@@ -1,1 +1,57 @@
-{}
+{
+  "name": "decoraition",
+  "version": "0.1.0",
+  "proxy": "http://localhost:5000",
+  "allowedHosts": [
+    "localhost",
+    ".localhost",
+    "127.0.0.1"
+  ],
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "concurrently": "^8.2.2",
+    "customize-cra": "^1.0.0",
+    "env-cmd": "^10.1.0",
+    "react": "^18.3.1",
+    "react-app-rewired": "^2.2.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run react\"",
+    "react": "env-cmd -f ./.env react-app-rewired start",
+    "server": "cd server && npm run dev",
+    "build": "concurrently \"npm run react:build\"",
+    "react:build": "env-cmd -f ./.env react-app-rewired build && move build ..\\server\\build",
+    "test": "concurrently \"npm run server:test\" \"npm run react:test\"",
+    "react:test": "env-cmd -f ./.env react-app-rewired test",
+    "server:test": "cd server && npm test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  }
+}

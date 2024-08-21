@@ -7,6 +7,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "./App.css";
+// import Login from "./pages/Account/login.js";
 
 function App() {
   const [backendData, setBackendData] = useState({});
@@ -28,7 +29,7 @@ function App() {
     <div className="App">
       {/* <Routes>
         <Route>
-          <Route path="/" element={<Home/>}/>
+          <Route path="/login" element={<Login />} />
         </Route>
       </Routes> */}
       <h1>App</h1>

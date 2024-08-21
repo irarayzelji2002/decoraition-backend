@@ -28,3 +28,4 @@ yarn-error.log*
 /server/.env
 /server/old/*.png
 /server/old/**/*.png
+/server/decoraition-firebase-adminsdk-g54wj-536e1e1fae.json

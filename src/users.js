@@ -7,10 +7,10 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "./App.css";
-import Login from "./pages/Account/login.js";
-import Users from "./users.js";
+import "./css/loginModal.css";
+// import Login from "./pages/Account/login.js";
 
-function App() {
+export default function Users() {
   const [backendData, setBackendData] = useState({});
 
   useEffect(() => {
@@ -28,14 +28,17 @@ function App() {
 
   return (
     <div className="App">
-      <Routes>
+      {/* <Routes>
         <Route>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Users />} />
         </Route>
-      </Routes>
+      </Routes> */}
+      <h1>App</h1>
+      {!backendData.users ? (
+        <p>Loading ...</p>
+      ) : (
+        backendData.users.map((user, i) => <p key={i}>{user}</p>)
+      )}
     </div>
   );
 }
-
-export default App;

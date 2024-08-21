@@ -1,5 +1,6 @@
 body,
-html {
+html,
+.App {
   height: 100%;
 }
 h1 {

@@ -15,8 +15,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static files from the React app
+// Serve static files, manifest.json and service-worker.js from the React app
 app.use(express.static(path.join(__dirname, "build")));
+app.get("/manifest.json", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "manifest.json"));
+});
+app.get("/service-worker.js", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "service-worker.js"));
+});
 
 // const { MY_API_KEY } = process.env;
 /*
@@ -63,7 +69,7 @@ function generateRandomString(length) {
   return result;
 }
 
-// GET PALENGKE
+// GET USER SAMPLE
 app.get("/api/sample", async (req, res) => {
   res.json({ users: ["userOne", "userTwo", "userThree"] });
 });

@@ -1,19 +1,23 @@
 const express = require("express");
 const multer = require("multer");
+const dotenv = require("dotenv").config({ path: "./.env" });
+const path = require("path");
 
 const app = express();
+
 // Parse URL-encoded bodies (form data)
 app.use(express.urlencoded({ extended: true }));
-// Middleware to set CORS headers
+
+// Middleware to set CORS headers (Allow requests from any origin & any headers in requests)
 app.use((req, res, next) => {
-  // Allow requests from any origin
   res.setHeader("Access-Control-Allow-Origin", "*");
-  // Allow any headers in requests
   res.setHeader("Access-Control-Allow-Headers", "*");
   next();
 });
 
-const dotenv = require("dotenv").config({ path: "./.env" });
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "build")));
+
 // const { MY_API_KEY } = process.env;
 /*
 const storage = multer.diskStorage({
@@ -64,7 +68,13 @@ app.get("/api/sample", async (req, res) => {
   res.json({ users: ["userOne", "userTwo", "userThree"] });
 });
 
+// All other requests should return to index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+
 // SERVER ON PORT 5000
-app.listen(5000, () => {
-  console.log("SERVER STARTED ON PORT 5000");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`SERVER STARTED ON PORT ${PORT}`);
 });

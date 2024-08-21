@@ -1,7 +1,7 @@
-import LoginModal from ".";
+import LoginModal from "../../components/loginModal.js";
 import "../../css/loginModal.css";
 
-export default function Page() {
+export default function Login() {
   return (
     <div className="bg">
       <div className="headtext">

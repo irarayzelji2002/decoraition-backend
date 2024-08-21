@@ -7,7 +7,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "./App.css";
-// import Login from "./pages/Account/login.js";
+import Login from "./pages/Account/login.js";
 
 function App() {
   const [backendData, setBackendData] = useState({});
@@ -27,11 +27,11 @@ function App() {
 
   return (
     <div className="App">
-      {/* <Routes>
+      <Routes>
         <Route>
           <Route path="/login" element={<Login />} />
         </Route>
-      </Routes> */}
+      </Routes>
       <h1>App</h1>
       {!backendData.users ? (
         <p>Loading ...</p>

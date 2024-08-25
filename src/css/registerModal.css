@@ -1,7 +1,7 @@
 body,
 html,
 .App {
-  height: 100%;
+  height: fit-content;
 }
 h1 {
   font-size: 50px;
@@ -25,7 +25,7 @@ h1 {
   background-color: #27262c;
   opacity: 0.9;
   width: 560px;
-  height: 80%;
+  height: fit-content;
   border-radius: 24px;
   max-width: 90%;
 }

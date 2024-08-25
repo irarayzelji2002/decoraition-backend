@@ -5,7 +5,7 @@ export default function ForgotPass() {
   return (
     <div className="bg">
       <div className="headtext">
-        <h1>Register Now!</h1>
+        <h1>Forgot Password</h1>
       </div>
       <div className="modal-bg">
         <ForgotPass1 />

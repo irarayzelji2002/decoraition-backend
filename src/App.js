@@ -11,6 +11,7 @@ import Login from "./pages/Account/login.js";
 import Register from "./pages/Account/register.js";
 import Users from "./users.js";
 import ChangePassw from "./pages/Account/changePass.js";
+import OneTP from "./pages/Account/otp.js";
 import ForgotPass from "./pages/Account/forgotPass1.js";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/" element={<Users />} />
           <Route path="/forgot" element={<ForgotPass />} />
           <Route path="/change" element={<ChangePassw />} />
+          <Route path="/otp" element={<OneTP />} />
         </Route>
       </Routes>
     </div>

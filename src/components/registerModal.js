@@ -56,19 +56,54 @@ export default function RegisterModal() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="fname"
+              label="First Name"
+              name="fname"
+              autoComplete="fname"
               autoFocus
             />
 
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="lname"
+              label="Last Name"
+              name="lname"
+              autoComplete="lname"
+              autoFocus
+            />
+
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="uname"
+              label="Username"
+              name="uname"
+              autoComplete="uname"
+              autoFocus
+            />
+
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="emailadd"
+              label="Email Address"
+              name="emailadd"
+              autoComplete="emailadd"
+              autoFocus
+            />
+
+            <Password></Password>
             <Password></Password>
 
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+
             <br></br>
             <center>
               <Button

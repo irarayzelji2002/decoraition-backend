@@ -44,7 +44,7 @@ export default function ForgotPass1() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            FROOFFFF
+            Forgot Password
           </Typography>
           <Box
             component="form"
@@ -56,54 +56,12 @@ export default function ForgotPass1() {
               margin="normal"
               required
               fullWidth
-              id="fname"
-              label="Frogggggg"
-              name="fname"
-              autoComplete="fname"
-              autoFocus
-            />
-
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="lname"
-              label="Last Name"
-              name="lname"
-              autoComplete="lname"
-              autoFocus
-            />
-
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="uname"
-              label="Username"
-              name="uname"
-              autoComplete="uname"
-              autoFocus
-            />
-
-            <TextField
-              margin="normal"
-              required
-              fullWidth
               id="emailadd"
               label="Email Address"
               name="emailadd"
               autoComplete="emailadd"
               autoFocus
             />
-
-            <Password></Password>
-            <Password></Password>
-
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-
             <br></br>
             <center>
               <Button
@@ -113,19 +71,14 @@ export default function ForgotPass1() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Register
+                Continue
               </Button>
             </center>
 
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                  Cancel
                 </Link>
               </Grid>
             </Grid>

@@ -1,4 +1,4 @@
-node_modules# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
 /node_modules
@@ -10,6 +10,7 @@ node_modules# See https://help.github.com/articles/ignoring-files/ for more abou
 
 # production
 /build
+server/build
 
 # misc
 .DS_Store
@@ -28,3 +29,4 @@ yarn-error.log*
 /server/.env
 /server/old/*.png
 /server/old/**/*.png
+/server/decoraition-firebase-adminsdk-g54wj-536e1e1fae.json

@@ -12,21 +12,6 @@ import Register from "./pages/Account/register.js";
 import Users from "./users.js";
 
 function App() {
-  const [backendData, setBackendData] = useState({});
-
-  useEffect(() => {
-    fetch("/api/sample")
-      .then((res) => res.json())
-      .then((data) => {
-        setBackendData(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching user:", error);
-      });
-  }, []);
-
-  const name = "adama";
-
   return (
     <div className="App">
       <Routes>

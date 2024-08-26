@@ -11,3 +11,84 @@
   justify-content: center;
   flex-direction: row;
 }
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.design-button,
+.project-button {
+  padding: 15px 30px;
+  margin: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.design-button {
+  background: linear-gradient(20deg, #faa653, #f04f59);
+  border-radius: 20px !important;
+  color: #fff;
+}
+
+.project-button {
+  background-color: transparent;
+  color: #fff;
+  font-weight: bold;
+  padding: 15px 30px;
+  margin: 10px;
+  font-size: 16px;
+  border-radius: 20px !important;
+  cursor: pointer;
+
+  /* Gradient Border */
+  border: 2px solid transparent; /* Initially make the border transparent */
+  background-image: linear-gradient(#1e1e1e, #1e1e1e),
+    linear-gradient(20deg, #faa653, #f04f59); /* Gradient background */
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.recent-section {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.recent-designs,
+.recent-projects {
+  width: 45%;
+}
+
+.recent-designs h2,
+.recent-projects h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.no-content p {
+  color: #aaa;
+}
+
+.floating-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  background: linear-gradient(20deg, #faa653, #f04f59);
+  color: #fff;
+  font-size: 24px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

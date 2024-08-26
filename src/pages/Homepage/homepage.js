@@ -27,6 +27,29 @@ function Homepage() {
         />
         <h1 className="navName">DecorAItion</h1>
       </div>
+      <div className="action-buttons">
+        <button className="design-button">Create a design</button>
+        <button className="project-button">Create a project</button>
+      </div>
+
+      <section className="recent-section">
+        <div className="recent-designs">
+          <h2>Recent Designs</h2>
+          <div className="no-content">
+            <img src="/img/design-placeholder.png" alt="No designs yet" />
+            <p>No designs yet. Start creating.</p>
+          </div>
+          <button className="floating-button">+</button>
+        </div>
+
+        <div className="recent-projects">
+          <h2>Recent Projects</h2>
+          <div className="no-content">
+            <img src="/img/design-placeholder.png" alt="No projects yet" />
+            <p>No projects yet. Start creating.</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

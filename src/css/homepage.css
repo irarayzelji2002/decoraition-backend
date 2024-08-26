@@ -1,0 +1,13 @@
+.navName {
+  font-size: 60px;
+  background: linear-gradient(20deg, #faa653, #f04f59);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}

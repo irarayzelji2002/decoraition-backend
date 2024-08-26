@@ -13,6 +13,7 @@ import Users from "./users.js";
 import ChangePassw from "./pages/Account/changePass.js";
 import OneTP from "./pages/Account/otp.js";
 import ForgotPass from "./pages/Account/forgotPass1.js";
+import Homepage from "./pages/Homepage/homepage.js";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/forgot" element={<ForgotPass />} />
           <Route path="/change" element={<ChangePassw />} />
           <Route path="/otp" element={<OneTP />} />
+          <Route path="/homepage" element={<Homepage />} />
         </Route>
       </Routes>
     </div>

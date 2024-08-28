@@ -6,6 +6,7 @@ function DesignIcon() {
       <img src="/img/logoWhitebg.png" className="pic" alt="No projects yet" />
 
       <h3 className="titleDesign">Project Name</h3>
+      <h3 className="subDate">Project Name</h3>
     </div>
   );
 }

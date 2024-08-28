@@ -9,6 +9,7 @@ import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import "../../css/homepage.css";
+import DesignIcon from "../../components/designIcon";
 
 function Homepage() {
   return (
@@ -36,7 +37,18 @@ function Homepage() {
         <div className="recent-designs">
           <h2>Recent Designs</h2>
           <div className="no-content">
+            <div className="layout">
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+            </div>
+
             <img src="/img/design-placeholder.png" alt="No designs yet" />
+
             <p>No designs yet. Start creating.</p>
           </div>
           <button className="floating-button">+</button>
@@ -45,6 +57,15 @@ function Homepage() {
         <div className="recent-projects">
           <h2>Recent Projects</h2>
           <div className="no-content">
+            <div className="layout">
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+              <DesignIcon />
+            </div>
             <img src="/img/design-placeholder.png" alt="No projects yet" />
             <p>No projects yet. Start creating.</p>
           </div>

@@ -12,15 +12,32 @@ import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
+import BedtimeIcon from "@mui/icons-material/Bedtime";
 import DesignIcon from "../../components/designIcon";
-import { Button } from "@mui/material";
-import "../../css/homepage.css";
+import Avatar from "@mui/material/Avatar";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
+import FolderIcon from "@mui/icons-material/Folder";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import {
+  Button,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+} from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
 import Drawer from "@mui/material/Drawer";
+import "../../css/homepage.css";
 
 function Homepage() {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
-  const [isDrawerOpen, setDrawerOpen] = useState(false); // State for drawer visibility
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,37 +68,156 @@ function Homepage() {
       });
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode", !darkMode);
+  };
+
   return (
     <div>
       <SearchAppBar
         user={user}
         username={username}
-        onMenuClick={() => setDrawerOpen(true)} // Open the drawer when menu button is clicked
+        onMenuClick={() => setDrawerOpen(true)}
       />
 
-      {/* Overlay Drawer */}
       <Drawer
         anchor="left"
         open={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
         sx={{
           "& .MuiDrawer-paper": {
-            width: { xs: "80%", sm: "25%" }, // 80% on mobile, 25% on larger screens
-            backgroundColor: "#333", // Background color of the drawer
+            width: { xs: "80%", sm: "25%" },
+            backgroundColor: darkMode ? "#121212" : "#1E1D21",
             color: "white",
             padding: "20px",
+            display: "flex",
+            flexDirection: "column",
           },
         }}
       >
-        <Typography variant="h6" gutterBottom>
-          Menu
-        </Typography>
-        {/* Add any additional menu items or actions here */}
-        <Button onClick={handleLogout} sx={{ color: "white" }}>
-          Sign Out
-        </Button>
-        {/* Close button for the drawer */}
-        <Button onClick={() => setDrawerOpen(false)} sx={{ color: "white" }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginBottom: "20px",
+            }}
+          >
+            <IconButton sx={{ color: "white" }} onClick={toggleDarkMode}>
+              <BedtimeIcon />
+            </IconButton>
+            <IconButton sx={{ color: "white", marginLeft: "16px" }}>
+              <NotificationsIcon />
+            </IconButton>
+          </div>
+        </div>
+
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <Avatar
+            sx={{
+              bgcolor: "gray",
+              width: 56,
+              height: 56,
+              marginBottom: "10px",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            {username.charAt(0).toUpperCase()}
+          </Avatar>
+          <Typography variant="body1">{username}</Typography>
+          <Typography variant="caption">@juandelacruz</Typography>
+        </div>
+        <Divider sx={{ backgroundColor: "gray", my: 2 }} />
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <HomeIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <PhotoLibraryIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Design" />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <FolderIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Projects" />
+          </ListItem>
+          <Divider sx={{ backgroundColor: "gray", my: 2 }} />
+          <Typography variant="body2" sx={{ paddingLeft: 2, marginBottom: 1 }}>
+            Recent Designs
+          </Typography>
+
+          <ListItem>
+            <ListItemText primary="Recent Design 1" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+          <ListItem>
+            <ListItemText primary="Recent Design 2" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+          <ListItem>
+            <ListItemText primary="Recent Design 3" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+
+          <Divider sx={{ backgroundColor: "gray", my: 2 }} />
+
+          <Typography variant="body2" sx={{ paddingLeft: 2, marginBottom: 1 }}>
+            Recent Projects
+          </Typography>
+          <ListItem button>
+            <ListItemText primary="Recent Project 1" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+          <ListItem button>
+            <ListItemText primary="Recent Project 2" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+          <ListItem button>
+            <ListItemText primary="Recent Project 3" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+
+          <Divider sx={{ backgroundColor: "gray", my: 2 }} />
+
+          {/* Settings Menu Item */}
+          <ListItem button>
+            <ListItemIcon>
+              <SettingsIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Settings" />
+          </ListItem>
+          <ListItem button onClick={handleLogout}>
+            <ListItemIcon>
+              <LogoutIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Sign Out" />
+          </ListItem>
+        </List>
+
+        <Button
+          onClick={() => setDrawerOpen(false)}
+          sx={{ color: "white", mt: 2 }}
+        >
           Close
         </Button>
       </Drawer>
@@ -152,6 +288,7 @@ function Homepage() {
 
 export default Homepage;
 
+// SearchAppBar component
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -237,17 +374,11 @@ export function SearchAppBar({ user, username, onMenuClick }) {
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
               sx={{
-                backgroundColor: "#4B4A4B",
-                borderRadius: "24px",
-                "&:hover": { bgcolor: "transparent", borderRadius: "24px" },
+                backgroundColor: "rgb(27, 27, 27)",
+                color: "whitesmoke !important",
               }}
             />
           </Search>
-          {user && username && (
-            <Typography variant="body1" sx={{ color: "white", ml: 2 }}>
-              Welcome, {username}
-            </Typography>
-          )}
         </Toolbar>
       </AppBar>
     </Box>

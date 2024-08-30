@@ -1,3 +1,8 @@
+import React, { useState, useEffect } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth, db } from "../../firebase";
+import { useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -7,31 +12,51 @@ import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import "../../css/homepage.css";
 import DesignIcon from "../../components/designIcon";
-import React, { useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase";
+import "../../css/homepage.css";
 
 function Homepage() {
+  const [user, setUser] = useState(null); // State to store user info
+  const [username, setUsername] = useState(""); // State to store username
+  const navigate = useNavigate();
+
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const uid = user.uid;
-        // ...
-        console.log("uid", uid);
+        setUser(user); // Set the user state
+        console.log("uid", user.uid);
+
+        // Fetch username from Firestore
+        const userDoc = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userDoc);
+        if (docSnap.exists()) {
+          setUsername(docSnap.data().username); // Set username
+        }
       } else {
-        // User is signed out
-        // ...
+        setUser(null); // Clear the user state
+        setUsername(""); // Clear the username
         console.log("user is logged out");
       }
     });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []);
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+        console.log("Signed out successfully");
+      })
+      .catch((error) => {
+        console.error("Sign-out error:", error);
+      });
+  };
+
   return (
     <div>
-      <SearchAppBar></SearchAppBar>
+      <SearchAppBar user={user} username={username} />
 
       <div className="header">
         <img
@@ -45,9 +70,13 @@ function Homepage() {
         />
         <h1 className="navName">DecorAItion</h1>
       </div>
+
       <div className="action-buttons">
         <button className="design-button">Create a design</button>
         <button className="project-button">Create a project</button>
+        <button className="project-button" onClick={handleLogout}>
+          Sign Out
+        </button>
       </div>
 
       <section className="recent-section">
@@ -124,7 +153,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: "100%",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     [theme.breakpoints.up("sm")]: {
@@ -136,7 +164,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export function SearchAppBar() {
+export function SearchAppBar({ user, username }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="sticky" sx={{ zIndex: 1200 }}>
@@ -185,6 +213,11 @@ export function SearchAppBar() {
               }}
             />
           </Search>
+          {user && username && (
+            <Typography variant="body1" sx={{ color: "white", ml: 2 }}>
+              Welcome, {username} {/* Display user's username */}
+            </Typography>
+          )}
         </Toolbar>
       </AppBar>
     </Box>

@@ -100,9 +100,14 @@ export default function ForgotPass1() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+              }}
+            >
               Continue
-            ></Button>
+            </Button>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2" className="cancel-link">

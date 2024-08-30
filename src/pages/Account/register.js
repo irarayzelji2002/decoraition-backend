@@ -1,4 +1,4 @@
-import RegisterModal from "../../components/registerModal.js";
+import Signup from "../../components/Signup";
 import "../../css/registerModal.css";
 
 export default function Register() {
@@ -8,7 +8,7 @@ export default function Register() {
         <h1>Register Now!</h1>
       </div>
       <div className="modal-bg">
-        <RegisterModal />
+        <Signup />
       </div>
     </div>
   );

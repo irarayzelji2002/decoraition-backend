@@ -1,5 +1,4 @@
 body,
-,
 .App {
   height: fit-content;
 }
@@ -34,7 +33,7 @@ h5 {
   max-width: 90%;
   height: fit-content;
   border-radius: 24px;
-  padding-bottom: 64px; 
+  padding-bottom: 64px;
   max-width: 90%;
   margin-bottom: 20%;
 }

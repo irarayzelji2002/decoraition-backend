@@ -12,6 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import "../css/registerModal.css";
 import Password from "./passInput";
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -44,7 +45,7 @@ export default function ForgotPass1() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Forgot Password
+            Enter Your Email
           </Typography>
           <Box
             component="form"
@@ -61,6 +62,27 @@ export default function ForgotPass1() {
               name="emailadd"
               autoComplete="emailadd"
               autoFocus
+              className="email-field"
+              sx={{
+                input: { color: "white" },
+                "& label": { color: "white" }, // Set the label color to white
+                "& label.Mui-focused": { color: "white" }, // Ensure label remains white when focused
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "white",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "white",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+                width: "400px",
+              }}
             />
             <br></br>
             <center>
@@ -77,7 +99,7 @@ export default function ForgotPass1() {
 
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href="#" variant="body2" className="cancel-link">
                   Cancel
                 </Link>
               </Grid>

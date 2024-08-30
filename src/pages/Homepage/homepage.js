@@ -13,33 +13,31 @@ import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import DesignIcon from "../../components/designIcon";
+import { Button } from "@mui/material";
 import "../../css/homepage.css";
+import Drawer from "@mui/material/Drawer";
 
 function Homepage() {
-  const [user, setUser] = useState(null); // State to store user info
-  const [username, setUsername] = useState(""); // State to store username
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState("");
+  const [isDrawerOpen, setDrawerOpen] = useState(false); // State for drawer visibility
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        setUser(user); // Set the user state
-        console.log("uid", user.uid);
-
-        // Fetch username from Firestore
+        setUser(user);
         const userDoc = doc(db, "users", user.uid);
         const docSnap = await getDoc(userDoc);
         if (docSnap.exists()) {
-          setUsername(docSnap.data().username); // Set username
+          setUsername(docSnap.data().username);
         }
       } else {
-        setUser(null); // Clear the user state
-        setUsername(""); // Clear the username
-        console.log("user is logged out");
+        setUser(null);
+        setUsername("");
       }
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
@@ -47,7 +45,6 @@ function Homepage() {
     signOut(auth)
       .then(() => {
         navigate("/");
-        console.log("Signed out successfully");
       })
       .catch((error) => {
         console.error("Sign-out error:", error);
@@ -56,67 +53,99 @@ function Homepage() {
 
   return (
     <div>
-      <SearchAppBar user={user} username={username} />
+      <SearchAppBar
+        user={user}
+        username={username}
+        onMenuClick={() => setDrawerOpen(true)} // Open the drawer when menu button is clicked
+      />
 
-      <div className="header">
-        <img
-          style={{
-            height: "100px",
-            paddingTop: "18px",
-            marginRight: "14px",
-          }}
-          src="/img/Logo-Colored.png"
-          alt="logo"
-        />
-        <h1 className="navName">DecorAItion</h1>
-      </div>
-
-      <div className="action-buttons">
-        <button className="design-button">Create a design</button>
-        <button className="project-button">Create a project</button>
-        <button className="project-button" onClick={handleLogout}>
+      {/* Overlay Drawer */}
+      <Drawer
+        anchor="left"
+        open={isDrawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        sx={{
+          "& .MuiDrawer-paper": {
+            width: { xs: "80%", sm: "25%" }, // 80% on mobile, 25% on larger screens
+            backgroundColor: "#333", // Background color of the drawer
+            color: "white",
+            padding: "20px",
+          },
+        }}
+      >
+        <Typography variant="h6" gutterBottom>
+          Menu
+        </Typography>
+        {/* Add any additional menu items or actions here */}
+        <Button onClick={handleLogout} sx={{ color: "white" }}>
           Sign Out
-        </button>
+        </Button>
+        {/* Close button for the drawer */}
+        <Button onClick={() => setDrawerOpen(false)} sx={{ color: "white" }}>
+          Close
+        </Button>
+      </Drawer>
+
+      <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>
+        <div className="header">
+          <img
+            style={{
+              height: "100px",
+              paddingTop: "18px",
+              marginRight: "14px",
+            }}
+            src="/img/Logo-Colored.png"
+            alt="logo"
+          />
+          <h1 className="navName">DecorAItion</h1>
+        </div>
+
+        <div className="action-buttons">
+          <button className="design-button">Create a design</button>
+          <button className="project-button">Create a project</button>
+          <button className="project-button" onClick={handleLogout}>
+            Sign Out
+          </button>
+        </div>
+
+        <section className="recent-section">
+          <div className="recent-designs">
+            <h2>Recent Designs</h2>
+            <div className="no-content">
+              <div className="layout">
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+              </div>
+
+              <img src="/img/design-placeholder.png" alt="No designs yet" />
+              <p>No designs yet. Start creating.</p>
+            </div>
+            <button className="floating-button">+</button>
+          </div>
+
+          <div className="recent-projects">
+            <h2>Recent Projects</h2>
+            <div className="no-content">
+              <div className="layout">
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+              </div>
+              <img src="/img/design-placeholder.png" alt="No projects yet" />
+              <p>No projects yet. Start creating.</p>
+            </div>
+          </div>
+        </section>
       </div>
-
-      <section className="recent-section">
-        <div className="recent-designs">
-          <h2>Recent Designs</h2>
-          <div className="no-content">
-            <div className="layout">
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-            </div>
-
-            <img src="/img/design-placeholder.png" alt="No designs yet" />
-
-            <p>No designs yet. Start creating.</p>
-          </div>
-          <button className="floating-button">+</button>
-        </div>
-
-        <div className="recent-projects">
-          <h2>Recent Projects</h2>
-          <div className="no-content">
-            <div className="layout">
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-            </div>
-            <img src="/img/design-placeholder.png" alt="No projects yet" />
-            <p>No projects yet. Start creating.</p>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
@@ -164,7 +193,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export function SearchAppBar({ user, username }) {
+export function SearchAppBar({ user, username, onMenuClick }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="sticky" sx={{ zIndex: 1200 }}>
@@ -175,6 +204,7 @@ export function SearchAppBar({ user, username }) {
             color="inherit"
             aria-label="open drawer"
             sx={{ mr: 2, backgroundColor: "transparent" }}
+            onClick={onMenuClick} // Open drawer on click
           >
             <MenuIcon />
           </IconButton>
@@ -215,7 +245,7 @@ export function SearchAppBar({ user, username }) {
           </Search>
           {user && username && (
             <Typography variant="body1" sx={{ color: "white", ml: 2 }}>
-              Welcome, {username} {/* Display user's username */}
+              Welcome, {username}
             </Typography>
           )}
         </Toolbar>

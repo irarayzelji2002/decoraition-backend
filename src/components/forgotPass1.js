@@ -3,8 +3,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -14,19 +12,29 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "../css/registerModal.css";
 import Password from "./passInput";
+import { handleForgotPassword } from "../firebase";
+import { useState } from "react"; // Import your forgot password function
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
+// TODO: remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function ForgotPass1() {
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    // Basic email validation
+    if (!email) {
+      setEmailError("Email is required.");
+      return;
+    }
+
+    setEmailError(""); // Clear previous error if any
+
+    // Call the forgot password function
+    handleForgotPassword(email);
   };
 
   return (
@@ -57,16 +65,20 @@ export default function ForgotPass1() {
               margin="normal"
               required
               fullWidth
-              id="emailadd"
+              id="email"
               label="Email Address"
-              name="emailadd"
-              autoComplete="emailadd"
+              name="email"
+              autoComplete="email"
               autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={!!emailError}
+              helperText={emailError}
               className="email-field"
               sx={{
                 input: { color: "white" },
-                "& label": { color: "white" }, // Set the label color to white
-                "& label.Mui-focused": { color: "white" }, // Ensure label remains white when focused
+                "& label": { color: "white" }, 
+                "& label.Mui-focused": { color: "white" }, 
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
                     borderColor: "white",
@@ -83,20 +95,14 @@ export default function ForgotPass1() {
                 },
                 width: "400px",
               }}
-            />
-            <br></br>
-            <center>
-              <Button
-                type="submit"
-                className="signIn"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Continue
-              </Button>
-            </center>
-
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Continue
+            </Button>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2" className="cancel-link">

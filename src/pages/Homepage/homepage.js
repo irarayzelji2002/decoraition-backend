@@ -12,34 +12,49 @@ import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
+import BedtimeIcon from "@mui/icons-material/Bedtime";
 import DesignIcon from "../../components/designIcon";
+import Avatar from "@mui/material/Avatar";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
+import FolderIcon from "@mui/icons-material/Folder";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import {
+  Button,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+} from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
+import Drawer from "@mui/material/Drawer";
 import "../../css/homepage.css";
 
 function Homepage() {
-  const [user, setUser] = useState(null); // State to store user info
-  const [username, setUsername] = useState(""); // State to store username
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState("");
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        setUser(user); // Set the user state
-        console.log("uid", user.uid);
-
-        // Fetch username from Firestore
+        setUser(user);
         const userDoc = doc(db, "users", user.uid);
         const docSnap = await getDoc(userDoc);
         if (docSnap.exists()) {
-          setUsername(docSnap.data().username); // Set username
+          setUsername(docSnap.data().username);
         }
       } else {
-        setUser(null); // Clear the user state
-        setUsername(""); // Clear the username
-        console.log("user is logged out");
+        setUser(null);
+        setUsername("");
       }
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
@@ -47,82 +62,233 @@ function Homepage() {
     signOut(auth)
       .then(() => {
         navigate("/");
-        console.log("Signed out successfully");
       })
       .catch((error) => {
         console.error("Sign-out error:", error);
       });
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode", !darkMode);
+  };
+
   return (
     <div>
-      <SearchAppBar user={user} username={username} />
+      <SearchAppBar
+        user={user}
+        username={username}
+        onMenuClick={() => setDrawerOpen(true)}
+      />
 
-      <div className="header">
-        <img
-          style={{
-            height: "100px",
-            paddingTop: "18px",
-            marginRight: "14px",
-          }}
-          src="/img/Logo-Colored.png"
-          alt="logo"
-        />
-        <h1 className="navName">DecorAItion</h1>
-      </div>
-
-      <div className="action-buttons">
-        <button className="design-button">Create a design</button>
-        <button className="project-button">Create a project</button>
-        <button className="project-button" onClick={handleLogout}>
-          Sign Out
-        </button>
-      </div>
-
-      <section className="recent-section">
-        <div className="recent-designs">
-          <h2>Recent Designs</h2>
-          <div className="no-content">
-            <div className="layout">
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-            </div>
-
-            <img src="/img/design-placeholder.png" alt="No designs yet" />
-
-            <p>No designs yet. Start creating.</p>
-          </div>
-          <button className="floating-button">+</button>
-        </div>
-
-        <div className="recent-projects">
-          <h2>Recent Projects</h2>
-          <div className="no-content">
-            <div className="layout">
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-              <DesignIcon />
-            </div>
-            <img src="/img/design-placeholder.png" alt="No projects yet" />
-            <p>No projects yet. Start creating.</p>
+      <Drawer
+        anchor="left"
+        open={isDrawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        sx={{
+          "& .MuiDrawer-paper": {
+            width: { xs: "80%", sm: "25%" },
+            backgroundColor: darkMode ? "#121212" : "#1E1D21",
+            color: "white",
+            padding: "20px",
+            display: "flex",
+            flexDirection: "column",
+          },
+        }}
+      >
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginBottom: "20px",
+            }}
+          >
+            <IconButton sx={{ color: "white" }} onClick={toggleDarkMode}>
+              <BedtimeIcon />
+            </IconButton>
+            <IconButton sx={{ color: "white", marginLeft: "16px" }}>
+              <NotificationsIcon />
+            </IconButton>
           </div>
         </div>
-      </section>
+
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <Avatar
+            sx={{
+              bgcolor: "gray",
+              width: 56,
+              height: 56,
+              marginBottom: "10px",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            {username.charAt(0).toUpperCase()}
+          </Avatar>
+          <Typography variant="body1">{username}</Typography>
+          <Typography variant="caption">@juandelacruz</Typography>
+        </div>
+        <Divider sx={{ backgroundColor: "gray", my: 2 }} />
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <HomeIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <PhotoLibraryIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Design" />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <FolderIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Projects" />
+          </ListItem>
+          <Divider sx={{ backgroundColor: "gray", my: 2 }} />
+          <Typography variant="body2" sx={{ paddingLeft: 2, marginBottom: 1 }}>
+            Recent Designs
+          </Typography>
+
+          <ListItem>
+            <ListItemText primary="Recent Design 1" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+          <ListItem>
+            <ListItemText primary="Recent Design 2" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+          <ListItem>
+            <ListItemText primary="Recent Design 3" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+
+          <Divider sx={{ backgroundColor: "gray", my: 2 }} />
+
+          <Typography variant="body2" sx={{ paddingLeft: 2, marginBottom: 1 }}>
+            Recent Projects
+          </Typography>
+          <ListItem button>
+            <ListItemText primary="Recent Project 1" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+          <ListItem button>
+            <ListItemText primary="Recent Project 2" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+          <ListItem button>
+            <ListItemText primary="Recent Project 3" />
+            <IconButton edge="end" aria-label="more">
+              <MoreHorizIcon sx={{ color: "white" }} />
+            </IconButton>
+          </ListItem>
+
+          <Divider sx={{ backgroundColor: "gray", my: 2 }} />
+
+          {/* Settings Menu Item */}
+          <ListItem button>
+            <ListItemIcon>
+              <SettingsIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Settings" />
+          </ListItem>
+          <ListItem button onClick={handleLogout}>
+            <ListItemIcon>
+              <LogoutIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary="Sign Out" />
+          </ListItem>
+        </List>
+
+        <Button
+          onClick={() => setDrawerOpen(false)}
+          sx={{ color: "white", mt: 2 }}
+        >
+          Close
+        </Button>
+      </Drawer>
+
+      <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>
+        <div className="header">
+          <img
+            style={{
+              height: "100px",
+              paddingTop: "18px",
+              marginRight: "14px",
+            }}
+            src="/img/Logo-Colored.png"
+            alt="logo"
+          />
+          <h1 className="navName">DecorAItion</h1>
+        </div>
+
+        <div className="action-buttons">
+          <button className="design-button">Create a design</button>
+          <button className="project-button">Create a project</button>
+          <button className="project-button" onClick={handleLogout}>
+            Sign Out
+          </button>
+        </div>
+
+        <section className="recent-section">
+          <div className="recent-designs">
+            <h2>Recent Designs</h2>
+            <div className="no-content">
+              <div className="layout">
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+              </div>
+
+              <img src="/img/design-placeholder.png" alt="No designs yet" />
+              <p>No designs yet. Start creating.</p>
+            </div>
+            <button className="floating-button">+</button>
+          </div>
+
+          <div className="recent-projects">
+            <h2>Recent Projects</h2>
+            <div className="no-content">
+              <div className="layout">
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+                <DesignIcon />
+              </div>
+              <img src="/img/design-placeholder.png" alt="No projects yet" />
+              <p>No projects yet. Start creating.</p>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
 
 export default Homepage;
 
+// SearchAppBar component
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -164,7 +330,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export function SearchAppBar({ user, username }) {
+export function SearchAppBar({ user, username, onMenuClick }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="sticky" sx={{ zIndex: 1200 }}>
@@ -175,6 +341,7 @@ export function SearchAppBar({ user, username }) {
             color="inherit"
             aria-label="open drawer"
             sx={{ mr: 2, backgroundColor: "transparent" }}
+            onClick={onMenuClick} // Open drawer on click
           >
             <MenuIcon />
           </IconButton>
@@ -207,17 +374,11 @@ export function SearchAppBar({ user, username }) {
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
               sx={{
-                backgroundColor: "#4B4A4B",
-                borderRadius: "24px",
-                "&:hover": { bgcolor: "transparent", borderRadius: "24px" },
+                backgroundColor: "rgb(27, 27, 27)",
+                color: "whitesmoke !important",
               }}
             />
           </Search>
-          {user && username && (
-            <Typography variant="body1" sx={{ color: "white", ml: 2 }}>
-              Welcome, {username} {/* Display user's username */}
-            </Typography>
-          )}
         </Toolbar>
       </AppBar>
     </Box>

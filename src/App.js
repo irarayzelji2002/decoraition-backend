@@ -14,17 +14,19 @@ import ChangePassw from "./pages/Account/changePass.js";
 import OneTP from "./pages/Account/otp.js";
 import ForgotPass from "./pages/Account/forgotPass1.js";
 import Homepage from "./pages/Homepage/homepage.js";
+import Loginn from "./Login.js";
 
 function App() {
   return (
     <div className="App">
       <Routes>
         <Route>
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Loginn />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Users />} />
+          <Route path="/" element={<Login />} />
           <Route path="/forgot" element={<ForgotPass />} />
           <Route path="/change" element={<ChangePassw />} />
+          <Route path="/users" element={<Users />} />
           <Route path="/otp" element={<OneTP />} />
           <Route path="/homepage" element={<Homepage />} />
         </Route>

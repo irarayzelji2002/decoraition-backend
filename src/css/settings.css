@@ -1,0 +1,91 @@
+/* Root container */
+.settings-container {
+  padding: 20px;
+  background-color: #1e1e24;
+  color: #ffffff;
+  height: 100vh;
+}
+
+/* Tabs bar */
+.MuiAppBar-root {
+  background-color: #26262c;
+  color: #ffffff;
+}
+
+/* Tab indicator */
+.MuiTabs-indicator {
+  background-color: #fc3d69;
+}
+
+/* Tab text */
+.MuiTab-root {
+  font-size: 1rem;
+  text-transform: none;
+}
+
+/* Avatar and buttons container */
+.avatar-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Profile buttons */
+.avatar-container .MuiButton-root {
+  margin-bottom: 10px;
+  background: linear-gradient(20deg, #faa653, #f04f59);
+  color: white;
+}
+
+.avatar-container .MuiButton-outlined {
+  color: #ff867f;
+  border-color: #ff867f;
+}
+
+/* Form fields styling */
+.MuiTextField-root {
+  margin-bottom: 16px;
+  background-color: #2c2c34;
+  border-radius: 4px;
+}
+
+.MuiInputBase-input {
+  color: #ffffff;
+}
+
+.MuiInputLabel-root {
+  color: #9a9a9a;
+}
+
+.MuiOutlinedInput-root {
+  fieldset {
+    border-color: #ffffff;
+  }
+}
+
+.MuiOutlinedInput-root:hover fieldset {
+  border-color: #fc3d69;
+}
+
+/* Icon button styling */
+.MuiIconButton-root {
+  color: #fc3d69;
+}
+
+/* Linked account and theme */
+.linked-account,
+.theme {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.linked-account svg,
+.theme svg {
+  margin-right: 8px;
+}
+
+/* Notification Tab styling */
+.notification-settings {
+  color: #ffffff;
+}

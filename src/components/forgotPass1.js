@@ -77,8 +77,8 @@ export default function ForgotPass1() {
               className="email-field"
               sx={{
                 input: { color: "white" },
-                "& label": { color: "white" }, 
-                "& label.Mui-focused": { color: "white" }, 
+                "& label": { color: "white" },
+                "& label.Mui-focused": { color: "white" },
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
                     borderColor: "white",
@@ -101,9 +101,8 @@ export default function ForgotPass1() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-            >
               Continue
-            </Button>
+            ></Button>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2" className="cancel-link">

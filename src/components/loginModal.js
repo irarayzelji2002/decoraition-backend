@@ -17,6 +17,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { GoogleIcon, FacebookIcon, SitemarkIcon } from "./customIcons";
 
 const defaultTheme = createTheme();
 
@@ -137,14 +138,30 @@ export default function LoginModal() {
             )}
 
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={
+                <Checkbox
+                  value="remember"
+                  sx={{
+                    color: "white",
+                    "&.Mui-checked": {
+                      color: "white",
+                    },
+                  }}
+                />
+              }
               label="Remember me"
+              sx={{ color: "white" }}
             />
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+              }}
             >
               Sign In
             </Button>
@@ -162,6 +179,24 @@ export default function LoginModal() {
               </Grid>
             </Grid>
           </Box>
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Button
+            type="submit"
+            fullWidth
+            onClick={() => alert("Sign up with Google")}
+            startIcon={<GoogleIcon />}
+          >
+            Sign up with Google
+          </Button>
+          <Button
+            type="submit"
+            fullWidth
+            onClick={() => alert("Sign up with Facebook")}
+            startIcon={<FacebookIcon />}
+          >
+            Sign up with Facebook
+          </Button>
         </Box>
       </Container>
     </ThemeProvider>

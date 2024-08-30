@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase"; // Import Firestore
+import { doc, setDoc } from "firebase/firestore";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -80,6 +81,15 @@ const Signup = () => {
         password
       );
       const user = userCredential.user;
+
+      // Save user details to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        fname,
+        lname,
+        username,
+        email,
+      });
+
       console.log(user);
       navigate("/login");
     } catch (error) {

@@ -18,7 +18,11 @@ export default function Password({ value, onChange, error, helperText }) {
   };
 
   return (
-    <FormControl sx={{ m: 1, width: "100%" }} variant="outlined" error={error}>
+    <FormControl
+      sx={{ width: "100%", marginTop: "12px" }}
+      variant="outlined"
+      error={error}
+    >
       <InputLabel
         htmlFor="outlined-adornment-password"
         sx={{ color: "#ffffff" }}

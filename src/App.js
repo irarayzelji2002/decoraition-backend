@@ -14,6 +14,7 @@ import ChangePassw from "./pages/Account/changePass.js";
 import OneTP from "./pages/Account/otp.js";
 import ForgotPass from "./pages/Account/forgotPass1.js";
 import Homepage from "./pages/Homepage/homepage.js";
+import ForgotPassword from "./pages/Account/forgot.js";
 
 function App() {
   return (

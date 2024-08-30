@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "../css/registerModal.css";
+import Password from "./passInput";
 import { handleForgotPassword } from "../firebase";
 import { useState } from "react"; // Import your forgot password function
 
@@ -76,8 +77,8 @@ export default function ForgotPass1() {
               className="email-field"
               sx={{
                 input: { color: "white" },
-                "& label": { color: "white" }, // Set the label color to white
-                "& label.Mui-focused": { color: "white" }, // Ensure label remains white when focused
+                "& label": { color: "white" }, 
+                "& label.Mui-focused": { color: "white" }, 
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
                     borderColor: "white",

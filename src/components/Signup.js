@@ -129,6 +129,24 @@ const Signup = () => {
               onChange={(e) => setFname(e.target.value)}
               error={!!errors.fname}
               helperText={errors.fname}
+              sx={{
+                input: { color: "white" },
+                label: { color: "white" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "white",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "white",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+              }}
             />
             <TextField
               margin="normal"
@@ -141,6 +159,24 @@ const Signup = () => {
               onChange={(e) => setLname(e.target.value)}
               error={!!errors.lname}
               helperText={errors.lname}
+              sx={{
+                input: { color: "white" },
+                label: { color: "white" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "white",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "white",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+              }}
             />
             <TextField
               margin="normal"
@@ -153,6 +189,24 @@ const Signup = () => {
               onChange={(e) => setUsername(e.target.value)}
               error={!!errors.username}
               helperText={errors.username}
+              sx={{
+                input: { color: "white" },
+                label: { color: "white" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "white",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "white",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+              }}
             />
 
             <TextField
@@ -167,6 +221,24 @@ const Signup = () => {
               onChange={(e) => setEmail(e.target.value)}
               error={!!errors.email}
               helperText={errors.email}
+              sx={{
+                input: { color: "white" },
+                label: { color: "white" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "white",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "white",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+              }}
             />
 
             <Password
@@ -174,6 +246,24 @@ const Signup = () => {
               onChange={(e) => setPassword(e.target.value)}
               error={!!errors.password}
               helperText={errors.password}
+              sx={{
+                input: { color: "white" },
+                label: { color: "white" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "white",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "white",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+              }}
             />
             <Password
               label="Confirm Password"
@@ -181,6 +271,24 @@ const Signup = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword}
+              sx={{
+                input: { color: "white" },
+                label: { color: "white" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "white",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "white",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+              }}
             />
 
             <FormControlLabel

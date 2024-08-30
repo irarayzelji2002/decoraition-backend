@@ -138,14 +138,30 @@ export default function LoginModal() {
             )}
 
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={
+                <Checkbox
+                  value="remember"
+                  sx={{
+                    color: "white",
+                    "&.Mui-checked": {
+                      color: "white",
+                    },
+                  }}
+                />
+              }
               label="Remember me"
+              sx={{ color: "white" }}
             />
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+              }}
             >
               Sign In
             </Button>
@@ -168,7 +184,6 @@ export default function LoginModal() {
           <Button
             type="submit"
             fullWidth
-            variant="outlined"
             onClick={() => alert("Sign up with Google")}
             startIcon={<GoogleIcon />}
           >
@@ -177,7 +192,6 @@ export default function LoginModal() {
           <Button
             type="submit"
             fullWidth
-            variant="outlined"
             onClick={() => alert("Sign up with Facebook")}
             startIcon={<FacebookIcon />}
           >

@@ -98,6 +98,24 @@ export default function LoginModal() {
               onChange={(e) => setEmail(e.target.value)}
               error={!!errors.email}
               helperText={errors.email}
+              sx={{
+                input: { color: "white" },
+                label: { color: "white" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "white",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "white",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "white",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+              }}
             />
 
             <Password

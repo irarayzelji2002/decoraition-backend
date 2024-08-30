@@ -18,12 +18,13 @@ export default function Password({ value, onChange, error, helperText }) {
   };
 
   return (
-    <FormControl
-      sx={{ m: 1, width: "100%", color: "#ffffff" }}
-      variant="outlined"
-      error={error}
-    >
-      <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+    <FormControl sx={{ m: 1, width: "100%" }} variant="outlined" error={error}>
+      <InputLabel
+        htmlFor="outlined-adornment-password"
+        sx={{ color: "#ffffff" }}
+      >
+        Password
+      </InputLabel>
       <OutlinedInput
         id="outlined-adornment-password"
         type={showPassword ? "text" : "password"}
@@ -36,14 +37,29 @@ export default function Password({ value, onChange, error, helperText }) {
               onClick={handleClickShowPassword}
               onMouseDown={handleMouseDownPassword}
               edge="end"
+              sx={{ color: "#ffffff" }} // Make the visibility icons white
             >
               {showPassword ? <VisibilityOff /> : <Visibility />}
             </IconButton>
           </InputAdornment>
         }
         label="Password"
+        sx={{
+          color: "#ffffff", // Input text color
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#ffffff", // Outline color
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#ffffff", // Outline color on hover
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#ffffff", // Outline color when focused
+          },
+        }}
       />
-      {helperText && <FormHelperText>{helperText}</FormHelperText>}
+      {helperText && (
+        <FormHelperText sx={{ color: "#ffffff" }}>{helperText}</FormHelperText>
+      )}
     </FormControl>
   );
 }

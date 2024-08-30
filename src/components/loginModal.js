@@ -75,6 +75,7 @@ export default function LoginModal() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            width: "100%",
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>

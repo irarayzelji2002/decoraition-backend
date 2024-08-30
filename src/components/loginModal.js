@@ -17,6 +17,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { GoogleIcon, FacebookIcon, SitemarkIcon } from "./customIcons";
 
 const defaultTheme = createTheme();
 
@@ -162,6 +163,26 @@ export default function LoginModal() {
               </Grid>
             </Grid>
           </Box>
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Button
+            type="submit"
+            fullWidth
+            variant="outlined"
+            onClick={() => alert("Sign up with Google")}
+            startIcon={<GoogleIcon />}
+          >
+            Sign up with Google
+          </Button>
+          <Button
+            type="submit"
+            fullWidth
+            variant="outlined"
+            onClick={() => alert("Sign up with Facebook")}
+            startIcon={<FacebookIcon />}
+          >
+            Sign up with Facebook
+          </Button>
         </Box>
       </Container>
     </ThemeProvider>

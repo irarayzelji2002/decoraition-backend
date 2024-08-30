@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Password from "./passInput";
+import { GoogleIcon, FacebookIcon, SitemarkIcon } from "./customIcons";
 
 const defaultTheme = createTheme();
 
@@ -327,6 +328,27 @@ const Signup = () => {
               </Grid>
             </Grid>
           </Box>
+        </Box>
+
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Button
+            type="submit"
+            fullWidth
+            variant="outlined"
+            onClick={() => alert("Sign up with Google")}
+            startIcon={<GoogleIcon />}
+          >
+            Sign up with Google
+          </Button>
+          <Button
+            type="submit"
+            fullWidth
+            variant="outlined"
+            onClick={() => alert("Sign up with Facebook")}
+            startIcon={<FacebookIcon />}
+          >
+            Sign up with Facebook
+          </Button>
         </Box>
       </Container>
     </ThemeProvider>

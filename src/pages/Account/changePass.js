@@ -1,5 +1,5 @@
 import ChangePass from "../../components/changePass";
-import "../../css/registerModal.css";
+import "../../css/forgotPass.css";
 
 export default function ChangePassw() {
   return (

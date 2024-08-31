@@ -16,9 +16,34 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Password from "./passInput";
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from "./customIcons";
+import { GoogleIcon, FacebookIcon } from "./customIcons";
 
 const defaultTheme = createTheme();
+
+const commonInputStyles = {
+  input: { color: "white" },
+  label: { color: "white" },
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "white",
+    },
+    "&:hover fieldset": {
+      borderColor: "white",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "white",
+    },
+  },
+  "& .MuiFormHelperText-root": {
+    color: "white",
+  },
+};
+
+const buttonStyles = {
+  mt: 3,
+  mb: 2,
+  backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+};
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -33,35 +58,19 @@ const Signup = () => {
   const handleValidation = () => {
     let formErrors = {};
 
-    if (!fname) {
-      formErrors.fname = "First name is required";
-    }
-
-    if (!lname) {
-      formErrors.lname = "Last name is required";
-    }
-
-    if (!username) {
-      formErrors.username = "Username is required";
-    }
-
-    if (!email) {
-      formErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!fname) formErrors.fname = "First name is required";
+    if (!lname) formErrors.lname = "Last name is required";
+    if (!username) formErrors.username = "Username is required";
+    if (!email) formErrors.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       formErrors.email = "Invalid email format";
-    }
-
-    if (!password) {
-      formErrors.password = "Password is required";
-    } else if (password.length < 6) {
+    if (!password) formErrors.password = "Password is required";
+    else if (password.length < 6)
       formErrors.password = "Password must be at least 6 characters long";
-    }
-
-    if (!confirmPassword) {
+    if (!confirmPassword)
       formErrors.confirmPassword = "Please confirm your password";
-    } else if (password !== confirmPassword) {
+    else if (password !== confirmPassword)
       formErrors.confirmPassword = "Passwords do not match";
-    }
 
     return formErrors;
   };
@@ -140,24 +149,7 @@ const Signup = () => {
               onChange={(e) => setFname(e.target.value)}
               error={!!errors.fname}
               helperText={errors.fname}
-              sx={{
-                input: { color: "white" },
-                label: { color: "white" },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiFormHelperText-root": {
-                  color: "white",
-                },
-              }}
+              sx={commonInputStyles}
             />
             <TextField
               margin="normal"
@@ -170,24 +162,7 @@ const Signup = () => {
               onChange={(e) => setLname(e.target.value)}
               error={!!errors.lname}
               helperText={errors.lname}
-              sx={{
-                input: { color: "white" },
-                label: { color: "white" },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiFormHelperText-root": {
-                  color: "white",
-                },
-              }}
+              sx={commonInputStyles}
             />
             <TextField
               margin="normal"
@@ -200,26 +175,8 @@ const Signup = () => {
               onChange={(e) => setUsername(e.target.value)}
               error={!!errors.username}
               helperText={errors.username}
-              sx={{
-                input: { color: "white" },
-                label: { color: "white" },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiFormHelperText-root": {
-                  color: "white",
-                },
-              }}
+              sx={commonInputStyles}
             />
-
             <TextField
               margin="normal"
               required
@@ -232,49 +189,14 @@ const Signup = () => {
               onChange={(e) => setEmail(e.target.value)}
               error={!!errors.email}
               helperText={errors.email}
-              sx={{
-                input: { color: "white" },
-                label: { color: "white" },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiFormHelperText-root": {
-                  color: "white",
-                },
-              }}
+              sx={commonInputStyles}
             />
-
             <Password
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               error={!!errors.password}
               helperText={errors.password}
-              sx={{
-                input: { color: "white" },
-                label: { color: "white" },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiFormHelperText-root": {
-                  color: "white",
-                },
-              }}
+              sx={commonInputStyles}
             />
             <Password
               label="Confirm Password"
@@ -282,51 +204,26 @@ const Signup = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword}
-              sx={{
-                input: { color: "white" },
-                label: { color: "white" },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "white",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "white",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                  },
-                },
-                "& .MuiFormHelperText-root": {
-                  color: "white",
-                },
-              }}
+              sx={commonInputStyles}
             />
-
             <FormControlLabel
               control={
                 <Checkbox
                   value="remember"
                   sx={{
                     color: "white",
-                    "&.Mui-checked": {
-                      color: "white",
-                    },
+                    "&.Mui-checked": { color: "white" },
                   }}
                 />
               }
               label="Remember me"
               sx={{ color: "white" }}
             />
-
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{
-                mt: 3,
-                mb: 2,
-                backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
-              }}
+              sx={buttonStyles}
             >
               Register
             </Button>
@@ -338,16 +235,15 @@ const Signup = () => {
               </Grid>
               <Grid item>
                 <a href="/login" variant="body2">
-                  {"Already have an account? Sign In"}
+                  Already have an account? Sign In
                 </a>
               </Grid>
             </Grid>
           </Box>
         </Box>
-
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Button
-            type="submit"
+            type="button"
             fullWidth
             onClick={() => alert("Sign up with Google")}
             startIcon={<GoogleIcon />}
@@ -355,7 +251,7 @@ const Signup = () => {
             Sign up with Google
           </Button>
           <Button
-            type="submit"
+            type="button"
             fullWidth
             onClick={() => alert("Sign up with Facebook")}
             startIcon={<FacebookIcon />}

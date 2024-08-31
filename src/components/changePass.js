@@ -66,6 +66,7 @@ export default function ChangePass() {
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
           }}
         >
@@ -98,7 +99,11 @@ export default function ChangePass() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+              }}
             >
               Change Password
             </Button>

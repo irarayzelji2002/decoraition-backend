@@ -25,7 +25,12 @@ export default function Password({ value, onChange, error, helperText }) {
     >
       <InputLabel
         htmlFor="outlined-adornment-password"
-        sx={{ color: "#ffffff" }}
+        sx={{
+          color: "#ffffff", // Default label color
+          "&.Mui-focused": {
+            color: "#ffffff", // Label color when focused
+          },
+        }}
       >
         Password
       </InputLabel>

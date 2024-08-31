@@ -1,3 +1,10 @@
 body {
   background-color: rgb(27, 27, 27);
+  font-family: "Inter", sans-serif !important;
+}
+.headTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 16px;
+  color: azure;
 }

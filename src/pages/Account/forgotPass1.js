@@ -1,5 +1,5 @@
 import ForgotPass1 from "../../components/forgotPass1";
-import "../../css/registerModal.css";
+import "../../css/forgotPass.css";
 
 export default function ForgotPass() {
   return (

@@ -10,7 +10,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import "../css/registerModal.css";
+import "../css/forgotPass.css";
 import Password from "./passInput";
 import { handleForgotPassword } from "../firebase";
 import { useState } from "react"; // Import your forgot password function

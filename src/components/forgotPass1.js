@@ -104,13 +104,16 @@ export default function ForgotPass1() {
                 mt: 3,
                 mb: 2,
                 backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+                borderRadius: "20px",
+                textTransform: "none",
+                fontWeight: "bold",
               }}
             >
               Continue
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2" className="cancel-link">
+                <Link href="/login" variant="body2" className="cancel-link">
                   Cancel
                 </Link>
               </Grid>

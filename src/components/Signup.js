@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../firebase"; // Import Firestore
-import { doc, setDoc } from "firebase/firestore";
+import {
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
+import { auth, db } from "../firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -55,6 +56,7 @@ const Signup = () => {
   const [lname, setLname] = useState("");
   const [username, setUsername] = useState("");
   const [errors, setErrors] = useState({});
+  const [userInfo, setUserInfo] = useState(null);
 
   const handleValidation = () => {
     let formErrors = {};
@@ -93,7 +95,6 @@ const Signup = () => {
       );
       const user = userCredential.user;
 
-      // Save user details to Firestore
       await setDoc(doc(db, "users", user.uid), {
         fname,
         lname,
@@ -116,6 +117,43 @@ const Signup = () => {
         password:
           errorCode === "auth/weak-password" ? "Password is too weak" : "",
       });
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Extract user information
+      const displayName = user.displayName ? user.displayName.split(" ") : [];
+      const firstName = displayName[0] || "";
+      const lastName = displayName.slice(1).join(" ") || "";
+      const email = user.email || "";
+      const username = `${firstName}_${lastName}`.toLowerCase();
+
+      // Set user info
+      setUserInfo({ firstName, lastName, email, username });
+
+      // Save user info to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        fname,
+        lname,
+        email,
+        username,
+      });
+
+      navigate("/homepage");
+      console.log("Google login successful", {
+        firstName,
+        lastName,
+        email,
+        username,
+      });
+    } catch (error) {
+      console.error("Google login error", error);
+      setErrors({ general: "Google login failed. Please try again." });
     }
   };
 
@@ -207,9 +245,7 @@ const Signup = () => {
               fullWidth
               variant="contained"
               sx={{
-                mt: 3,
-                mb: 2,
-                backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+                ...buttonStyles,
                 borderRadius: "20px",
                 textTransform: "none",
                 fontWeight: "bold",
@@ -228,9 +264,9 @@ const Signup = () => {
           }}
         >
           <Button
-            type="submit"
+            type="button"
             fullWidth
-            onClick={() => alert("Login with Google")}
+            onClick={handleGoogleLogin}
             startIcon={<GoogleIcon />}
             sx={{
               textTransform: "none",
@@ -256,7 +292,7 @@ const Signup = () => {
             Login with Google
           </Button>
           <Button
-            type="submit"
+            type="button"
             fullWidth
             onClick={() => alert("Login with Facebook")}
             startIcon={<FacebookIcon />}

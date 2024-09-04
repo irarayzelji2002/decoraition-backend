@@ -127,7 +127,7 @@ function Homepage() {
             {username.charAt(0).toUpperCase()}
           </Avatar>
           <Typography variant="body1">{username}</Typography>
-          <Typography variant="caption">@juandelacruz</Typography>
+          <Typography variant="caption">{user.email}</Typography>
         </div>
         <Divider sx={{ backgroundColor: "gray", my: 2 }} />
         <List>
@@ -239,9 +239,6 @@ function Homepage() {
         <div className="action-buttons">
           <button className="design-button">Create a design</button>
           <button className="project-button">Create a project</button>
-          <button className="project-button" onClick={handleLogout}>
-            Sign Out
-          </button>
         </div>
 
         <section className="recent-section">

@@ -13,7 +13,11 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Password from "./passInput";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -26,6 +30,7 @@ export default function LoginModal() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [userInfo, setUserInfo] = useState(null);
 
   const handleValidation = () => {
     let formErrors = {};
@@ -63,6 +68,34 @@ export default function LoginModal() {
         console.log(errorCode, errorMessage);
         setErrors({ general: "Login failed. Please try again." });
       });
+  };
+
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      // Extract user information
+      const displayName = user.displayName ? user.displayName.split(" ") : [];
+      const firstName = displayName[0] || "";
+      const lastName = displayName.slice(1).join(" ") || "";
+      const email = user.email || "";
+      const username = user.providerData[0].uid; // This is a unique identifier for the user
+
+      // Set user info
+      setUserInfo({ firstName, lastName, email, username });
+
+      navigate("/homepage");
+      console.log("Google login successful", {
+        firstName,
+        lastName,
+        email,
+        username,
+      });
+    } catch (error) {
+      console.error("Google login error", error);
+      setErrors({ general: "Google login failed. Please try again." });
+    }
   };
 
   return (
@@ -157,9 +190,9 @@ export default function LoginModal() {
                     variant="body2"
                     sx={{
                       color: "#FF894D",
-                      textDecoration: "underline", // Add underline
+                      textDecoration: "underline",
                       "&:hover": {
-                        textDecoration: "underline", // Ensure underline on hover
+                        textDecoration: "underline",
                       },
                     }}
                   >
@@ -195,9 +228,9 @@ export default function LoginModal() {
           }}
         >
           <Button
-            type="submit"
+            type="button"
             fullWidth
-            onClick={() => alert("Login with Google")}
+            onClick={handleGoogleLogin}
             startIcon={<GoogleIcon />}
             sx={{
               textTransform: "none",
@@ -259,7 +292,7 @@ export default function LoginModal() {
             </Typography>
           </Grid>
           <Grid item>
-            <Link href="#" variant="body2" className="cancel-link">
+            <Link href="/register" variant="body2" className="cancel-link">
               Sign Up
             </Link>
           </Grid>

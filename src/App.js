@@ -8,8 +8,8 @@ import Users from "./users.js";
 import ChangePassw from "./pages/Account/ChangePass.js";
 import OneTP from "./pages/Account/Otp.js";
 import ForgotPass from "./pages/Account/ForgotPass1.js";
-import Homepage from "./pages/Homepage/homepage.js";
-import Settings from "./pages/Settings/settings.js";
+import Homepage from "./pages/Homepage/Homepage.js";
+import Settings from "./pages/Settings/Settings.js";
 import Design from "./pages/DesignSpace/Design.js";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary

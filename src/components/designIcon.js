@@ -1,6 +1,7 @@
+import React from "react";
 import "../css/homepage.css";
 
-function DesignIcon() {
+function DesignIcon({ name }) {
   return (
     <div className="iconFrame">
       <div className="options">
@@ -8,10 +9,9 @@ function DesignIcon() {
           <center>&#8942;</center>
         </h3>
       </div>
-      <img src="/img/logoWhitebg.png" className="pic" alt="No projects yet" />
+      <img src="/img/logoWhitebg.png" className="pic" alt="Design" />
 
-      <h3 className="titleDesign">Project Name</h3>
-      <h3 className="subDate">Project Name</h3>
+      <h3 className="titleDesign">{name}</h3>
     </div>
   );
 }

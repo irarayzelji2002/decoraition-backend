@@ -23,6 +23,9 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { GoogleIcon, FacebookIcon } from "./CustomIcons";
 
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase"; // Import Firestore instance
+
 const defaultTheme = createTheme();
 
 export default function LoginModal() {
@@ -75,15 +78,24 @@ export default function LoginModal() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+
       // Extract user information
       const displayName = user.displayName ? user.displayName.split(" ") : [];
       const firstName = displayName[0] || "";
       const lastName = displayName.slice(1).join(" ") || "";
       const email = user.email || "";
-      const username = user.providerData[0].uid; // This is a unique identifier for the user
+      const username = `${firstName}_${lastName}`.toLowerCase();
 
       // Set user info
       setUserInfo({ firstName, lastName, email, username });
+
+      // Save user info to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        firstName,
+        lastName,
+        email,
+        username,
+      });
 
       navigate("/homepage");
       console.log("Google login successful", {

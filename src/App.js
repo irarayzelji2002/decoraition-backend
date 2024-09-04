@@ -2,12 +2,12 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Login from "./pages/Account/login.js";
-import Register from "./pages/Account/register.js";
+import Login from "./pages/Account/Login.js";
+import Register from "./pages/Account/Register.js";
 import Users from "./users.js";
-import ChangePassw from "./pages/Account/changePass.js";
-import OneTP from "./pages/Account/otp.js";
-import ForgotPass from "./pages/Account/forgotPass1.js";
+import ChangePassw from "./pages/Account/ChangePass.js";
+import OneTP from "./pages/Account/Otp.js";
+import ForgotPass from "./pages/Account/ForgotPass1.js";
 import Homepage from "./pages/Homepage/homepage.js";
 import Settings from "./pages/Settings/settings.js";
 import Design from "./pages/DesignSpace/Design.js";

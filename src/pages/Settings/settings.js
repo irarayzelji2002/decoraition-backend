@@ -45,6 +45,7 @@ function SettingsPage() {
 
   return (
     <div className="settings-container">
+      {/* App Bar for Tabs */}
       <AppBar position="static" className="app-bar">
         <Tabs
           value={selectedTab}
@@ -53,7 +54,7 @@ function SettingsPage() {
           className="tabs"
           TabIndicatorProps={{
             style: {
-              backgroundColor: "#FF894D",
+              backgroundColor: "#FF894D", // Tab indicator color
             },
           }}
         >
@@ -119,10 +120,12 @@ function SettingsPage() {
               <Button
                 variant="outlined"
                 color="error"
+                startIcon={<DeleteIcon />}
                 className="remove-photo-btn"
                 sx={{
                   borderColor: "#FF894D",
                   color: "#FF894D",
+                  marginLeft: "10px",
                 }}
               >
                 Remove photo

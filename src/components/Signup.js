@@ -262,64 +262,7 @@ const Signup = () => {
             gap: 2,
             alignItems: "center",
           }}
-        >
-          <Button
-            type="button"
-            fullWidth
-            onClick={handleGoogleLogin}
-            startIcon={<GoogleIcon />}
-            sx={{
-              textTransform: "none",
-              fontWeight: "bold",
-              color: "white",
-              backgroundColor: "transparent",
-              border: "none",
-              "&:hover": {
-                backgroundColor: "transparent",
-                boxShadow: "none",
-              },
-              "&:active": {
-                backgroundColor: "transparent",
-                boxShadow: "none",
-              },
-              "&:focus": {
-                outline: "none",
-                boxShadow: "none",
-              },
-              maxWidth: "400px",
-            }}
-          >
-            Login with Google
-          </Button>
-          <Button
-            type="button"
-            fullWidth
-            onClick={() => alert("Login with Facebook")}
-            startIcon={<FacebookIcon />}
-            sx={{
-              textTransform: "none",
-              fontWeight: "bold",
-              color: "white",
-              backgroundColor: "transparent",
-              border: "none",
-              "&:hover": {
-                backgroundColor: "transparent",
-                boxShadow: "none",
-              },
-              "&:active": {
-                backgroundColor: "transparent",
-                boxShadow: "none",
-              },
-              "&:focus": {
-                outline: "none",
-                boxShadow: "none",
-              },
-              maxWidth: "400px",
-            }}
-          >
-            Login with Facebook
-          </Button>
-        </Box>
+        ></Box>
         <Grid container justifyContent="center" alignItems="center">
           <Grid item>
             <Typography variant="body2" sx={{ color: "white", marginRight: 1 }}>

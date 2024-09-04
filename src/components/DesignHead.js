@@ -14,16 +14,22 @@ function DesignHead() {
           edge="start"
           color="inherit"
           aria-label="open drawer"
-          sx={{ mr: 2, backgroundColor: "transparent", marginTop: "6px" }}
+          sx={{ backgroundColor: "transparent", marginTop: "6px" }}
         >
           <MenuIcon sx={{ color: "white" }} />
         </IconButton>
         <p className="headTitle">Project Title</p>
       </div>
       <div className="right">
-        <CommentIcon sx={{ color: "whitesmoke", marginRight: "12px" }} />
-        <ShareIcon sx={{ color: "whitesmoke", marginRight: "12px" }} />
-        <MoreVertIcon sx={{ color: "whitesmoke", marginRight: "12px" }} />
+        <IconButton>
+          <CommentIcon sx={{ color: "whitesmoke" }} />
+        </IconButton>
+        <IconButton>
+          <ShareIcon sx={{ color: "whitesmoke" }} />
+        </IconButton>
+        <IconButton>
+          <MoreVertIcon sx={{ color: "whitesmoke" }} />
+        </IconButton>
       </div>
     </div>
   );

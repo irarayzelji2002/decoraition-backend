@@ -145,6 +145,7 @@ h2 {
   height: 270px;
   width: 250px;
   margin: 8px;
+  cursor: pointer;
 }
 
 .pic {

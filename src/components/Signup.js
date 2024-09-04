@@ -16,8 +16,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Password from "./passInput";
-import { GoogleIcon, FacebookIcon } from "./customIcons";
+import Password from "./PassInput";
+import { GoogleIcon, FacebookIcon } from "./CustomIcons";
 import Link from "@mui/material/Link";
 
 const defaultTheme = createTheme();

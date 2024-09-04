@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -13,7 +13,7 @@ import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
-import DesignIcon from "../../components/designIcon";
+import DesignIcon from "../../components/DesignIcon.js";
 import Avatar from "@mui/material/Avatar";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
@@ -32,30 +32,40 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Drawer from "@mui/material/Drawer";
 import "../../css/homepage.css";
+import { query, where, onSnapshot } from "firebase/firestore";
 
 function Homepage() {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
+  const [projects, setProjects] = useState([]);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
+  const [designs, setDesigns] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        const userDoc = doc(db, "users", user.uid);
-        const docSnap = await getDoc(userDoc);
-        if (docSnap.exists()) {
-          setUsername(docSnap.data().username);
-        }
+        const designsRef = collection(db, "users", user.uid, "designs");
+        const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
+
+        const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+          const designList = [];
+          querySnapshot.forEach((doc) => {
+            designList.push({ id: doc.id, ...doc.data() });
+          });
+          setDesigns(designList);
+        });
+
+        return () => unsubscribeDesigns();
       } else {
         setUser(null);
-        setUsername("");
+        setDesigns([]);
       }
     });
 
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, []);
 
   const handleLogout = () => {
@@ -127,7 +137,7 @@ function Homepage() {
             {username.charAt(0).toUpperCase()}
           </Avatar>
           <Typography variant="body1">{username}</Typography>
-          <Typography variant="caption">{user.email}</Typography>
+          <Typography variant="caption">{user ? user.email : ""}</Typography>
         </div>
         <Divider sx={{ backgroundColor: "gray", my: 2 }} />
         <List>
@@ -216,7 +226,7 @@ function Homepage() {
 
         <Button
           onClick={() => setDrawerOpen(false)}
-          sx={{ color: "white", mt: 2 }}
+          sx={{ color: "white", mt: 2, marginBottom: "36px" }}
         >
           Close
         </Button>
@@ -237,44 +247,31 @@ function Homepage() {
         </div>
 
         <div className="action-buttons">
-          <button className="design-button">Create a design</button>
-          <button className="project-button">Create a project</button>
+          <button className="design-button" onClick={() => navigate("/design")}>
+            Create a design
+          </button>
+          <button
+            className="project-button"
+            onClick={() => navigate("/project")}
+          >
+            Create a project
+          </button>
         </div>
 
         <section className="recent-section">
           <div className="recent-designs">
             <h2>Recent Designs</h2>
-            <div className="no-content">
-              <div className="layout">
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-              </div>
-
-              <img src="/img/design-placeholder.png" alt="No designs yet" />
-              <p>No designs yet. Start creating.</p>
-            </div>
-            <button className="floating-button">+</button>
-          </div>
-
-          <div className="recent-projects">
-            <h2>Recent Projects</h2>
-            <div className="no-content">
-              <div className="layout">
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-                <DesignIcon />
-              </div>
-              <img src="/img/design-placeholder.png" alt="No projects yet" />
-              <p>No projects yet. Start creating.</p>
+            <div className="layout">
+              {designs.length > 0 ? (
+                designs.map((design) => (
+                  <DesignIcon key={design.id} name={design.name} />
+                ))
+              ) : (
+                <div className="no-content">
+                  <img src="/img/design-placeholder.png" alt="No designs yet" />
+                  <p>No designs yet. Start creating.</p>
+                </div>
+              )}
             </div>
           </div>
         </section>

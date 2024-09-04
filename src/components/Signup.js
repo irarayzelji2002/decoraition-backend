@@ -17,6 +17,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Password from "./passInput";
 import { GoogleIcon, FacebookIcon } from "./customIcons";
+import Link from "@mui/material/Link";
 
 const defaultTheme = createTheme();
 
@@ -130,12 +131,6 @@ const Signup = () => {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Register
-          </Typography>
           <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
@@ -206,59 +201,136 @@ const Signup = () => {
               helperText={errors.confirmPassword}
               sx={commonInputStyles}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  value="remember"
-                  sx={{
-                    color: "white",
-                    "&.Mui-checked": { color: "white" },
-                  }}
+            <Grid container alignItems="center">
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      value="remember"
+                      sx={{
+                        color: "white",
+                        "&.Mui-checked": {
+                          color: "white",
+                        },
+                      }}
+                    />
+                  }
+                  label="Remember me"
+                  sx={{ color: "white" }}
                 />
-              }
-              label="Remember me"
-              sx={{ color: "white" }}
-            />
+              </Grid>
+              <Grid item xs>
+                <Box display="flex" justifyContent="flex-end">
+                  <Link
+                    href="/forgot"
+                    variant="body2"
+                    sx={{
+                      color: "#FF894D",
+                      textDecoration: "underline", // Add underline
+                      "&:hover": {
+                        textDecoration: "underline", // Ensure underline on hover
+                      },
+                    }}
+                  >
+                    Forgot password?
+                  </Link>
+                </Box>
+              </Grid>
+            </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={buttonStyles}
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+                borderRadius: "20px",
+                textTransform: "none",
+                fontWeight: "bold",
+              }}
             >
               Register
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <a href="#" variant="body2">
-                  Forgot password?
-                </a>
-              </Grid>
-              <Grid item>
-                <a href="/login" variant="body2">
-                  Already have an account? Sign In
-                </a>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            alignItems: "center",
+          }}
+        >
           <Button
-            type="button"
+            type="submit"
             fullWidth
-            onClick={() => alert("Sign up with Google")}
+            onClick={() => alert("Login with Google")}
             startIcon={<GoogleIcon />}
+            sx={{
+              textTransform: "none",
+              fontWeight: "bold",
+              color: "white",
+              backgroundColor: "transparent",
+              border: "none",
+              "&:hover": {
+                backgroundColor: "transparent",
+                boxShadow: "none",
+              },
+              "&:active": {
+                backgroundColor: "transparent",
+                boxShadow: "none",
+              },
+              "&:focus": {
+                outline: "none",
+                boxShadow: "none",
+              },
+              maxWidth: "400px",
+            }}
           >
-            Sign up with Google
+            Login with Google
           </Button>
           <Button
-            type="button"
+            type="submit"
             fullWidth
-            onClick={() => alert("Sign up with Facebook")}
+            onClick={() => alert("Login with Facebook")}
             startIcon={<FacebookIcon />}
+            sx={{
+              textTransform: "none",
+              fontWeight: "bold",
+              color: "white",
+              backgroundColor: "transparent",
+              border: "none",
+              "&:hover": {
+                backgroundColor: "transparent",
+                boxShadow: "none",
+              },
+              "&:active": {
+                backgroundColor: "transparent",
+                boxShadow: "none",
+              },
+              "&:focus": {
+                outline: "none",
+                boxShadow: "none",
+              },
+              maxWidth: "400px",
+            }}
           >
-            Sign up with Facebook
+            Login with Facebook
           </Button>
         </Box>
+        <Grid container justifyContent="center" alignItems="center">
+          <Grid item>
+            <Typography variant="body2" sx={{ color: "white", marginRight: 1 }}>
+              Already have an account?
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Link href="/login" variant="body2" className="cancel-link">
+              Login
+            </Link>
+          </Grid>
+        </Grid>
       </Container>
     </ThemeProvider>
   );

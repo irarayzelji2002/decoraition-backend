@@ -8,3 +8,7 @@ body {
   margin-top: 16px;
   color: azure;
 }
+
+body {
+  overflow: auto !important;
+}

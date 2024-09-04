@@ -1,4 +1,4 @@
-import LoginModal from "../../components/loginModal.js";
+import LoginModal from "../../components/LoginModal.js";
 import "../../css/loginModal.css";
 
 export default function Login() {

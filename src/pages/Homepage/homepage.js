@@ -13,7 +13,7 @@ import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
-import DesignIcon from "../../components/designIcon";
+import DesignIcon from "../../components/DesignIcon";
 import Avatar from "@mui/material/Avatar";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";

@@ -1,4 +1,4 @@
-import ChangePass from "../../components/changePass";
+import ChangePass from "../../components/ChangePass";
 import "../../css/forgotPass.css";
 
 export default function ChangePassw() {

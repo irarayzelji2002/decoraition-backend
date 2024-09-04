@@ -11,7 +11,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { verifyPasswordResetCode, confirmPasswordReset } from "firebase/auth";
 import { auth } from "../firebase"; // Adjust this path to where you initialize Firebase
-import Password from "./passInput"; // Import your Password component
+import Password from "./PassInput"; // Import your Password component
 import { useState, useEffect } from "react";
 
 const defaultTheme = createTheme();

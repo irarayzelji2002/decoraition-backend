@@ -4,23 +4,26 @@
   background-color: #1e1e24;
   color: #ffffff;
   height: 100vh;
+  font-family: "Roboto", sans-serif;
 }
 
-/* Tabs bar */
-.MuiAppBar-root {
+/* AppBar styling */
+.app-bar {
   background-color: #26262c;
+}
+
+/* Tab styling */
+.tabs {
   color: #ffffff;
 }
 
-/* Tab indicator */
-.MuiTabs-indicator {
-  background-color: #fc3d69;
-}
-
-/* Tab text */
 .MuiTab-root {
   font-size: 1rem;
   text-transform: none;
+}
+
+.tab-label {
+  color: #ffffff;
 }
 
 /* Avatar and buttons container */
@@ -33,13 +36,16 @@
 /* Profile buttons */
 .avatar-container .MuiButton-root {
   margin-bottom: 10px;
-  background: linear-gradient(20deg, #faa653, #f04f59);
   color: white;
 }
 
-.avatar-container .MuiButton-outlined {
-  color: #ff867f;
+.change-photo-btn {
+  background: linear-gradient(20deg, #faa653, #f04f59);
+}
+
+.remove-photo-btn {
   border-color: #ff867f;
+  color: #ff867f;
 }
 
 /* Form fields styling */
@@ -70,19 +76,6 @@
 /* Icon button styling */
 .MuiIconButton-root {
   color: #fc3d69;
-}
-
-/* Linked account and theme */
-.linked-account,
-.theme {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.linked-account svg,
-.theme svg {
-  margin-right: 8px;
 }
 
 /* Notification Tab styling */

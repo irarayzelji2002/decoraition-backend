@@ -201,42 +201,7 @@ const Signup = () => {
               helperText={errors.confirmPassword}
               sx={commonInputStyles}
             />
-            <Grid container alignItems="center">
-              <Grid item>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      value="remember"
-                      sx={{
-                        color: "white",
-                        "&.Mui-checked": {
-                          color: "white",
-                        },
-                      }}
-                    />
-                  }
-                  label="Remember me"
-                  sx={{ color: "white" }}
-                />
-              </Grid>
-              <Grid item xs>
-                <Box display="flex" justifyContent="flex-end">
-                  <Link
-                    href="/forgot"
-                    variant="body2"
-                    sx={{
-                      color: "#FF894D",
-                      textDecoration: "underline", // Add underline
-                      "&:hover": {
-                        textDecoration: "underline", // Ensure underline on hover
-                      },
-                    }}
-                  >
-                    Forgot password?
-                  </Link>
-                </Box>
-              </Grid>
-            </Grid>
+
             <Button
               type="submit"
               fullWidth

@@ -70,12 +70,6 @@ export default function ChangePass() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Change Password
-          </Typography>
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -103,6 +97,9 @@ export default function ChangePass() {
                 mt: 3,
                 mb: 2,
                 backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+                borderRadius: "20px",
+                textTransform: "none",
+                fontWeight: "bold",
               }}
             >
               Change Password

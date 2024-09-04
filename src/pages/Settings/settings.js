@@ -35,7 +35,6 @@ function SettingsPage() {
     const file = event.target.files[0];
     if (file) {
       console.log("File uploaded:", file);
-      // Implement the logic to upload and display the new avatar
     }
   };
 
@@ -46,7 +45,6 @@ function SettingsPage() {
 
   return (
     <div className="settings-container">
-      {/* App Bar for Tabs */}
       <AppBar position="static" className="app-bar">
         <Tabs
           value={selectedTab}
@@ -55,7 +53,7 @@ function SettingsPage() {
           className="tabs"
           TabIndicatorProps={{
             style: {
-              backgroundColor: "#FF894D", // Tab indicator color
+              backgroundColor: "#FF894D",
             },
           }}
         >

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   AppBar,
   Tabs,
@@ -10,18 +10,17 @@ import {
   Box,
   Typography,
   InputAdornment,
-  Toolbar,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import MenuIcon from "@mui/icons-material/Menu";
 import "../../css/settings.css";
 
 function SettingsPage() {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
+  const fileInputRef = useRef(null); // Reference for the file input
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -29,6 +28,19 @@ function SettingsPage() {
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);
+  };
+
+  // Handle file input change
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log("File uploaded:", file);
+    }
+  };
+
+  // Trigger file input click
+  const handleChangePhotoClick = () => {
+    fileInputRef.current.click();
   };
 
   return (
@@ -58,7 +70,10 @@ function SettingsPage() {
       {/* Account Tab Content */}
       {selectedTab === 0 && (
         <Box mt={4} className="tab-content">
-          <div className="avatar-container">
+          <div
+            className="avatar-container"
+            style={{ display: "flex", alignItems: "center" }}
+          >
             <Avatar
               alt="User Avatar"
               src=""
@@ -70,16 +85,38 @@ function SettingsPage() {
                 boxShadow: "0 0 5px 2px rgba(255, 86, 125, 0.5)", // Avatar shadow
               }}
             />
-            <div>
+
+            {/* Button Container */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginLeft: "auto",
+              }}
+            >
+              {/* Hidden File Input */}
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+
+              {/* Change Photo Button */}
               <Button
                 variant="contained"
                 className="change-photo-btn"
+                onClick={handleChangePhotoClick}
                 sx={{
                   background: "linear-gradient(to right, #F54D70, #FF894D)",
+                  marginBottom: "10px",
                 }}
               >
                 Change photo
               </Button>
+
+              {/* Remove Photo Button */}
               <Button
                 variant="outlined"
                 color="error"

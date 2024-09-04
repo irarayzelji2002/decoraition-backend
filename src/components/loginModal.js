@@ -78,12 +78,6 @@ export default function LoginModal() {
             width: "100%",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
           <Box component="form" onSubmit={onLogin} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
@@ -138,21 +132,42 @@ export default function LoginModal() {
               </Typography>
             )}
 
-            <FormControlLabel
-              control={
-                <Checkbox
-                  value="remember"
-                  sx={{
-                    color: "white",
-                    "&.Mui-checked": {
-                      color: "white",
-                    },
-                  }}
+            <Grid container alignItems="center">
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      value="remember"
+                      sx={{
+                        color: "white",
+                        "&.Mui-checked": {
+                          color: "white",
+                        },
+                      }}
+                    />
+                  }
+                  label="Remember me"
+                  sx={{ color: "white" }}
                 />
-              }
-              label="Remember me"
-              sx={{ color: "white" }}
-            />
+              </Grid>
+              <Grid item xs>
+                <Box display="flex" justifyContent="flex-end">
+                  <Link
+                    href="/forgot"
+                    variant="body2"
+                    sx={{
+                      color: "#FF894D",
+                      textDecoration: "underline", // Add underline
+                      "&:hover": {
+                        textDecoration: "underline", // Ensure underline on hover
+                      },
+                    }}
+                  >
+                    Forgot password?
+                  </Link>
+                </Box>
+              </Grid>
+            </Grid>
 
             <Button
               type="submit"
@@ -162,43 +177,93 @@ export default function LoginModal() {
                 mt: 3,
                 mb: 2,
                 backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+                borderRadius: "20px",
+                textTransform: "none",
+                fontWeight: "bold",
               }}
             >
-              Sign In
+              Login
             </Button>
-
-            <Grid container>
-              <Grid item xs>
-                <Link href="/forgot" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="/register" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            alignItems: "center",
+          }}
+        >
           <Button
             type="submit"
             fullWidth
-            onClick={() => alert("Sign up with Google")}
+            onClick={() => alert("Login with Google")}
             startIcon={<GoogleIcon />}
+            sx={{
+              textTransform: "none",
+              fontWeight: "bold",
+              color: "white",
+              backgroundColor: "transparent",
+              border: "none",
+              "&:hover": {
+                backgroundColor: "transparent",
+                boxShadow: "none",
+              },
+              "&:active": {
+                backgroundColor: "transparent",
+                boxShadow: "none",
+              },
+              "&:focus": {
+                outline: "none",
+                boxShadow: "none",
+              },
+              maxWidth: "400px",
+            }}
           >
-            Sign up with Google
+            Login with Google
           </Button>
           <Button
             type="submit"
             fullWidth
-            onClick={() => alert("Sign up with Facebook")}
+            onClick={() => alert("Login with Facebook")}
             startIcon={<FacebookIcon />}
+            sx={{
+              textTransform: "none",
+              fontWeight: "bold",
+              color: "white",
+              backgroundColor: "transparent",
+              border: "none",
+              "&:hover": {
+                backgroundColor: "transparent",
+                boxShadow: "none",
+              },
+              "&:active": {
+                backgroundColor: "transparent",
+                boxShadow: "none",
+              },
+              "&:focus": {
+                outline: "none",
+                boxShadow: "none",
+              },
+              maxWidth: "400px",
+            }}
           >
-            Sign up with Facebook
+            Login with Facebook
           </Button>
         </Box>
+
+        <Grid container justifyContent="center" alignItems="center">
+          <Grid item>
+            <Typography variant="body2" sx={{ color: "white", marginRight: 1 }}>
+              Don&apos;t have an account?
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Link href="#" variant="body2" className="cancel-link">
+              Sign Up
+            </Link>
+          </Grid>
+        </Grid>
       </Container>
     </ThemeProvider>
   );

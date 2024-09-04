@@ -1,23 +1,51 @@
 .designHead {
-  width: 100%;
-  background-color: #27262c;
-  height: 36px;
-  padding: 16px;
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #27262c;
 }
 
 .left {
-  width: 80%;
-  margin-top: -12px;
   display: flex;
-  flex-direction: row;
+  align-items: center;
 }
+
+.headTitle {
+  color: whitesmoke;
+  margin-left: 10px;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
 .right {
-  width: 20%;
   display: flex;
-  flex-direction: row;
-  align-items: end;
-  justify-content: end;
-  padding-right: 28px;
+  align-items: center;
+}
+
+.right .MuiIconButton-root {
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  /* Responsive adjustments for medium screens */
+  .headTitle {
+    font-size: 1rem;
+  }
+  .right .MuiIconButton-root {
+    margin-right: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Responsive adjustments for small screens */
+  .designHead {
+    padding: 8px 10px;
+  }
+  .headTitle {
+    font-size: 0.9rem;
+  }
+  .right .MuiIconButton-root {
+    margin-right: 4px;
+  }
 }

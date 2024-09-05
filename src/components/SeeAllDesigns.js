@@ -4,7 +4,7 @@ import { db, auth } from "../../firebase"; // Adjust import paths as necessary
 import { useNavigate } from "react-router-dom";
 import "../css/design.css";
 
-function Design() {
+function SeeAllDesigns() {
   const [designName, setDesignName] = useState("");
   const navigate = useNavigate();
 
@@ -51,4 +51,4 @@ function Design() {
   );
 }
 
-export default Design;
+export default SeeAllDesigns;

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import DesignHead from "../../components/DesignHead";
+import "../../css/design.css";
 
 function Design() {
   const [designName, setDesignName] = useState("");
@@ -49,6 +50,7 @@ function Design() {
           placeholder="Enter design name"
         />
         <button onClick={handleCreateDesign}>Create Design</button>
+       
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import ForgotPass from "./pages/Account/ForgotPass1.js";
 import Homepage from "./pages/Homepage/Homepage.js";
 import Settings from "./pages/Settings/Settings.js";
 import Design from "./pages/DesignSpace/Design.js";
+import SeeAllDesigns from "./pages/DesignSpace/SeeAllDesigns.js";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 
@@ -45,6 +46,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/design" element={<Design />} />{" "}
           <Route path="/users" element={<Users />} />
+          <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
           {/* Add other routes as needed */}
         </Routes>
       </Router>

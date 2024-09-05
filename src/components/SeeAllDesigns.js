@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
-import DesignHead from "../../components/DesignHead";
-import "../../css/design.css";
+import { db, auth } from "../../firebase"; // Adjust import paths as necessary
+import { useNavigate } from "react-router-dom";
+import "../css/design.css";
 
-function Design() {
+function SeeAllDesigns() {
   const [designName, setDesignName] = useState("");
   const navigate = useNavigate();
 
@@ -18,7 +17,7 @@ function Design() {
     try {
       const user = auth.currentUser;
       if (user) {
-        const designId = new Date().getTime().toString(); // Generate a unique ID
+        const designId = new Date().getTime().toString(); // Example ID generation
         const designRef = doc(db, "users", user.uid, "designs", designId);
 
         await setDoc(designRef, {
@@ -28,7 +27,7 @@ function Design() {
         });
 
         // Redirect to homepage or another page
-        navigate("/homepage");
+        navigate("/");
       } else {
         alert("User not authenticated.");
       }
@@ -40,20 +39,16 @@ function Design() {
 
   return (
     <div>
-      <DesignHead />
-      <div className="create-design">
-        <h1>Create a New Design</h1>
-        <input
-          type="text"
-          value={designName}
-          onChange={(e) => setDesignName(e.target.value)}
-          placeholder="Enter design name"
-        />
-        <button onClick={handleCreateDesign}>Create Design</button>
-       
-      </div>
+      <h1>Create a New Design</h1>
+      <input
+        type="text"
+        value={designName}
+        onChange={(e) => setDesignName(e.target.value)}
+        placeholder="Enter design name"
+      />
+      <button onClick={handleCreateDesign}>Create Design</button>
     </div>
   );
 }
 
-export default Design;
+export default SeeAllDesigns;

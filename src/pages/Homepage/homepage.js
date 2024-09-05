@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "../../firebase.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import SearchAppBar from "./SearchAppBar.js";
 import DesignIcon from "../../components/DesignIcon.js";
 import DrawerComponent from "./DrawerComponent.js";
 import "../../css/homepage.css";
+import "../../css/design.css";
 
 function Homepage() {
   const [user, setUser] = useState(null);
@@ -115,6 +116,9 @@ function Homepage() {
                   <p>No designs yet. Start creating.</p>
                 </div>
               )}
+              <Link to="/seeAllDesigns" className="seeAll">
+                See All
+              </Link>
             </div>
           </div>
         </section>

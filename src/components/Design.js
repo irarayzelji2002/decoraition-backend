@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { db, auth } from "../../firebase"; // Adjust import paths as necessary
 import { useNavigate } from "react-router-dom";
+import "../css/design.css";
 
 function Design() {
   const [designName, setDesignName] = useState("");

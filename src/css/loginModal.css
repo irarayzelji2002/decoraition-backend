@@ -1,7 +1,7 @@
 body,
 html,
 .App {
-  height: 100%;
+  height: fit-content;
 }
 h1 {
   font-size: 50px;

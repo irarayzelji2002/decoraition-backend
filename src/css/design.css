@@ -58,3 +58,37 @@
   font-weight: bold !important;
   text-decoration-color: #f58850 !important;
 }
+
+.workspace {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.space {
+  display: flex;
+  flex-direction: row;
+}
+
+.promptBar {
+  height: 100%;
+  width: 300px;
+  background-color: #27262c;
+  padding: 20px;
+}
+
+.create-design {
+  display: flex;
+  height: 100%;
+}
+.whole {
+  height: 100%;
+  width: 100%;
+}
+
+h3 {
+  color: aliceblue;
+}
+h6 {
+  color: #5e5e5e;
+}

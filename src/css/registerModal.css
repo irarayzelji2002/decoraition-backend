@@ -1,6 +1,8 @@
 body,
+html,
 .App {
-  height: fit-content;
+  height: 100vh;
+  width: 100vw;
 }
 h1 {
   font-size: 50px;

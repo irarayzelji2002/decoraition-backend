@@ -25,7 +25,7 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "../css/design.css";
 
-function DesignHead() {
+function DesignHead({ toggleComments }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false); // State for comment drawer visibility
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false); // State for share submenu
@@ -74,7 +74,7 @@ function DesignHead() {
         <p className="headTitle">Project Title</p>
       </div>
       <div className="right">
-        <IconButton onClick={toggleCommentDrawer}>
+        <IconButton onClick={toggleComments}>
           <CommentIcon sx={{ color: "whitesmoke" }} />
         </IconButton>
         <IconButton>

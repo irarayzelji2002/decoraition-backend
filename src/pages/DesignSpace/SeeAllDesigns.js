@@ -110,9 +110,8 @@ export default function SeeAllDesigns() {
 
   return (
     <>
+      <SearchAppBar />
       <div className="bg">
-        <SearchAppBar />
-
         <div className="dropdown-container">
           {["Owner", "Date Modified", "Date Created", "Sort By", "Order"].map(
             (item, index) => (
@@ -127,16 +126,14 @@ export default function SeeAllDesigns() {
             )
           )}
         </div>
-
+        <div className="title">Designs</div>
         <section className="recent-section">
           <div className="recent-designs">{/* Add content here */}</div>
         </section>
-
         {modalOpen && (
           <Modal onClose={closeModal} content={getModalContent(modalContent)} />
         )}
       </div>
-      <div className="title">Designs</div>
     </>
   );
 }

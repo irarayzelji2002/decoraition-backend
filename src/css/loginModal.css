@@ -3,6 +3,10 @@ html,
 .App {
   height: fit-content;
 }
+
+html {
+  /* background-image: url("./public/"); */
+}
 h1 {
   font-size: 50px;
   background: linear-gradient(20deg, #faa653, #f04f59);

@@ -3,6 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import DesignHead from "../../components/DesignHead";
+import PromptBar from "./PromptBar";
+import BottomBar from "../../components/BottomBar";
+import { Button } from "@mui/material";
 import "../../css/design.css";
 
 function Design() {
@@ -39,19 +42,27 @@ function Design() {
   };
 
   return (
-    <div>
+    <div className="whole">
       <DesignHead />
       <div className="create-design">
-        <h1>Create a New Design</h1>
-        <input
-          type="text"
-          value={designName}
-          onChange={(e) => setDesignName(e.target.value)}
-          placeholder="Enter design name"
-        />
-        <button onClick={handleCreateDesign}>Create Design</button>
-       
+        <div>
+          <div className="workspace">
+            <PromptBar />
+            <div>
+              <h1>Create a New Design</h1>
+              <input
+                type="text"
+                value={designName}
+                onChange={(e) => setDesignName(e.target.value)}
+                placeholder="Enter design name"
+              />
+              <button onClick={handleCreateDesign}>Create Design</button>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <BottomBar></BottomBar>
     </div>
   );
 }

@@ -5,6 +5,9 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
+  Drawer,
+  TextField,
+  Button,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CommentIcon from "@mui/icons-material/Comment";
@@ -23,6 +26,7 @@ import "../css/design.css";
 
 function DesignHead() {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -31,6 +35,10 @@ function DesignHead() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const toggleCommentDrawer = () => {
+    setIsCommentDrawerOpen((prevState) => !prevState);
   };
 
   return (
@@ -48,10 +56,10 @@ function DesignHead() {
         <p className="headTitle">Project Title</p>
       </div>
       <div className="right">
-        <IconButton>
+        <IconButton onClick={toggleCommentDrawer}>
           <CommentIcon sx={{ color: "whitesmoke" }} />
         </IconButton>
-        <IconButton onClick={handleClick}>
+        <IconButton>
           <ShareIcon sx={{ color: "whitesmoke" }} />
         </IconButton>
         <IconButton onClick={handleClick}>
@@ -69,6 +77,7 @@ function DesignHead() {
             },
           }}
         >
+          {/* Menu items */}
           <MenuItem onClick={handleClose}>
             <ListItemIcon>
               <CommentIcon sx={{ color: "whitesmoke" }} />
@@ -143,6 +152,35 @@ function DesignHead() {
           </MenuItem>
         </Menu>
       </div>
+
+      {/* Comment Drawer */}
+      <Drawer
+        anchor="right"
+        open={isCommentDrawerOpen}
+        onClose={toggleCommentDrawer}
+        PaperProps={{
+          sx: {
+            width: "350px",
+            backgroundColor: "#27262C",
+            color: "whitesmoke",
+          },
+        }}
+      >
+        <div className="commentSection" style={{ padding: "20px" }}>
+          <h4>Comments</h4>
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            placeholder="Add a comment..."
+            variant="outlined"
+            sx={{ marginBottom: "16px", backgroundColor: "white" }}
+          />
+          <Button variant="contained" color="primary" fullWidth>
+            Post Comment
+          </Button>
+        </div>
+      </Drawer>
     </div>
   );
 }

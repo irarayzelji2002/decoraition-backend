@@ -118,10 +118,10 @@ h6 {
   height: 100%;
 }
 .stickyMenu {
-  position: -webkit-sticky; /* For Safari */
+  position: -webkit-sticky;
   position: sticky;
-  top: 0; /* Adjust the top position as needed */
-  z-index: 1000; /* Ensure it stays on top of other content */
-  background-color: #27262c; /* Same background color as your menu */
+  top: 0;
+  z-index: 1000;
+  background-color: #27262c;
   padding: 10px;
 }

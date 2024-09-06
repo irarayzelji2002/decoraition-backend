@@ -45,18 +45,26 @@ function Design() {
     <div className="whole">
       <DesignHead />
       <div className="create-design">
-        <div>
-          <div className="workspace">
-            <PromptBar />
-            <div>
-              <h1>Create a New Design</h1>
-              <input
-                type="text"
-                value={designName}
-                onChange={(e) => setDesignName(e.target.value)}
-                placeholder="Enter design name"
+        <div className="workspace">
+          <PromptBar />
+          <div>
+            <h6>Create a New Design</h6>
+            <input
+              type="text"
+              value={designName}
+              onChange={(e) => setDesignName(e.target.value)}
+              placeholder="Enter design name"
+            />
+            <button onClick={handleCreateDesign}>Create Design</button>
+          </div>
+
+          <div className="working-area">
+            <div className="image-frame">
+              <img
+                src="./img/design-placeholder.png"
+                alt="design preview"
+                className="image-preview"
               />
-              <button onClick={handleCreateDesign}>Create Design</button>
             </div>
           </div>
         </div>

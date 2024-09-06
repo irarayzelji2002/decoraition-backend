@@ -5,7 +5,7 @@ html,
 }
 
 html {
-  /* background-image: url("./public/"); */
+  background-color: rgb(27, 27, 27);
 }
 h1 {
   font-size: 50px;
@@ -17,7 +17,9 @@ h1 {
   margin-bottom: 24px;
 }
 .bg {
-  background-color: rgb(27, 27, 27);
+  background-image: url("../../public/img/bg-login.png");
+  background-repeat: no-repeat;
+  background-size: cover;
   width: 100%;
   height: 100%;
   justify-content: center;

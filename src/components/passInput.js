@@ -8,7 +8,13 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import FormHelperText from "@mui/material/FormHelperText";
 
-export default function Password({ value, onChange, error, helperText }) {
+export default function Password({
+  value,
+  onChange,
+  error,
+  helperText,
+  label,
+}) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -32,7 +38,7 @@ export default function Password({ value, onChange, error, helperText }) {
           },
         }}
       >
-        Password
+        {label || "Password"}
       </InputLabel>
       <OutlinedInput
         id="outlined-adornment-password"
@@ -54,7 +60,9 @@ export default function Password({ value, onChange, error, helperText }) {
         }
         label="Password"
         sx={{
-          color: "#ffffff", // Input text color
+          color: "#ffffff",
+          borderRadius: "24px", // Input text color
+          backgroundColor: "#3E3C47",
           "& .MuiOutlinedInput-notchedOutline": {
             borderColor: "#ffffff", // Outline color
           },

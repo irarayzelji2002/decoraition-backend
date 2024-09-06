@@ -104,7 +104,10 @@ function Homepage() {
 
         <section className="recent-section">
           <div className="recent-designs">
-            <h2>Recent Designs</h2>
+            <h2>Recent Designs </h2>{" "}
+            <Link to="/seeAllDesigns" className="seeAll">
+              See All
+            </Link>
             <div className="layout">
               {designs.length > 0 ? (
                 designs.map((design) => (
@@ -116,9 +119,6 @@ function Homepage() {
                   <p>No designs yet. Start creating.</p>
                 </div>
               )}
-              <Link to="/seeAllDesigns" className="seeAll">
-                See All
-              </Link>
             </div>
           </div>
         </section>

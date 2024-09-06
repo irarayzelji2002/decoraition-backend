@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import DesignHead from "../../components/DesignHead";
 import PromptBar from "./PromptBar";
 import BottomBar from "../../components/BottomBar";
-import { Button } from "@mui/material";
 import "../../css/design.css";
 
 function Design() {
   const [designName, setDesignName] = useState("");
+  const [showComments, setShowComments] = useState(false); // State to toggle comments
+  const [comment, setComment] = useState(""); // State for comment input
   const navigate = useNavigate();
 
   const handleCreateDesign = async () => {
@@ -27,10 +28,8 @@ function Design() {
         await setDoc(designRef, {
           name: designName,
           createdAt: new Date(),
-          // Add other design fields as necessary
         });
 
-        // Redirect to homepage or another page
         navigate("/homepage");
       } else {
         alert("User not authenticated.");
@@ -41,6 +40,11 @@ function Design() {
     }
   };
 
+  // Toggle comments section
+  const toggleComments = () => {
+    setShowComments(!showComments);
+  };
+
   return (
     <div className="whole">
       <DesignHead />
@@ -49,6 +53,9 @@ function Design() {
           <PromptBar />
           <div>
             <h6>Create a New Design</h6>
+            <button onClick={toggleComments} className="toggle-comment-button">
+              {showComments ? "Hide Comments" : "Show Comments"}
+            </button>
             <input
               type="text"
               value={designName}
@@ -66,11 +73,28 @@ function Design() {
                 className="image-preview"
               />
             </div>
+            {/* Button to toggle comment section */}
+            <button onClick={toggleComments} className="toggle-comment-button">
+              {showComments ? "Hide Comments" : "Show Comments"}
+            </button>
           </div>
+
+          {/* Comment section, shown when showComments is true */}
+          {showComments && (
+            <div className="comment-section">
+              <h4>Comments</h4>
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Add your comment here..."
+              />
+              <button className="add-comment-button">Submit Comment</button>
+            </div>
+          )}
         </div>
       </div>
 
-      <BottomBar></BottomBar>
+      <BottomBar />
     </div>
   );
 }

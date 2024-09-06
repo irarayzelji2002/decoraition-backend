@@ -24,7 +24,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import "../css/design.css";
 
-function DesignHead() {
+function DesignHead({ toggleComments }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
   const open = Boolean(anchorEl);
@@ -56,7 +56,7 @@ function DesignHead() {
         <p className="headTitle">Project Title</p>
       </div>
       <div className="right">
-        <IconButton onClick={toggleCommentDrawer}>
+        <IconButton onClick={toggleComments}>
           <CommentIcon sx={{ color: "whitesmoke" }} />
         </IconButton>
         <IconButton>

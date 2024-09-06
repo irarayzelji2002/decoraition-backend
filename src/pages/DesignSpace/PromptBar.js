@@ -7,7 +7,14 @@ import Dropdown from "@mui/joy/Dropdown";
 import MenuButton from "@mui/joy/MenuButton";
 import MenuItem from "@mui/joy/MenuItem";
 import Menu from "@mui/joy/Menu";
+import { MuiColorInput } from "mui-color-input";
+
 function PromptBar() {
+  const [value, setValue] = React.useState("#ffffff");
+
+  const handleChange = (newValue) => {
+    setValue(newValue);
+  };
   return (
     <div className="promptBar">
       <h3>Describe your Idea</h3>
@@ -57,11 +64,18 @@ function PromptBar() {
             },
           }}
         >
+          <MenuItem
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent the dropdown from closing when clicked
+            }}
+          ></MenuItem>
           <MenuItem>Profile</MenuItem>
           <MenuItem>My account</MenuItem>
           <MenuItem>Logout</MenuItem>
         </Menu>
       </Dropdown>
+      <MuiColorInput format="hex" value={value} onChange={handleChange} />
+      <br />
 
       <Button
         type="submit"

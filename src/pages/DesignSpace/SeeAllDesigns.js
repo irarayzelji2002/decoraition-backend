@@ -126,16 +126,14 @@ export default function SeeAllDesigns() {
             )
           )}
         </div>
-
+        <div className="title">Designs</div>
         <section className="recent-section">
           <div className="recent-designs">{/* Add content here */}</div>
         </section>
-
         {modalOpen && (
           <Modal onClose={closeModal} content={getModalContent(modalContent)} />
         )}
       </div>
-      <div className="title">Designs</div>
     </>
   );
 }

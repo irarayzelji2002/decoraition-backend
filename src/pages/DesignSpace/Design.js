@@ -5,6 +5,7 @@ import { doc, setDoc } from "firebase/firestore";
 import DesignHead from "../../components/DesignHead";
 import PromptBar from "./PromptBar";
 import BottomBar from "../../components/BottomBar";
+import { Button } from "@mui/material";
 import "../../css/design.css";
 
 function Design() {
@@ -61,7 +62,7 @@ function Design() {
         </div>
       </div>
 
-      <BottomBar />
+      <BottomBar></BottomBar>
     </div>
   );
 }

@@ -22,11 +22,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InfoIcon from "@mui/icons-material/Info";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "../css/design.css";
 
 function DesignHead() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
+  const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false); // State for comment drawer visibility
+  const [isShareMenuOpen, setIsShareMenuOpen] = useState(false); // State for share submenu
+  const [isChangeModeMenuOpen, setIsChangeModeMenuOpen] = useState(false); // State for change mode submenu
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -35,10 +38,25 @@ function DesignHead() {
 
   const handleClose = () => {
     setAnchorEl(null);
+    setIsShareMenuOpen(false);
+    setIsChangeModeMenuOpen(false); // Reset to default menu when closing
   };
 
   const toggleCommentDrawer = () => {
-    setIsCommentDrawerOpen((prevState) => !prevState);
+    setIsCommentDrawerOpen((prevState) => !prevState); // Toggle the drawer state
+  };
+
+  const handleShareClick = () => {
+    setIsShareMenuOpen(true); // Switch to Share submenu
+  };
+
+  const handleChangeModeClick = () => {
+    setIsChangeModeMenuOpen(true); // Switch to Change Mode submenu
+  };
+
+  const handleBackToMenu = () => {
+    setIsShareMenuOpen(false); // Go back to the default menu
+    setIsChangeModeMenuOpen(false); // Go back to the default menu
   };
 
   return (
@@ -77,79 +95,121 @@ function DesignHead() {
             },
           }}
         >
-          {/* Menu items */}
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <CommentIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Comment" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <ShareIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Share" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <ContentCopy sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Copy Link" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <HistoryIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="History" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <SettingsIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <EditIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Change mode" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <DownloadIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Download" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <FileCopyIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Make a Copy" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <RestoreIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Restore" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <EditIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Rename" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <DeleteIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Delete" />
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <InfoIcon sx={{ color: "whitesmoke" }} />
-            </ListItemIcon>
-            <ListItemText primary="Details" />
-          </MenuItem>
+          {isShareMenuOpen ? (
+            <>
+              {/* Share Submenu */}
+              <MenuItem onClick={handleBackToMenu}>
+                <ListItemIcon>
+                  <ArrowBackIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Share" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemText primary="Add Collaborators" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemText primary="Manage Access" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemText primary="Copy Link" />
+              </MenuItem>
+            </>
+          ) : isChangeModeMenuOpen ? (
+            <>
+              {/* Change Mode Submenu */}
+              <MenuItem onClick={handleBackToMenu}>
+                <ListItemIcon>
+                  <ArrowBackIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Change Mode" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemText primary="Editing" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemText primary="Commenting" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemText primary="Viewing" />
+              </MenuItem>
+            </>
+          ) : (
+            <>
+              {/* Default Menu */}
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <CommentIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Comment" />
+              </MenuItem>
+              <MenuItem onClick={handleShareClick}>
+                <ListItemIcon>
+                  <ShareIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Share" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <ContentCopy sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Copy Link" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <HistoryIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="History" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <SettingsIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Settings" />
+              </MenuItem>
+              <MenuItem onClick={handleChangeModeClick}>
+                <ListItemIcon>
+                  <EditIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Change Mode" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <DownloadIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Download" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <FileCopyIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Make a Copy" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <RestoreIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Restore" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <EditIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Rename" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <DeleteIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Delete" />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <ListItemIcon>
+                  <InfoIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Details" />
+              </MenuItem>
+            </>
+          )}
         </Menu>
       </div>
 

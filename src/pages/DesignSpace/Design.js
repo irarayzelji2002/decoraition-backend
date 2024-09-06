@@ -4,7 +4,6 @@ import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import DesignHead from "../../components/DesignHead";
 import PromptBar from "./PromptBar";
-import BottomBar from "../../components/BottomBar";
 import "../../css/design.css";
 
 function Design() {
@@ -60,8 +59,6 @@ function Design() {
           </div>
         </div>
       </div>
-
-      <BottomBar />
     </div>
   );
 }

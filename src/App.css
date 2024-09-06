@@ -22,12 +22,3 @@ select:-webkit-autofill {
 body {
   overflow: auto !important;
 }
-:root {
-  --color-primary: #faa653;
-  --color-secondary: #f04f59;
-  --color-tertiary: #27262c;
-  --color-quaternary: #ef4f56;
-  --color-white: #ffffff;
-  --color-black: #000000;
-  --logo: #8f5e5e;
-}

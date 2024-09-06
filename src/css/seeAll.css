@@ -2,7 +2,7 @@
 .dropdown-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: start;
   padding: 40px;
 }
 
@@ -46,7 +46,12 @@
   color: white;
   font-weight: bold;
   font-size: 36px; /* Adjust font size if needed */
-  margin-left: 3in; /* Positioning 3 inches from the left */
+
   margin-top: 10px; /* Space from the dropdowns */
   left: 0; /* Make sure it aligns properly with margin-left */
+}
+
+.bg {
+  display: flex;
+  justify-content: start !important;
 }

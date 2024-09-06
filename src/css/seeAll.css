@@ -2,7 +2,7 @@
 .dropdown-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   padding: 40px;
 }
 
@@ -46,7 +46,21 @@
   color: white;
   font-weight: bold;
   font-size: 36px; /* Adjust font size if needed */
-  margin-left: 3in; /* Positioning 3 inches from the left */
+  margin-left: 24px;
   margin-top: 10px; /* Space from the dropdowns */
   left: 0; /* Make sure it aligns properly with margin-left */
+}
+
+.css-i9gxme {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  height: 10% !important; /* Set height to 90px */
+  width: 100%;
+  box-sizing: border-box; /* Ensures padding and border are included in the height */
+}
+.bg {
+  display: flex !important;
+  justify-content: start;
 }

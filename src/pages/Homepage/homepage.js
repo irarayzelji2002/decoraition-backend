@@ -11,6 +11,11 @@ import {
   deleteDoc,
   setDoc,
 } from "firebase/firestore";
+import { IconButton } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import FolderIcon from "@mui/icons-material/Folder";
+import ImageIcon from "@mui/icons-material/Image";
 import SearchAppBar from "./SearchAppBar.js";
 import DesignIcon from "../../components/DesignIcon.js";
 import DrawerComponent from "./DrawerComponent.js";
@@ -23,9 +28,9 @@ function Homepage() {
   const [designs, setDesigns] = useState([]);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch user and designs on authentication state change
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -40,7 +45,6 @@ function Homepage() {
     return () => unsubscribeAuth();
   }, []);
 
-  // Fetch designs for the authenticated user
   const fetchDesigns = (userId) => {
     const designsRef = collection(db, "users", userId, "designs");
     const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
@@ -56,7 +60,6 @@ function Homepage() {
     return () => unsubscribeDesigns();
   };
 
-  // Handle user logout
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -67,13 +70,11 @@ function Homepage() {
       });
   };
 
-  // Toggle dark mode
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     document.body.classList.toggle("dark-mode", !darkMode);
   };
 
-  // Handle project creation
   const handleCreateProject = async () => {
     try {
       const designId = new Date().getTime().toString(); // Generate a unique ID
@@ -100,7 +101,6 @@ function Homepage() {
     }
   };
 
-  // Handle design deletion
   const handleDeleteDesign = async (designId) => {
     try {
       const currentUser = auth.currentUser;
@@ -120,16 +120,20 @@ function Homepage() {
     }
   };
 
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
-    <div>
-      {/* App Bar with search and user menu */}
+    <div className={`homepage ${menuOpen ? "darkened" : ""}`}>
+      {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
+
       <SearchAppBar
         user={user}
         username={username}
         onMenuClick={() => setDrawerOpen(true)}
       />
 
-      {/* Side drawer for settings, dark mode, logout, etc. */}
       <DrawerComponent
         isDrawerOpen={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
@@ -141,7 +145,6 @@ function Homepage() {
         designs={designs}
       />
 
-      {/* Main content area */}
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>
         <div className="header">
           <img
@@ -152,7 +155,6 @@ function Homepage() {
           <h1 className="navName">DecorAItion</h1>
         </div>
 
-        {/* Buttons to create new design or project */}
         <div className="action-buttons">
           <button className="design-button" onClick={handleCreateProject}>
             Create a design
@@ -165,7 +167,6 @@ function Homepage() {
           </button>
         </div>
 
-        {/* Section for displaying recent designs */}
         <section className="recent-section">
           <div className="recent-designs">
             <h2>Recent Designs</h2>
@@ -193,6 +194,31 @@ function Homepage() {
             </div>
           </div>
         </section>
+
+        <div className="circle-button-container">
+          {menuOpen && (
+            <div className="small-buttons">
+              <div className="small-button-container">
+                <span className="small-button-text">Create a Project</span>
+                <div className="small-circle-button">
+                  <FolderIcon className="icon" />
+                </div>
+              </div>
+              <div className="small-button-container">
+                <span className="small-button-text">Create a Design</span>
+                <div className="small-circle-button">
+                  <ImageIcon className="icon" />
+                </div>
+              </div>
+            </div>
+          )}
+          <div
+            className={`circle-button ${menuOpen ? "rotate" : ""}`}
+            onClick={toggleMenu}
+          >
+            {menuOpen ? <CloseIcon /> : <AddIcon />}
+          </div>
+        </div>
       </div>
     </div>
   );

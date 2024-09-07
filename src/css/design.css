@@ -206,3 +206,93 @@ h6 {
   outline: none;
   box-shadow: 0 0 0 3px rgba(98, 0, 234, 0.3); /* Focus indicator */
 }
+/* For darkened background */
+.homepage.darkened {
+  position: relative; /* Position relative for overlay positioning */
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Darken the whole page */
+  z-index: 1; /* Overlay should be behind the buttons */
+}
+
+.circle-button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align everything to the right */
+  gap: 20px; /* Space between the buttons */
+  z-index: 2; /* Ensure buttons are above the overlay */
+}
+
+/* Main circular button (Add/Close) */
+.circle-button {
+  background-image: linear-gradient(20deg, #ec2073, #f89a47);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.circle-button.rotate {
+  transform: rotate(45deg);
+}
+
+/* Container for the smaller buttons */
+.small-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Spacing between buttons */
+  align-items: flex-end; /* Align buttons to the right */
+}
+
+/* Small circular buttons for creating project/design */
+.small-circle-button {
+  background-image: linear-gradient(20deg, #ec2073, #f89a47);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+/* Flex container to hold both text and button */
+.small-button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Spacing between text and button */
+}
+
+/* Icons inside small circular buttons */
+.icon {
+  font-size: 30px;
+}
+
+/* Text to the left of the circular buttons */
+.small-button-text {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Hover effect for small and main buttons */
+.small-circle-button:hover,
+.circle-button:hover {
+  opacity: 0.8;
+}

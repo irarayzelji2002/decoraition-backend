@@ -41,6 +41,12 @@ function DesignHead({ toggleComments }) {
   const [isShareConfirmationModalOpen, setIsShareConfirmationModalOpen] =
     useState(false);
   const [isCopyLinkModalOpen, setIsCopyLinkModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
+  const [isMakeCopyModalOpen, setIsMakeCopyModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [collaborators, setCollaborators] = useState([]);
   const [newCollaborator, setNewCollaborator] = useState("");
   const [isSecondPage, setIsSecondPage] = useState(false);
@@ -123,6 +129,59 @@ function DesignHead({ toggleComments }) {
     setIsCopyLinkModalOpen(false);
   };
 
+  const handleOpenDeleteModal = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleDelete = () => {
+    console.log("Item deleted");
+    handleCloseDeleteModal();
+  };
+
+  const handleOpenDownloadModal = () => {
+    setIsDownloadModalOpen(true);
+  };
+
+  const handleCloseDownloadModal = () => {
+    setIsDownloadModalOpen(false);
+  };
+
+  const handleOpenRenameModal = () => {
+    setIsRenameModalOpen(true);
+  };
+
+  const handleCloseRenameModal = () => {
+    setIsRenameModalOpen(false);
+  };
+
+  const handleOpenRestoreModal = () => {
+    setIsRestoreModalOpen(true);
+  };
+
+  const handleCloseRestoreModal = () => {
+    setIsRestoreModalOpen(false);
+  };
+
+  const handleOpenMakeCopyModal = () => {
+    setIsMakeCopyModalOpen(true);
+  };
+
+  const handleCloseMakeCopyModal = () => {
+    setIsMakeCopyModalOpen(false);
+  };
+
+  const handleOpenInfoModal = () => {
+    setIsInfoModalOpen(true);
+  };
+
+  const handleCloseInfoModal = () => {
+    setIsInfoModalOpen(false);
+  };
+
   const BackButton = ({ onClick }) => (
     <IconButton onClick={onClick} sx={{ marginRight: "16px" }}>
       <ArrowBackIcon sx={{ color: "whitesmoke" }} />
@@ -165,6 +224,142 @@ function DesignHead({ toggleComments }) {
           Close
         </Button>
       </DialogContent>
+    </Dialog>
+  );
+
+  const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => (
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <BackButton onClick={onClose} />
+        Confirm Delete
+      </DialogTitle>
+      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <Typography variant="body1">
+          Are you sure you want to delete this item? This action cannot be
+          undone.
+        </Typography>
+      </DialogContent>
+      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+        <Button fullWidth variant="contained" color="error" onClick={onDelete}>
+          Delete
+        </Button>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
+  const DownloadModal = ({ isOpen, onClose }) => (
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <BackButton onClick={onClose} />
+        Download
+      </DialogTitle>
+      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <Typography variant="body1">
+          Choose your download options and format.
+        </Typography>
+        {/* Add download options here */}
+      </DialogContent>
+      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Download
+        </Button>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
+  const RenameModal = ({ isOpen, onClose }) => (
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <BackButton onClick={onClose} />
+        Rename
+      </DialogTitle>
+      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <TextField
+          label="New Name"
+          variant="outlined"
+          fullWidth
+          sx={{ marginBottom: "16px" }}
+        />
+      </DialogContent>
+      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Rename
+        </Button>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
+  const RestoreModal = ({ isOpen, onClose }) => (
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <BackButton onClick={onClose} />
+        Restore
+      </DialogTitle>
+      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <Typography variant="body1">
+          Are you sure you want to restore this item?
+        </Typography>
+      </DialogContent>
+      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Restore
+        </Button>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
+  const MakeCopyModal = ({ isOpen, onClose }) => (
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <BackButton onClick={onClose} />
+        Make a Copy
+      </DialogTitle>
+      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <Typography variant="body1">
+          Choose options for making a copy of the item.
+        </Typography>
+        {/* Add copy options here */}
+      </DialogContent>
+      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Make Copy
+        </Button>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
+  const InfoModal = ({ isOpen, onClose }) => (
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <BackButton onClick={onClose} />
+        Info
+      </DialogTitle>
+      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+        <Typography variant="body1">
+          Here is some information about the item.
+        </Typography>
+        {/* Add additional info here */}
+      </DialogContent>
+      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+          Close
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 
@@ -287,29 +482,41 @@ function DesignHead({ toggleComments }) {
                 </ListItemIcon>
                 <ListItemText primary="Change Mode" />
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={handleOpenDownloadModal}>
                 <ListItemIcon>
                   <DownloadIcon sx={{ color: "whitesmoke" }} />
                 </ListItemIcon>
                 <ListItemText primary="Download" />
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={handleOpenRenameModal}>
+                <ListItemIcon>
+                  <EditIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Rename" />
+              </MenuItem>
+              <MenuItem onClick={handleOpenRestoreModal}>
                 <ListItemIcon>
                   <RestoreIcon sx={{ color: "whitesmoke" }} />
                 </ListItemIcon>
                 <ListItemText primary="Restore" />
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={handleOpenMakeCopyModal}>
                 <ListItemIcon>
-                  <DeleteIcon sx={{ color: "whitesmoke" }} />
+                  <FileCopyIcon sx={{ color: "whitesmoke" }} />
                 </ListItemIcon>
-                <ListItemText primary="Delete" />
+                <ListItemText primary="Make a Copy" />
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={handleOpenInfoModal}>
                 <ListItemIcon>
                   <InfoIcon sx={{ color: "whitesmoke" }} />
                 </ListItemIcon>
                 <ListItemText primary="Info" />
+              </MenuItem>
+              <MenuItem onClick={handleOpenDeleteModal}>
+                <ListItemIcon>
+                  <DeleteIcon sx={{ color: "whitesmoke" }} />
+                </ListItemIcon>
+                <ListItemText primary="Delete" />
               </MenuItem>
             </>
           )}
@@ -417,6 +624,40 @@ function DesignHead({ toggleComments }) {
         isOpen={isCopyLinkModalOpen}
         onClose={handleCloseCopyLinkModal}
       />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onDelete={handleDelete}
+      />
+
+      {/* Download Modal */}
+      <DownloadModal
+        isOpen={isDownloadModalOpen}
+        onClose={handleCloseDownloadModal}
+      />
+
+      {/* Rename Modal */}
+      <RenameModal
+        isOpen={isRenameModalOpen}
+        onClose={handleCloseRenameModal}
+      />
+
+      {/* Restore Modal */}
+      <RestoreModal
+        isOpen={isRestoreModalOpen}
+        onClose={handleCloseRestoreModal}
+      />
+
+      {/* Make Copy Modal */}
+      <MakeCopyModal
+        isOpen={isMakeCopyModalOpen}
+        onClose={handleCloseMakeCopyModal}
+      />
+
+      {/* Info Modal */}
+      <InfoModal isOpen={isInfoModalOpen} onClose={handleCloseInfoModal} />
     </div>
   );
 }

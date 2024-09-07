@@ -1,16 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import "../css/homepage.css";
 
-function DesignIcon({ name }) {
+function DesignIcon({ name, designId, onOpen, onDelete }) {
+  const [showOptions, setShowOptions] = useState(false);
+
+  // Toggle the visibility of options
+  const toggleOptions = () => {
+    setShowOptions((prev) => !prev);
+  };
+
   return (
     <div className="iconFrame">
-      <div className="options">
+      {/* Options button */}
+      <div className="options" onClick={toggleOptions}>
         <h3 className="selectOption">
           <center>&#8942;</center>
         </h3>
+        {showOptions && (
+          <div className="dropdown">
+            <button onClick={onOpen}>Open</button>
+            <button onClick={() => onDelete(designId)}>Delete</button>
+          </div>
+        )}
       </div>
-      <img src="/img/logoWhitebg.png" className="pic" alt="Design" />
 
+      {/* Design image */}
+      <img
+        src="/img/logoWhitebg.png"
+        className="pic"
+        alt="Design"
+        onClick={onOpen}
+      />
+
+      {/* Design title */}
       <h3 className="titleDesign">{name}</h3>
     </div>
   );

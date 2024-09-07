@@ -12,6 +12,7 @@ import Homepage from "./pages/Homepage/Homepage.js";
 import Settings from "./pages/Settings/Settings.js";
 import Design from "./pages/DesignSpace/Design.js";
 import SeeAllDesigns from "./pages/DesignSpace/SeeAllDesigns.js";
+import Budget from "./pages/DesignSpace/Budget.js";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 
@@ -48,6 +49,7 @@ function App() {
 
           <Route path="/design/:designId" element={<Design />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/budget" element={<Budget />} />
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
         </Routes>
       </Router>

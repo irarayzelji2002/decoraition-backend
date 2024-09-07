@@ -26,6 +26,9 @@ function App() {
           <Route path="/forgot" element={<ForgotPass />} />
           <Route path="/change" element={<ChangePassw />} />
           <Route path="/otp" element={<OneTP />} />
+          <Route path="/homepage" element={<Homepage />} />
+          <Route path="/settings" element={<Settings />} />
+          {/* Use a dynamic ID for the design route */}
           {/* <Route
             path="/homepage"
             element={<ProtectedRoute element={<Homepage />} />}
@@ -42,12 +45,10 @@ function App() {
             path="/users"
             element={<ProtectedRoute element={<Users />} />}
           /> */}
-          <Route path="/homepage" element={<Homepage />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/design" element={<Design />} />{" "}
+
+          <Route path="/design/:designId" element={<Design />} />
           <Route path="/users" element={<Users />} />
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
-          {/* Add other routes as needed */}
         </Routes>
       </Router>
     </AuthProvider>

@@ -1,85 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import DesignHead from "../../components/DesignHead";
 import PromptBar from "./PromptBar";
 import BottomBar from "../../components/BottomBar";
 import "../../css/design.css";
 
 function Design() {
-  const [designName, setDesignName] = useState("");
-  const [showComments, setShowComments] = useState(false); // State to toggle comments
-  const [comment, setComment] = useState(""); // State for comment input
+  const [designName, setDesignName] = useState("Untitled");
+  const [designId, setDesignId] = useState(null);
+  const [showComments, setShowComments] = useState(false);
+  const [comment, setComment] = useState("");
+  const [numImageFrames, setNumImageFrames] = useState(2);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [newName, setNewName] = useState("");
   const navigate = useNavigate();
 
-  const handleCreateDesign = async () => {
-    if (designName.trim() === "") {
-      alert("Please enter a design name.");
-      return;
-    }
-
-    try {
+  useEffect(() => {
+    const createInitialDesign = async () => {
       const user = auth.currentUser;
       if (user) {
-        const designId = new Date().getTime().toString(); // Generate a unique ID
-        const designRef = doc(db, "users", user.uid, "designs", designId);
+        const newDesignId = new Date().getTime().toString();
+        const designRef = doc(db, "users", user.uid, "designs", newDesignId);
 
-        await setDoc(designRef, {
-          name: designName,
-          createdAt: new Date(),
-        });
-
-        navigate("/homepage");
+        try {
+          await setDoc(designRef, {
+            name: "Untitled",
+            createdAt: new Date(),
+          });
+          setDesignId(newDesignId);
+        } catch (error) {
+          console.error("Error creating initial design:", error);
+          alert("Failed to create initial design.");
+        }
       } else {
         alert("User not authenticated.");
+        navigate("/");
       }
-    } catch (error) {
-      console.error("Error creating design: ", error);
-      alert("Error creating design. Please try again.");
+    };
+
+    createInitialDesign();
+  }, [navigate]);
+
+  const handleUpdateDesignName = (newName) => {
+    setNewName(newName);
+    setShowConfirmation(true);
+  };
+
+  const confirmNameChange = async () => {
+    if (designId) {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const designRef = doc(db, "users", user.uid, "designs", designId);
+          await updateDoc(designRef, { name: newName });
+          setDesignName(newName);
+          setShowConfirmation(false);
+        }
+      } catch (error) {
+        console.error("Error updating design name:", error);
+        alert("Failed to update design name.");
+      }
     }
   };
 
-  // Toggle comments section
+  const cancelNameChange = () => {
+    setNewName("");
+    setShowConfirmation(false);
+  };
+
   const toggleComments = () => {
-    setShowComments(!showComments);
+    setShowComments((prevShowComments) => !prevShowComments);
   };
 
   return (
     <div className="whole">
-      <DesignHead />
+      <DesignHead
+        designName={designName}
+        setDesignName={handleUpdateDesignName}
+        toggleComments={toggleComments}
+      />
+
       <div className="create-design">
         <div className="workspace">
           <PromptBar />
-          <div>
-            <h6>Create a New Design</h6>
-            <button onClick={toggleComments} className="toggle-comment-button">
-              {showComments ? "Hide Comments" : "Show Comments"}
-            </button>
-            <input
-              type="text"
-              value={designName}
-              onChange={(e) => setDesignName(e.target.value)}
-              placeholder="Enter design name"
-            />
-            <button onClick={handleCreateDesign}>Create Design</button>
+          <div className="frame-buttons">
+            <button onClick={() => setNumImageFrames(2)}>2 Image Frames</button>
+            <button onClick={() => setNumImageFrames(4)}>4 Image Frames</button>
           </div>
-
           <div className="working-area">
-            <div className="image-frame">
-              <img
-                src="./img/design-placeholder.png"
-                alt="design preview"
-                className="image-preview"
-              />
-            </div>
-            {/* Button to toggle comment section */}
-            <button onClick={toggleComments} className="toggle-comment-button">
-              {showComments ? "Hide Comments" : "Show Comments"}
-            </button>
+            {Array.from({ length: numImageFrames }).map((_, index) => (
+              <div className="image-frame" key={index}>
+                <img
+                  src="../../img/logoWhitebg.png"
+                  alt={`design preview ${index + 1}`}
+                  className="image-preview"
+                />
+              </div>
+            ))}
           </div>
-
-          {/* Comment section, shown when showComments is true */}
           {showComments && (
             <div className="comment-section">
               <h4>Comments</h4>
@@ -93,7 +113,13 @@ function Design() {
           )}
         </div>
       </div>
-
+      {showConfirmation && (
+        <div className="confirmation-dialog">
+          <p>Are you sure you want to change the design name to "{newName}"?</p>
+          <button onClick={confirmNameChange}>Confirm</button>
+          <button onClick={cancelNameChange}>Cancel</button>
+        </div>
+      )}
       <BottomBar />
     </div>
   );

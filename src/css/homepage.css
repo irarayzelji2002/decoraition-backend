@@ -1,6 +1,6 @@
 .navName {
   font-size: 60px;
-  background: linear-gradient(20deg, #faa653, #f04f59);
+  background: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -35,14 +35,14 @@ h2 {
 
 .design-button:hover,
 .project-button:hover {
-  background: linear-gradient(20deg, #faa653, #f04f59);
+  background: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
   border-radius: 20px !important;
   color: #fff;
 }
 
 .design-button:click,
 .project-button:click {
-  background: linear-gradient(20deg, #faa653, #f04f59);
+  background: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
   border-radius: 20px !important;
   color: #fff;
 }
@@ -61,7 +61,7 @@ h2 {
   /* Gradient Border */
   border: 2px solid transparent; /* Initially make the border transparent */
   background-image: linear-gradient(#1e1e1e, #1e1e1e),
-    linear-gradient(20deg, #faa653, #f04f59); /* Gradient background */
+    linear-gradient(90deg, #f89a47, #f15f3e, #ec2073); /* Gradient background */
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }
@@ -108,7 +108,7 @@ h2 {
   width: 60px;
   height: 60px;
   padding: 0;
-  background: linear-gradient(20deg, #faa653, #f04f59);
+  background: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
   color: #fff;
   font-size: 24px;
   border: none;

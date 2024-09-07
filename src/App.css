@@ -36,4 +36,7 @@ body {
   --budget-capsule: #397438;
   --inputBg: #3e3c47;
   --iconBg: #302f37;
+  --brightFont: #ff8344;
+  --gradientCircle: linear-gradient(20deg, #ec2073, #ff894d);
+  --gradientButton: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
 }

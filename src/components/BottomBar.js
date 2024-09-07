@@ -86,7 +86,7 @@ function BottomBar() {
               </linearGradient>
             </defs>
           </svg>
-          <span style={{ color: "white" }}>Design</span>
+          <span style={{ color: "#ff8344" }}>Design</span>
         </div>
       </Button>
       <Button

@@ -32,7 +32,7 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "../css/design.css";
 
-function DesignHead({ toggleComments }) {
+function DesignHead({ designName, setDesignName, toggleComments }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
@@ -375,7 +375,13 @@ function DesignHead({ toggleComments }) {
         >
           <MenuIcon sx={{ color: "white" }} />
         </IconButton>
-        <p className="headTitle">Project Title</p>
+        <input
+          type="text"
+          value={designName}
+          onChange={(e) => setDesignName(e.target.value)}
+          placeholder="Untitled"
+          className="headTitleInput"
+        />
       </div>
       <div className="right">
         <IconButton onClick={toggleComments}>

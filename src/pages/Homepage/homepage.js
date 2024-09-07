@@ -114,7 +114,6 @@ function Homepage() {
           designId
         );
         await deleteDoc(designRef);
-        alert("Design deleted successfully");
       }
     } catch (error) {
       console.error("Error deleting design: ", error);

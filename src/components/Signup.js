@@ -47,7 +47,7 @@ const commonInputStyles = {
 const buttonStyles = {
   mt: 3,
   mb: 2,
-  backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+  backgroundImage: "linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);",
 };
 
 const Signup = () => {

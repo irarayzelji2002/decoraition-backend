@@ -6,7 +6,7 @@ body {
 }
 h1 {
   font-size: 50px;
-  background: linear-gradient(20deg, #faa653, #f04f59);
+  background: linear-gradient(20deg, #f89a47, #f15f3e, #ec2073);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

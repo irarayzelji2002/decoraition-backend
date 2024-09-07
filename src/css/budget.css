@@ -1,0 +1,48 @@
+.titleBudget {
+  font-size: 38px;
+  color: aliceblue;
+
+  font-weight: bold;
+}
+
+.priceSum {
+  font-size: 18px;
+  color: aliceblue;
+  margin-top: 24px;
+  background-color: var(--inputBg);
+  width: fit-content;
+  padding: 18px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  border-radius: 28px;
+}
+.budgetSpace {
+  display: flex;
+  flex-direction: column;
+  margin: 36px;
+  width: 50%;
+}
+
+.itemSpace {
+  background-color: var(--nav-card-modal);
+  width: 100%;
+  height: 90px;
+  border-radius: 18px;
+  margin-top: 24px;
+}
+.thumbnail {
+  width: 70px;
+  height: 70%;
+  border-radius: 14px;
+  margin: 12px;
+}
+.itemName {
+  font-size: 18px;
+  color: aliceblue;
+}
+.itemPrice {
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: 0.6;
+  color: aliceblue;
+}

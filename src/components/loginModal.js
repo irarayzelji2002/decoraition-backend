@@ -27,6 +27,24 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Import Firestore instance
 
 const defaultTheme = createTheme();
+const style = {
+  input: { color: "white" },
+  label: { color: "white" },
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "white",
+    },
+    "&:hover fieldset": {
+      borderColor: "white",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "white",
+    },
+  },
+  "& .MuiFormHelperText-root": {
+    color: "white",
+  },
+};
 
 export default function LoginModal() {
   const navigate = useNavigate();
@@ -140,17 +158,24 @@ export default function LoginModal() {
               error={!!errors.email}
               helperText={errors.email}
               sx={{
-                input: { color: "white" },
+                input: {
+                  color: "white",
+                  backgroundColor: "#3E3C47",
+                  borderRadius: "24px",
+                },
                 label: { color: "white" },
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
                     borderColor: "white",
+                    borderRadius: "24px",
                   },
                   "&:hover fieldset": {
                     borderColor: "white",
+                    borderRadius: "24px",
                   },
                   "&.Mui-focused fieldset": {
                     borderColor: "white",
+                    borderRadius: "24px",
                   },
                 },
                 "& .MuiFormHelperText-root": {

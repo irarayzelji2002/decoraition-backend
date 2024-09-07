@@ -23,17 +23,20 @@ import Link from "@mui/material/Link";
 const defaultTheme = createTheme();
 
 const commonInputStyles = {
-  input: { color: "white" },
+  input: { color: "white", backgroundColor: "#3E3C47", borderRadius: "24px" },
   label: { color: "white" },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       borderColor: "white",
+      borderRadius: "24px",
     },
     "&:hover fieldset": {
       borderColor: "white",
+      borderRadius: "24px",
     },
     "&.Mui-focused fieldset": {
       borderColor: "white",
+      borderRadius: "24px",
     },
   },
   "& .MuiFormHelperText-root": {
@@ -70,6 +73,9 @@ const Signup = () => {
     if (!password) formErrors.password = "Password is required";
     else if (password.length < 6)
       formErrors.password = "Password must be at least 6 characters long";
+    else if (!/[!@#$%^&*]/.test(password))
+      formErrors.password =
+        "Password must contain at least 1 special character";
     if (!confirmPassword)
       formErrors.confirmPassword = "Please confirm your password";
     else if (password !== confirmPassword)
@@ -224,6 +230,15 @@ const Signup = () => {
               helperText={errors.email}
               sx={commonInputStyles}
             />
+            <p
+              style={{
+                color: "gray",
+                fontSize: "12px",
+                marginBottom: "-8px",
+              }}
+            >
+              At least 6 characters long, with 1 special character
+            </p>
             <Password
               value={password}
               onChange={(e) => setPassword(e.target.value)}

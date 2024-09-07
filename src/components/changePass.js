@@ -76,6 +76,15 @@ export default function ChangePass() {
             noValidate
             sx={{ mt: 1 }}
           >
+            <p
+              style={{
+                color: "gray",
+                fontSize: "12px",
+                marginBottom: "-8px",
+              }}
+            >
+              At least 6 characters long, with 1 special character
+            </p>
             <Password
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -86,6 +95,7 @@ export default function ChangePass() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               error={!!error}
+              label="Confirm Password"
               helperText={error}
             />
             {success && <Typography color="primary">{success}</Typography>}

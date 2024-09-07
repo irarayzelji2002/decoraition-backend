@@ -61,6 +61,7 @@
 
 .workspace {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: row;
 }
@@ -91,4 +92,116 @@ h3 {
 }
 h6 {
   color: #5e5e5e;
+}
+
+.image-frame {
+  width: 80%;
+  height: 50%;
+  max-height: 300px !important;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  position: relative;
+  border: var(--nav-card-modal) 3px solid;
+  border-radius: 12px;
+  margin: 2%;
+}
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: absolute;
+}
+.working-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+  height: 600px;
+}
+.stickyMenu {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #27262c;
+  padding: 10px;
+}
+
+.working-area {
+  position: relative;
+  display: flex;
+}
+
+.toggle-comment-button {
+  margin-top: 20px;
+  background-color: #faa653;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.comment-section {
+  margin-left: 20px;
+  width: 300px;
+  background-color: #333;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.comment-section h4 {
+  color: white;
+}
+
+.comment-section textarea {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+.add-comment-button {
+  margin-top: 10px;
+  background-color: #f04f59;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.frame-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.frame-buttons button {
+  background-color: var(--nav-card-modal); /* Primary color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.frame-buttons button:hover {
+  background-color: var(--inputBg); /* Darker shade on hover */
+  transform: scale(1.05);
+}
+
+.frame-buttons button:active {
+  background-color: #2900a3; /* Even darker shade on active */
+  transform: scale(0.98);
+}
+
+.frame-buttons button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(98, 0, 234, 0.3); /* Focus indicator */
 }

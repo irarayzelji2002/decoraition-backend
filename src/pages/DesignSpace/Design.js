@@ -141,7 +141,7 @@ function Design() {
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Add your comment here..."
               />
-              <button className="add-comment-button">Submit Comment</button>
+              <button className="add-comment-button">Add a comment</button>
             </div>
           )}
         </div>

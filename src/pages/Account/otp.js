@@ -253,7 +253,7 @@ export default function OneTP() {
         <h1>One-Time-Password</h1>
       </div>
       <div className="modal-bg">
-        <h2>Verify your account</h2>
+        <h2 style={{ marginLeft: "10px" }}>Verify your account</h2>
 
         <center>
           <h5>Enter the OTP code sent to mam**03**@gmail.com</h5>

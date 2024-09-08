@@ -22,7 +22,6 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import InputBase from "@mui/material/InputBase";
-import DesignIcon from "../../components/DesignIcon.js";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -71,9 +70,9 @@ const DrawerComponent = ({
   toggleDarkMode,
   handleLogout,
   darkMode,
-  username,
-  userEmail,
-  designs,
+  username = "", // Default to empty string
+  userEmail = "", // Default to empty string
+  designs = [], // Default to empty array
 }) => {
   return (
     <Drawer
@@ -119,10 +118,10 @@ const DrawerComponent = ({
             marginRight: "auto",
           }}
         >
-          {username.charAt(0).toUpperCase()}
+          {username ? username.charAt(0).toUpperCase() : ""}
         </Avatar>
-        <Typography variant="body1">{username}</Typography>
-        <Typography variant="caption">{userEmail}</Typography>
+        <Typography variant="body1">{username || "Guest"}</Typography>
+        <Typography variant="caption">{userEmail || "No email"}</Typography>
       </div>
       <Divider sx={{ backgroundColor: "gray", my: 2 }} />
       <List>

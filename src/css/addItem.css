@@ -47,7 +47,7 @@
 }
 
 .upload-btn:hover {
-  background: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
+  background: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073) border-box;
   border-radius: 20px !important;
   color: #fff;
 }
@@ -67,6 +67,7 @@
   font-size: 16px;
   border-radius: 20px !important;
   cursor: pointer;
+  width: 100%;
 
   /* Gradient Border */
   border: 2px solid transparent;
@@ -93,10 +94,10 @@
 }
 
 .input-group {
-  background-color: #333;
+  background-color: var(--nav-card-modal);
   border: 2px solid #555;
   border-radius: 8px;
-  padding: 15px;
+
   margin-bottom: 20px;
 }
 
@@ -105,9 +106,9 @@
 .price-quantity-section input,
 .price-quantity-section select {
   width: 100%;
-  padding: 10px;
+  padding: 18px;
+
   border: none;
-  border-radius: 8px;
   background-color: transparent;
   color: white;
   font-size: 18px;
@@ -116,6 +117,7 @@
 /* Container for Price and Currency Selector */
 .price-quantity-section {
   display: flex;
+  border-right: 1px solid var(--borderInput);
   justify-content: space-between;
   gap: 20px;
 }
@@ -133,17 +135,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
+  background-color: var(--nav-card-modal);
   border: 2px solid #555;
   border-radius: 8px;
-  padding: 15px;
+  height: 60px;
 }
 
 .quantity-section button {
-  background-color: #ff3d00;
+  background-color: var(--nav-card-modal);
   color: white;
-  border: none;
-  padding: 10px 20px;
+  border: 2px solid var(--borderInput);
+  padding: 20px 20px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 18px;

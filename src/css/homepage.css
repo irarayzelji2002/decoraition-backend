@@ -35,7 +35,7 @@ h2 {
 
 .design-button:hover,
 .project-button:hover {
-  background: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
+  background: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073) border-box;
   border-radius: 20px !important;
   color: #fff;
 }
@@ -45,6 +45,7 @@ h2 {
   background: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
   border-radius: 20px !important;
   color: #fff;
+  border-radius: 4px;
 }
 
 .design-button,

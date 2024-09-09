@@ -14,6 +14,8 @@ import Design from "./pages/DesignSpace/Design.js";
 import SeeAllDesigns from "./pages/DesignSpace/SeeAllDesigns.js";
 import Budget from "./pages/DesignSpace/Budget.js";
 import AddItem from "./pages/DesignSpace/AddItem.js";
+import EditItem from "./pages/DesignSpace/EditItem.js";
+import SearchItem from "./pages/DesignSpace/SearchItem.js";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 
@@ -49,7 +51,9 @@ function App() {
           /> */}
 
           <Route path="/design/:designId" element={<Design />} />
+          <Route path="/searchItem" element={<SearchItem />} />
           <Route path="/addItem" element={<AddItem />} />
+          <Route path="/editItem" element={<EditItem />} />
           <Route path="/users" element={<Users />} />
           <Route path="/budget" element={<Budget />} />
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />

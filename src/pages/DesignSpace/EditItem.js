@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../../css/addItem.css";
 import TopBar from "../../components/TopBar";
 
-const AddItem = () => {
+const EditItem = () => {
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState("");
   const [itemQuantity, setItemQuantity] = useState(1);
@@ -24,13 +24,9 @@ const AddItem = () => {
 
   return (
     <>
-      <TopBar state={"Add Item"} />
+      <TopBar state={"Edit Item"} />
       <div className="add-item-container">
         <div className="left-column">
-          <div className="search-section">
-            <input type="text" placeholder="Search for an item" />
-          </div>
-
           <div className="upload-section">
             {image ? (
               <img src={image} alt="Item" className="uploaded-image" />
@@ -38,7 +34,7 @@ const AddItem = () => {
               <div className="image-placeholder">Add an image to the item</div>
             )}
             <label htmlFor="upload-image" className="upload-btn">
-              Upload image of item
+              Reupload the image of item
               <input
                 type="file"
                 id="upload-image"
@@ -101,7 +97,7 @@ const AddItem = () => {
 
             {/* Add Item Button */}
             <button className="add-item-btn" onClick={handleSubmit}>
-              Add item
+              Edit item
             </button>
           </div>
         </div>
@@ -110,4 +106,4 @@ const AddItem = () => {
   );
 };
 
-export default AddItem;
+export default EditItem;

@@ -24,11 +24,13 @@ function SearchItem() {
       <div className="grid-container">
         {items.map((item, index) => (
           <div key={index} className="grid-item">
-            <div className="image-placeholder2" />
+            <div className="image-placeholder2"></div>
             <div className="item-details">
-              <p className="item-name">{item.name}</p>
-              <p className="item-price">{item.price}</p>
-              <p className="item-store">{item.store}</p>
+              <div className="item-name">{item.name}</div>
+              <div className="item-price" style={{ fontWeight: "bold" }}>
+                {item.price}
+              </div>
+              <div className="item-store">{item.store}</div>
             </div>
           </div>
         ))}

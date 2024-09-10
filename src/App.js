@@ -17,6 +17,9 @@ import AddItem from "./pages/DesignSpace/AddItem.js";
 import EditItem from "./pages/DesignSpace/EditItem.js";
 import SearchItem from "./pages/DesignSpace/SearchItem.js";
 import Project from "./pages/ProjectSpace/Project.js";
+import ProjBudget from "./pages/ProjectSpace/ProjBudget.js";
+import PlanMap from "./pages/ProjectSpace/PlanMap.js";
+import Timeline from "./pages/ProjectSpace/Timeline.js";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 import { Rotate90DegreesCcw } from "@mui/icons-material";
@@ -52,14 +55,20 @@ function App() {
             element={<ProtectedRoute element={<Users />} />}
           /> */}
 
+          {/* DESIGN SPACE */}
           <Route path="/design/:designId" element={<Design />} />
-          <Route path="/project" element={<Project />} />
           <Route path="/searchItem" element={<SearchItem />} />
           <Route path="/addItem" element={<AddItem />} />
           <Route path="/editItem" element={<EditItem />} />
           <Route path="/users" element={<Users />} />
           <Route path="/budget" element={<Budget />} />
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
+
+          {/* PROJECT SPACE */}
+          <Route path="/project" element={<Project />} />
+          <Route path="/planMap" element={<PlanMap />} />
+          <Route path="/timeline" element={<Timeline />} />
+          <Route path="/projBudget" element={<ProjBudget />} />
         </Routes>
       </Router>
     </AuthProvider>

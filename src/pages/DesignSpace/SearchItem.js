@@ -2,7 +2,12 @@ import React from "react";
 import TopBar from "../../components/TopBar";
 import "../../css/searchItem.css";
 import SearchIcon from "@mui/icons-material/Search"; // Importing the SearchIcon
-
+import Paper from "@mui/material/Paper";
+import InputBase from "@mui/material/InputBase";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import DirectionsIcon from "@mui/icons-material/Directions";
 function SearchItem() {
   const items = new Array(12).fill({
     name: "Clothing Fabric Wedding Fabric Party Fabric Lase...",
@@ -13,14 +18,30 @@ function SearchItem() {
   return (
     <div className="search-item-page">
       <TopBar state="Search Item" />
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search for an item"
-          className="search-input"
+      <Paper
+        component="form"
+        sx={{
+          p: "2px 4px",
+          display: "flex",
+          alignItems: "center",
+          width: "69%",
+          marginTop: "40px",
+          backgroundColor: "#25232A",
+        }}
+      >
+        <IconButton
+          type="button"
+          sx={{ p: "10px", color: "white" }}
+          aria-label="search"
+        >
+          <SearchIcon sx={{ color: "white" }} />
+        </IconButton>
+        <InputBase
+          sx={{ ml: 1, flex: 1, color: "white" }}
+          placeholder="Search Item"
+          inputProps={{ "aria-label": "search google maps" }}
         />
-        <SearchIcon className="search-icon" />
-      </div>
+      </Paper>
       <div className="grid-container">
         {items.map((item, index) => (
           <div key={index} className="grid-item">

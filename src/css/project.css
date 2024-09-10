@@ -1,0 +1,92 @@
+/* General styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  color: #ffffff;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+
+  border-bottom: 1px solid #3a3a3c;
+}
+
+.menu-button,
+.share-button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.header-left h1 {
+  margin: 0;
+  padding-left: 10px;
+}
+
+.search-filter-bar {
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2c2c2e;
+  border-bottom: 1px solid #3a3a3c;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 10px;
+  background-color: #3a3a3c;
+  border: none;
+  color: #ffffff;
+  margin-right: 20px;
+}
+
+.filter-options button {
+  background-color: #3a3a3c;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  margin-left: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.designs-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.design-card {
+  background-color: #2c2c2e;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.design-image {
+  width: 100%;
+  display: block;
+}
+
+.design-info {
+  padding: 10px;
+}

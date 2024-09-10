@@ -10,8 +10,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { verifyPasswordResetCode, confirmPasswordReset } from "firebase/auth";
-import { auth } from "../firebase"; // Adjust this path to where you initialize Firebase
-import Password from "./PassInput"; // Import your Password component
+import { auth } from "../firebase";
+import Password from "./PassInput";
 import { useState, useEffect } from "react";
 
 const defaultTheme = createTheme();

@@ -6,10 +6,8 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
 import Modal from "../../components/Modal";
-import BottomBarDesign from "../../components/BottomBarDesign";
-
+import BottomBarDesign from "../../components/BottomBarProject";
 import "../../css/seeAll.css";
-import BottomBar from "../../components/BottomBar";
 
 const SearchBar = styled(Paper)(({ theme }) => ({
   display: "flex",
@@ -197,7 +195,7 @@ function Project() {
         <Modal onClose={closeModal} content={getModalContent(modalContent)} />
       )}
 
-      <BottomBarDesign />
+      <BottomBarDesign Design={true} />
     </div>
   );
 }

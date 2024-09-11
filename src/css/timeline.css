@@ -1,0 +1,88 @@
+.timeline-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #1f1e22;
+  color: white;
+  height: 100vh;
+  padding: 20px;
+}
+
+/* Calendar section */
+.react-calendar__navigation__label {
+  color: white;
+}
+
+.react-calendar__navigation__arrow {
+  color: white;
+}
+
+.calendar-section {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Custom styling for the calendar */
+.custom-calendar {
+  background-color: #27262c;
+  color: white;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.custom-calendar .react-calendar__tile {
+  color: white;
+}
+
+.custom-calendar .react-calendar__tile--now {
+  background: #ff5e5e;
+  color: white;
+}
+
+.custom-calendar .react-calendar__tile--active {
+  background: #ff8c8c;
+  color: white;
+}
+
+/* Task list */
+.task-list {
+  width: 100%;
+  max-width: 600px;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #27262c;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.task-text h3 {
+  margin: 0;
+  color: white;
+}
+
+.task-text p {
+  margin: 0;
+  color: #aaa;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-icon {
+  color: orange;
+}
+
+.delete-icon {
+  color: orange;
+}

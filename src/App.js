@@ -20,6 +20,7 @@ import Project from "./pages/ProjectSpace/Project.js";
 import ProjBudget from "./pages/ProjectSpace/ProjBudget.js";
 import PlanMap from "./pages/ProjectSpace/PlanMap.js";
 import Timeline from "./pages/ProjectSpace/Timeline.js";
+import AddPin from "./pages/ProjectSpace/AddPin.js";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 import { Rotate90DegreesCcw } from "@mui/icons-material";
@@ -69,6 +70,7 @@ function App() {
           <Route path="/planMap" element={<PlanMap />} />
           <Route path="/timeline" element={<Timeline />} />
           <Route path="/projBudget" element={<ProjBudget />} />
+          <Route path="/addPin" element={<AddPin />} />
         </Routes>
       </Router>
     </AuthProvider>

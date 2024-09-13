@@ -9,6 +9,7 @@ import ChangePassw from "./pages/Account/ChangePass.js";
 import OneTP from "./pages/Account/Otp.js";
 import ForgotPass from "./pages/Account/ForgotPass1.js";
 import Homepage from "./pages/Homepage/Homepage.js";
+import Details from "./pages/Homepage/Details";
 import Settings from "./pages/Settings/Settings.js";
 import Design from "./pages/DesignSpace/Design.js";
 import SeeAllDesigns from "./pages/DesignSpace/SeeAllDesigns.js";
@@ -37,6 +38,7 @@ function App() {
           <Route path="/change" element={<ChangePassw />} />
           <Route path="/otp" element={<OneTP />} />
           <Route path="/homepage" element={<Homepage />} />
+          <Route path="/details" element={<Details />} />
           <Route path="/settings" element={<Settings />} />
           {/* Use a dynamic ID for the design route */}
           {/* <Route

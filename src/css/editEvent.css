@@ -1,0 +1,108 @@
+/* General styling */
+.edit-event {
+  background-color: #1f1e22;
+  color: white;
+  padding: 20px;
+  font-weight: bold;
+}
+
+.form-container {
+  max-width: 600px;
+  margin: auto;
+}
+
+/* Form group styling */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid gray;
+  background-color: #1f1e22;
+  color: white;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+/* Reminders section styling */
+.reminders {
+  margin-top: 20px;
+}
+
+.reminders-header {
+  display: flex;
+  justify-content: space-between; /* Space between label and button */
+  align-items: center; /* Vertically center items */
+  margin-bottom: 10px;
+}
+
+.reminders-header span {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reminder-item input {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.gradient-button,
+.edit-event-button {
+  background-image: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 20px;
+  width: 100%;
+  display: block;
+}
+
+.gradient-button:hover,
+.edit-event-button:hover {
+  background-image: linear-gradient(90deg, #f89a47, #ec2073);
+}
+
+/* Button for icons (Add, Delete, Edit) */
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 1.2rem;
+  padding: 0;
+  transition: color 0.3s ease;
+}
+
+.icon-button:hover {
+  color: #f15f3e;
+}
+
+.add-button {
+  margin-bottom: 10px;
+}
+
+.reminder-actions {
+  display: flex;
+  align-items: center;
+}

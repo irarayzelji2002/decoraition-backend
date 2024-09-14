@@ -14,7 +14,8 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import Notifications from "./Notifications";
+import TopBar from "../../components/TopBar";
 import "../../css/settings.css";
 
 function SettingsPage() {
@@ -44,180 +45,200 @@ function SettingsPage() {
   };
 
   return (
-    <div className="settings-container">
-      {/* App Bar for Tabs */}
-      <AppBar position="static" className="app-bar">
-        <Tabs
-          value={selectedTab}
-          onChange={handleTabChange}
-          centered
-          className="tabs"
-          TabIndicatorProps={{
-            style: {
-              backgroundColor: "#FF894D", // Tab indicator color
-            },
-          }}
-        >
-          <Tab label="Account" className="tab-label" />
-          <Tab
-            label="Notification"
-            icon={<NotificationsIcon />}
-            className="tab-label"
-          />
-        </Tabs>
-      </AppBar>
+    <>
+      <TopBar state="Settings" />{" "}
+      <Tabs
+        value={selectedTab}
+        onChange={handleTabChange}
+        centered
+        className="tabs"
+        TabIndicatorProps={{
+          style: {
+            backgroundImage: "var(--gradientCircle)",
 
-      {/* Account Tab Content */}
-      {selectedTab === 0 && (
-        <Box mt={4} className="tab-content">
-          <div
-            className="avatar-container"
-            style={{ display: "flex", alignItems: "center" }}
-          >
-            <Avatar
-              alt="User Avatar"
-              src=""
-              sx={{
-                width: 80,
-                height: 80,
-                marginRight: "20px",
-                border: "3px solid #FF567D", // Avatar border
-                boxShadow: "0 0 5px 2px rgba(255, 86, 125, 0.5)", // Avatar shadow
+            // Tab indicator color
+          },
+        }}
+        sx={{
+          "& .MuiTab-root": {
+            color: "white", // Color for unselected tabs
+          },
+          "& .MuiTab-root.Mui-selected": {
+            color: "transparent", // Hide the actual text color
+            backgroundImage: "var(--gradientCircle)", // Apply background image
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            fontWeight: "bold", // Optional: make text bold to stand out
+          },
+        }}
+      >
+        <Tab
+          label="Account"
+          className="tab-label"
+          style={{ textTransform: "none" }}
+        />
+        <Tab
+          label="Notification"
+          className="tab-label"
+          style={{ textTransform: "none" }}
+        />
+      </Tabs>
+      <div className="settings-container">
+        {/* App Bar for Tabs */}
+
+        {/* Account Tab Content */}
+        {selectedTab === 0 && (
+          <Box mt={4} className="tab-content" sx={{ maxWidth: "1200px" }}>
+            <div
+              className="avatar-container"
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <Avatar
+                alt="User Avatar"
+                src=""
+                sx={{
+                  width: 150,
+                  height: 150,
+                  marginLeft: "20px",
+                  border: "3px solid #FF567D", // Avatar border
+                  boxShadow: "0 0 5px 2px rgba(255, 86, 125, 0.5)", // Avatar shadow
+                }}
+              />
+
+              {/* Button Container */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginLeft: "auto",
+                  marginRight: "20px",
+                }}
+              >
+                {/* Hidden File Input */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
+
+                {/* Change Photo Button */}
+                <Button
+                  variant="contained"
+                  className="change-photo-btn"
+                  onClick={handleChangePhotoClick}
+                  sx={{
+                    background: "linear-gradient(to right, #F54D70, #FF894D)",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Change photo
+                </Button>
+
+                {/* Remove Photo Button */}
+                <Button
+                  variant="outlined"
+                  color="error"
+                  startIcon={<DeleteIcon />}
+                  className="remove-photo-btn"
+                  sx={{
+                    borderColor: "#FF894D",
+                    color: "#FF894D",
+                    marginLeft: "10px",
+                  }}
+                >
+                  Remove photo
+                </Button>
+              </div>
+            </div>
+
+            {["First name", "Last name", "Username", "Email address"].map(
+              (label, index) => (
+                <TextField
+                  key={index}
+                  label={label}
+                  value=""
+                  sx={{ color: "white" }}
+                  fullWidth
+                  margin="normal"
+                  InputProps={{
+                    readOnly: !isEditing,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={toggleEdit}>
+                          <EditIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )
+            )}
+
+            {/* Additional Fields */}
+            <TextField
+              label="Password"
+              value="*******"
+              fullWidth
+              margin="normal"
+              type="password"
+              InputProps={{
+                readOnly: true,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => console.log("Edit password")}>
+                      <EditIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
             />
-
-            {/* Button Container */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                marginLeft: "auto",
+            <TextField
+              label="Linked account"
+              value="Google"
+              fullWidth
+              margin="normal"
+              InputProps={{
+                readOnly: true,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => console.log("Edit linked account")}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
-            >
-              {/* Hidden File Input */}
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
+            />
+            <TextField
+              label="Theme"
+              value="Dark"
+              fullWidth
+              margin="normal"
+              InputProps={{
+                readOnly: true,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => console.log("Change theme")}>
+                      <BedtimeIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+        )}
 
-              {/* Change Photo Button */}
-              <Button
-                variant="contained"
-                className="change-photo-btn"
-                onClick={handleChangePhotoClick}
-                sx={{
-                  background: "linear-gradient(to right, #F54D70, #FF894D)",
-                  marginBottom: "10px",
-                }}
-              >
-                Change photo
-              </Button>
-
-              {/* Remove Photo Button */}
-              <Button
-                variant="outlined"
-                color="error"
-                startIcon={<DeleteIcon />}
-                className="remove-photo-btn"
-                sx={{
-                  borderColor: "#FF894D",
-                  color: "#FF894D",
-                  marginLeft: "10px",
-                }}
-              >
-                Remove photo
-              </Button>
-            </div>
-          </div>
-
-          {["First name", "Last name", "Username", "Email address"].map(
-            (label, index) => (
-              <TextField
-                key={index}
-                label={label}
-                value=""
-                fullWidth
-                margin="normal"
-                InputProps={{
-                  readOnly: !isEditing,
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={toggleEdit}>
-                        <EditIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )
-          )}
-
-          {/* Additional Fields */}
-          <TextField
-            label="Password"
-            value="*******"
-            fullWidth
-            margin="normal"
-            type="password"
-            InputProps={{
-              readOnly: true,
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => console.log("Edit password")}>
-                    <EditIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            label="Linked account"
-            value="Google"
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: true,
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => console.log("Edit linked account")}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <TextField
-            label="Theme"
-            value="Dark"
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: true,
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => console.log("Change theme")}>
-                    <BedtimeIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
-      )}
-
-      {/* Notification Tab Content */}
-      {selectedTab === 1 && (
-        <Box mt={4} className="notification-settings">
-          <Typography variant="h6">Notification Settings</Typography>
-          <Typography>..l</Typography>
-        </Box>
-      )}
-    </div>
+        {/* Notification Tab Content */}
+        {selectedTab === 1 && (
+          <Box mt={4} className="notification-settings">
+            <Notifications />
+          </Box>
+        )}
+      </div>{" "}
+    </>
   );
 }
 

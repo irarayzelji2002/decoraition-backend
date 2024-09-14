@@ -1,7 +1,9 @@
 /* Root container */
 .settings-container {
+  display: flex;
+  justify-content: center;
   padding: 20px;
-  background-color: #1e1e24;
+  background-color: var(--bgcolor);
   color: #ffffff;
   height: 100vh;
   font-family: "Roboto", sans-serif;

@@ -169,13 +169,53 @@ function Homepage() {
 
         <section className="recent-section">
           <div className="recent-designs">
-            <h2>Recent Designs</h2>
-            <Link to="/seeAllDesigns" className="seeAll">
-              See All
-            </Link>
+            <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
+              <h2>Recent Designs</h2>{" "}
+              <Link
+                to="/seeAllDesigns"
+                className="seeAll"
+                style={{ marginLeft: "auto" }}
+              >
+                See All
+              </Link>
+            </div>
 
             <div className="layout">
               {designs.length > 0 ? (
+                designs.map((design) => (
+                  <DesignIcon
+                    key={design.id}
+                    name={design.name}
+                    designId={design.id}
+                    onDelete={handleDeleteDesign}
+                    onOpen={() => navigate(`/design/${design.id}`)}
+                  />
+                ))
+              ) : (
+                <div className="no-content">
+                  <img src="/img/design-placeholder.png" alt="No designs yet" />
+                  <p>No designs yet. Start creating.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <section className="recent-section">
+          <div className="recent-designs">
+            <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
+              <h2>Recent Projects</h2>{" "}
+              <Link
+                to="/seeAllDesigns"
+                className="seeAll"
+                style={{ marginLeft: "auto" }}
+              >
+                See All
+              </Link>
+            </div>
+
+            <div className="layout">
+              {-1 > 0 ? (
                 designs.map((design) => (
                   <DesignIcon
                     key={design.id}

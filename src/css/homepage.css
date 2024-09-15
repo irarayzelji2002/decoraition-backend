@@ -6,7 +6,8 @@
 }
 
 h2 {
-  margin-left: -110%;
+  text-align: left;
+  text-wrap: nowrap;
 }
 
 .header {
@@ -24,7 +25,7 @@ h2 {
 }
 
 .project-button {
-  padding: 15px 30px;
+  padding: 15px;
   margin: 10px;
   font-size: 16px;
   border: none;
@@ -53,10 +54,10 @@ h2 {
   background-color: transparent;
   color: #fff;
   font-weight: bold;
-  padding: 15px 30px;
+  padding: 15px;
   margin: 10px;
   font-size: 16px;
-  border-radius: 20px !important;
+  border-radius: 24px !important;
   cursor: pointer;
 
   /* Gradient Border */
@@ -73,11 +74,12 @@ h2 {
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  width: 100%;
 }
 
 .recent-designs,
 .recent-projects {
-  width: 45%;
+  width: 90%;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -126,7 +128,7 @@ h2 {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  width: 220%;
+  width: 100%;
 
   height: fit-content;
 }
@@ -172,12 +174,20 @@ h2 {
   color: aliceblue;
 }
 
-@media only screen and (max-width: 380px) {
+@media only screen and (max-width: 600px) {
   .iconFrame {
     height: 120px;
-    width: 100px;
+    width: 90%;
+    margin-bottom: 120px;
   }
   .layout {
     flex-direction: column;
+  }
+  .options {
+    left: 85%;
+  }
+
+  .navName {
+    font-size: 48px;
   }
 }

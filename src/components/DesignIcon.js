@@ -30,6 +30,7 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
         className="pic"
         alt="Design"
         onClick={onOpen}
+        style={{ objectFit: "cover", objectPosition: "top left" }}
       />
 
       {/* Design title */}

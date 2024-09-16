@@ -31,16 +31,12 @@ import InfoIcon from "@mui/icons-material/Info";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "../css/seeAll.css";
-import { Paper, InputBase } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import SearchIcon from "@mui/icons-material/Search";
-import { styled } from "@mui/material/styles";
 
 import "../css/design.css";
 
 function ProjectHead({ designName, setDesignName, toggleComments }) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
+  // const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isChangeModeMenuOpen, setIsChangeModeMenuOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -59,20 +55,20 @@ function ProjectHead({ designName, setDesignName, toggleComments }) {
   const [role, setRole] = useState("Editor");
   const [notifyPeople, setNotifyPeople] = useState(true);
 
-  const open = Boolean(anchorEl);
+  // const open = Boolean(anchorEl);
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
+  // const [modalOpen, setModalOpen] = useState(false);
+  // const [modalContent, setModalContent] = useState(null);
 
-  const openModal = (content) => {
-    setModalContent(content);
-    setModalOpen(true);
-  };
+  // const openModal = (content) => {
+  //   setModalContent(content);
+  //   setModalOpen(true);
+  // };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setModalContent(null);
-  };
+  // const closeModal = () => {
+  //   setModalOpen(false);
+  //   setModalContent(null);
+  // };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -84,9 +80,9 @@ function ProjectHead({ designName, setDesignName, toggleComments }) {
     setIsChangeModeMenuOpen(false);
   };
 
-  const toggleCommentDrawer = () => {
-    setIsCommentDrawerOpen((prevState) => !prevState);
-  };
+  // const toggleCommentDrawer = () => {
+  //   setIsCommentDrawerOpen((prevState) => !prevState);
+  // };
 
   const handleShareClick = () => {
     setIsShareMenuOpen(true);

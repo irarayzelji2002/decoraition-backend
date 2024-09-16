@@ -34,7 +34,7 @@ import "../css/design.css";
 
 function DesignHead({ designName, setDesignName, toggleComments }) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
+  // const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isChangeModeMenuOpen, setIsChangeModeMenuOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -53,7 +53,7 @@ function DesignHead({ designName, setDesignName, toggleComments }) {
   const [role, setRole] = useState("Editor");
   const [notifyPeople, setNotifyPeople] = useState(true);
 
-  const open = Boolean(anchorEl);
+  // const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -65,9 +65,9 @@ function DesignHead({ designName, setDesignName, toggleComments }) {
     setIsChangeModeMenuOpen(false);
   };
 
-  const toggleCommentDrawer = () => {
-    setIsCommentDrawerOpen((prevState) => !prevState);
-  };
+  // const toggleCommentDrawer = () => {
+  //   setIsCommentDrawerOpen((prevState) => !prevState);
+  // };
 
   const handleShareClick = () => {
     setIsShareMenuOpen(true);

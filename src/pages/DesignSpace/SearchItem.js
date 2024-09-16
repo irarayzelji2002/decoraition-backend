@@ -4,10 +4,9 @@ import "../../css/searchItem.css";
 import SearchIcon from "@mui/icons-material/Search"; // Importing the SearchIcon
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
-import Divider from "@mui/material/Divider";
+
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import DirectionsIcon from "@mui/icons-material/Directions";
+
 function SearchItem() {
   const items = new Array(12).fill({
     name: "Clothing Fabric Wedding Fabric Party Fabric Lase...",

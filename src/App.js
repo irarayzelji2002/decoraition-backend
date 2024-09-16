@@ -9,6 +9,7 @@ import ChangePassw from "./pages/Account/ChangePass.js";
 import OneTP from "./pages/Account/Otp.js";
 import ForgotPass from "./pages/Account/ForgotPass1.js";
 import Homepage from "./pages/Homepage/Homepage.js";
+import Details from "./pages/Homepage/Details";
 import Settings from "./pages/Settings/Settings.js";
 import Design from "./pages/DesignSpace/Design.js";
 import SeeAllDesigns from "./pages/DesignSpace/SeeAllDesigns.js";
@@ -20,11 +21,41 @@ import Project from "./pages/ProjectSpace/Project.js";
 import ProjBudget from "./pages/ProjectSpace/ProjBudget.js";
 import PlanMap from "./pages/ProjectSpace/PlanMap.js";
 import Timeline from "./pages/ProjectSpace/Timeline.js";
+import AddPin from "./pages/ProjectSpace/AddPin.js";
+import EditEvent from "./pages/ProjectSpace/EditEvent";
+import ProjSetting from "./pages/Settings/ProjSetting.js";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
-import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
-import { Rotate90DegreesCcw } from "@mui/icons-material";
+// import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
+// import { Rotate90DegreesCcw } from "@mui/icons-material";
+import { useEffect } from "react";
+import {
+  getAuth,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
 
 function App() {
+  useEffect(() => {
+    const auth = getAuth();
+    // Set persistence to local so the user stays logged in across sessions.
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        // Check if the user is logged in or not
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            // User is signed in, you can set the user state here
+            console.log("User is logged in:", user);
+          } else {
+            // No user is signed in, redirect to login page or handle accordingly
+            console.log("No user logged in");
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error with setting persistence:", error);
+      });
+  }, []);
   return (
     <AuthProvider>
       <Router>
@@ -36,6 +67,7 @@ function App() {
           <Route path="/change" element={<ChangePassw />} />
           <Route path="/otp" element={<OneTP />} />
           <Route path="/homepage" element={<Homepage />} />
+          <Route path="/details" element={<Details />} />
           <Route path="/settings" element={<Settings />} />
           {/* Use a dynamic ID for the design route */}
           {/* <Route
@@ -69,6 +101,9 @@ function App() {
           <Route path="/planMap" element={<PlanMap />} />
           <Route path="/timeline" element={<Timeline />} />
           <Route path="/projBudget" element={<ProjBudget />} />
+          <Route path="/addPin" element={<AddPin />} />
+          <Route path="/editEvent" element={<EditEvent />} />
+          <Route path="/projSetting" element={<ProjSetting />} />
         </Routes>
       </Router>
     </AuthProvider>

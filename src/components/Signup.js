@@ -1,13 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import Avatar from "@mui/material/Avatar";
+import { doc, setDoc } from "firebase/firestore";
+
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -17,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Password from "./PassInput";
-import { GoogleIcon, FacebookIcon } from "./CustomIcons";
+
 import Link from "@mui/material/Link";
 
 const defaultTheme = createTheme();
@@ -55,17 +51,17 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
+  const [firstName, setfirstName] = useState("");
+  const [lastName, setlastName] = useState("");
   const [username, setUsername] = useState("");
   const [errors, setErrors] = useState({});
-  const [userInfo, setUserInfo] = useState(null);
+  // const [userInfo, setUserInfo] = useState(null);
 
   const handleValidation = () => {
     let formErrors = {};
 
-    if (!fname) formErrors.fname = "First name is required";
-    if (!lname) formErrors.lname = "Last name is required";
+    if (!firstName) formErrors.firstName = "First name is required";
+    if (!lastName) formErrors.lastName = "Last name is required";
     if (!username) formErrors.username = "Username is required";
     if (!email) formErrors.email = "Email is required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
@@ -102,8 +98,8 @@ const Signup = () => {
       const user = userCredential.user;
 
       await setDoc(doc(db, "users", user.uid), {
-        fname,
-        lname,
+        firstName,
+        lastName,
         username,
         email,
       });
@@ -126,43 +122,6 @@ const Signup = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // Extract user information
-      const displayName = user.displayName ? user.displayName.split(" ") : [];
-      const firstName = displayName[0] || "";
-      const lastName = displayName.slice(1).join(" ") || "";
-      const email = user.email || "";
-      const username = `${firstName}_${lastName}`.toLowerCase();
-
-      // Set user info
-      setUserInfo({ firstName, lastName, email, username });
-
-      // Save user info to Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        fname,
-        lname,
-        email,
-        username,
-      });
-
-      navigate("/homepage");
-      console.log("Google login successful", {
-        firstName,
-        lastName,
-        email,
-        username,
-      });
-    } catch (error) {
-      console.error("Google login error", error);
-      setErrors({ general: "Google login failed. Please try again." });
-    }
-  };
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -180,27 +139,27 @@ const Signup = () => {
               margin="normal"
               required
               fullWidth
-              id="fname"
+              id="firstName"
               label="First Name"
-              name="fname"
+              name="firstName"
               autoFocus
-              value={fname}
-              onChange={(e) => setFname(e.target.value)}
-              error={!!errors.fname}
-              helperText={errors.fname}
+              value={firstName}
+              onChange={(e) => setfirstName(e.target.value)}
+              error={!!errors.firstName}
+              helperText={errors.firstName}
               sx={commonInputStyles}
             />
             <TextField
               margin="normal"
               required
               fullWidth
-              id="lname"
+              id="lastName"
               label="Last Name"
-              name="lname"
-              value={lname}
-              onChange={(e) => setLname(e.target.value)}
-              error={!!errors.lname}
-              helperText={errors.lname}
+              name="lastName"
+              value={lastName}
+              onChange={(e) => setlastName(e.target.value)}
+              error={!!errors.lastName}
+              helperText={errors.lastName}
               sx={commonInputStyles}
             />
             <TextField

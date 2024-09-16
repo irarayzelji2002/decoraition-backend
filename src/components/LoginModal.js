@@ -126,48 +126,50 @@ export default function LoginModal() {
           }}
         >
           <Box component="form" onSubmit={onLogin} noValidate sx={{ mt: 1 }}>
+            <span className="formLabels">Email Address</span>
             <TextField
-              margin="normal"
               required
               fullWidth
-              label="Email Address"
+              label="Your email address"
               name="email"
               autoComplete="email"
               autoFocus
               id="email-address"
               type="email"
-              placeholder="Email address"
+              placeholder="Your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={!!errors.email}
               helperText={errors.email}
               sx={{
+                marginTop: "10px",
+                marginBottom: "10px",
                 input: {
-                  color: "white",
+                  color: "var(--color-white)",
                   backgroundColor: "#3E3C47",
-                  borderRadius: "24px",
+                  borderRadius: "5px",
                 },
                 label: { color: "white" },
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
-                    borderColor: "white",
-                    borderRadius: "24px",
+                    borderColor: "var(--borderInput)",
+                    borderRadius: "5px",
                   },
                   "&:hover fieldset": {
-                    borderColor: "white",
-                    borderRadius: "24px",
+                    borderColor: "var(--borderInput)",
+                    borderRadius: "5px",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "white",
-                    borderRadius: "24px",
+                    borderColor: "var(--color-white)",
+                    borderRadius: "5px",
                   },
                 },
                 "& .MuiFormHelperText-root": {
-                  color: "white",
+                  color: "var(--color-white)",
                 },
               }}
             />
-
+            <span className="formLabels">Password</span>
             <Password
               id="password"
               name="password"
@@ -196,6 +198,10 @@ export default function LoginModal() {
                         color: "white",
                         "&.Mui-checked": {
                           color: "white",
+                        },
+                        borderRadius: "4px",
+                        "& .MuiSvgIcon-root": {
+                          fontSize: 28,
                         },
                       }}
                     />
@@ -276,7 +282,7 @@ export default function LoginModal() {
               maxWidth: "400px",
             }}
           >
-            Login with Google
+            Login with Google&nbsp;&nbsp;&nbsp;&nbsp;
           </Button>
           <Button
             type="button"
@@ -302,24 +308,28 @@ export default function LoginModal() {
                 boxShadow: "none",
               },
               maxWidth: "400px",
+              marginTop: "-12px",
             }}
           >
             Login with Facebook
           </Button>
         </Box>
 
-        <Grid container justifyContent="center" alignItems="center">
-          <Grid item>
-            <Typography variant="body2" sx={{ color: "white", marginRight: 1 }}>
-              Don&apos;t have an account?
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Link href="/register" variant="body2" className="cancel-link">
-              Sign Up
-            </Link>
-          </Grid>
-        </Grid>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: "18px ",
+          }}
+        >
+          Don&apos;t have an account?&nbsp;
+          <Link href="/register" variant="body2" className="cancel-link">
+            Sign Up
+          </Link>
+        </Typography>
       </Container>
     </ThemeProvider>
   );

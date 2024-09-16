@@ -25,7 +25,7 @@ export default function Password({
 
   return (
     <FormControl
-      sx={{ width: "100%", marginTop: "12px" }}
+      sx={{ width: "100%", marginTop: "10px", marginBottom: "10px" }}
       variant="outlined"
       error={error}
     >
@@ -52,7 +52,7 @@ export default function Password({
               onClick={handleClickShowPassword}
               onMouseDown={handleMouseDownPassword}
               edge="end"
-              sx={{ color: "#ffffff" }} // Make the visibility icons white
+              sx={{ color: "var(--color-white)" }} // Make the visibility icons white
             >
               {showPassword ? <VisibilityOff /> : <Visibility />}
             </IconButton>
@@ -60,17 +60,17 @@ export default function Password({
         }
         label="Password"
         sx={{
-          color: "#ffffff",
-          borderRadius: "24px", // Input text color
+          color: "var(--color-white)",
+          borderRadius: "5px", // Input text color
           backgroundColor: "#3E3C47",
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#ffffff", // Outline color
+            borderColor: "var(--borderInput)", // Outline color
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#ffffff", // Outline color on hover
+            borderColor: "var(--borderInput)", // Outline color on hover
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#ffffff", // Outline color when focused
+            borderColor: "var(--borderInput)", // Outline color when focused
           },
         }}
       />

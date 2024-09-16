@@ -1,11 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Outlet,
-  useNavigate,
-} from "react-router-dom";
 import "./App.css";
 import "./css/loginModal.css";
 // import Login from "./pages/Account/login.js";

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ProjectHead from "../../components/ProjectHead";
 import MapPin from "./MapPin";
 import BottomBarDesign from "../../components/BottomBarProject";
-import { useNavigate } from "react-router-dom";
+
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
@@ -15,7 +15,6 @@ import "../../css/budget.css";
 
 function PlanMap() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);

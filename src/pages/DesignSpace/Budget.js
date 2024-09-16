@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import DesignHead from "../../components/DesignHead";
 import Item from "./Item";
 import BottomBar from "../../components/BottomBar";
-import { useNavigate } from "react-router-dom";
+
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import "../../css/budget.css";
 
-
 function Budget() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);

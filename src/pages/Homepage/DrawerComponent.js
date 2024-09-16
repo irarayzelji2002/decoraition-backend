@@ -1,5 +1,5 @@
 import React from "react";
-import { styled, alpha } from "@mui/material/styles";
+
 import {
   Drawer,
   IconButton,
@@ -12,7 +12,7 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+
 import BedtimeIcon from "@mui/icons-material/Bedtime";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import HomeIcon from "@mui/icons-material/Home";
@@ -21,7 +21,6 @@ import FolderIcon from "@mui/icons-material/Folder";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
-import InputBase from "@mui/material/InputBase";
 
 const DrawerComponent = ({
   isDrawerOpen,

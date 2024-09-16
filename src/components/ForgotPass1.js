@@ -54,13 +54,14 @@ export default function ForgotPass1() {
             noValidate
             sx={{ mt: 1 }}
           >
+            <span className="formLabels">Email address</span>
             <TextField
               margin="normal"
               required
               fullWidth
               id="email"
-              label="Email Address"
               name="email"
+              label="Enter your email Address"
               autoComplete="email"
               autoFocus
               value={email}
@@ -69,18 +70,18 @@ export default function ForgotPass1() {
               helperText={emailError}
               className="email-field"
               sx={{
-                input: { color: "white" },
-                "& label": { color: "white" },
-                "& label.Mui-focused": { color: "white" },
+                input: { color: "var(--color-white)" },
+                "& label": { color: "var(--borderInput)" },
+                "& label.Mui-focused": { color: "var(--borderInput)" },
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
-                    borderColor: "white",
+                    borderColor: "var(--borderInput)",
                   },
                   "&:hover fieldset": {
-                    borderColor: "white",
+                    borderColor: "var(--borderInput)",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "white",
+                    borderColor: "var(--borderInput)",
                   },
                 },
                 "& .MuiFormHelperText-root": {

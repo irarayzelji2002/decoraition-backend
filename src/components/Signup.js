@@ -19,20 +19,26 @@ import Link from "@mui/material/Link";
 const defaultTheme = createTheme();
 
 const commonInputStyles = {
-  input: { color: "white", backgroundColor: "#3E3C47", borderRadius: "24px" },
+  marginTop: "10px",
+  marginBottom: "10px",
+  input: {
+    color: "var(--color-white)",
+    backgroundColor: "var(--inputBg)",
+    borderRadius: "5px",
+  },
   label: { color: "white" },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "white",
-      borderRadius: "24px",
+      borderColor: "var(--borderInput)",
+      borderRadius: "5px",
     },
     "&:hover fieldset": {
-      borderColor: "white",
-      borderRadius: "24px",
+      borderColor: "var(--borderInput)",
+      borderRadius: "5px",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "white",
-      borderRadius: "24px",
+      borderColor: "var(--borderInput)",
+      borderRadius: "5px",
     },
   },
   "& .MuiFormHelperText-root": {
@@ -135,12 +141,15 @@ const Signup = () => {
           }}
         >
           <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
+            <span className="formLabels">
+              First Name
+              <span style={{ color: "var(--color-quaternary)" }}> *</span>
+            </span>
+
             <TextField
-              margin="normal"
               required
               fullWidth
               id="firstName"
-              label="First Name"
               name="firstName"
               autoFocus
               value={firstName}
@@ -149,12 +158,14 @@ const Signup = () => {
               helperText={errors.firstName}
               sx={commonInputStyles}
             />
+            <span className="formLabels">
+              Last Name
+              <span style={{ color: "var(--color-quaternary)" }}> *</span>
+            </span>
             <TextField
-              margin="normal"
               required
               fullWidth
               id="lastName"
-              label="Last Name"
               name="lastName"
               value={lastName}
               onChange={(e) => setlastName(e.target.value)}
@@ -162,12 +173,15 @@ const Signup = () => {
               helperText={errors.lastName}
               sx={commonInputStyles}
             />
+
+            <span className="formLabels">
+              Username
+              <span style={{ color: "var(--color-quaternary)" }}> *</span>
+            </span>
             <TextField
-              margin="normal"
               required
               fullWidth
               id="username"
-              label="Username"
               name="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -175,12 +189,14 @@ const Signup = () => {
               helperText={errors.username}
               sx={commonInputStyles}
             />
+            <span className="formLabels">
+              Email Address
+              <span style={{ color: "var(--color-quaternary)" }}> *</span>
+            </span>
             <TextField
-              margin="normal"
               required
               fullWidth
               id="email"
-              label="Email Address"
               name="email"
               autoComplete="email"
               value={email}
@@ -193,11 +209,14 @@ const Signup = () => {
               style={{
                 color: "gray",
                 fontSize: "12px",
-                marginBottom: "-8px",
               }}
             >
               At least 6 characters long, with 1 special character
             </p>
+            <span className="formLabels">
+              Password
+              <span style={{ color: "var(--color-quaternary)" }}> *</span>
+            </span>
             <Password
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -205,6 +224,10 @@ const Signup = () => {
               helperText={errors.password}
               sx={commonInputStyles}
             />
+            <span className="formLabels">
+              Confirm Password
+              <span style={{ color: "var(--color-quaternary)" }}> *</span>
+            </span>
             <Password
               label="Confirm Password"
               value={confirmPassword}
@@ -213,7 +236,6 @@ const Signup = () => {
               helperText={errors.confirmPassword}
               sx={commonInputStyles}
             />
-
             <Button
               type="submit"
               fullWidth

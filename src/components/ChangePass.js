@@ -80,17 +80,24 @@ export default function ChangePass() {
               style={{
                 color: "gray",
                 fontSize: "12px",
-                marginBottom: "-8px",
               }}
             >
               At least 6 characters long, with 1 special character
             </p>
+            <span className="formLabels">
+              New Password
+              <span style={{ color: "var(--color-quaternary)" }}> *</span>
+            </span>
             <Password
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               error={!!error}
               helperText={error}
             />
+            <span className="formLabels">
+              Confirm New Password
+              <span style={{ color: "var(--color-quaternary)" }}> *</span>
+            </span>
             <Password
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

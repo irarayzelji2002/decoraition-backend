@@ -25,10 +25,37 @@ import AddPin from "./pages/ProjectSpace/AddPin.js";
 import EditEvent from "./pages/ProjectSpace/EditEvent";
 import ProjSetting from "./pages/Settings/ProjSetting.js";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
-import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
-import { Rotate90DegreesCcw } from "@mui/icons-material";
+// import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
+// import { Rotate90DegreesCcw } from "@mui/icons-material";
+import { useEffect } from "react";
+import {
+  getAuth,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
 
 function App() {
+  useEffect(() => {
+    const auth = getAuth();
+    // Set persistence to local so the user stays logged in across sessions.
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        // Check if the user is logged in or not
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            // User is signed in, you can set the user state here
+            console.log("User is logged in:", user);
+          } else {
+            // No user is signed in, redirect to login page or handle accordingly
+            console.log("No user logged in");
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error with setting persistence:", error);
+      });
+  }, []);
   return (
     <AuthProvider>
       <Router>

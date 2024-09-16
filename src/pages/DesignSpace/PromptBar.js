@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import "../../css/design.css";
 import Input from "@mui/joy/Input";
 import Slider from "@mui/joy/Slider";
@@ -8,13 +8,27 @@ import MenuButton from "@mui/joy/MenuButton";
 import MenuItem from "@mui/joy/MenuItem";
 import Menu from "@mui/joy/Menu";
 import { MuiColorInput } from "mui-color-input";
+import { Modal, Box } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close"; 
 
 function PromptBar() {
   const [value, setValue] = React.useState("#ffffff");
+  const [modalOpen, setModalOpen] = useState(false); 
+  const [modalTitle, setModalTitle] = useState("");
 
   const handleChange = (newValue) => {
     setValue(newValue);
   };
+
+  const handleOpenModal = (title) => {
+    setModalTitle(title); 
+    setModalOpen(true); 
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <div className="promptBar">
       <h3>Describe your Idea</h3>
@@ -27,8 +41,8 @@ function PromptBar() {
           width: "90%",
         }}
       />
-      <h3>Number of images to Generate</h3>
 
+      <h3>Number of images to Generate</h3>
       <Slider defaultValue={1} max={4} />
 
       <div
@@ -36,6 +50,7 @@ function PromptBar() {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
+          marginBottom: "20px",
         }}
       >
         <div>
@@ -45,11 +60,12 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "40px" }}
+          sx={{ borderRadius: "40px", marginLeft: "20px" }}
           style={{
-            backgroundImage: "linear-gradient(20deg, #ec2073,#f89a47)",
+            backgroundImage: "linear-gradient(20deg, #ec2073, #f89a47)",
             height: "40px",
           }}
+          onClick={() => handleOpenModal("Upload an image of the space")}
         >
           <svg
             width="15"
@@ -59,8 +75,8 @@ function PromptBar() {
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M70.1777 178.192C72.282 178.31 74.4032 178.37 76.5392 178.37C134.258 178.37 181.049 134.448 181.049 80.2668C181.049 75.4202 180.675 70.6557 179.951 65.9974H350.082C372.137 65.9974 390.068 82.3378 390.068 102.436V284.628C390.068 304.726 372.137 321.067 350.082 321.067H110.164C88.1091 321.067 70.1777 304.726 70.1777 284.628V178.192ZM200.133 157.094C195.197 157.094 190.574 159.314 187.763 163.072L112.788 263.278C109.664 267.434 109.352 272.843 111.913 277.341C114.475 281.838 119.598 284.628 125.159 284.628H335.087C340.835 284.628 346.083 281.611 348.583 276.885C351.082 272.159 350.394 266.523 346.771 262.424L306.784 216.875C303.973 213.63 299.599 211.751 295.101 211.751C290.602 211.751 286.291 213.63 283.417 216.875L266.86 235.721L212.504 163.072C209.755 159.314 205.069 157.094 200.133 157.094ZM298.886 149.089C304.51 154.214 312.139 157.094 320.092 157.094C328.046 157.094 335.674 154.214 341.298 149.089C346.922 143.964 350.082 137.013 350.082 129.765C350.082 122.517 346.922 115.565 341.298 110.44C335.674 105.315 328.046 102.436 320.092 102.436C312.139 102.436 304.51 105.315 298.886 110.44C293.262 115.565 290.103 122.517 290.103 129.765C290.103 137.013 293.262 143.964 298.886 149.089Z"
               fill="white"
             />
@@ -73,7 +89,6 @@ function PromptBar() {
           </svg>
         </Button>
       </div>
-
       <div
         style={{
           display: "flex",
@@ -92,6 +107,7 @@ function PromptBar() {
           style={{
             backgroundImage: "linear-gradient(20deg, #ec2073,#f89a47)",
           }}
+          onClick={() => handleOpenModal("Upload an image for style reference")}
         >
           <svg
             width="15"
@@ -143,7 +159,7 @@ function PromptBar() {
         >
           <MenuItem
             onClick={(e) => {
-              e.stopPropagation(); // Prevent the dropdown from closing when clicked
+              e.stopPropagation(); 
             }}
           ></MenuItem>
           <MenuItem>Profile</MenuItem>
@@ -170,6 +186,87 @@ function PromptBar() {
       >
         Generate Image
       </Button>
+
+      {/* Modal component */}
+      <Modal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            backgroundColor: "#27262c",
+            color: "white",
+            width: "500px",
+            maxWidth: "90%",
+            borderRadius: "20px",
+            p: 3, // Padding
+            position: "relative",
+            margin: "auto",
+            top: "20%", 
+          }}
+        >
+        
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <h2 id="modal-title" style={{ color: "white", margin: 0 }}>
+              {modalTitle}
+            </h2>
+            <Button
+              onClick={handleCloseModal}
+              sx={{
+                backgroundColor: "transparent",
+                color: "white",
+                minWidth: "auto",
+                padding: "0",
+                "&:hover": { backgroundColor: "transparent" },
+              }}
+            >
+              <CloseIcon />
+            </Button>
+          </div>
+
+          <div style={{ marginTop: "30px" }}>
+            <Button
+              fullWidth
+              size="md"
+              sx={{
+                backgroundImage: "linear-gradient(20deg, #ec2073, #f89a47)",
+                borderRadius: "20px",
+                color: "white",
+                marginBottom: "20px",
+              }}
+              onClick={() => {
+                console.log("Take a photo clicked");
+              }}
+            >
+              Take a Photo
+            </Button>
+
+            <Button
+              fullWidth
+              size="md"
+              sx={{
+                backgroundImage: "linear-gradient(20deg, #ec2073, #f89a47)",
+                borderRadius: "20px",
+                color: "white",
+              }}
+              onClick={() => {
+                document.getElementById("fileInput").click(); 
+              }}
+            >
+              Browse from gallery
+            </Button>
+            
+            <input
+              type="file"
+              id="fileInput"
+              style={{ display: "none" }}
+              onChange={(e) => console.log(e.target.files[0])}
+            />
+          </div>
+        </Box>
+      </Modal>
     </div>
   );
 }

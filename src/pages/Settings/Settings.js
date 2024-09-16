@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import {
-  AppBar,
   Tabs,
   Tab,
   Avatar,
@@ -8,7 +7,6 @@ import {
   IconButton,
   TextField,
   Box,
-  Typography,
   InputAdornment,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";

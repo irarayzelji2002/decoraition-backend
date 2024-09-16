@@ -1,5 +1,5 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
+
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -8,7 +8,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -27,31 +27,13 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Import Firestore instance
 
 const defaultTheme = createTheme();
-const style = {
-  input: { color: "white" },
-  label: { color: "white" },
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "white",
-    },
-    "&:hover fieldset": {
-      borderColor: "white",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "white",
-    },
-  },
-  "& .MuiFormHelperText-root": {
-    color: "white",
-  },
-};
 
 export default function LoginModal() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const [userInfo, setUserInfo] = useState(null);
+  // const [userInfo, setUserInfo] = useState(null);
 
   const handleValidation = () => {
     let formErrors = {};
@@ -105,7 +87,7 @@ export default function LoginModal() {
       const username = `${firstName}_${lastName}`.toLowerCase();
 
       // Set user info
-      setUserInfo({ firstName, lastName, email, username });
+      // setUserInfo({ firstName, lastName, email, username });
 
       // Save user info to Firestore
       await setDoc(doc(db, "users", user.uid), {

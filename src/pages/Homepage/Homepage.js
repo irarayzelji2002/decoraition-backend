@@ -11,7 +11,7 @@ import {
   deleteDoc,
   setDoc,
 } from "firebase/firestore";
-import { IconButton } from "@mui/material";
+
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -30,7 +30,14 @@ function Homepage() {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-
+  useEffect(() => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      onSnapshot(userRef, (doc) => {
+        setUsername(doc.data().username);
+      });
+    }
+  }, [user]);
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -182,15 +189,17 @@ function Homepage() {
 
             <div className="layout">
               {designs.length > 0 ? (
-                designs.map((design) => (
-                  <DesignIcon
-                    key={design.id}
-                    name={design.name}
-                    designId={design.id}
-                    onDelete={handleDeleteDesign}
-                    onOpen={() => navigate(`/design/${design.id}`)}
-                  />
-                ))
+                designs
+                  .slice(0, 5)
+                  .map((design) => (
+                    <DesignIcon
+                      key={design.id}
+                      name={design.name}
+                      designId={design.id}
+                      onDelete={handleDeleteDesign}
+                      onOpen={() => navigate(`/design/${design.id}`)}
+                    />
+                  ))
               ) : (
                 <div className="no-content">
                   <img src="/img/design-placeholder.png" alt="No designs yet" />
@@ -228,7 +237,7 @@ function Homepage() {
               ) : (
                 <div className="no-content">
                   <img src="/img/design-placeholder.png" alt="No designs yet" />
-                  <p>No designs yet. Start creating.</p>
+                  <p>No Projects yet. Start creating.</p>
                 </div>
               )}
             </div>

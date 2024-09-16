@@ -21,24 +21,18 @@ const defaultTheme = createTheme();
 const commonInputStyles = {
   marginTop: "10px",
   marginBottom: "10px",
-  input: {
-    color: "var(--color-white)",
-    backgroundColor: "var(--inputBg)",
-    borderRadius: "5px",
-  },
-  label: { color: "white" },
+  input: { color: "var(--color-white)", backgroundColor: "var(--inputBg)" },
+  "& label": { color: "var(--borderInput)" },
+  "& label.Mui-focused": { color: "var(--borderInput)" },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
       borderColor: "var(--borderInput)",
-      borderRadius: "5px",
     },
     "&:hover fieldset": {
       borderColor: "var(--borderInput)",
-      borderRadius: "5px",
     },
     "&.Mui-focused fieldset": {
       borderColor: "var(--borderInput)",
-      borderRadius: "5px",
     },
   },
   "& .MuiFormHelperText-root": {
@@ -151,6 +145,7 @@ const Signup = () => {
               fullWidth
               id="firstName"
               name="firstName"
+              label="First Name"
               autoFocus
               value={firstName}
               onChange={(e) => setfirstName(e.target.value)}
@@ -167,6 +162,7 @@ const Signup = () => {
               fullWidth
               id="lastName"
               name="lastName"
+              label="Last Name"
               value={lastName}
               onChange={(e) => setlastName(e.target.value)}
               error={!!errors.lastName}
@@ -183,6 +179,7 @@ const Signup = () => {
               fullWidth
               id="username"
               name="username"
+              label="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               error={!!errors.username}
@@ -198,6 +195,7 @@ const Signup = () => {
               fullWidth
               id="email"
               name="email"
+              label="Email Address"
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

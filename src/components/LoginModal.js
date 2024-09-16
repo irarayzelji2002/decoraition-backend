@@ -136,7 +136,6 @@ export default function LoginModal() {
               autoFocus
               id="email-address"
               type="email"
-              placeholder="Your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={!!errors.email}
@@ -144,28 +143,23 @@ export default function LoginModal() {
               sx={{
                 marginTop: "10px",
                 marginBottom: "10px",
-                input: {
-                  color: "var(--color-white)",
-                  backgroundColor: "#3E3C47",
-                  borderRadius: "5px",
-                },
-                label: { color: "white" },
+                backgroundColor: "var(--inputBg)",
+                input: { color: "var(--color-white)" },
+                "& label": { color: "var(--borderInput)" },
+                "& label.Mui-focused": { color: "var(--borderInput)" },
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
                     borderColor: "var(--borderInput)",
-                    borderRadius: "5px",
                   },
                   "&:hover fieldset": {
                     borderColor: "var(--borderInput)",
-                    borderRadius: "5px",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "var(--color-white)",
-                    borderRadius: "5px",
+                    borderColor: "var(--borderInput)",
                   },
                 },
                 "& .MuiFormHelperText-root": {
-                  color: "var(--color-white)",
+                  color: "white",
                 },
               }}
             />

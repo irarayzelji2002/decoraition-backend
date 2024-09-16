@@ -32,9 +32,9 @@ export default function Password({
       <InputLabel
         htmlFor="outlined-adornment-password"
         sx={{
-          color: "#ffffff", // Default label color
+          color: "var(--borderInput)", // Default label color
           "&.Mui-focused": {
-            color: "#ffffff", // Label color when focused
+            color: "var(--borderInput)", // Label color when focused
           },
         }}
       >

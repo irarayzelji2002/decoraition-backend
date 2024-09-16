@@ -46,6 +46,9 @@ const DrawerComponent = ({
           display: "flex",
           flexDirection: "column",
         },
+        "& .MuiDrawer-paper::-webkit-scrollbar": {
+          display: "none",
+        },
       }}
     >
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>

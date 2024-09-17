@@ -4,18 +4,18 @@
   justify-content: flex-start;
   align-items: center;
   background-color: #1f1e22;
-  color: white;
+  color: var(--color-white);
   height: 100vh;
   padding: 20px;
 }
 
 /* Calendar section */
 .react-calendar__navigation__label {
-  color: white;
+  color: var(--color-white);
 }
 
 .react-calendar__navigation__arrow {
-  color: white;
+  color: var(--color-white);
 }
 
 .calendar-section {
@@ -28,24 +28,24 @@
 
 /* Custom styling for the calendar */
 .custom-calendar {
-  background-color: #27262c;
-  color: white;
+  background-color: var(--nav-card-modal);
+  color: var(--color-white);
   border-radius: 8px;
   padding: 10px;
 }
 
 .custom-calendar .react-calendar__tile {
-  color: white;
+  color: var(--color-white);
 }
 
 .custom-calendar .react-calendar__tile--now {
   background: #ff5e5e;
-  color: white;
+  color: var(--color-white);
 }
 
 .custom-calendar .react-calendar__tile--active {
   background: #ff8c8c;
-  color: white;
+  color: var(--color-white);
 }
 
 /* Task list */
@@ -58,7 +58,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #27262c;
+  background-color: var(--nav-card-modal);
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -66,7 +66,7 @@
 
 .task-text h3 {
   margin: 0;
-  color: white;
+  color: var(--color-white);
 }
 
 .task-text p {

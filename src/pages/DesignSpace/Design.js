@@ -1,79 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { auth, db } from "../../firebase";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import React, { useState } from "react";
+
 import DesignHead from "../../components/DesignHead";
 import PromptBar from "./PromptBar";
 import BottomBar from "../../components/BottomBar";
 import "../../css/design.css";
 
 function Design() {
-  const location = useLocation();
-  const [designName, setDesignName] = useState("Untitled");
-  const [designId, setDesignId] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState("");
   const [numImageFrames, setNumImageFrames] = useState(2);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [newName, setNewName] = useState("");
-
-  useEffect(() => {
-    // Get designId from location state
-    const { state } = location;
-    if (state && state.designId) {
-      setDesignId(state.designId);
-      fetchDesignDetails(state.designId);
-    } else {
-      console.error("Design ID not provided");
-      // Handle missing design ID case
-    }
-  }, [location.state]);
-
-  const fetchDesignDetails = async (id) => {
-    try {
-      const designRef = doc(db, "users", auth.currentUser.uid, "designs", id);
-      const designSnap = await getDoc(designRef);
-      if (designSnap.exists()) {
-        setDesignName(designSnap.data().name);
-        // Set other design details if needed
-      } else {
-        console.error("No such design!");
-        // Handle case where design does not exist
-      }
-    } catch (error) {
-      console.error("Error fetching design details:", error);
-    }
-  };
-
-  const handleUpdateDesignName = (newName) => {
-    setNewName(newName);
-    setShowConfirmation(true);
-  };
-
-  const confirmNameChange = async () => {
-    if (designId) {
-      try {
-        const designRef = doc(
-          db,
-          "users",
-          auth.currentUser.uid,
-          "designs",
-          designId
-        );
-        await updateDoc(designRef, { name: newName });
-        setDesignName(newName);
-        setShowConfirmation(false);
-      } catch (error) {
-        console.error("Error updating design name:", error);
-        alert("Failed to update design name.");
-      }
-    }
-  };
-
-  const cancelNameChange = () => {
-    setNewName("");
-    setShowConfirmation(false);
-  };
 
   const toggleComments = () => {
     setShowComments((prevShowComments) => !prevShowComments);
@@ -81,12 +16,7 @@ function Design() {
 
   return (
     <div className="whole">
-      <DesignHead
-        designName={designName}
-        setDesignName={handleUpdateDesignName}
-        designId={designId}
-        toggleComments={toggleComments}
-      />
+      <DesignHead toggleComments={toggleComments} />
 
       <div className="create-design">
         <div className="workspace">
@@ -152,13 +82,7 @@ function Design() {
           )}
         </div>
       </div>
-      {showConfirmation && (
-        <div className="confirmation-dialog">
-          <p>Are you sure you want to change the design name to "{newName}"?</p>
-          <button onClick={confirmNameChange}>Confirm</button>
-          <button onClick={cancelNameChange}>Cancel</button>
-        </div>
-      )}
+
       <BottomBar />
     </div>
   );

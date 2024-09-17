@@ -2,19 +2,14 @@ import React, { useState } from "react";
 import "../../css/design.css";
 import Slider from "@mui/joy/Slider";
 import Button from "@mui/joy/Button";
-import { MuiColorInput } from "mui-color-input";
+
 import { Modal, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Textarea from "@mui/joy/Textarea";
 
 function PromptBar() {
-  const [value, setValue] = React.useState("#ffffff");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
-
-  const handleChange = (newValue) => {
-    setValue(newValue);
-  };
 
   const handleOpenModal = (title) => {
     setModalTitle(title);

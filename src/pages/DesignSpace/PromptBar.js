@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import "../../css/design.css";
-
 import Slider from "@mui/joy/Slider";
 import Button from "@mui/joy/Button";
-import Dropdown from "@mui/joy/Dropdown";
-import MenuButton from "@mui/joy/MenuButton";
-import MenuItem from "@mui/joy/MenuItem";
-import Menu from "@mui/joy/Menu";
 import { MuiColorInput } from "mui-color-input";
 import { Modal, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -140,6 +135,8 @@ function PromptBar() {
           </svg>
         </Button>
       </div>
+
+      <br />
       <div
         style={{
           display: "flex",
@@ -148,17 +145,17 @@ function PromptBar() {
         }}
       >
         <div>
-          <h3>Use color pallete</h3>
+          <h3>Choose a Color Palette</h3>
           <h6>optional</h6>
         </div>
 
         <Button
           size="md"
-          sx={{ borderRadius: "90%", marginLeft: "auto" }}
+          sx={{ borderRadius: "40px" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
           }}
-          onClick={() => handleOpenModal("Upload an image for style reference")}
+          onClick={() => handleOpenModal("Add a Color Palette")}
         >
           <svg
             width="15"
@@ -182,41 +179,6 @@ function PromptBar() {
           </svg>
         </Button>
       </div>
-
-      <br />
-      <Dropdown>
-        <MenuButton
-          sx={{
-            color: "var(--color-white)",
-            m: 1,
-            width: "100%",
-            "&:hover": {
-              backgroundColor: "var( --inputBg)",
-              color: "white",
-            },
-          }}
-        >
-          Choose Color Palette &#9660;
-        </MenuButton>
-        <Menu
-          sx={{
-            backgroundColor: "transparent",
-            width: "50%",
-            "& .MuiMenuItem-root": {
-              backgroundColor: "var(--inputBg)",
-              color: "var(--color-white)",
-            },
-          }}
-        >
-          <MenuItem>Pallete1</MenuItem>
-          <MenuItem>Pallete2</MenuItem>
-        </Menu>
-      </Dropdown>
-      <center>
-        <MuiColorInput format="hex" value={value} onChange={handleChange} />
-      </center>
-
-      <br />
 
       <Button
         type="submit"
@@ -249,7 +211,7 @@ function PromptBar() {
             width: "500px",
             maxWidth: "90%",
             borderRadius: "20px",
-            p: 3, // Padding
+            p: 3,
             position: "relative",
             margin: "auto",
             top: "20%",

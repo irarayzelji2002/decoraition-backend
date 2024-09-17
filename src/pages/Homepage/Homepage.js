@@ -189,17 +189,19 @@ function Homepage() {
 
             <div className="layout">
               {designs.length > 0 ? (
-                designs
-                  .slice(0, 5)
-                  .map((design) => (
-                    <DesignIcon
-                      key={design.id}
-                      name={design.name}
-                      designId={design.id}
-                      onDelete={handleDeleteDesign}
-                      onOpen={() => navigate(`/design/${design.id}`)}
-                    />
-                  ))
+                designs.slice(0, 5).map((design) => (
+                  <DesignIcon
+                    key={design.id}
+                    name={design.name}
+                    designId={design.id}
+                    onDelete={handleDeleteDesign}
+                    onOpen={() =>
+                      navigate(`/design/${design.id}`, {
+                        state: { designId: design.id },
+                      })
+                    }
+                  />
+                ))
               ) : (
                 <div className="no-content">
                   <img src="/img/design-placeholder.png" alt="No designs yet" />

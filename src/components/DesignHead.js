@@ -52,8 +52,24 @@ function DesignHead({ designName, setDesignName, toggleComments }) {
   const [isSecondPage, setIsSecondPage] = useState(false);
   const [role, setRole] = useState("Editor");
   const [notifyPeople, setNotifyPeople] = useState(true);
+  const [tempName, setTempName] = useState(designName);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // const open = Boolean(anchorEl);
+  const handleInputChange = (e) => {
+    setTempName(e.target.value);
+    setShowConfirm(true);
+  };
+
+  const handleConfirm = () => {
+    setDesignName(tempName); // Update the design name in parent component
+    setShowConfirm(false);
+  };
+
+  const handleCancel = () => {
+    setTempName(designName); // Revert to original name
+    setShowConfirm(false);
+  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -377,11 +393,17 @@ function DesignHead({ designName, setDesignName, toggleComments }) {
         </IconButton>
         <input
           type="text"
-          value={designName}
-          onChange={(e) => setDesignName(e.target.value)}
+          value={tempName}
+          onChange={handleInputChange}
           placeholder="Untitled"
           className="headTitleInput"
         />
+        {showConfirm && (
+          <div className="confirm-buttons">
+            <button onClick={handleConfirm}>✔️</button>
+            <button onClick={handleCancel}>❌</button>
+          </div>
+        )}
       </div>
       <div className="right">
         <IconButton onClick={toggleComments}>

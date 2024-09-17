@@ -110,7 +110,7 @@ const DrawerComponent = ({
         </Typography>
 
         {designs.length > 0 ? (
-          designs.map((design) => (
+          designs.slice(0, 5).map((design) => (
             <ListItem key={design.id}>
               <ListItemText primary={design.name} />
               <IconButton edge="end" aria-label="more">

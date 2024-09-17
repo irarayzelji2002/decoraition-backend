@@ -9,11 +9,11 @@ import MenuItem from "@mui/joy/MenuItem";
 import Menu from "@mui/joy/Menu";
 import { MuiColorInput } from "mui-color-input";
 import { Modal, Box } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close"; 
+import CloseIcon from "@mui/icons-material/Close";
 
 function PromptBar() {
   const [value, setValue] = React.useState("#ffffff");
-  const [modalOpen, setModalOpen] = useState(false); 
+  const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
 
   const handleChange = (newValue) => {
@@ -21,8 +21,8 @@ function PromptBar() {
   };
 
   const handleOpenModal = (title) => {
-    setModalTitle(title); 
-    setModalOpen(true); 
+    setModalTitle(title);
+    setModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -37,7 +37,7 @@ function PromptBar() {
         placeholder="Large"
         sx={{
           backgroundColor: "transparent",
-          color: "white",
+          color: "var(--color-white)",
           width: "90%",
         }}
       />
@@ -62,7 +62,7 @@ function PromptBar() {
           size="md"
           sx={{ borderRadius: "40px", marginLeft: "20px" }}
           style={{
-            backgroundImage: "linear-gradient(20deg, #ec2073, #f89a47)",
+            backgroundImage: "var(--gradientCircle)",
             height: "40px",
           }}
           onClick={() => handleOpenModal("Upload an image of the space")}
@@ -105,7 +105,7 @@ function PromptBar() {
           size="md"
           sx={{ borderRadius: "40px" }}
           style={{
-            backgroundImage: "linear-gradient(20deg, #ec2073,#f89a47)",
+            backgroundImage: "var(--gradientCircle)",
           }}
           onClick={() => handleOpenModal("Upload an image for style reference")}
         >
@@ -136,10 +136,13 @@ function PromptBar() {
       <Dropdown>
         <MenuButton
           sx={{
-            color: "white",
+            color: "var(--color-white)",
             m: 1,
             width: "90%",
-            "&:hover": { backgroundColor: "gray", color: "white" },
+            "&:hover": {
+              backgroundColor: "var( --inputBg)",
+              color: "white",
+            },
           }}
         >
           Choose Color Palette &#9660;
@@ -150,7 +153,7 @@ function PromptBar() {
             width: "50%",
             "& .MuiMenuItem-root": {
               backgroundColor: "gray",
-              color: "white",
+              color: "var(--color-white)",
               "&:hover": {
                 backgroundColor: "darkgray",
               },
@@ -159,7 +162,7 @@ function PromptBar() {
         >
           <MenuItem
             onClick={(e) => {
-              e.stopPropagation(); 
+              e.stopPropagation();
             }}
           ></MenuItem>
           <MenuItem>Profile</MenuItem>
@@ -178,7 +181,7 @@ function PromptBar() {
           color: "white",
           mt: 3,
           mb: 2,
-          backgroundImage: "linear-gradient(20deg, #faa653, #f04f59)",
+          backgroundImage: "var(--gradientButton)",
           borderRadius: "20px",
           textTransform: "none",
           fontWeight: "bold",
@@ -197,17 +200,16 @@ function PromptBar() {
         <Box
           sx={{
             backgroundColor: "#27262c",
-            color: "white",
+            color: "var(--color-white)",
             width: "500px",
             maxWidth: "90%",
             borderRadius: "20px",
             p: 3, // Padding
             position: "relative",
             margin: "auto",
-            top: "20%", 
+            top: "20%",
           }}
         >
-        
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <h2 id="modal-title" style={{ color: "white", margin: 0 }}>
               {modalTitle}
@@ -216,7 +218,7 @@ function PromptBar() {
               onClick={handleCloseModal}
               sx={{
                 backgroundColor: "transparent",
-                color: "white",
+                color: "var(--color-white)",
                 minWidth: "auto",
                 padding: "0",
                 "&:hover": { backgroundColor: "transparent" },
@@ -231,7 +233,7 @@ function PromptBar() {
               fullWidth
               size="md"
               sx={{
-                backgroundImage: "linear-gradient(20deg, #ec2073, #f89a47)",
+                backgroundImage: "var(--gradientButton)",
                 borderRadius: "20px",
                 color: "white",
                 marginBottom: "20px",
@@ -247,17 +249,17 @@ function PromptBar() {
               fullWidth
               size="md"
               sx={{
-                backgroundImage: "linear-gradient(20deg, #ec2073, #f89a47)",
+                backgroundImage: "var(--gradientButton)",
                 borderRadius: "20px",
                 color: "white",
               }}
               onClick={() => {
-                document.getElementById("fileInput").click(); 
+                document.getElementById("fileInput").click();
               }}
             >
               Browse from gallery
             </Button>
-            
+
             <input
               type="file"
               id="fileInput"

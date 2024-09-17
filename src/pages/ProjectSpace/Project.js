@@ -27,7 +27,7 @@ const OptionButton = styled(Button)(({ theme }) => ({
   borderRadius: "10px",
   marginTop: theme.spacing(1),
   backgroundColor: "#25232A",
-  color: "white",
+  color: "var(--color-white)",
   "&:hover": {
     backgroundColor: "#3B393F",
   },
@@ -56,10 +56,10 @@ function Project() {
               <InputBase
                 placeholder="Search…"
                 inputProps={{ "aria-label": "search" }}
-                sx={{ flex: 1, color: "white" }}
+                sx={{ flex: 1, color: "var(--color-white)" }}
               />
               <IconButton type="submit" aria-label="search">
-                <SearchIcon sx={{ color: "white" }} />
+                <SearchIcon sx={{ color: "var(--color-white)" }} />
               </IconButton>
             </SearchBar>
             <OptionButton>Any owner</OptionButton>
@@ -133,13 +133,13 @@ function Project() {
         >
           <IconButton
             type="button"
-            sx={{ p: "10px", color: "white" }}
+            sx={{ p: "10px", color: "var(--color-white)" }}
             aria-label="search"
           >
-            <SearchIcon sx={{ color: "white" }} />
+            <SearchIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
           <InputBase
-            sx={{ ml: 1, flex: 1, color: "white" }}
+            sx={{ ml: 1, flex: 1, color: "var(--color-white)" }}
             placeholder="Search Item"
             inputProps={{ "aria-label": "search google maps" }}
           />

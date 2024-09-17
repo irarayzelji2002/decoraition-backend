@@ -16,7 +16,7 @@ const theme = createTheme({
       styleOverrides: {
         switchBase: {
           "& .MuiSwitch-thumb": {
-            backgroundColor: "white", // Color of the switch thumb
+            backgroundColor: "var(--color-white)", // Color of the switch thumb
           },
           "&.Mui-checked .MuiSwitch-thumb": {
             backgroundImage: "var(--gradientCircle)", // Color when checked
@@ -356,7 +356,7 @@ export default function Notifications() {
               marginTop: "20px",
               marginBottom: "20px",
               backgroundImage: "var(--gradientButton)",
-              color: "white",
+              color: "var(--color-white)",
               fontWeight: "bold",
               borderRadius: "20px",
               textTransform: "none",

@@ -30,8 +30,8 @@ const ProjSetting = () => {
       <Box
         sx={{
           padding: 4,
-          backgroundColor: "#1F1E22",
-          color: "#fff",
+          backgroundColor: "var( --bgcolor)",
+          color: "var(color-white)",
           borderRadius: 2,
         }}
       >
@@ -82,14 +82,18 @@ const ProjSetting = () => {
                   marginRight: 2,
                 }}
               >
-                <Typography variant="h6" sx={{ color: "#fff" }}>
+                <Typography variant="h6" sx={{ color: "var(color-white)" }}>
                   🌐
                 </Typography>
               </Box>
               <Select
                 value={generalAccess}
                 onChange={(e) => setGeneralAccess(e.target.value)}
-                sx={{ backgroundColor: "#1F1E22", color: "#fff", width: 250 }}
+                sx={{
+                  backgroundColor: "var( --bgcolor)",
+                  color: "var(color-white)",
+                  width: 250,
+                }}
               >
                 <MenuItem value="Anyone with the link">
                   Anyone with the link
@@ -155,7 +159,10 @@ const ProjSetting = () => {
                     onChange={(e) => setInactivityDays(e.target.value)}
                     sx={{ width: "100%", marginTop: 1 }}
                     inputProps={{
-                      style: { backgroundColor: "#1F1E22", color: "#fff" },
+                      style: {
+                        backgroundColor: "var( --bgcolor)",
+                        color: "var(color-white)",
+                      },
                     }}
                   />
                 </Box>
@@ -170,7 +177,10 @@ const ProjSetting = () => {
                     onChange={(e) => setDeletionDays(e.target.value)}
                     sx={{ width: "100%", marginTop: 1 }}
                     inputProps={{
-                      style: { backgroundColor: "#1F1E22", color: "#fff" },
+                      style: {
+                        backgroundColor: "var( --bgcolor)",
+                        color: "var(color-white)",
+                      },
                     }}
                   />
                 </Box>
@@ -186,7 +196,10 @@ const ProjSetting = () => {
                     onChange={(e) => setNotifyDays(e.target.value)}
                     sx={{ width: "100%", marginTop: 1 }}
                     inputProps={{
-                      style: { backgroundColor: "#1F1E22", color: "#fff" },
+                      style: {
+                        backgroundColor: "var( --bgcolor)",
+                        color: "var(color-white)",
+                      },
                     }}
                   />
                 </Box>
@@ -200,8 +213,7 @@ const ProjSetting = () => {
               <Button
                 variant="contained"
                 sx={{
-                  backgroundImage:
-                    "linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);",
+                  backgroundImage: "var( --gradientButton)",
                   borderRadius: "20px",
                   textTransform: "none",
                   fontWeight: "bold",

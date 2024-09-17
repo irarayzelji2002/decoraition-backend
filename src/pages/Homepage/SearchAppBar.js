@@ -43,13 +43,13 @@ const SearchAppBar = ({ user, username, onMenuClick }) => {
           >
             <IconButton
               type="button"
-              sx={{ p: "10px", color: "white" }}
+              sx={{ p: "10px", color: "var(--color-white)" }}
               aria-label="search"
             >
-              <SearchIcon sx={{ color: "white" }} />
+              <SearchIcon sx={{ color: "var(--color-white)" }} />
             </IconButton>
             <InputBase
-              sx={{ ml: 1, flex: 1, color: "white" }}
+              sx={{ ml: 1, flex: 1, color: "var(--color-white)" }}
               placeholder="Search Item"
               inputProps={{ "aria-label": "search google maps" }}
             />

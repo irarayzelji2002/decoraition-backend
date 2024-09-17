@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { auth, db } from "../../firebase";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 import DesignHead from "../../components/DesignHead";
 import PromptBar from "./PromptBar";
 import BottomBar from "../../components/BottomBar";
 import "../../css/design.css";
 
 function Design() {
+  const location = useLocation();
   const [designName, setDesignName] = useState("Untitled");
   const [designId, setDesignId] = useState(null);
   const [showComments, setShowComments] = useState(false);
@@ -15,33 +16,34 @@ function Design() {
   const [numImageFrames, setNumImageFrames] = useState(2);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [newName, setNewName] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const createInitialDesign = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const newDesignId = new Date().getTime().toString();
-        const designRef = doc(db, "users", user.uid, "designs", newDesignId);
+    // Get designId from location state
+    const { state } = location;
+    if (state && state.designId) {
+      setDesignId(state.designId);
+      fetchDesignDetails(state.designId);
+    } else {
+      console.error("Design ID not provided");
+      // Handle missing design ID case
+    }
+  }, [location.state]);
 
-        try {
-          await setDoc(designRef, {
-            name: "Untitled",
-            createdAt: new Date(),
-          });
-          setDesignId(newDesignId);
-        } catch (error) {
-          console.error("Error creating initial design:", error);
-          alert("Failed to create initial design.");
-        }
+  const fetchDesignDetails = async (id) => {
+    try {
+      const designRef = doc(db, "users", auth.currentUser.uid, "designs", id);
+      const designSnap = await getDoc(designRef);
+      if (designSnap.exists()) {
+        setDesignName(designSnap.data().name);
+        // Set other design details if needed
       } else {
-        alert("User not authenticated.");
-        navigate("/");
+        console.error("No such design!");
+        // Handle case where design does not exist
       }
-    };
-
-    createInitialDesign();
-  }, [navigate]);
+    } catch (error) {
+      console.error("Error fetching design details:", error);
+    }
+  };
 
   const handleUpdateDesignName = (newName) => {
     setNewName(newName);
@@ -51,13 +53,16 @@ function Design() {
   const confirmNameChange = async () => {
     if (designId) {
       try {
-        const user = auth.currentUser;
-        if (user) {
-          const designRef = doc(db, "users", user.uid, "designs", designId);
-          await updateDoc(designRef, { name: newName });
-          setDesignName(newName);
-          setShowConfirmation(false);
-        }
+        const designRef = doc(
+          db,
+          "users",
+          auth.currentUser.uid,
+          "designs",
+          designId
+        );
+        await updateDoc(designRef, { name: newName });
+        setDesignName(newName);
+        setShowConfirmation(false);
       } catch (error) {
         console.error("Error updating design name:", error);
         alert("Failed to update design name.");
@@ -79,6 +84,7 @@ function Design() {
       <DesignHead
         designName={designName}
         setDesignName={handleUpdateDesignName}
+        designId={designId}
         toggleComments={toggleComments}
       />
 

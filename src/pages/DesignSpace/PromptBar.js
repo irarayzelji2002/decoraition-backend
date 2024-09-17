@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import "../../css/design.css";
-import Input from "@mui/joy/Input";
 import Slider from "@mui/joy/Slider";
 import Button from "@mui/joy/Button";
 import { MuiColorInput } from "mui-color-input";
 import { Modal, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import Textarea from "@mui/joy/Textarea";
 
 function PromptBar() {
   const [value, setValue] = React.useState("#ffffff");
@@ -27,18 +27,26 @@ function PromptBar() {
 
   return (
     <div className="promptBar">
-      <h3>Describe your Idea</h3>
-      <Input
-        size="lg"
-        placeholder="Large"
+      <h3>
+        Describe your Idea
+        <span style={{ color: "var(--color-quaternary)" }}> *</span>
+      </h3>
+      <Textarea
+        placeholder="Type in here…"
+        maxRows={2}
         sx={{
-          backgroundColor: "transparent",
           color: "var(--color-white)",
-          width: "90%",
+          backgroundColor: "transparent",
+          "&::before": {
+            display: "none",
+          },
         }}
       />
 
-      <h3>Number of images to Generate</h3>
+      <h3>
+        Number of images to Generate
+        <span style={{ color: "var(--color-quaternary)" }}> *</span>
+      </h3>
       <Slider defaultValue={1} max={4} />
 
       <div
@@ -56,7 +64,7 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "40px", marginLeft: "20px" }}
+          sx={{ borderRadius: "90%", marginLeft: "auto" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
             height: "40px",
@@ -99,7 +107,7 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "40px" }}
+          sx={{ borderRadius: "90%", marginLeft: "auto" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
           }}
@@ -127,6 +135,8 @@ function PromptBar() {
           </svg>
         </Button>
       </div>
+
+      <br />
       <div
         style={{
           display: "flex",

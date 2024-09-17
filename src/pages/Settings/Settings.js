@@ -59,7 +59,7 @@ function SettingsPage() {
         }}
         sx={{
           "& .MuiTab-root": {
-            color: "white", // Color for unselected tabs
+            color: "var(color-white)", // Color for unselected tabs
           },
           "& .MuiTab-root.Mui-selected": {
             color: "transparent", // Hide the actual text color
@@ -157,7 +157,7 @@ function SettingsPage() {
                   key={index}
                   label={label}
                   value=""
-                  sx={{ color: "white" }}
+                  sx={{ color: "var(color-white)" }}
                   fullWidth
                   margin="normal"
                   InputProps={{

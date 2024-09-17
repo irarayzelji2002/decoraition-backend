@@ -32,7 +32,10 @@ function AddPin({ EditMode }) {
                 color: "white",
                 m: 1,
                 width: "90%",
-                "&:hover": { backgroundColor: "gray", color: "white" },
+                "&:hover": {
+                  backgroundColor: "gray",
+                  color: "var(--color-white)",
+                },
               }}
             >
               Choose Color Palette &#9660;
@@ -43,7 +46,7 @@ function AddPin({ EditMode }) {
                 width: "50%",
                 "& .MuiMenuItem-root": {
                   backgroundColor: "gray",
-                  color: "white",
+                  color: "var(--color-white)",
                   "&:hover": {
                     backgroundColor: "darkgray",
                   },

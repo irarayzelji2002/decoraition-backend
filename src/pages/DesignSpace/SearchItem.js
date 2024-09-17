@@ -25,7 +25,7 @@ function SearchItem() {
           alignItems: "center",
           width: "69%",
           marginTop: "40px",
-          backgroundColor: "#25232A",
+          backgroundColor: "var(--color-tertiary)",
         }}
       >
         <IconButton

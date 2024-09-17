@@ -9,7 +9,7 @@ html {
 }
 h1 {
   font-size: 50px;
-  background: linear-gradient(20deg, #f89a47, #f15f3e, #ec2073);
+  background: var(--gradientFont);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -28,7 +28,7 @@ h1 {
   flex-direction: column;
 }
 .modal-bg {
-  background-color: #27262c;
+  background-color: var(--nav-card-modal);
   opacity: 0.9;
   width: 560px;
   max-width: 90%;

@@ -7,7 +7,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Arial", sans-serif;
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .app-container {
@@ -26,7 +26,7 @@ body {
 .share-button {
   background: none;
   border: none;
-  color: #ffffff;
+  color: var(--color-white);
   font-size: 24px;
   cursor: pointer;
 }
@@ -50,13 +50,13 @@ body {
   padding: 10px;
   background-color: #3a3a3c;
   border: none;
-  color: #ffffff;
+  color: var(--color-white);
   margin-right: 20px;
 }
 
 .filter-options button {
   background-color: #3a3a3c;
-  color: #ffffff;
+  color: var(--color-white);
   border: none;
   padding: 10px;
   margin-left: 5px;
@@ -135,7 +135,7 @@ body {
 .SubtitlePrice {
   font-size: 12px;
   font-weight: bold;
-  color: #ffffff;
+  color: var(--color-white);
   padding: 6px;
   width: fit-content;
   border-radius: 24px;

@@ -4,9 +4,8 @@
   justify-content: center;
   padding: 20px;
   background-color: var(--bgcolor);
-  color: #ffffff;
+  color: var(--color-white);
   height: 100vh;
-  font-family: "Roboto", sans-serif;
 }
 
 /* AppBar styling */
@@ -16,7 +15,7 @@
 
 /* Tab styling */
 .tabs {
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .MuiTab-root {
@@ -25,7 +24,7 @@
 }
 
 .tab-label {
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 /* Avatar and buttons container */
@@ -38,7 +37,7 @@
 /* Profile buttons */
 .avatar-container .MuiButton-root {
   margin-bottom: 10px;
-  color: white;
+  color: var(--color-white);
 }
 
 .change-photo-btn {
@@ -58,7 +57,7 @@
 }
 
 .MuiInputBase-input {
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .MuiInputLabel-root {
@@ -67,7 +66,7 @@
 
 .MuiOutlinedInput-root {
   fieldset {
-    border-color: #ffffff;
+    border-color: var(--color-white);
   }
 }
 
@@ -82,5 +81,5 @@
 
 /* Notification Tab styling */
 .notification-settings {
-  color: #ffffff;
+  color: var(--color-white);
 }

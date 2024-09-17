@@ -1,7 +1,7 @@
 /* General styling */
 .edit-event {
-  background-color: #1f1e22;
-  color: white;
+  background-color: var(--bgcolor);
+  color: var(--color-white);
   padding: 20px;
   font-weight: bold;
 }
@@ -27,9 +27,9 @@
   width: 100%;
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid gray;
-  background-color: #1f1e22;
-  color: white;
+  border: 2px solid var(--borderInput);
+  background-color: var(--bgcolor);
+  color: var(--color-white);
 }
 
 textarea {
@@ -66,10 +66,10 @@ textarea {
 
 .gradient-button,
 .edit-event-button {
-  background-image: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
+  background-image: var(--gradientButton);
   border: none;
   padding: 10px 20px;
-  color: white;
+  color: var(--color-white);
   border-radius: 20px;
   cursor: pointer;
   font-weight: bold;
@@ -80,7 +80,7 @@ textarea {
 
 .gradient-button:hover,
 .edit-event-button:hover {
-  background-image: linear-gradient(90deg, #f89a47, #ec2073);
+  background-image: var(--gradientButton);
 }
 
 /* Button for icons (Add, Delete, Edit) */
@@ -88,7 +88,7 @@ textarea {
   background: none;
   border: none;
   cursor: pointer;
-  color: white;
+  color: var(--color-white);
   font-size: 1.2rem;
   padding: 0;
   transition: color 0.3s ease;

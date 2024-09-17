@@ -30,7 +30,7 @@ h5 {
   flex-direction: column;
 }
 .modal-bg {
-  background-color: #27262c;
+  background-color: var(--nav-card-modal);
   opacity: 0.9;
   width: 560px;
   max-width: 90%;
@@ -46,10 +46,10 @@ h5 {
   width: 80% !important;
 }
 .cancel-link {
-  color: #ef4f56 !important;
+  color: var(--color-quaternary) !important;
   text-align: center;
   display: block;
   margin-top: 16px;
   font-weight: bold !important;
-  text-decoration-color: #ef4f56 !important;
+  text-decoration-color: var(--color-quaternary) !important;
 }

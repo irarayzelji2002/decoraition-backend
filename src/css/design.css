@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #27262c;
+  background-color: var(--color-tertiary);
 }
 
 .left {
@@ -50,13 +50,13 @@
   }
 }
 .seeAll {
-  color: #f58850 !important;
+  color: var(--brightFont) !important;
   text-align: right;
 
   display: block;
   margin-top: 16px;
   font-weight: bold !important;
-  text-decoration-color: #f58850 !important;
+  text-decoration-color: var(--brightFont) !important;
 }
 
 .workspace {
@@ -74,7 +74,7 @@
 .promptBar {
   height: 100%;
   width: 300px;
-  background-color: #27262c;
+  background-color: var(--nav-card-modal);
   padding: 20px;
 }
 
@@ -124,7 +124,7 @@ h6 {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: #27262c;
+  background-color: var(--nav-card-modal);
   padding: 10px;
 }
 
@@ -136,7 +136,7 @@ h6 {
 .toggle-comment-button {
   margin-top: 20px;
   background-color: #faa653;
-  color: white;
+  color: var(--color-white);
   border: none;
   padding: 10px 15px;
   cursor: pointer;
@@ -159,7 +159,7 @@ textarea {
   width: 90%;
 }
 .comment-section h4 {
-  color: white;
+  color: var(--color-white);
 }
 
 .comment-section textarea {
@@ -168,7 +168,7 @@ textarea {
   margin-top: 10px;
   padding: 10px;
   background-color: #444;
-  color: white;
+  color: var(--color-white);
   border: none;
   border-radius: 4px;
 }
@@ -178,7 +178,7 @@ textarea {
   background-image: var(--gradientButton);
   border-radius: 20px;
   font-weight: bold;
-  color: white;
+  color: var(--color-white);
   border: none;
   padding: 10px 15px;
   cursor: pointer;
@@ -193,7 +193,7 @@ textarea {
 
 .frame-buttons button {
   background-color: var(--nav-card-modal); /* Primary color */
-  color: white;
+  color: var(--color-white);
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
@@ -244,8 +244,8 @@ textarea {
 
 /* Main circular button (Add/Close) */
 .circle-button {
-  background-image: linear-gradient(20deg, #ec2073, #f89a47);
-  color: white;
+  background-image: var(--gradientCircle);
+  color: var(--color-white);
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -270,8 +270,8 @@ textarea {
 
 /* Small circular buttons for creating project/design */
 .small-circle-button {
-  background-image: linear-gradient(20deg, #ec2073, #f89a47);
-  color: white;
+  background-image: var(--gradientCircle);
+  color: var(--color-white);
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -296,7 +296,7 @@ textarea {
 
 /* Text to the left of the circular buttons */
 .small-button-text {
-  color: white;
+  color: var(--color-white);
   font-size: 14px;
   font-weight: bold;
 }
@@ -320,5 +320,6 @@ textarea {
   margin-left: 18px;
   font-weight: bold;
   font-size: 24px;
-  color: white;
+
+  color: var(--color-white);
 }

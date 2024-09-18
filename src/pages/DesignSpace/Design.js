@@ -8,19 +8,26 @@ import "../../css/design.css";
 function Design() {
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState("");
+  const [showPromptBar, setShowPromptBar] = useState(false);
   const [numImageFrames, setNumImageFrames] = useState(2);
 
   const toggleComments = () => {
     setShowComments((prevShowComments) => !prevShowComments);
   };
+  const togglePromptBar = () => {
+    setShowPromptBar((prevShowPromptBar) => !prevShowPromptBar);
+  };
 
   return (
     <div className="whole">
-      <DesignHead toggleComments={toggleComments} />
+      <DesignHead
+        toggleComments={toggleComments}
+        setPromptBarOpen={togglePromptBar}
+      />
 
       <div className="create-design">
         <div className="workspace">
-          <PromptBar />
+          {showPromptBar && <PromptBar />}
 
           <div className="working-area">
             <div className="frame-buttons">

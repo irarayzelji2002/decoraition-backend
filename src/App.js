@@ -88,7 +88,7 @@ function App() {
           /> */}
 
           {/* DESIGN SPACE */}
-          <Route path="/design/:designId" element={<Design />} />
+          <Route path="/design" element={<Design />} />
           <Route path="/searchItem" element={<SearchItem />} />
           <Route path="/addItem" element={<AddItem />} />
           <Route path="/editItem" element={<EditItem />} />

@@ -190,3 +190,61 @@ h2 {
     font-size: 48px;
   }
 }
+.iconFrame {
+  position: relative;
+  display: inline-block;
+}
+
+.options {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.selectOption {
+  font-size: 24px;
+  color: white;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--nav-card-modal);
+  border-radius: 10px;
+  padding: 10px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 200px;
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: var(--iconBg);
+}
+
+.dropdown-item .icon {
+  margin-right: 12px;
+}
+
+.titleDesign {
+  font-size: 16px;
+  text-align: center;
+  color: white;
+}
+
+.pic {
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+  cursor: pointer;
+}

@@ -71,11 +71,20 @@
   flex-direction: row;
 }
 
+.headTitleInput {
+  background-color: transparent;
+  border: transparent;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: "Inter", sans-serif !important;
+  color: var(--color-white);
+}
+
 .promptBar {
   height: 100%;
-  width: 300px;
+  width: 500px;
   background-color: var(--nav-card-modal);
-  padding: 20px;
+  padding: 40px;
 }
 
 .create-design {
@@ -88,6 +97,7 @@
 }
 
 h3 {
+  font-size: 14px;
   color: aliceblue;
 }
 h6 {

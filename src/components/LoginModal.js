@@ -189,9 +189,9 @@ export default function LoginModal() {
                     <Checkbox
                       value="remember"
                       sx={{
-                        color: "white",
+                        color: "var(--color-white)",
                         "&.Mui-checked": {
-                          color: "white",
+                          color: "var(--color-white)",
                         },
                         borderRadius: "4px",
                         "& .MuiSvgIcon-root": {

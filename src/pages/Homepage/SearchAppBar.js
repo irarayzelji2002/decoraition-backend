@@ -15,7 +15,12 @@ const SearchAppBar = ({ user, username, onMenuClick }) => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
         position="sticky"
-        sx={{ zIndex: 1200, backgroundColor: "transparent", boxShadow: "none" }}
+        sx={{
+          zIndex: 1200,
+          backgroundColor: "transparent",
+          boxShadow: "none",
+          paddingTop: "10px",
+        }}
       >
         <Toolbar sx={{ backgroundColor: "transparent" }}>
           <IconButton

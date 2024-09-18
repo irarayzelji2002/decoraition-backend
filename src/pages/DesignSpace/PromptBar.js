@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../../css/design.css";
 import Slider from "@mui/joy/Slider";
 import Button from "@mui/joy/Button";
-
+import { MuiColorInput } from "mui-color-input";
 import { Modal, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Textarea from "@mui/joy/Textarea";
@@ -10,6 +10,11 @@ import Textarea from "@mui/joy/Textarea";
 function PromptBar() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
+  const [value, setValue] = React.useState("#ffffff");
+
+  const handleChange = (newValue) => {
+    setValue(newValue);
+  };
 
   const handleOpenModal = (title) => {
     setModalTitle(title);
@@ -146,7 +151,7 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "40px" }}
+          sx={{ borderRadius: "50%", marginLeft: "auto" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
           }}
@@ -267,6 +272,22 @@ function PromptBar() {
               id="fileInput"
               style={{ display: "none" }}
               onChange={(e) => console.log(e.target.files[0])}
+            />
+
+            <MuiColorInput
+              style={{
+                width: "100%",
+                margin: "10px",
+                "& .MuiInput-root": {
+                  borderColor: "var(--borderInput)",
+                  "&:hover": {
+                    borderColor: "var(--borderInput)",
+                  },
+                },
+              }}
+              format="hex"
+              value={value}
+              onChange={handleChange}
             />
           </div>
         </Box>

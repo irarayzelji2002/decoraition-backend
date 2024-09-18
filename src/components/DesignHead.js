@@ -47,7 +47,13 @@ import { useEffect } from "react";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase.js";
 
-function DesignHead({ designName, setDesignName, toggleComments, designId }) {
+function DesignHead({
+  designName,
+  setDesignName,
+  toggleComments,
+  designId,
+  setPromptBarOpen,
+}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isChangeModeMenuOpen, setIsChangeModeMenuOpen] = useState(false);
@@ -257,6 +263,7 @@ function DesignHead({ designName, setDesignName, toggleComments, designId }) {
           edge="start"
           color="inherit"
           aria-label="open drawer"
+          onClick={setPromptBarOpen}
           sx={{ backgroundColor: "transparent", marginTop: "6px" }}
         >
           <MenuIcon sx={{ color: "white" }} />

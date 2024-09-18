@@ -77,6 +77,16 @@ function Homepage() {
       });
   };
 
+  const handleSettings = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/settings");
+      })
+      .catch((error) => {
+        console.error("Settings error:", error);
+      });
+  };
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     document.body.classList.toggle("dark-mode", !darkMode);
@@ -146,6 +156,7 @@ function Homepage() {
         onClose={() => setDrawerOpen(false)}
         toggleDarkMode={toggleDarkMode}
         handleLogout={handleLogout}
+        handleSettings={handleSettings}
         darkMode={darkMode}
         username={username}
         userEmail={user ? user.email : ""}

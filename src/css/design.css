@@ -85,6 +85,7 @@
   width: 500px;
   background-color: var(--nav-card-modal);
   padding: 40px;
+  margin-right: 12px;
 }
 
 .create-design {

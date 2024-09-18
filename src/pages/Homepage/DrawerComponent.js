@@ -27,6 +27,7 @@ const DrawerComponent = ({
   onClose,
   toggleDarkMode,
   handleLogout,
+  handleSettings,
   darkMode,
   username = "", // Default to empty string
   userEmail = "", // Default to empty string
@@ -127,7 +128,7 @@ const DrawerComponent = ({
         <Divider sx={{ backgroundColor: "gray", my: 2 }} />
 
         {/* Settings Menu Item */}
-        <ListItem button>
+        <ListItem button onClick={handleSettings}>
           <ListItemIcon>
             <SettingsIcon sx={{ color: "white" }} />
           </ListItemIcon>

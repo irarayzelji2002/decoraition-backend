@@ -8,7 +8,7 @@ import "../../css/design.css";
 function Design() {
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState("");
-  const [showPromptBar, setShowPromptBar] = useState(false);
+  const [showPromptBar, setShowPromptBar] = useState(true);
   const [numImageFrames, setNumImageFrames] = useState(2);
 
   const toggleComments = () => {

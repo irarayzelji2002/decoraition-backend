@@ -320,7 +320,9 @@ function DesignHead({ designName, setDesignName, toggleComments, designId }) {
               onOpenRestoreModal={handleOpenRestoreModal}
               onOpenMakeCopyModal={handleOpenMakeCopyModal}
               onOpenInfoModal={handleOpenInfoModal}
+              onOpenShareModal={handleShareClick}
               onDelete={handleOpenDeleteModal}
+              onChangeMode={handleChangeModeClick}
             />
           )}
         </Menu>
@@ -338,7 +340,6 @@ function DesignHead({ designName, setDesignName, toggleComments, designId }) {
         role={role}
         notifyPeople={notifyPeople}
       />
-
       <ShareConfirmationModal
         isOpen={isShareConfirmationModalOpen}
         onClose={handleCloseShareConfirmationModal}

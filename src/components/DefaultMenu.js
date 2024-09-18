@@ -16,11 +16,13 @@ const DefaultMenu = ({
   onClose,
   onCopyLink,
   onOpenDownloadModal,
+  onOpenShareModal,
   onOpenRenameModal,
   onOpenRestoreModal,
   onOpenMakeCopyModal,
   onOpenInfoModal,
   onDelete,
+  onChangeMode,
 }) => {
   return (
     <>
@@ -30,7 +32,7 @@ const DefaultMenu = ({
         </ListItemIcon>
         <ListItemText primary="Comment" />
       </MenuItem>
-      <MenuItem onClick={onClose}>
+      <MenuItem onClick={onOpenShareModal}>
         <ListItemIcon>
           <ShareIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>
@@ -54,23 +56,17 @@ const DefaultMenu = ({
         </ListItemIcon>
         <ListItemText primary="Settings" />
       </MenuItem>
+      <MenuItem onClick={onChangeMode}>
+        <ListItemIcon>
+          <EditIcon sx={{ color: "whitesmoke" }} />
+        </ListItemIcon>
+        <ListItemText primary="Change Mode" />
+      </MenuItem>
       <MenuItem onClick={onOpenDownloadModal}>
         <ListItemIcon>
           <DownloadIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>
         <ListItemText primary="Download" />
-      </MenuItem>
-      <MenuItem onClick={onOpenRenameModal}>
-        <ListItemIcon>
-          <EditIcon sx={{ color: "whitesmoke" }} />
-        </ListItemIcon>
-        <ListItemText primary="Rename" />
-      </MenuItem>
-      <MenuItem onClick={onOpenRestoreModal}>
-        <ListItemIcon>
-          <RestoreIcon sx={{ color: "whitesmoke" }} />
-        </ListItemIcon>
-        <ListItemText primary="Restore" />
       </MenuItem>
       <MenuItem onClick={onOpenMakeCopyModal}>
         <ListItemIcon>
@@ -78,17 +74,29 @@ const DefaultMenu = ({
         </ListItemIcon>
         <ListItemText primary="Make a Copy" />
       </MenuItem>
-      <MenuItem onClick={onOpenInfoModal}>
+      <MenuItem onClick={onOpenRestoreModal}>
         <ListItemIcon>
-          <InfoIcon sx={{ color: "whitesmoke" }} />
+          <RestoreIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>
-        <ListItemText primary="Info" />
+        <ListItemText primary="Restore" />
+      </MenuItem>
+      <MenuItem onClick={onOpenRenameModal}>
+        <ListItemIcon>
+          <EditIcon sx={{ color: "whitesmoke" }} />
+        </ListItemIcon>
+        <ListItemText primary="Rename" />
       </MenuItem>
       <MenuItem onClick={onDelete}>
         <ListItemIcon>
           <DeleteIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>
         <ListItemText primary="Delete" />
+      </MenuItem>{" "}
+      <MenuItem onClick={onOpenInfoModal}>
+        <ListItemIcon>
+          <InfoIcon sx={{ color: "whitesmoke" }} />
+        </ListItemIcon>
+        <ListItemText primary="Info" />
       </MenuItem>
     </>
   );

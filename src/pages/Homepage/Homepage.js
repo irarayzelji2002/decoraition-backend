@@ -200,7 +200,7 @@ function Homepage() {
 
             <div className="layout">
               {designs.length > 0 ? (
-                designs.slice(0, 5).map((design) => (
+                designs.slice(0, 6).map((design) => (
                   <DesignIcon
                     key={design.id}
                     name={design.name}

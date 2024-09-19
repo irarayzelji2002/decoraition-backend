@@ -1,35 +1,10 @@
 import React, { useState } from "react";
-import {
-  IconButton,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Typography,
-  Button,
-  TextField,
-  Checkbox,
-  Select,
-  MenuItem as DropdownItem,
-} from "@mui/material";
+import { IconButton, Menu } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CommentIcon from "@mui/icons-material/Comment";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ContentCopy from "@mui/icons-material/ContentCopy";
-import HistoryIcon from "@mui/icons-material/History";
-import SettingsIcon from "@mui/icons-material/Settings";
-import DownloadIcon from "@mui/icons-material/Download";
-import RestoreIcon from "@mui/icons-material/Restore";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import InfoIcon from "@mui/icons-material/Info";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 import ChangeModeMenu from "./ChangeModeMenu.js";
 import CopyLinkModal from "./CopyLinkModal.js";
 import DefaultMenu from "./DefaultMenu.js";

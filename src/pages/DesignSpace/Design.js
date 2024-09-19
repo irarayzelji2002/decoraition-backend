@@ -1,23 +1,87 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase"; // Assuming you have firebase setup
 import DesignHead from "../../components/DesignHead";
+import { getAuth } from "firebase/auth";
 import PromptBar from "./PromptBar";
 import BottomBar from "../../components/BottomBar";
 import "../../css/design.css";
 
 function Design() {
+  const { designId } = useParams(); // Get designId from the URL
+  const [designData, setDesignData] = useState(null);
+  const [newName, setNewName] = useState("");
   const [showComments, setShowComments] = useState(false);
   const [comment, setComment] = useState("");
   const [showPromptBar, setShowPromptBar] = useState(true);
   const [numImageFrames, setNumImageFrames] = useState(2);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  // Fetch design details based on designId
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.error("User is not authenticated");
+      return;
+    }
+
+    setUserId(user.uid);
+
+    const fetchDesignDetails = async () => {
+      try {
+        const designRef = doc(db, "users", user.uid, "designs", designId);
+        const designSnapshot = await getDoc(designRef);
+        if (designSnapshot.exists()) {
+          const design = designSnapshot.data();
+          setDesignData(design);
+          setNewName(design.name);
+        } else {
+          console.error("Design not found");
+        }
+      } catch (error) {
+        console.error("Error fetching design details:", error);
+      }
+    };
+
+    fetchDesignDetails();
+  }, [designId]);
+
+  const handleEditNameToggle = () => {
+    setIsEditingName((prev) => !prev);
+  };
+
+  const handleNameChange = async () => {
+    if (newName.trim() === "") {
+      alert("Design name cannot be empty");
+      return;
+    }
+
+    try {
+      const designRef = doc(db, "users", userId, "designs", designId);
+      await updateDoc(designRef, { name: newName });
+      setIsEditingName(false);
+      alert("Design name updated successfully!");
+    } catch (error) {
+      console.error("Error updating design name:", error);
+      alert("Failed to update design name");
+    }
+  };
 
   const toggleComments = () => {
-    setShowComments((prevShowComments) => !prevShowComments);
-  };
-  const togglePromptBar = () => {
-    setShowPromptBar((prevShowPromptBar) => !prevShowPromptBar);
+    setShowComments((prev) => !prev);
   };
 
+  const togglePromptBar = () => {
+    setShowPromptBar((prev) => !prev);
+  };
+
+  if (!designData) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="whole">
       <DesignHead
@@ -30,6 +94,25 @@ function Design() {
           {showPromptBar && <PromptBar />}
 
           <div className="working-area">
+            <div className="design-name-section">
+              <h2>Design Name:</h2>
+              {isEditingName ? (
+                <div>
+                  <input
+                    type="text"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                  />
+                  <button onClick={handleNameChange}>Save</button>
+                  <button onClick={handleEditNameToggle}>Cancel</button>
+                </div>
+              ) : (
+                <div>
+                  <p>{designData.name}</p>
+                  <button onClick={handleEditNameToggle}>Edit Name</button>
+                </div>
+              )}
+            </div>
             <div className="frame-buttons">
               <button onClick={() => setNumImageFrames(2)}>
                 <svg

@@ -1,11 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchAppBar from "../Homepage/SearchAppBar.js";
+import { onAuthStateChanged } from "firebase/auth";
 import Modal from "../../components/Modal.js";
 import "../../css/seeAll.css";
 import { Paper, Button, IconButton, InputBase } from "@mui/material";
+import { auth, db } from "../../firebase.js";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
+import { useNavigate, Link } from "react-router-dom";
+import DesignIcon from "../../components/DesignIcon.js";
+import "../../css/homepage.css";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  setDoc,
+} from "firebase/firestore";
 
 // Define SearchBar and OptionButton here
 const SearchBar = styled(Paper)(({ theme }) => ({
@@ -35,6 +49,73 @@ const OptionButton = styled(Button)(({ theme }) => ({
 export default function SeeAllDesigns() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+  const [user, setUser] = useState(null);
+  const [designs, setDesigns] = useState([]);
+  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      onSnapshot(userRef, (doc) => {
+        setUsername(doc.data().username);
+      });
+    }
+  }, [user]);
+  useEffect(() => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      onSnapshot(userRef, (doc) => {
+        setUsername(doc.data().username);
+      });
+    }
+  }, [user]);
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        fetchDesigns(user.uid);
+      } else {
+        setUser(null);
+        setDesigns([]);
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
+
+  const fetchDesigns = (userId) => {
+    const designsRef = collection(db, "users", userId, "designs");
+    const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
+
+    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+      const designList = [];
+      querySnapshot.forEach((doc) => {
+        designList.push({ id: doc.id, ...doc.data() });
+      });
+      setDesigns(designList);
+    });
+
+    return () => unsubscribeDesigns();
+  };
+
+  const handleDeleteDesign = async (designId) => {
+    try {
+      const currentUser = auth.currentUser;
+
+      if (currentUser) {
+        const designRef = doc(
+          db,
+          "users",
+          currentUser.uid,
+          "designs",
+          designId
+        );
+        await deleteDoc(designRef);
+      }
+    } catch (error) {
+      console.error("Error deleting design: ", error);
+    }
+  };
 
   const openModal = (content) => {
     setModalContent(content);
@@ -128,7 +209,30 @@ export default function SeeAllDesigns() {
         </div>
         <div className="title">Designs</div>
         <section className="recent-section">
-          <div className="recent-designs">{/* Add content here */}</div>
+          <div className="recent-designs">
+            <div className="layout">
+              {designs.length > 0 ? (
+                designs.map((design) => (
+                  <DesignIcon
+                    key={design.id}
+                    name={design.name}
+                    designId={design.id}
+                    onDelete={handleDeleteDesign}
+                    onOpen={() =>
+                      navigate(`/design/${design.id}`, {
+                        state: { designId: design.id },
+                      })
+                    }
+                  />
+                ))
+              ) : (
+                <div className="no-content">
+                  <img src="/img/design-placeholder.png" alt="No designs yet" />
+                  <p>No designs yet. Start creating.</p>
+                </div>
+              )}
+            </div>
+          </div>
         </section>
         {modalOpen && (
           <Modal onClose={closeModal} content={getModalContent(modalContent)} />

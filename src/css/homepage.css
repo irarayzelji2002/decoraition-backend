@@ -4,7 +4,13 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
+.homepage {
+  background-image: url("../../public/img/bg-login.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
 h2 {
   text-align: left;
   text-wrap: nowrap;
@@ -72,7 +78,7 @@ h2 {
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 0px;
   width: 100%;
 }
 
@@ -122,20 +128,24 @@ h2 {
 }
 
 .layout {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  display: grid;
 
+  width: 100%;
   height: fit-content;
+
+  /* Grid template for different screen sizes */
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns by default */
+  justify-items: center; /* Align items horizontally */
+  align-items: start; /* Align items vertically at the top */
 }
+
+/* Medium screen sizes */
 
 .titleDesign {
   font-size: 20px;
   color: aliceblue !important;
   margin-top: -2px;
+  margin-bottom: 2px;
 }
 
 .subDate {
@@ -144,8 +154,8 @@ h2 {
 }
 
 .iconFrame {
-  height: 270px;
-  width: 250px;
+  height: 70%;
+  width: 95%;
   margin: 8px;
   cursor: pointer;
 }
@@ -160,7 +170,7 @@ h2 {
   height: 34px;
   width: 34px;
   background-color: #474747;
-  left: 205px;
+  left: 85%;
   top: 40px;
   position: relative;
   cursor: pointer;
@@ -172,23 +182,6 @@ h2 {
   color: aliceblue;
 }
 
-@media only screen and (max-width: 600px) {
-  .iconFrame {
-    height: 120px;
-    width: 90%;
-    margin-bottom: 120px;
-  }
-  .layout {
-    flex-direction: column;
-  }
-  .options {
-    left: 85%;
-  }
-
-  .navName {
-    font-size: 48px;
-  }
-}
 .iconFrame {
   position: relative;
   display: inline-block;
@@ -235,10 +228,15 @@ h2 {
 .dropdown-item .icon {
   margin-right: 12px;
 }
+.dateModified {
+  font-size: 12px;
+  color: var(--color-white);
+  opacity: 0.4;
+}
 
 .titleDesign {
-  font-size: 16px;
-  text-align: center;
+  margin-top: 8px;
+  font-size: 18px;
   color: white;
 }
 
@@ -247,4 +245,40 @@ h2 {
   height: auto;
   margin-top: 10px;
   cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */
+  }
+  .options {
+    left: 80%;
+  }
+}
+
+/* Small screen sizes */
+@media (max-width: 600px) {
+  .layout {
+    grid-template-columns: repeat(1, 1fr); /* 1 column for small screens */
+  }
+  .options {
+    left: 80%;
+  }
+}
+@media only screen and (max-width: 720px) {
+  .iconFrame {
+    height: 120px;
+    width: 90%;
+    margin-bottom: 140px;
+  }
+  .layout {
+    flex-direction: column;
+  }
+  .options {
+    left: 85%;
+  }
+
+  .navName {
+    font-size: 48px;
+  }
 }

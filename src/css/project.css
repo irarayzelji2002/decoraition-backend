@@ -1,9 +1,5 @@
 /* General styles */
 body {
-  background-image: url("../../public/img/bg-login.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
   margin: 0;
   padding: 0;
   font-family: "Arial", sans-serif;

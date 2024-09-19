@@ -69,26 +69,7 @@ function App() {
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/details" element={<Details />} />
           <Route path="/settings" element={<Settings />} />
-          {/* Use a dynamic ID for the design route */}
-          {/* <Route
-            path="/homepage"
-            element={<ProtectedRoute element={<Homepage />} />}
-          />
-          <Route
-            path="/settings"
-            element={<ProtectedRoute element={<Settings />} />}
-          />
-          <Route
-            path="/design"
-            element={<ProtectedRoute element={<Design />} />}
-          />
-          <Route
-            path="/users"
-            element={<ProtectedRoute element={<Users />} />}
-          /> */}
 
-          {/* DESIGN SPACE */}
-          {/* <Route path="/design" element={<Design />} /> */}
           <Route path="/design/:designId" element={<Design />} />
           <Route path="/searchItem" element={<SearchItem />} />
           <Route path="/addItem" element={<AddItem />} />

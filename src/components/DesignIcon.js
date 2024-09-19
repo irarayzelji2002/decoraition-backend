@@ -47,7 +47,10 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
       />
 
       {/* Design title */}
-      <h3 className="titleDesign">{name}</h3>
+      <div width="100%" style={{ textAlign: "start" }}>
+        <h3 className="titleDesign">{name}</h3>
+        <span className="dateModified">Modified on September 1, 2022</span>
+      </div>
     </div>
   );
 }

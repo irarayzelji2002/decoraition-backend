@@ -28,6 +28,12 @@ function DesignHead({
   toggleComments,
   designId,
   setPromptBarOpen,
+  designData,
+  newName,
+  setNewName,
+  isEditingName,
+  setIsEditingName,
+  handleNameChange,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
@@ -49,6 +55,9 @@ function DesignHead({
   const [notifyPeople, setNotifyPeople] = useState(true);
   const [tempName, setTempName] = useState(designName);
   const [showConfirm, setShowConfirm] = useState(false);
+  const handleEditNameToggle = () => {
+    setIsEditingName((prev) => !prev);
+  };
 
   const [originalName, setOriginalName] = useState("Untitled");
 
@@ -229,6 +238,17 @@ function DesignHead({
   const handleCloseInfoModal = () => {
     setIsInfoModalOpen(false);
   };
+  const handleInputClick = () => {
+    // Enable edit mode when the input is clicked
+    handleEditNameToggle();
+  };
+
+  const handleBlur = () => {
+    // Save the name when the user clicks away from the input field
+    if (isEditingName) {
+      handleNameChange();
+    }
+  };
 
   return (
     <div className="designHead stickyMenu">
@@ -243,19 +263,26 @@ function DesignHead({
         >
           <MenuIcon sx={{ color: "white" }} />
         </IconButton>
-        <input
-          type="text"
-          value={tempName}
-          onChange={handleInputChange}
-          placeholder="Untitled"
-          className="headTitleInput"
-        />
-        {showConfirm && (
-          <div className="confirm-buttons">
-            <button onClick={handleConfirm}>✔️</button>
-            <button onClick={handleCancel}>❌</button>
-          </div>
-        )}
+        <div className="design-name-section">
+          {isEditingName ? (
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onBlur={handleBlur} // Save when the input loses focus
+              autoFocus // Automatically focus on the input when in edit mode
+              className="headTitleInput"
+            />
+          ) : (
+            <span
+              onClick={handleInputClick}
+              className="headTitleInput"
+              style={{ height: "20px" }}
+            >
+              {designData.name || "Untitled"}
+            </span>
+          )}
+        </div>
       </div>
       <div className="right">
         <IconButton onClick={toggleComments}>

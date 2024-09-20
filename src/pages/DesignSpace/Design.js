@@ -85,7 +85,13 @@ function Design() {
   return (
     <div className="whole">
       <DesignHead
-        toggleComments={toggleComments}
+        designData={designData}
+        newName={newName}
+        setNewName={setNewName}
+        isEditingName={isEditingName}
+        handleNameChange={handleNameChange}
+        setIsEditingName={setIsEditingName}
+        handleEditNameToggle={handleEditNameToggle}
         setPromptBarOpen={togglePromptBar}
       />
 
@@ -94,7 +100,7 @@ function Design() {
           {showPromptBar && <PromptBar />}
 
           <div className="working-area">
-            <div className="design-name-section">
+            {/* <div className="design-name-section">
               <h2>Design Name:</h2>
               {isEditingName ? (
                 <div>
@@ -112,7 +118,7 @@ function Design() {
                   <button onClick={handleEditNameToggle}>Edit Name</button>
                 </div>
               )}
-            </div>
+            </div> */}
             <div className="frame-buttons">
               <button onClick={() => setNumImageFrames(2)}>
                 <svg

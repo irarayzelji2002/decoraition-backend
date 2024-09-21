@@ -1,7 +1,8 @@
 import "../css/bottomBar.css";
 import Button from "@mui/joy/Button";
+import { Link } from "react-router-dom";
 
-function BottomBar() {
+function BottomBar({ onTabChange }) {
   return (
     <div className="bottomBar">
       <Button
@@ -13,6 +14,7 @@ function BottomBar() {
             backgroundColor: "#2c2f33",
           },
         }}
+        onClick={() => onTabChange("design")}
       >
         <div
           style={{
@@ -89,6 +91,7 @@ function BottomBar() {
           <span style={{ color: "#ff8344" }}>Design</span>
         </div>
       </Button>
+
       <Button
         size="md"
         color="#302f37"
@@ -97,6 +100,7 @@ function BottomBar() {
             backgroundColor: "#2c2f33",
           },
         }}
+        onClick={() => onTabChange("budget")}
       >
         <div
           style={{

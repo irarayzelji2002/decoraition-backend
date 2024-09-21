@@ -18,6 +18,7 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
+import { Person } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { GoogleIcon, FacebookIcon } from "./CustomIcons";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -72,8 +73,22 @@ export default function LoginModal() {
       .then((userCredential) => {
         // Signed in
         // const user = userCredential.user;
-        toast.success("Login successful");
-        navigate("/homepage");
+        toast.success("You have been logged in", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          style: {
+            color: "var(--color-white)",
+            backgroundColor: "var(--inputBg)",
+          },
+          progressStyle: {
+            backgroundColor: "var(--brightFont)",
+          },
+        });
+        setTimeout(() => navigate("/homepage"), 1500);
       })
       .catch((error) => {
         const errorMessage = error.message;
@@ -104,8 +119,23 @@ export default function LoginModal() {
         username,
       });
 
-      toast.success("Google login successful");
-      navigate("/homepage");
+      toast.success("You have been logged in", {
+        icon: <Person />,
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+      setTimeout(() => navigate("/homepage"), 1500);
     } catch (error) {
       console.error("Google login error", error);
       toast.error("Google login failed. Please try again.");
@@ -114,6 +144,8 @@ export default function LoginModal() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {" "}
+      <ToastContainer />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -240,7 +272,6 @@ export default function LoginModal() {
               Login
             </Button>
           </Box>
-          <ToastContainer />
         </Box>
         <Box
           sx={{

@@ -19,6 +19,11 @@ import ImageIcon from "@mui/icons-material/Image";
 import SearchAppBar from "./SearchAppBar.js";
 import DesignIcon from "../../components/DesignIcon.js";
 import DrawerComponent from "./DrawerComponent.js";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import { CheckCircle } from "@mui/icons-material";
+import Delete from "@mui/icons-material/Delete.js";
+import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
 import "../../css/design.css";
 
@@ -110,11 +115,37 @@ function Homepage() {
           createdAt: new Date(),
         });
 
+        // Show toast notification when the project is created
+        toast.success("Design created successfully!", {
+          icon: <CheckCircle />,
+          position: "top-right",
+          autoClose: 3000, // 3 seconds auto close
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          style: {
+            color: "var(--color-white)",
+            backgroundColor: "var(--inputBg)",
+          },
+          progressStyle: {
+            backgroundColor: "var(--brightFont)",
+          },
+        });
+
         // Navigate to the newly created design
-        navigate(`/design/${designId}`);
+        setTimeout(() => navigate(`/design/${designId}`), 1500);
       }
     } catch (error) {
       console.error("Error creating design: ", error);
+      toast.error("Error creating design! Please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
   };
 
@@ -131,6 +162,17 @@ function Homepage() {
           designId
         );
         await deleteDoc(designRef);
+
+        toast.success("Design deleted", {
+          icon: <Delete />,
+          style: {
+            color: "var(--color-white)",
+            backgroundColor: "var(--inputBg)",
+          },
+          progressStyle: {
+            backgroundColor: "var(--brightFont)",
+          },
+        });
       }
     } catch (error) {
       console.error("Error deleting design: ", error);
@@ -143,6 +185,7 @@ function Homepage() {
 
   return (
     <div className={`homepage ${menuOpen ? "darkened" : ""}`}>
+      <ToastContainer />
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
 
       <SearchAppBar

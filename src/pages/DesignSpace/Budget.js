@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom"; // Import useParams
 import DesignHead from "../../components/DesignHead";
 import Item from "./Item";
 import BottomBar from "../../components/BottomBar";
@@ -10,21 +11,39 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import "../../css/budget.css";
 
 function Budget() {
+  const { designId } = useParams(); // Get the design ID from the URL
   const [menuOpen, setMenuOpen] = useState(false);
+  const [designData, setDesignData] = useState(null);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
+  useEffect(() => {
+    // Fetch design data based on designId
+    const fetchDesignData = async () => {
+      try {
+        const response = await fetch(`YOUR_API_ENDPOINT/designs/${designId}`); // Replace with your API endpoint
+        const data = await response.json();
+        setDesignData(data);
+      } catch (error) {
+        console.error("Error fetching design data:", error);
+      }
+    };
+
+    if (designId) {
+      fetchDesignData();
+    }
+  }, [designId]);
+
   return (
     <div className={`budget-page ${menuOpen ? "darkened" : ""}`}>
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
 
-      <DesignHead />
+      {/* Pass design name to DesignHead */}
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div className="budgetSpace">
-          <span className="titleBudget"> Project Name</span>
-          <span className="priceSum"> No Budget yet</span>
+          <span className="priceSum">No Budget yet</span>
           <div className="image-frame">
             <img
               src="../../img/logoWhitebg.png"
@@ -38,8 +57,6 @@ function Budget() {
           <Item />
         </div>
       </div>
-
-      <BottomBar />
 
       {/* Floating Action Button */}
       <div className="circle-button-container">

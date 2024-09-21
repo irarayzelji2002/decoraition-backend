@@ -43,9 +43,6 @@ function Budget() {
       {/* Pass design name to DesignHead */}
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div className="budgetSpace">
-          <span className="titleBudget">
-            {designData ? designData.name : "Loading..."}
-          </span>
           <span className="priceSum">No Budget yet</span>
           <div className="image-frame">
             <img

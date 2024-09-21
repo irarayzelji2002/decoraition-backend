@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, { useState } from "react";
 import {
   Drawer,
   IconButton,
@@ -12,7 +11,6 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
-
 import BedtimeIcon from "@mui/icons-material/Bedtime";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import HomeIcon from "@mui/icons-material/Home";
@@ -25,14 +23,24 @@ import LogoutIcon from "@mui/icons-material/Logout";
 const DrawerComponent = ({
   isDrawerOpen,
   onClose,
-  toggleDarkMode,
   handleLogout,
   handleSettings,
-  darkMode,
   username = "", // Default to empty string
   userEmail = "", // Default to empty string
   designs = [], // Default to empty array
 }) => {
+  const [darkMode, setDarkMode] = useState(true);
+
+  // Toggle dark mode by updating CSS variables globally
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    if (darkMode) {
+      document.documentElement.classList.remove("light-mode");
+    } else {
+      document.documentElement.classList.add("light-mode");
+    }
+  };
+
   return (
     <Drawer
       anchor="left"
@@ -41,8 +49,8 @@ const DrawerComponent = ({
       sx={{
         "& .MuiDrawer-paper": {
           width: { xs: "80%", sm: "25%" },
-          backgroundColor: darkMode ? "#121212" : "#1E1D21",
-          color: "white",
+          backgroundColor: darkMode ? "#121212" : "#f0f0f0",
+          color: darkMode ? "white" : "black",
           padding: "20px",
           display: "flex",
           flexDirection: "column",
@@ -89,19 +97,19 @@ const DrawerComponent = ({
       <List>
         <ListItem>
           <ListItemIcon>
-            <HomeIcon sx={{ color: "white" }} />
+            <HomeIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
         <ListItem>
           <ListItemIcon>
-            <PhotoLibraryIcon sx={{ color: "white" }} />
+            <PhotoLibraryIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>
           <ListItemText primary="Design" />
         </ListItem>
         <ListItem>
           <ListItemIcon>
-            <FolderIcon sx={{ color: "white" }} />
+            <FolderIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>
           <ListItemText primary="Projects" />
         </ListItem>
@@ -115,7 +123,7 @@ const DrawerComponent = ({
             <ListItem key={design.id}>
               <ListItemText primary={design.name} />
               <IconButton edge="end" aria-label="more">
-                <MoreHorizIcon sx={{ color: "white" }} />
+                <MoreHorizIcon sx={{ color: darkMode ? "white" : "black" }} />
               </IconButton>
             </ListItem>
           ))
@@ -130,13 +138,13 @@ const DrawerComponent = ({
         {/* Settings Menu Item */}
         <ListItem button onClick={handleSettings}>
           <ListItemIcon>
-            <SettingsIcon sx={{ color: "white" }} />
+            <SettingsIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>
           <ListItemText primary="Settings" />
         </ListItem>
         <ListItem button onClick={handleLogout}>
           <ListItemIcon>
-            <LogoutIcon sx={{ color: "white" }} />
+            <LogoutIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>
           <ListItemText primary="Sign Out" />
         </ListItem>
@@ -144,7 +152,11 @@ const DrawerComponent = ({
 
       <Button
         onClick={onClose}
-        sx={{ color: "white", mt: 2, marginBottom: "36px" }}
+        sx={{
+          color: darkMode ? "white" : "black",
+          mt: 2,
+          marginBottom: "36px",
+        }}
       >
         Close
       </Button>

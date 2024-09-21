@@ -10,6 +10,7 @@ import Loading from "../../components/Loading";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "../../css/design.css";
+import DrawerComponent from "../Homepage/DrawerComponent";
 import Budget from "./Budget";
 
 function Design() {
@@ -133,8 +134,8 @@ function Design() {
           {" "}
           <div className="create-design">
             <div className="workspace">
-              {showPromptBar && <PromptBar />}
-
+              {showPromptBar && <DrawerComponent />}
+              <PromptBar />
               <div className="working-area">
                 {/* <div className="design-name-section">
               <h2>Design Name:</h2>

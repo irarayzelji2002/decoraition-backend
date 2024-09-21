@@ -24,6 +24,8 @@ import { GoogleIcon, FacebookIcon } from "./CustomIcons";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Import Firestore instance
+import { setPersistence, browserLocalPersistence } from "firebase/auth";
+const auth = getAuth();
 
 const defaultTheme = createTheme();
 
@@ -50,17 +52,15 @@ export default function LoginModal() {
   const auth = getAuth();
 
   useEffect(() => {
-    // Check if the user is logged in
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // If user is logged in, redirect to homepage
         navigate("/homepage");
       }
     });
-    return () => unsubscribe(); // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, [auth, navigate]);
 
-  const onLogin = (e) => {
+  const onLogin = async (e) => {
     e.preventDefault();
     const formErrors = handleValidation();
 
@@ -69,33 +69,33 @@ export default function LoginModal() {
       return;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        // const user = userCredential.user;
-        toast.success("You have been logged in", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          style: {
-            color: "var(--color-white)",
-            backgroundColor: "var(--inputBg)",
-          },
-          progressStyle: {
-            backgroundColor: "var(--brightFont)",
-          },
-        });
-        setTimeout(() => navigate("/homepage"), 1500);
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        console.log(errorMessage);
-        toast.error("Login failed. Please try again.");
-        setErrors({ general: "Login failed. Please try again." });
+    try {
+      await setPersistence(auth, browserLocalPersistence); // Set persistence here
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      toast.success("You have been logged in", {
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
       });
+      setTimeout(() => navigate("/homepage"), 1500);
+    } catch (error) {
+      console.error(error);
+      toast.error("Login failed. Please try again.");
+      setErrors({ general: "Login failed. Please try again." });
+    }
   };
 
   const handleGoogleLogin = async () => {

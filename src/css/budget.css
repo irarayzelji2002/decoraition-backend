@@ -186,7 +186,7 @@ select {
   z-index: 1000;
 }
 .modal-content {
-  background-color: #27262c;
+  background-color: var(--nav-card-modal);
   width: 250px !important;
   height: 250px;
   border-radius: 8px;

@@ -54,12 +54,10 @@ function DesignHead({
   const [role, setRole] = useState("Editor");
   const [notifyPeople, setNotifyPeople] = useState(true);
   const [tempName, setTempName] = useState(designName);
-  const [showConfirm, setShowConfirm] = useState(false);
+
   const handleEditNameToggle = () => {
     setIsEditingName((prev) => !prev);
   };
-
-  const [originalName, setOriginalName] = useState("Untitled");
 
   useEffect(() => {
     const fetchDesignTitle = () => {
@@ -75,7 +73,6 @@ function DesignHead({
         if (doc.exists()) {
           const designData = doc.data();
           setTempName(designData.name || "Untitled");
-          setOriginalName(designData.name || "Untitled");
         }
       });
 
@@ -86,35 +83,6 @@ function DesignHead({
       fetchDesignTitle();
     }
   }, [designId]);
-
-  const handleInputChange = (e) => {
-    setTempName(e.target.value);
-    setShowConfirm(true); // Show confirm/cancel buttons when the title is changed
-  };
-
-  const handleConfirm = async () => {
-    try {
-      const designRef = doc(
-        db,
-        "users",
-        auth.currentUser.uid,
-        "designs",
-        designId
-      );
-      await updateDoc(designRef, {
-        name: tempName,
-      });
-      setOriginalName(tempName); // Update the local state with the confirmed name
-      setShowConfirm(false); // Hide confirm/cancel buttons
-    } catch (error) {
-      console.error("Error updating design name: ", error);
-    }
-  };
-
-  const handleCancel = () => {
-    setTempName(originalName); // Reset the input to the original title
-    setShowConfirm(false); // Hide confirm/cancel buttons
-  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

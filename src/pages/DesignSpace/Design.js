@@ -6,6 +6,9 @@ import DesignHead from "../../components/DesignHead";
 import { getAuth } from "firebase/auth";
 import PromptBar from "./PromptBar";
 import BottomBar from "../../components/BottomBar";
+import Loading from "../../components/Loading";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "../../css/design.css";
 
 function Design() {
@@ -22,32 +25,34 @@ function Design() {
   // Fetch design details based on designId
   useEffect(() => {
     const auth = getAuth();
-    const user = auth.currentUser;
 
-    if (!user) {
-      console.error("User is not authenticated");
-      return;
-    }
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
 
-    setUserId(user.uid);
+        const fetchDesignDetails = async () => {
+          try {
+            const designRef = doc(db, "users", user.uid, "designs", designId);
+            const designSnapshot = await getDoc(designRef);
+            if (designSnapshot.exists()) {
+              const design = designSnapshot.data();
+              setDesignData(design);
+              setNewName(design.name);
+            } else {
+              console.error("Design not found");
+            }
+          } catch (error) {
+            console.error("Error fetching design details:", error);
+          }
+        };
 
-    const fetchDesignDetails = async () => {
-      try {
-        const designRef = doc(db, "users", user.uid, "designs", designId);
-        const designSnapshot = await getDoc(designRef);
-        if (designSnapshot.exists()) {
-          const design = designSnapshot.data();
-          setDesignData(design);
-          setNewName(design.name);
-        } else {
-          console.error("Design not found");
-        }
-      } catch (error) {
-        console.error("Error fetching design details:", error);
+        fetchDesignDetails();
+      } else {
+        console.error("User is not authenticated");
       }
-    };
+    });
 
-    fetchDesignDetails();
+    return () => unsubscribe(); // Cleanup listener on component unmount
   }, [designId]);
 
   const handleEditNameToggle = () => {
@@ -64,7 +69,23 @@ function Design() {
       const designRef = doc(db, "users", userId, "designs", designId);
       await updateDoc(designRef, { name: newName });
       setIsEditingName(false);
-      alert("Design name updated successfully!");
+      toast.success("Design name updated successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+
+      setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
       console.error("Error updating design name:", error);
       alert("Failed to update design name");
@@ -80,10 +101,17 @@ function Design() {
   };
 
   if (!designData) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <Loading />
+      </>
+    );
   }
   return (
     <div className="whole">
+      <ToastContainer
+        progressStyle={{ backgroundColor: "var(--brightFont)" }}
+      />
       <DesignHead
         designData={designData}
         newName={newName}
@@ -179,7 +207,7 @@ function Design() {
         </div>
       </div>
 
-      <BottomBar />
+      <BottomBar designId={designId} />
     </div>
   );
 }

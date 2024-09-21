@@ -75,7 +75,7 @@ function App() {
           <Route path="/addItem" element={<AddItem />} />
           <Route path="/editItem" element={<EditItem />} />
           <Route path="/users" element={<Users />} />
-          <Route path="/budget" element={<Budget />} />
+          <Route path="/budget/:designId" element={<Budget />} />
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
 
           {/* PROJECT SPACE */}

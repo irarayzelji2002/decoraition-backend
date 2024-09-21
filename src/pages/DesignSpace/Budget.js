@@ -39,7 +39,7 @@ function Budget() {
   return (
     <div className={`budget-page ${menuOpen ? "darkened" : ""}`}>
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
-      {designData && <DesignHead designName={designData.name} />}{" "}
+
       {/* Pass design name to DesignHead */}
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div className="budgetSpace">
@@ -60,7 +60,7 @@ function Budget() {
           <Item />
         </div>
       </div>
-      <BottomBar designId={designId} />
+
       {/* Floating Action Button */}
       <div className="circle-button-container">
         {menuOpen && (

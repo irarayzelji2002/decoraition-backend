@@ -4,7 +4,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CommentIcon from "@mui/icons-material/Comment";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-
+import { signOut } from "firebase/auth";
 import ChangeModeMenu from "./ChangeModeMenu.js";
 import CopyLinkModal from "./CopyLinkModal.js";
 import DefaultMenu from "./DefaultMenu.js";
@@ -21,6 +21,8 @@ import "../css/design.css";
 import { useEffect } from "react";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase.js";
+import DrawerComponent from "../pages/Homepage/DrawerComponent.js";
+import { useNavigate } from "react-router-dom";
 
 function DesignHead({
   designName,
@@ -53,7 +55,15 @@ function DesignHead({
   const [isSecondPage, setIsSecondPage] = useState(false);
   const [role, setRole] = useState("Editor");
   const [notifyPeople, setNotifyPeople] = useState(true);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [tempName, setTempName] = useState(designName);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState("");
+  const [designs, setDesigns] = useState([]);
+
+  const navigate = useNavigate();
 
   const handleEditNameToggle = () => {
     setIsEditingName((prev) => !prev);
@@ -217,16 +227,52 @@ function DesignHead({
       handleNameChange();
     }
   };
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode", !darkMode);
+  };
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Sign-out error:", error);
+      });
+  };
+  const handleSettings = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/settings");
+      })
+      .catch((error) => {
+        console.error("Settings error:", error);
+      });
+  };
 
   return (
-    <div className="designHead stickyMenu">
+    <div className={`designHead stickyMenu ${menuOpen ? "darkened" : ""}`}>
+      <DrawerComponent
+        isDrawerOpen={isDrawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        toggleDarkMode={toggleDarkMode}
+        handleLogout={handleLogout}
+        handleSettings={handleSettings}
+        darkMode={darkMode}
+        username={username}
+        userEmail={user ? user.email : ""}
+        designs={designs}
+      />
       <div className="left">
         <IconButton
           size="large"
           edge="start"
           color="inherit"
           aria-label="open drawer"
-          onClick={setPromptBarOpen}
+          onClick={setDrawerOpen}
           sx={{ backgroundColor: "transparent", marginTop: "6px" }}
         >
           <MenuIcon sx={{ color: "white" }} />
@@ -304,7 +350,6 @@ function DesignHead({
           )}
         </Menu>
       </div>
-
       <ShareModal
         isOpen={isShareModalOpen}
         onClose={handleCloseShareModal}
@@ -322,38 +367,31 @@ function DesignHead({
         onClose={handleCloseShareConfirmationModal}
         collaborators={collaborators}
       />
-
       <CopyLinkModal
         isOpen={isCopyLinkModalOpen}
         onClose={handleCloseCopyLinkModal}
       />
-
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
         onDelete={handleDelete}
       />
-
       <DownloadModal
         isOpen={isDownloadModalOpen}
         onClose={handleCloseDownloadModal}
       />
-
       <RenameModal
         isOpen={isRenameModalOpen}
         onClose={handleCloseRenameModal}
       />
-
       <RestoreModal
         isOpen={isRestoreModalOpen}
         onClose={handleCloseRestoreModal}
       />
-
       <MakeCopyModal
         isOpen={isMakeCopyModalOpen}
         onClose={handleCloseMakeCopyModal}
       />
-
       <InfoModal isOpen={isInfoModalOpen} onClose={handleCloseInfoModal} />
     </div>
   );

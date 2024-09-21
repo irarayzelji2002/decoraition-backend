@@ -124,6 +124,7 @@ h6 {
 }
 .working-area {
   display: flex;
+  background-color: var(--bgMain);
   flex-direction: column;
   justify-content: start;
   align-items: center;

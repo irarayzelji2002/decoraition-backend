@@ -196,7 +196,7 @@ h2 {
 
 .selectOption {
   font-size: 24px;
-  color: white;
+  color: var(--color-white);
   margin-top: 0px;
 }
 
@@ -214,7 +214,7 @@ h2 {
 
 .dropdown-item {
   padding: 10px 20px;
-  color: white;
+  color: var(--color-white);
   display: flex;
   align-items: center;
   font-size: 14px;
@@ -237,7 +237,7 @@ h2 {
 .titleDesign {
   margin-top: 8px;
   font-size: 18px;
-  color: white;
+  color: var(--color-white);
 }
 
 .pic {

@@ -26,7 +26,7 @@ const SearchAppBar = ({ user, username, onMenuClick }) => {
           <IconButton
             size="large"
             edge="start"
-            color="inherit"
+            color="var(--color-white)"
             aria-label="open drawer"
             sx={{ mr: 2, backgroundColor: "transparent" }}
             onClick={onMenuClick} // Open drawer on click

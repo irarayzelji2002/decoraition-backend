@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   IconButton,
@@ -29,15 +29,30 @@ const DrawerComponent = ({
   userEmail = "", // Default to empty string
   designs = [], // Default to empty array
 }) => {
+  // State to handle dark mode
   const [darkMode, setDarkMode] = useState(true);
 
-  // Toggle dark mode by updating CSS variables globally
+  // Load dark mode preference from localStorage on component mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      setDarkMode(false);
+      document.documentElement.classList.add("light-mode");
+    } else {
+      setDarkMode(true);
+      document.documentElement.classList.remove("light-mode");
+    }
+  }, []);
+
+  // Toggle dark mode and save preference in localStorage
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     if (darkMode) {
-      document.documentElement.classList.remove("light-mode");
-    } else {
       document.documentElement.classList.add("light-mode");
+      localStorage.setItem("theme", "light");
+    } else {
+      document.documentElement.classList.remove("light-mode");
+      localStorage.setItem("theme", "dark");
     }
   };
 
@@ -69,10 +84,10 @@ const DrawerComponent = ({
           }}
         >
           <IconButton sx={{ color: "white" }} onClick={toggleDarkMode}>
-            <BedtimeIcon />
+            <BedtimeIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
           <IconButton sx={{ color: "white", marginLeft: "16px" }}>
-            <NotificationsIcon />
+            <NotificationsIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
         </div>
       </div>

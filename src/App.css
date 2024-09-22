@@ -23,7 +23,8 @@ body {
   overflow: auto !important;
 }
 :root {
-  /* Default dark mode variables */
+  --bg-image: url("../public/img/bg-login.png");
+
   --color-primary: #faa653;
   --color-secondary: #f04f59;
   --color-tertiary: #27262c;
@@ -51,7 +52,8 @@ body {
 
 .light-mode {
   /* Light mode variables */
-  --color-primary: #1e90ff;
+  --bg-image: url("../public/img/white-bg.png");
+  --color-primary: #faa653;
   --color-secondary: #ff6347;
   --color-tertiary: #f0f0f0;
   --color-grey: #666666;
@@ -65,12 +67,12 @@ body {
   --budget-capsule: #32cd32;
   --inputBg: #f0f0f0;
   --iconBg: #ffffff;
-  --brightFont: #1e90ff;
+  --brightFont: #ba620b;
   --borderInput: #cccccc;
   --gradientCircle: linear-gradient(20deg, #ec2073, #ff894d);
   --gradientButton: linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);
   --gradientFont: linear-gradient(20deg, #f89a47, #f15f3e, #ec2073);
-  --darkGradient: linear-gradient(#1e1e1e, #1e1e1e);
+  --darkGradient: linear-gradient(#c6c6c6, #e5e5e5);
   --budgetCard: #e0e0e0;
   --bgMain: #dbdae2;
 }

@@ -101,7 +101,6 @@
   color: var(--color-white);
 }
 
-/* Media queries for mobile devices */
 @media (max-width: 768px) {
   .search-bar {
     width: 90%;
@@ -109,17 +108,17 @@
   }
 
   .search-icon {
-    left: 20px; /* Adjust the position for smaller screens */
+    left: 20px;
     font-size: 20px;
   }
 
   .grid-container {
-    grid-template-columns: repeat(2, 1fr); /* Two columns on mobile */
+    grid-template-columns: repeat(2, 1fr);
     width: 90%;
   }
 
   .select-button {
-    width: 80%; /* Make the button wider on smaller screens */
+    width: 80%;
     font-size: 14px;
   }
 }

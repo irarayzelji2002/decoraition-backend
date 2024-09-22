@@ -279,12 +279,12 @@ function DesignHead({
         <IconButton
           size="large"
           edge="start"
-          color="inherit"
+          color="var(--color-white)"
           aria-label="open drawer"
           onClick={setDrawerOpen}
           sx={{ backgroundColor: "transparent", marginTop: "6px" }}
         >
-          <MenuIcon sx={{ color: "white" }} />
+          <MenuIcon sx={{ color: "var(--color-white)" }} />
         </IconButton>
         <div className="design-name-section">
           {isEditingName ? (
@@ -315,16 +315,16 @@ function DesignHead({
       </div>
       <div className="right">
         <IconButton onClick={toggleComments}>
-          <CommentIcon sx={{ color: "whitesmoke" }} />
+          <CommentIcon sx={{ color: "var(--color-white)" }} />
         </IconButton>
         <IconButton>
           <ShareIcon
-            sx={{ color: "whitesmoke" }}
+            sx={{ color: "var(--color-white)" }}
             onClick={handleOpenShareModal}
           />
         </IconButton>
         <IconButton onClick={handleClick}>
-          <MoreVertIcon sx={{ color: "whitesmoke" }} />
+          <MoreVertIcon sx={{ color: "var(--color-white)" }} />
         </IconButton>
         <Menu
           anchorEl={anchorEl}

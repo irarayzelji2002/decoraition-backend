@@ -157,7 +157,6 @@ function SettingsPage() {
                   key={index}
                   label={label}
                   value=""
-                  sx={{ color: "var(color-white)" }}
                   fullWidth
                   margin="normal"
                   InputProps={{
@@ -165,10 +164,21 @@ function SettingsPage() {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton onClick={toggleEdit}>
-                          <EditIcon />
+                          <EditIcon sx={{ color: "#FF894D" }} />
                         </IconButton>
                       </InputAdornment>
                     ),
+                    sx: {
+                      "& .MuiInput-root": {
+                        color: "#FF894D",
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: "#FF894D",
+                      },
+                      "& .MuiFormHelperText-root": {
+                        color: "#FF894D",
+                      },
+                    },
                   }}
                 />
               )
@@ -186,7 +196,7 @@ function SettingsPage() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={() => console.log("Edit password")}>
-                      <EditIcon />
+                      <EditIcon sx={{ color: "#FF894D" }} />
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -204,7 +214,7 @@ function SettingsPage() {
                     <IconButton
                       onClick={() => console.log("Edit linked account")}
                     >
-                      <EditIcon />
+                      <EditIcon sx={{ color: "#FF894D" }} />
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -220,7 +230,7 @@ function SettingsPage() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={() => console.log("Change theme")}>
-                      <BedtimeIcon />
+                      <BedtimeIcon sx={{ color: "#FF894D" }} />
                     </IconButton>
                   </InputAdornment>
                 ),

@@ -16,16 +16,17 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  getAuth,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { Person } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { GoogleIcon, FacebookIcon } from "./CustomIcons";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { GoogleIcon, FacebookIcon } from "./CustomIcons";
 import { db } from "../firebase"; // Import Firestore instance
-import { setPersistence, browserLocalPersistence } from "firebase/auth";
-const auth = getAuth();
 
 const defaultTheme = createTheme();
 
@@ -37,15 +38,12 @@ export default function LoginModal() {
 
   const handleValidation = () => {
     let formErrors = {};
-
     if (!email) {
       formErrors.email = "Email is required";
     }
-
     if (!password) {
       formErrors.password = "Password is required";
     }
-
     return formErrors;
   };
 
@@ -77,6 +75,7 @@ export default function LoginModal() {
         password
       );
       toast.success("You have been logged in", {
+        position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -101,6 +100,7 @@ export default function LoginModal() {
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
+      await setPersistence(auth, browserLocalPersistence); // Set persistence for Google login
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
@@ -144,7 +144,6 @@ export default function LoginModal() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      {" "}
       <ToastContainer />
       <Container component="main" maxWidth="xs">
         <CssBaseline />

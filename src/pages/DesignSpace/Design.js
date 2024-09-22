@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "../../css/design.css";
 import DrawerComponent from "../Homepage/DrawerComponent";
+
 import Budget from "./Budget";
 
 function Design() {
@@ -156,6 +157,7 @@ function Design() {
                 </div>
               )}
             </div> */}
+
                 <div className="frame-buttons">
                   <button onClick={() => setNumImageFrames(2)}>
                     <svg

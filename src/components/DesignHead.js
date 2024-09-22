@@ -70,6 +70,15 @@ function DesignHead({
   };
 
   useEffect(() => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      onSnapshot(userRef, (doc) => {
+        setUsername(doc.data().username);
+      });
+    }
+  }, [user]);
+
+  useEffect(() => {
     const fetchDesignTitle = () => {
       const designRef = doc(
         db,
@@ -283,7 +292,13 @@ function DesignHead({
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              onBlur={handleBlur} // Save when the input loses focus
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleBlur();
+                  e.target.blur();
+                }
+              }}
+              // onBlur={handleBlur} // Save when the input loses focus
               autoFocus // Automatically focus on the input when in edit mode
               className="headTitleInput"
             />

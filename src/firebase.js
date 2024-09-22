@@ -1,7 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import {
+  getAuth,
+  setPersistence,
+  browserSessionPersistence,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { sendPasswordResetEmail } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -14,27 +18,41 @@ const firebaseConfig = {
   measurementId: "G-DQL41XE7BK",
 };
 
-// Initialize Firebase
+// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
 
+// Initialize Firebase Authentication and Firestore
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+// Set persistence to browser session
+setPersistence(auth, browserSessionPersistence)
+  .then(() => {
+    console.log("Persistence set to session");
+  })
+  .catch((error) => {
+    console.error("Error setting persistence:", error);
+  });
+
+// Handle forgot password functionality
 export const handleForgotPassword = async (email) => {
-  const auth = getAuth();
   try {
     await sendPasswordResetEmail(auth, email);
     alert("Password reset email sent! Check your inbox.");
   } catch (error) {
     console.error("Error sending password reset email:", error);
-    if (error.code === "auth/user-not-found") {
-      alert("No user found with this email.");
-    } else if (error.code === "auth/invalid-email") {
-      alert("Invalid email address.");
-    } else {
-      alert("Error sending password reset email.");
+    // Handle specific error codes
+    switch (error.code) {
+      case "auth/user-not-found":
+        alert("No user found with this email.");
+        break;
+      case "auth/invalid-email":
+        alert("Invalid email address.");
+        break;
+      default:
+        alert("Error sending password reset email.");
     }
   }
 };
 
-// Initialize Firebase Authentication and Firestore
-export const auth = getAuth(app);
-export const db = getFirestore(app); // Firestore initialization
 export default app;

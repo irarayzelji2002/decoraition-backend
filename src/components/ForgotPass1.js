@@ -85,7 +85,7 @@ export default function ForgotPass1() {
                   },
                 },
                 "& .MuiFormHelperText-root": {
-                  color: "var(color-white)",
+                  color: "white",
                 },
                 width: "400px",
               }}

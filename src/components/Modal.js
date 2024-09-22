@@ -7,7 +7,7 @@ const ModalContent = styled("div")(({ theme }) => ({
   width: "100%",
   maxWidth: "100%",
   padding: theme.spacing(2),
-  color: "var(color-white)",
+  color: "white",
 }));
 
 const Modal = ({ onClose, content }) => {

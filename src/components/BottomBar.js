@@ -128,7 +128,7 @@ function BottomBar({ onTabChange }) {
               fill="white"
             />
           </svg>
-          <span style={{ color: "var(color-white)" }}>Budget</span>
+          <span style={{ color: "white" }}>Budget</span>
         </div>
       </Button>
     </div>

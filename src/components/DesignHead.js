@@ -284,7 +284,7 @@ function DesignHead({
           onClick={setDrawerOpen}
           sx={{ backgroundColor: "transparent", marginTop: "6px" }}
         >
-          <MenuIcon sx={{ color: "white" }} />
+          <MenuIcon sx={{ color: "var(color-white)" }} />
         </IconButton>
         <div className="design-name-section">
           {isEditingName ? (
@@ -333,7 +333,7 @@ function DesignHead({
           PaperProps={{
             style: {
               backgroundColor: "#27262C",
-              color: "white",
+              color: "var(color-white)",
               minWidth: "200px",
             },
           }}

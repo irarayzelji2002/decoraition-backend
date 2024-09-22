@@ -77,7 +77,9 @@ function BottomBarDesign({
             </svg>
           )}
 
-          <span style={{ color: Design ? "#ff8344" : "white" }}>Design</span>
+          <span style={{ color: Design ? "#ff8344" : "var(color-white)" }}>
+            Design
+          </span>
         </div>
       </Button>
       <Button
@@ -142,7 +144,7 @@ function BottomBarDesign({
             </svg>
           )}
 
-          <span style={{ color: Timeline ? "#ff8344" : "white" }}>
+          <span style={{ color: Timeline ? "#ff8344" : "var(color-white)" }}>
             Timeline
           </span>
         </div>
@@ -253,7 +255,9 @@ function BottomBarDesign({
             </svg>
           )}
 
-          <span style={{ color: PlanMap ? "#ff8344" : "white" }}>Plan Map</span>
+          <span style={{ color: PlanMap ? "#ff8344" : "var(color-white)" }}>
+            Plan Map
+          </span>
         </div>
       </Button>
       <Button
@@ -342,7 +346,9 @@ function BottomBarDesign({
             </svg>
           )}
 
-          <span style={{ color: Budget ? "#ff8344" : "white" }}>Budget</span>
+          <span style={{ color: Budget ? "#ff8344" : "var(color-white)" }}>
+            Budget
+          </span>
         </div>
       </Button>
     </div>

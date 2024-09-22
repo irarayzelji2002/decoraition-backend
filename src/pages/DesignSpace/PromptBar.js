@@ -6,6 +6,7 @@ import { MuiColorInput } from "mui-color-input";
 import { Modal, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Textarea from "@mui/joy/Textarea";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 function PromptBar() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -27,6 +28,9 @@ function PromptBar() {
 
   return (
     <div className="promptBar">
+      <div className="bump">
+        <ArrowBackIosIcon />
+      </div>
       <h3>
         Describe your Idea
         <span style={{ color: "var(--color-quaternary)" }}> *</span>

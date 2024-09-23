@@ -181,6 +181,7 @@ h2 {
 .selectOption {
   font-size: 24px;
   color: aliceblue;
+  margin-top: 0px;
 }
 
 .iconFrame {
@@ -193,12 +194,6 @@ h2 {
   top: 24px;
   right: 10px;
   cursor: pointer;
-}
-
-.selectOption {
-  font-size: 24px;
-  color: var(--color-white);
-  margin-top: 0px;
 }
 
 .dropdown-menu {

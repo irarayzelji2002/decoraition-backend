@@ -39,13 +39,13 @@
 }
 .itemName {
   font-size: 18px;
-  color: aliceblue;
+  color: var(--corlor-white);
 }
 .itemPrice {
   margin-top: 12px;
   font-size: 12px;
   opacity: 0.6;
-  color: aliceblue;
+  color: var(--corlor-white);
 }
 
 .circle-button-container {

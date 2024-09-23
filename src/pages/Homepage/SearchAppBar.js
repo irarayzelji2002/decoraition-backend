@@ -31,7 +31,7 @@ const SearchAppBar = ({ user, username, onMenuClick }) => {
             sx={{ mr: 2, backgroundColor: "transparent" }}
             onClick={onMenuClick} // Open drawer on click
           >
-            <MenuIcon />
+            <MenuIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
 
           <Paper

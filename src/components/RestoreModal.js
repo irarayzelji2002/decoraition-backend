@@ -6,14 +6,28 @@ import {
   DialogActions,
   Typography,
   Button,
+  IconButton,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const RestoreModal = ({ isOpen, onClose }) => {
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <ArrowBackIcon sx={{ color: "whitesmoke" }} />
+      <DialogTitle
+        sx={{
+          backgroundColor: "#1F1E22",
+          color: "whitesmoke",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {/* Wrapping ArrowBackIcon inside IconButton for clickability */}
+        <IconButton
+          onClick={onClose}
+          sx={{ color: "whitesmoke", marginRight: 1 }}
+        >
+          <ArrowBackIcon />
+        </IconButton>
         Restore
       </DialogTitle>
       <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
@@ -22,10 +36,41 @@ const RestoreModal = ({ isOpen, onClose }) => {
         </Typography>
       </DialogContent>
       <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+        {/* Restore Button */}
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={onClose}
+          sx={{
+            background: "var(--gradientButton)",
+            borderRadius: "20px",
+            color: "var(--color-white)",
+            fontWeight: "bold",
+            textTransform: "none",
+            "&:hover": {
+              background: "var(--gradientButtonHover)",
+            },
+          }}
+        >
           Restore
         </Button>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
+
+        {/* Cancel Button */}
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={onClose}
+          sx={{
+            background: "var(--gradientButton)",
+            borderRadius: "20px",
+            color: "var(--color-white)",
+            fontWeight: "bold",
+            textTransform: "none",
+            "&:hover": {
+              background: "var(--gradientButtonHover)",
+            },
+          }}
+        >
           Cancel
         </Button>
       </DialogActions>

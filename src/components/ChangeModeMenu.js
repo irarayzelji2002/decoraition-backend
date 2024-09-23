@@ -1,13 +1,13 @@
 import React from "react";
 import { MenuItem, ListItemIcon, ListItemText } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const ChangeModeMenu = ({ onClose, onBackToMenu }) => {
   return (
     <>
       <MenuItem onClick={onBackToMenu}>
         <ListItemIcon>
-          <EditIcon sx={{ color: "whitesmoke" }} />
+          <ArrowBackIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>
         <ListItemText primary="Change Mode" />
       </MenuItem>
@@ -18,7 +18,7 @@ const ChangeModeMenu = ({ onClose, onBackToMenu }) => {
         <ListItemText primary="Commenting" />
       </MenuItem>
       <MenuItem onClick={onClose}>
-        <ListItemText primary="View ing" />
+        <ListItemText primary="Viewing" />
       </MenuItem>
     </>
   );

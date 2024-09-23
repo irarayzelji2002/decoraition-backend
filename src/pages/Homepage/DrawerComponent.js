@@ -19,6 +19,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 
 const DrawerComponent = ({
   isDrawerOpen,
@@ -31,7 +32,7 @@ const DrawerComponent = ({
 }) => {
   // State to handle dark mode
   const [darkMode, setDarkMode] = useState(true);
-
+  const navigate = useNavigate();
   // Load dark mode preference from localStorage on component mount
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -111,10 +112,12 @@ const DrawerComponent = ({
       <Divider sx={{ backgroundColor: "gray", my: 2 }} />
       <List>
         <ListItem>
-          <ListItemIcon>
-            <HomeIcon sx={{ color: darkMode ? "white" : "black" }} />
-          </ListItemIcon>
-          <ListItemText primary="Home" />
+          <ListItem button onClick={() => navigate("/")}>
+            <ListItemIcon>
+              <HomeIcon sx={{ color: darkMode ? "white" : "black" }} />
+            </ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
         </ListItem>
         <ListItem>
           <ListItemIcon>

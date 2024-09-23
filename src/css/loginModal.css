@@ -5,7 +5,7 @@ html,
 }
 
 html {
-  background-color: rgb(27, 27, 27);
+  background-color: var(--bgMain);
 }
 h1 {
   font-size: 50px;
@@ -20,6 +20,7 @@ h1 {
   background-image: var(--bg-image);
   background-repeat: no-repeat;
   background-size: cover;
+  background-attachment: fixed;
   width: 100%;
   min-height: 100vh;
   justify-content: center;

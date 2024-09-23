@@ -30,24 +30,104 @@ const ShareModal = ({
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
         <ArrowBackIcon
-          sx={{ color: "whitesmoke", cursor: "pointer" }}
+          sx={{ color: "var(--co)", cursor: "pointer" }}
           onClick={onClose}
         />
         {isSecondPage ? "Set Roles and Notifications" : "Add Collaborators"}
       </DialogTitle>
 
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+      <DialogContent
+        sx={{
+          backgroundColor: "#1F1E22",
+          color: "var(--color-white)",
+          width: "400px",
+        }}
+      >
         {!isSecondPage ? (
           <div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <TextField
+                label="Enter email address"
+                variant="outlined"
+                fullWidth
+                value={newCollaborator}
+                input={{ color: "var(--color-white)" }}
+                onChange={(e) => setNewCollaborator(e.target.value)}
+                sx={{
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                  backgroundColor: "var(--inputBg)",
+                  input: { color: "var(--color-white)" },
+                  "& label": { color: "var(--borderInput)" },
+                  "& label.Mui-focused": { color: "var(--borderInput)" },
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "var(--borderInput)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "var(--borderInput)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "var(--borderInput)",
+                    },
+                  },
+                  "& .MuiFormHelperText-root": {
+                    color: "white",
+                  },
+                }}
+              />
+            </div>
             {/* Collaborator Input Field */}
-            <TextField
-              label="Collaborator Email"
-              variant="outlined"
-              fullWidth
-              value={newCollaborator}
-              onChange={(e) => setNewCollaborator(e.target.value)}
-              sx={{ marginBottom: "16px" }}
-            />
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                sx={{
+                  width: "50%",
+                  backgroundColor: "var(--inputBg)",
+                  "& .MuiSelect-select": { color: "var(--color-white)" },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "var(--borderInput)",
+                  },
+                  "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                    {
+                      borderColor: "var(--borderInput)",
+                    },
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                    {
+                      borderColor: "var(--borderInput)",
+                    },
+                }}
+              >
+                <MenuItem value="Editor">Editor</MenuItem>
+                <MenuItem value="Commenter">Commenter</MenuItem>
+                <MenuItem value="Viewer">Viewer</MenuItem>
+              </Select>
+              <p style={{ color: "var(--color-white)", marginLeft: "auto" }}>
+                Notify People
+              </p>
+              <Checkbox
+                checked={notifyPeople}
+                onChange={(e) => setNotifyPeople(e.target.checked)}
+                sx={{ color: "var(--color-white)" }}
+              />
+            </div>
+            <div style={{ marginTop: "10px" }}>
+              <Typography variant="body1" color="var(--color-white)">
+                Added Collaborators
+              </Typography>
+              <ul style={{ listStyle: "none", padding: 0 }}>
+                {collaborators.map((collaborator, index) => (
+                  <li key={index} style={{ marginTop: "10px" }}>
+                    <Typography variant="body1" color="var(--color-white)">
+                      {collaborator}
+                    </Typography>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <br />
             <Button
               fullWidth
               variant="contained"

@@ -1,12 +1,116 @@
 import "../../css/budget.css";
 import "../../css/design.css";
+import * as React from "react";
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import CloseIcon from "@mui/icons-material/Close";
+import Modal from "@mui/material/Modal";
+import { Divider } from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "var(--nav-card-modal)",
+  borderRadius: "12px",
+  boxShadow: 24,
+};
 
 function Item() {
+  const [itemPrice, setItemPrice] = useState("");
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   return (
     <div
       className="itemSpace"
       style={{ display: "flex", flexDirection: "row" }}
     >
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                marginBottom: "12px",
+                margin: "18px",
+              }}
+            >
+              <span
+                id="modal-modal-title"
+                style={{ fontSize: "18px", fontWeight: "600" }}
+              >
+                Edit Budget
+              </span>{" "}
+              <CloseIcon
+                sx={{ marginLeft: "auto" }}
+                onClick={handleClose}
+                cursor={"pointer"}
+              />
+            </div>
+
+            <Divider sx={{ borderColor: "var(--color-grey)" }} />
+            <div
+              className="input-group"
+              style={{ marginTop: "12px", margin: "18px" }}
+            >
+              <div className="price-quantity-section">
+                <select
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    appearance: "none",
+                    outline: "none",
+                  }}
+                >
+                  <option value="PHP">PHP</option>
+                </select>
+                <KeyboardArrowDownIcon
+                  sx={{
+                    color: "var(--color-grey)",
+                    marginLeft: "-50px",
+                    marginTop: "18px",
+                  }}
+                />
+                <input
+                  id="item-price"
+                  type="number"
+                  placeholder="Enter item price"
+                  value={itemPrice}
+                  onChange={(e) => setItemPrice(e.target.value)}
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    appearance: "none",
+                    outline: "none",
+                  }}
+                />
+              </div>
+            </div>
+            <button className="add-item-btn" style={{ margin: "18px" }}>
+              Edit Price
+            </button>
+          </div>
+        </Box>
+      </Modal>
+
       <img
         src="../../img/logoWhitebg.png"
         alt={`design preview `}
@@ -17,7 +121,7 @@ function Item() {
           display: "flex",
           flexDirection: "column",
           margin: "12px",
-          width: "70%",
+          width: "auto  ",
         }}
       >
         <span className="itemName">Item</span>
@@ -27,13 +131,16 @@ function Item() {
         style={{
           display: "flex",
           flexDirection: "row",
-
+          marginLeft: "auto",
+          marginRight: "10px",
           justifyContent: "flex-end",
           alignItems: "center",
         }}
       >
         <svg
           style={{ marginRight: "12px" }}
+          onClick={handleOpen}
+          cursor={"pointer"}
           width="20"
           height="20"
           viewBox="0 0 120 120"
@@ -87,6 +194,8 @@ function Item() {
           width="20"
           height="20"
           viewBox="0 0 140 151"
+          onClick={handleOpen}
+          cursor={"pointer"}
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >

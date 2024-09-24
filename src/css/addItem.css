@@ -116,7 +116,7 @@
 /* Container for Price and Currency Selector */
 .price-quantity-section {
   display: flex;
-  border-right: 1px solid var(--borderInput);
+
   justify-content: space-between;
   gap: 20px;
 }
@@ -168,6 +168,7 @@
   font-weight: bold !important;
   border: none;
   cursor: pointer;
+
   font-size: 18px;
 }
 

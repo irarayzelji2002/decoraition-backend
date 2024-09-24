@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import DesignHead from "../../components/DesignHead";
 import Item from "./Item";
-import BottomBar from "../../components/BottomBar";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
@@ -11,11 +9,11 @@ import "../../css/budget.css";
 
 function Budget() {
   const { designId } = useParams();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [designData, setDesignData] = useState(null);
-  const [budget, setBudget] = useState(""); 
+  const [budget, setBudget] = useState("");
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -43,7 +41,7 @@ function Budget() {
 
   const handleAddBudget = () => {
     console.log("Budget added:", budget);
-    setModalOpen(false); 
+    setModalOpen(false);
     setBudget("");
   };
 
@@ -95,7 +93,7 @@ function Budget() {
           {menuOpen ? <CloseIcon /> : <AddIcon />}
         </div>
       </div>
-      
+
       {/* Modal */}
       {modalOpen && (
         <div className="modal-overlay">

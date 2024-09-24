@@ -125,6 +125,7 @@ function Design() {
         newName={newName}
         setNewName={setNewName}
         isEditingName={isEditingName}
+        toggleComments={toggleComments}
         handleNameChange={handleNameChange}
         setIsEditingName={setIsEditingName}
         handleEditNameToggle={handleEditNameToggle}

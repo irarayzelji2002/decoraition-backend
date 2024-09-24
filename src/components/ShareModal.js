@@ -10,8 +10,10 @@ import {
   Select,
   MenuItem,
   Checkbox,
+  Divider,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EmailInput from "./EmailInput";
 
 const ShareModal = ({
   isOpen,
@@ -57,41 +59,17 @@ const ShareModal = ({
           backgroundColor: "#1F1E22", // Content background color
           color: "whitesmoke", // Text color in the content
           width: "400px",
+          "& .MuiDialog-paper": {
+            width: "100%",
+          },
         }}
       >
         {!isSecondPage ? (
-          <div>
+          <div w>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <TextField
-                label="Enter email address"
-                variant="outlined"
-                fullWidth
-                value={newCollaborator}
-                onChange={(e) => setNewCollaborator(e.target.value)}
-                sx={{
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                  backgroundColor: "#3E3E42", // Input background color
-                  input: { color: "whitesmoke" }, // Input text color
-                  "& label": { color: "whitesmoke" }, // Label color
-                  "& label.Mui-focused": { color: "whitesmoke" }, // Focused label color
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "whitesmoke", // Border color
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "whitesmoke", // Hover border color
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "whitesmoke", // Focused border color
-                    },
-                  },
-                  "& .MuiFormHelperText-root": {
-                    color: "white",
-                  },
-                }}
-              />
+              <EmailInput />
             </div>
+            <Divider sx={{ backgroundColor: "grey", marginBottom: "16px" }} />
 
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Select
@@ -99,18 +77,18 @@ const ShareModal = ({
                 onChange={(e) => setRole(e.target.value)}
                 sx={{
                   width: "50%",
-                  backgroundColor: "#3E3E42", // Select background color
+                  backgroundColor: "transparent", // Select background color
                   "& .MuiSelect-select": { color: "whitesmoke" }, // Select text color
                   "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "whitesmoke", // Border color
+                    borderColor: "transparent", // Border color
                   },
                   "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
                     {
-                      borderColor: "whitesmoke", // Hover border color
+                      borderColor: "transparent", // Hover border color
                     },
                   "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
                     {
-                      borderColor: "whitesmoke", // Focused border color
+                      borderColor: "transparent", // Focused border color
                     },
                 }}
               >
@@ -124,60 +102,33 @@ const ShareModal = ({
               <Checkbox
                 checked={notifyPeople}
                 onChange={(e) => setNotifyPeople(e.target.checked)}
-                sx={{ color: "whitesmoke" }} // Checkbox color
+                sx={{
+                  color: "var(--color-white)",
+                  "&.Mui-checked": {
+                    color: "var(--color-quaternary)", // Change color when checked
+                  },
+                }}
               />
             </div>
 
-            <div style={{ marginTop: "10px" }}>
-              <Typography variant="body1" color="whitesmoke">
-                Added Collaborators
-              </Typography>
-              <ul style={{ listStyle: "none", padding: 0 }}>
-                {collaborators.map((collaborator, index) => (
-                  <li key={index} style={{ marginTop: "10px" }}>
-                    <Typography variant="body1" color="whitesmoke">
-                      {collaborator}
-                    </Typography>
-                  </li>
-                ))}
-              </ul>
-            </div>
             <br />
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={() => onAddCollaborator(newCollaborator)}
-              sx={{
-                background: "var(--gradientButton)", // Gradient background
-                borderRadius: "20px", // Button border radius
-                color: "whitesmoke", // Button text color
-                fontWeight: "bold",
-                textTransform: "none",
-                "&:hover": {
-                  background: "var(--gradientButtonHover)", // Reverse gradient on hover
-                },
-              }}
-            >
-              Add Collaborator
-            </Button>
+            <Divider sx={{ backgroundColor: "grey", marginBottom: "16px" }} />
 
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={onNext}
+            <TextField
+              multiline
+              minRows={1}
+              variant="standard"
+              placeholder="Optional message"
               sx={{
-                background: "var(--gradientButton)", // Gradient background
-                borderRadius: "20px", // Button border radius
-                color: "whitesmoke", // Button text color
-                fontWeight: "bold",
-                textTransform: "none",
-                "&:hover": {
-                  background: "var(--gradientButtonHover)", // Reverse gradient on hover
+                marginBottom: "16px",
+                padding: "16px",
+                width: "90%",
+                backgroundColor: "transparent",
+                "& .MuiInput-root": {
+                  color: "var(--color-white)",
                 },
               }}
-            >
-              Next
-            </Button>
+            />
           </div>
         ) : (
           <div>
@@ -244,7 +195,7 @@ const ShareModal = ({
         <Button
           fullWidth
           variant="contained"
-          onClick={onClose}
+          onClick={onNext}
           sx={{
             background: "var(--gradientButton)", // Gradient background
             borderRadius: "20px", // Button border radius
@@ -256,7 +207,7 @@ const ShareModal = ({
             },
           }}
         >
-          Close
+          Next
         </Button>
       </DialogActions>
     </Dialog>

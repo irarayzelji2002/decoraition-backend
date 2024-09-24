@@ -12,16 +12,24 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const CopyLinkModal = ({ isOpen, onClose }) => {
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper": {
+          backgroundColor: "var(  --nav-card-modal)", // Change this to your desired background color
+          borderRadius: "20px", // Change this to your desired border radius
+        },
+      }}
+    >
       <DialogTitle
         sx={{
-          backgroundColor: "#1F1E22",
+          backgroundColor: "var(  --nav-card-modal)",
           color: "whitesmoke",
           display: "flex",
           alignItems: "center",
         }}
       >
-        {/* Wrapping the ArrowBackIcon in IconButton for clickability */}
         <IconButton
           onClick={onClose}
           sx={{ color: "whitesmoke", marginRight: 1 }}
@@ -30,12 +38,14 @@ const CopyLinkModal = ({ isOpen, onClose }) => {
         </IconButton>
         Link Copied
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+      <DialogContent
+        sx={{ backgroundColor: "var(  --nav-card-modal)", color: "whitesmoke" }}
+      >
         <Typography variant="body1">
           The link has been copied to your clipboard.
         </Typography>
       </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+      <DialogActions sx={{ backgroundColor: "var(  --nav-card-modal)" }}>
         <Button
           fullWidth
           variant="contained"

@@ -12,16 +12,24 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const DownloadModal = ({ isOpen, onClose }) => {
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper": {
+          backgroundColor: "var(  --nav-card-modal)", // Custom background color for the dialog
+          borderRadius: "20px", // Custom border radius for the dialog
+        },
+      }}
+    >
       <DialogTitle
         sx={{
-          backgroundColor: "#1F1E22",
-          color: "whitesmoke",
+          backgroundColor: "var(  --nav-card-modal)", // Title background color
+          color: "whitesmoke", // Title text color
           display: "flex",
           alignItems: "center",
         }}
       >
-        {/* Wrapping ArrowBackIcon inside IconButton for clickability */}
         <IconButton
           onClick={onClose}
           sx={{ color: "whitesmoke", marginRight: 1 }}
@@ -30,25 +38,27 @@ const DownloadModal = ({ isOpen, onClose }) => {
         </IconButton>
         Download
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+      <DialogContent
+        sx={{ backgroundColor: "var(--nav-card-modal)", color: "whitesmoke" }}
+      >
         <Typography variant="body1">
           Choose your download options and format.
         </Typography>
       </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+      <DialogActions sx={{ backgroundColor: "var(--nav-card-modal)" }}>
         {/* Download Button */}
         <Button
           fullWidth
           variant="contained"
           onClick={onClose}
           sx={{
-            background: "var(--gradientButton)",
-            borderRadius: "20px",
-            color: "var(--color-white)",
+            background: "var(--gradientButton)", // Gradient background
+            borderRadius: "20px", // Button border radius
+            color: "var(--color-white)", // Button text color
             fontWeight: "bold",
             textTransform: "none",
             "&:hover": {
-              background: "var(--gradientButtonHover)",
+              background: "var(--gradientButtonHover)", // Reverse gradient on hover
             },
           }}
         >
@@ -61,13 +71,13 @@ const DownloadModal = ({ isOpen, onClose }) => {
           variant="contained"
           onClick={onClose}
           sx={{
-            background: "var(--gradientButton)",
-            borderRadius: "20px",
-            color: "var(--color-white)",
+            background: "var(--gradientButton)", // Gradient background
+            borderRadius: "20px", // Button border radius
+            color: "var(--color-white)", // Button text color
             fontWeight: "bold",
             textTransform: "none",
             "&:hover": {
-              background: "var(--gradientButtonHover)",
+              background: "var(--gradientButtonHover)", // Reverse gradient on hover
             },
           }}
         >

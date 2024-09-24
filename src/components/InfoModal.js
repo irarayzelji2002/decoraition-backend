@@ -12,30 +12,49 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const InfoModal = ({ isOpen, onClose }) => {
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper": {
+          backgroundColor: "var(  --nav-card-modal)", // Custom background color for the dialog
+          borderRadius: "20px", // Custom border radius for the dialog
+        },
+      }}
+    >
       <DialogTitle
         sx={{
-          backgroundColor: "#1F1E22",
-          color: "whitesmoke",
+          backgroundColor: "var(  --nav-card-modal)", // Title background color
+          color: "whitesmoke", // Set title text color to white
           display: "flex",
           alignItems: "center",
         }}
       >
-        {/* Wrapping the ArrowBackIcon in IconButton for clickability */}
         <IconButton
           onClick={onClose}
-          sx={{ color: "whitesmoke", marginRight: 1 }}
+          sx={{ color: "whitesmoke", marginRight: 1 }} // Set icon color to white
         >
           <ArrowBackIcon />
         </IconButton>
-        Info
+        <Typography variant="h6" sx={{ color: "whitesmoke" }}>
+          {" "}
+          {/* Set info text color to white */}
+          Info
+        </Typography>
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+      <DialogContent
+        sx={{
+          backgroundColor: "var(  --nav-card-modal)", // Content background color
+          color: "var(--color-white)", // Text color in the content
+        }}
+      >
         <Typography variant="body1">
           Here is some information about the item.
         </Typography>
       </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+      <DialogActions
+        sx={{ backgroundColor: "var(  --nav-card-modal)" }} // Actions background color
+      >
         <Button
           fullWidth
           variant="contained"
@@ -43,7 +62,7 @@ const InfoModal = ({ isOpen, onClose }) => {
           sx={{
             background: "var(--gradientButton)",
             borderRadius: "20px",
-            color: "var(--color-white)",
+            color: "var(--color-white)", // Button text color
             fontWeight: "bold",
             textTransform: "none",
             "&:hover": {

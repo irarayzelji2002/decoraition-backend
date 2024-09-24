@@ -12,11 +12,20 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const RenameModal = ({ isOpen, onClose }) => {
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper": {
+          backgroundColor: "var(  --nav-card-modal)", // Custom background color for the dialog
+          borderRadius: "20px", // Custom border radius for the dialog
+        },
+      }}
+    >
       <DialogTitle
         sx={{
-          backgroundColor: "#1F1E22",
-          color: "whitesmoke",
+          backgroundColor: "var(  --nav-card-modal)", // Title background color
+          color: "var(--color-white)", // Title text color
           display: "flex",
           alignItems: "center",
         }}
@@ -24,33 +33,52 @@ const RenameModal = ({ isOpen, onClose }) => {
         {/* Make the ArrowBackIcon clickable by wrapping it in an IconButton */}
         <IconButton
           onClick={onClose}
-          sx={{ color: "whitesmoke", marginRight: 1 }}
+          sx={{ color: "var(--color-white)", marginRight: 1 }}
         >
           <ArrowBackIcon />
         </IconButton>
         Rename
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+      <DialogContent
+        sx={{ backgroundColor: "var(  --nav-card-modal)", color: "whitesmoke" }} // Content background color
+      >
         <TextField
           label="New Name"
           variant="outlined"
           fullWidth
-          sx={{ marginBottom: "16px" }}
+          sx={{
+            marginBottom: "16px",
+            backgroundColor: "var(  --nav-card-modal)", // Input background color
+            input: { color: "whitesmoke" }, // Input text color
+            "& label": { color: "whitesmoke" }, // Label color
+            "& label.Mui-focused": { color: "whitesmoke" }, // Focused label color
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "whitesmoke", // Border color
+              },
+              "&:hover fieldset": {
+                borderColor: "whitesmoke", // Hover border color
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "whitesmoke", // Focused border color
+              },
+            },
+          }}
         />
       </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+      <DialogActions sx={{ backgroundColor: "var(  --nav-card-modal)" }}>
         <Button
           fullWidth
           variant="contained"
           onClick={onClose}
           sx={{
-            background: "var(--gradientButton)",
-            borderRadius: "20px",
-            color: "var( --color-white)",
+            background: "var(--gradientButton)", // Gradient background
+            borderRadius: "20px", // Button border radius
+            color: "var(--color-white)", // Button text color
             fontWeight: "bold",
             textTransform: "none",
             "&:hover": {
-              background: "var(--gradientButtonHover)",
+              background: "var(--gradientButtonHover)", // Reverse gradient on hover
             },
           }}
         >
@@ -61,13 +89,13 @@ const RenameModal = ({ isOpen, onClose }) => {
           variant="contained"
           onClick={onClose}
           sx={{
-            background: "var(--gradientButton)",
-            borderRadius: "20px",
-            color: "var( --color-white)",
+            background: "var(--gradientButton)", // Gradient background
+            borderRadius: "20px", // Button border radius
+            color: "var(--color-white)", // Button text color
             fontWeight: "bold",
             textTransform: "none",
             "&:hover": {
-              background: "var(--gradientButtonHover)",
+              background: "var(--gradientButtonHover)", // Reverse gradient on hover
             },
           }}
         >

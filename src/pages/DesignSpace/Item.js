@@ -24,6 +24,9 @@ function Item() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [openDelete, setOpenDelete] = React.useState(false);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
   return (
     <div
       className="itemSpace"
@@ -110,7 +113,70 @@ function Item() {
           </div>
         </Box>
       </Modal>
+      <Modal
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                marginBottom: "12px",
+                margin: "18px",
+              }}
+            >
+              <span
+                id="modal-modal-title"
+                style={{ fontSize: "18px", fontWeight: "600" }}
+              >
+                Confirm Budget Removal
+              </span>{" "}
+              <CloseIcon
+                sx={{ marginLeft: "auto" }}
+                onClick={handleCloseDelete}
+                cursor={"pointer"}
+              />
+            </div>
+            <Divider sx={{ borderColor: "var(--color-grey)" }} />
 
+            <span style={{ textAlign: "center", margin: "18px" }}>
+              Are you sure you want to remove the budget item?
+            </span>
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                margin: "18px",
+                marginTop: "-24px",
+                justifyContent: "center",
+              }}
+            >
+              <button
+                className="add-item-btn"
+                style={{
+                  background: "transparent",
+                  border: "2px solid transparent",
+                  backgroundImage:
+                    " var(--darkGradient), var(--gradientButton)",
+                  backgroundOrigin: "border-box",
+                  backgroundClip: " padding-box, border-box",
+                }}
+              >
+                Cancel
+              </button>
+              <button className="add-item-btn">Confirm</button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
       <img
         src="../../img/logoWhitebg.png"
         alt={`design preview `}
@@ -194,7 +260,7 @@ function Item() {
           width="20"
           height="20"
           viewBox="0 0 140 151"
-          onClick={handleOpen}
+          onClick={handleOpenDelete}
           cursor={"pointer"}
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

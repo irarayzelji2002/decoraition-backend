@@ -36,3 +36,5 @@ ai-api/**/*.png
 ai-api/*.sarif
 ai-api/*.pt
 ai-api/*.safetensors
+ai-api/__pycache__
+ai-api/venv

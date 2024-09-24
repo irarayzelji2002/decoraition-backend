@@ -1,8 +1,80 @@
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Next Generation</title>
 	</head>
-	<body></body>
+	<body>
+		<h1>Next Image Generation Test</h1>
+
+		<form id="generate_image_form" enctype="multipart/form-data">
+			<label for="prompt">Prompt:</label><br />
+			<input type="text" id="prompt" name="prompt" required /><br /><br />
+			<label for="number_of_images">Number of Images:</label><br />
+			<input
+				type="number"
+				id="number_of_images"
+				name="number_of_images"
+				min="1"
+				max="4"
+				value="1"
+				required
+			/><br /><br />
+			<button type="button" onclick="submitForm()">Generate</button>
+		</form>
+
+		<button onclick="document.location='/test/first-generation'">
+			First Generation
+		</button>
+
+		<div id="imageContainer"></div>
+
+		<script>
+			async function submitForm() {
+				const prompt = document.getElementById("prompt").value.trim();
+				const number_of_images = document
+					.getElementById("number_of_images")
+					.value.trim();
+
+				if (!prompt || number_of_images < 1 || number_of_images > 4) {
+					alert(
+						"Invalid input. Ensure prompt is filled and number of images is between 1 and 4."
+					);
+					return;
+				}
+
+				const formData = new FormData();
+				formData.append("prompt", prompt);
+				formData.append("number_of_images", number_of_images);
+
+				try {
+					const response = await fetch("/generate-first-image", {
+						method: "POST",
+						body: formData,
+					});
+
+					if (!response.ok) {
+						throw new Error("Failed to generate image");
+					}
+
+					const data = await response.json();
+					const imageContainer =
+						document.getElementById("imageContainer");
+					imageContainer.innerHTML = "";
+
+					data.image_paths.forEach((path) => {
+						const img = document.createElement("img");
+						img.src = path;
+						img.alt = "Generated Image";
+						img.style.maxWidth = "100%";
+						img.style.height = "auto";
+						imageContainer.appendChild(img);
+					});
+				} catch (error) {
+					console.error("Error:", error);
+				}
+			}
+		</script>
+	</body>
 </html>

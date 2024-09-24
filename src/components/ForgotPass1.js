@@ -1,16 +1,13 @@
 import * as React from "react";
-
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "../css/forgotPass.css";
-
 import { handleForgotPassword } from "../firebase";
 import { useState } from "react"; // Import your forgot password function
 
@@ -54,42 +51,45 @@ export default function ForgotPass1() {
             noValidate
             sx={{ mt: 1 }}
           >
-            <span className="formLabels">Email address</span>
+            <span className="formLabels">Email Address</span>
             <TextField
-              margin="normal"
               required
               fullWidth
-              id="email"
+              placeholder="Enter your email address"
               name="email"
-              label="Enter your email Address"
               autoComplete="email"
               autoFocus
+              id="email-address"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={!!emailError}
               helperText={emailError}
-              className="email-field"
               sx={{
+                marginTop: "10px",
+                marginBottom: "10px",
+                backgroundColor: "var(--inputBg)",
                 input: { color: "var(--color-white)" },
-                "& label": { color: "var(--borderInput)" },
-                "& label.Mui-focused": { color: "var(--borderInput)" },
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
-                    borderColor: "var(--borderInput)",
+                    borderColor: "var(--borderInput)", // Border color when not focused
+                    borderWidth: "2px", // Adjust the border thickness here
                   },
                   "&:hover fieldset": {
-                    borderColor: "var(--borderInput)",
+                    borderColor: "var(--borderInput)", // Border color on hover
+                    borderWidth: "2px", // Maintain the thickness on hover
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "var(--borderInput)",
+                    borderColor: "var(--borderInput)", // Border color when focused
+                    borderWidth: "2px", // Maintain the thickness on focus
                   },
                 },
                 "& .MuiFormHelperText-root": {
                   color: "white",
                 },
-                width: "400px",
               }}
             />
+
             <Button
               type="submit"
               fullWidth

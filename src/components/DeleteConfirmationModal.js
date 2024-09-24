@@ -12,31 +12,49 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper": {
+          backgroundColor: "var(  --nav-card-modal)", // Custom background color for the dialog
+          borderRadius: "20px", // Custom border radius for the dialog
+        },
+      }}
+    >
       <DialogTitle
         sx={{
-          backgroundColor: "#1F1E22",
-          color: "whitesmoke",
+          backgroundColor: "var(  --nav-card-modal)", // Title background color
+          color: "whitesmoke", // Set title text color to white
           display: "flex",
           alignItems: "center",
         }}
       >
-        {/* Wrapping ArrowBackIcon in IconButton to make it clickable */}
         <IconButton
           onClick={onClose}
-          sx={{ color: "whitesmoke", marginRight: 1 }}
+          sx={{ color: "whitesmoke", marginRight: 1 }} // Set icon color to white
         >
           <ArrowBackIcon />
         </IconButton>
-        Confirm Delete
+        <Typography variant="h6" sx={{ color: "whitesmoke" }}>
+          {" "}
+          Confirm Delete
+        </Typography>
       </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
+      <DialogContent
+        sx={{
+          backgroundColor: "var(  --nav-card-modal)", // Content background color
+          color: "whitesmoke", // Text color in the content
+        }}
+      >
         <Typography variant="body1">
           Are you sure you want to delete this item? This action cannot be
           undone.
         </Typography>
       </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
+      <DialogActions
+        sx={{ backgroundColor: "var(  --nav-card-modal)" }} // Actions background color
+      >
         <Button
           fullWidth
           variant="contained"
@@ -44,7 +62,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
           sx={{
             background: "var(--gradientButton)",
             borderRadius: "20px",
-            color: "var(--color-white)",
+            color: "var(--color-white)", // Button text color
             fontWeight: "bold",
             textTransform: "none",
             "&:hover": {
@@ -61,7 +79,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
           sx={{
             background: "var(--gradientButton)",
             borderRadius: "20px",
-            color: "var(--color-white)",
+            color: "var(--color-white)", // Button text color
             fontWeight: "bold",
             textTransform: "none",
             "&:hover": {

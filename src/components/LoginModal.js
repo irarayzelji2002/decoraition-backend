@@ -27,6 +27,9 @@ import { useNavigate } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 import { GoogleIcon, FacebookIcon } from "./CustomIcons";
 import { db } from "../firebase"; // Import Firestore instance
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 
 const defaultTheme = createTheme();
 
@@ -35,6 +38,10 @@ export default function LoginModal() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = (event) => event.preventDefault();
 
   const handleValidation = () => {
     let formErrors = {};
@@ -161,7 +168,7 @@ export default function LoginModal() {
             <TextField
               required
               fullWidth
-              label="Your email address"
+              placeholder="Enter your email address"
               name="email"
               autoComplete="email"
               autoFocus
@@ -176,17 +183,18 @@ export default function LoginModal() {
                 marginBottom: "10px",
                 backgroundColor: "var(--inputBg)",
                 input: { color: "var(--color-white)" },
-                "& label": { color: "var(--borderInput)" },
-                "& label.Mui-focused": { color: "var(--borderInput)" },
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
-                    borderColor: "var(--borderInput)",
+                    borderColor: "var(--borderInput)", // Border color when not focused
+                    borderWidth: "2px", // Adjust the border thickness here
                   },
                   "&:hover fieldset": {
-                    borderColor: "var(--borderInput)",
+                    borderColor: "var(--borderInput)", // Border color on hover
+                    borderWidth: "2px", // Maintain the thickness on hover
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "var(--borderInput)",
+                    borderColor: "var(--borderInput)", // Border color when focused
+                    borderWidth: "2px", // Maintain the thickness on focus
                   },
                 },
                 "& .MuiFormHelperText-root": {
@@ -194,17 +202,60 @@ export default function LoginModal() {
                 },
               }}
             />
+
             <span className="formLabels">Password</span>
-            <Password
+            <TextField
+              required
+              fullWidth
+              label="" // or simply omit this line
               id="password"
               name="password"
-              type="password"
-              required
-              placeholder="Password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               error={!!errors.password}
               helperText={errors.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      sx={{
+                        color: "var(--color-white)",
+                      }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                marginTop: "10px",
+                marginBottom: "10px",
+                backgroundColor: "var(--inputBg)",
+                input: { color: "var(--color-white)" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "var(--borderInput)", // Border color when not focused
+                    borderWidth: "2px", // Adjust the border thickness here
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "var(--borderInput)", // Border color on hover
+                    borderWidth: "2px", // Maintain the thickness on hover
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "var(--borderInput)", // Border color when focused
+                    borderWidth: "2px", // Maintain the thickness on focus
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+              }}
             />
 
             {errors.general && (

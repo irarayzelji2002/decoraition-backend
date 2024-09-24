@@ -12,27 +12,31 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Password from "./PassInput";
-
 import Link from "@mui/material/Link";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const defaultTheme = createTheme();
 
 const commonInputStyles = {
   marginTop: "10px",
   marginBottom: "10px",
-  input: { color: "var(--color-white)", backgroundColor: "var(--inputBg)" },
-  "& label": { color: "var(--borderInput)" },
-  "& label.Mui-focused": { color: "var(--borderInput)" },
+  backgroundColor: "var(--inputBg)",
+  input: { color: "var(--color-white)" },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "var(--borderInput)",
+      borderColor: "var(--borderInput)", // Border color when not focused
+      borderWidth: "2px", // Adjust the border thickness here
     },
     "&:hover fieldset": {
-      borderColor: "var(--borderInput)",
+      borderColor: "var(--borderInput)", // Border color on hover
+      borderWidth: "2px", // Maintain the thickness on hover
     },
     "&.Mui-focused fieldset": {
-      borderColor: "var(--borderInput)",
+      borderColor: "var(--borderInput)", // Border color when focused
+      borderWidth: "2px", // Maintain the thickness on focus
     },
   },
   "& .MuiFormHelperText-root": {
@@ -51,11 +55,19 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setfirstName] = useState("");
-  const [lastName, setlastName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [errors, setErrors] = useState({});
-  // const [userInfo, setUserInfo] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   const handleValidation = () => {
     let formErrors = {};
@@ -139,16 +151,13 @@ const Signup = () => {
               First Name
               <span style={{ color: "var(--color-quaternary)" }}> *</span>
             </span>
-
             <TextField
               required
               fullWidth
-              id="firstName"
+              placeholder="Enter your first name"
               name="firstName"
-              label="First Name"
-              autoFocus
               value={firstName}
-              onChange={(e) => setfirstName(e.target.value)}
+              onChange={(e) => setFirstName(e.target.value)}
               error={!!errors.firstName}
               helperText={errors.firstName}
               sx={commonInputStyles}
@@ -160,16 +169,14 @@ const Signup = () => {
             <TextField
               required
               fullWidth
-              id="lastName"
+              placeholder="Enter your last name"
               name="lastName"
-              label="Last Name"
               value={lastName}
-              onChange={(e) => setlastName(e.target.value)}
+              onChange={(e) => setLastName(e.target.value)}
               error={!!errors.lastName}
               helperText={errors.lastName}
               sx={commonInputStyles}
             />
-
             <span className="formLabels">
               Username
               <span style={{ color: "var(--color-quaternary)" }}> *</span>
@@ -177,9 +184,8 @@ const Signup = () => {
             <TextField
               required
               fullWidth
-              id="username"
+              placeholder="Enter your username"
               name="username"
-              label="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               error={!!errors.username}
@@ -193,45 +199,83 @@ const Signup = () => {
             <TextField
               required
               fullWidth
-              id="email"
+              placeholder="Enter your email address"
               name="email"
-              label="Email Address"
-              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={!!errors.email}
               helperText={errors.email}
               sx={commonInputStyles}
             />
-            <p
-              style={{
-                color: "gray",
-                fontSize: "12px",
-              }}
-            >
+            <p style={{ color: "gray", fontSize: "12px" }}>
               At least 6 characters long, with 1 special character
             </p>
             <span className="formLabels">
               Password
               <span style={{ color: "var(--color-quaternary)" }}> *</span>
             </span>
-            <Password
+            <TextField
+              required
+              fullWidth
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               error={!!errors.password}
               helperText={errors.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      sx={{
+                        color: "var(--color-white)",
+                      }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               sx={commonInputStyles}
             />
             <span className="formLabels">
               Confirm Password
               <span style={{ color: "var(--color-quaternary)" }}> *</span>
             </span>
-            <Password
-              label="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword}
+            <TextField
+              required
+              fullWidth
+              id="confirm-password"
+              name="confirmPassword" // Ensure correct name attribute
+              type={showPassword ? "text" : "password"}
+              placeholder="Confirm your password"
+              value={confirmPassword} // Changed from password to confirmPassword
+              onChange={(e) => setConfirmPassword(e.target.value)} // Update handler
+              error={!!errors.confirmPassword} // Updated error reference
+              helperText={errors.confirmPassword} // Updated helper text reference
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      sx={{
+                        color: "var(--color-white)",
+                      }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               sx={commonInputStyles}
             />
             <Button
@@ -249,14 +293,6 @@ const Signup = () => {
             </Button>
           </Box>
         </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            alignItems: "center",
-          }}
-        ></Box>
         <Grid container justifyContent="center" alignItems="center">
           <Grid item>
             <Typography variant="body2" sx={{ color: "white", marginRight: 1 }}>

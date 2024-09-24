@@ -1,5 +1,5 @@
 body {
-  background-color: var(--color-tertiary) !important;
+  background-color: var(--bgMain) !important;
   font-family: "Inter", sans-serif !important;
 }
 .headTitle {
@@ -48,7 +48,7 @@ body {
   --gradientFont: linear-gradient(20deg, #f89a47, #f15f3e, #ec2073);
   --darkGradient: linear-gradient(#1e1e1e, #1e1e1e);
   --budgetCard: #32313a;
-  --bgMain: #27262c;
+  --bgMain: #1f1e22;
 }
 
 .light-mode {

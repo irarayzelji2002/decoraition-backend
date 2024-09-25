@@ -8,6 +8,7 @@ import { styled } from "@mui/material/styles";
 import Modal from "../../components/Modal";
 import BottomBarDesign from "../../components/BottomBarProject";
 import "../../css/seeAll.css";
+import "../../css/project.css";
 
 const SearchBar = styled(Paper)(({ theme }) => ({
   display: "flex",
@@ -124,7 +125,7 @@ function Project() {
             p: "2px 4px",
             display: "flex",
             alignItems: "center",
-            width: "69%",
+            width: "90%",
             marginTop: "40px",
             backgroundColor: "#25232A",
             borderRadius: "20px",
@@ -157,7 +158,7 @@ function Project() {
               display: "flex",
               justifyContent: "space-between",
               flexDirection: "row",
-              height: "50px",
+              overflow: "hidden",
             }}
           >
             {["Owner", "Date Modified", "Date Created", "Sort By", "Order"].map(
@@ -167,13 +168,46 @@ function Project() {
                   className="dropdown"
                   onClick={() => openModal(item)}
                 >
-                  <span className="dropdown-text">{item}</span>
+                  <span
+                    className="dropdown-text"
+                    style={{ whiteSpace: "nowrap" }}
+                  >
+                    {item}
+                  </span>
                   <ArrowDropDownIcon className="dropdown-icon" />
                 </div>
               )
             )}
           </main>
         </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          width: "92%",
+
+          padding: "20px",
+        }}
+      >
+        <span
+          className="SubtitleBudget"
+          style={{ marginLeft: "20px", fontSize: "30px" }}
+        >
+          Project Name
+          <br />
+          <span
+            className="SubtitlePrice"
+            style={{
+              backgroundColor: "transparent",
+            }}
+          >
+            Designs
+          </span>
+        </span>
+
+        <span className="seeAll" style={{ marginLeft: "auto " }}>
+          See All
+        </span>
       </div>
       <div className="designs-list">
         {[...Array(5)].map((_, index) => (

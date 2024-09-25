@@ -109,8 +109,43 @@ def validate_first_generation_request(data):
 def validate_next_generation_request(data):
     """Validate the next image generation request (e.g., with selected area)."""
 
+def generate_first_image(prompt, number_of_images, base_image, style_reference, color_palette):
+    """Generate first image core"""
+    try:
+        if base_image and not style_reference:
+            # Case 1: prompt with base image
+            print("========1st Gen: prompt with base image========")
+        elif style_reference and not base_image:
+            # Case 2: prompt with style reference
+            print("========1st Gen: prompt with style reference========")
+        elif base_image and style_reference:
+            # Case 3: prompt with base image and style reference
+            print("========1st Gen: prompt with base image and style reference========")
+        else:
+            # Case 4: prompt only
+            print("========1st Gen: prompt only-=======")
+
+            txt2img_payload = {
+                "prompt": prompt,
+                "steps": 30,
+                "sampler_name": "DPM++ 2M SDE",
+                "cfg_scale": 6,
+                "width": 512,
+                "height": 512,
+                "n_iter": number_of_images,
+                "seed": -1
+            }
+
+            response = requests.post(f"{SD_URL}/sdapi/v1/txt2img", json=txt2img_payload)
+
+        return response
+
+    except Exception as e:
+        print(f"Error generating image: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 @app.route('/generate-first-image', methods=['POST'])
-def generate_first_image():
+def generate_first_image_route():
     try:
         # Validate request data
         data = request.form if request.content_type.startswith('multipart/form-data') else request.json
@@ -119,19 +154,9 @@ def generate_first_image():
         if not prompt:
             return jsonify({"error": "Prompt is required"}), 400
 
-        # Payload for API & Make request to API
-        txt2img_payload = {
-            "prompt": prompt,
-            "steps": 30,
-            "sampler_name": "DPM++ 2M SDE",
-            "cfg_scale": 6,
-            "width": 512,
-            "height": 512,
-            "n_iter": number_of_images,
-            "seed": -1
-        }
 
-        response = requests.post(f"{SD_URL}/sdapi/v1/txt2img", json=txt2img_payload)
+        # Payload for API & Make request to API
+        response = generate_first_image(prompt, number_of_images, base_image_loaded, style_reference_loaded, color_palette)
 
         # Handle response
         if response.status_code == 200:

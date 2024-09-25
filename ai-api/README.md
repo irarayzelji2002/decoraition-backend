@@ -13,3 +13,17 @@ python -m venv venv
 pip install -r requirements.txt
 deactivate
 ```
+
+#### Running the Server
+
+1. Go to stable-diffusion-webui-reForge folder and run:
+
+```
+.\webui-user.bat
+```
+
+2. Go to ai-api folder and run:
+
+```
+python server.py
+```

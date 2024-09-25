@@ -217,6 +217,9 @@ textarea {
   padding: 10px 15px;
   cursor: pointer;
 }
+.add-comment-button:hover {
+  background-image: var(--gradientButtonHover);
+}
 
 .frame-buttons {
   display: flex;

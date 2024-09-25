@@ -210,6 +210,9 @@ function Design() {
                   <h4>Comments</h4>
                   <textarea
                     value={comment}
+                    style={{
+                      backgroundColor: "var(--inputBg)",
+                    }}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Add your comment here..."
                   />

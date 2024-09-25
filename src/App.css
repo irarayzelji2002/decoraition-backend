@@ -49,6 +49,7 @@ body {
   --darkGradient: linear-gradient(#1e1e1e, #1e1e1e);
   --budgetCard: #32313a;
   --bgMain: #1f1e22;
+  --slider: #707070;
 }
 
 .light-mode {

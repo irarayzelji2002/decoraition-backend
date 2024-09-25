@@ -48,10 +48,25 @@ function PromptBar() {
       />
 
       <h3>
-        Number of images to Generate
+        Number of images to generate
         <span style={{ color: "var(--color-quaternary)" }}> *</span>
       </h3>
-      <Slider defaultValue={1} max={4} />
+      <Slider
+        defaultValue={1}
+        max={4}
+        sx={{
+          color: "var(--slider)", // Slider color
+          "& .MuiSlider-thumb": {
+            background: "var( --gradientCircle)", // Gradient thumb
+          },
+          "& .MuiSlider-track": {
+            backgroundColor: "var(--slider)", // Track color
+          },
+          "& .MuiSlider-rail": {
+            backgroundColor: "var(--slider)", // Rail color
+          },
+        }}
+      />
 
       <div
         style={{
@@ -62,7 +77,7 @@ function PromptBar() {
         }}
       >
         <div>
-          <h3>Upload image of the Space</h3>
+          <h3>Upload image of the space</h3>
           <h6>optional</h6>
         </div>
 
@@ -105,7 +120,7 @@ function PromptBar() {
         }}
       >
         <div>
-          <h3>Upload image for Style reference</h3>
+          <h3>Upload image for style reference</h3>
           <h6>optional</h6>
         </div>
 

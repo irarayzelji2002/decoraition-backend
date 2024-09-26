@@ -47,9 +47,11 @@ const commonInputStyles = {
 const buttonStyles = {
   mt: 3,
   mb: 2,
-  backgroundImage: "linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);",
+  backgroundImage: "var(--gradientButton)",
+  "&:hover": {
+    backgroundImage: "var(--gradientButtonHover)",
+  },
 };
-
 const Signup = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");

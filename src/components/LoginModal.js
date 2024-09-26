@@ -312,11 +312,13 @@ export default function LoginModal() {
               sx={{
                 mt: 3,
                 mb: 2,
-                backgroundImage:
-                  "linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);",
+                backgroundImage: "var(--gradientButton)",
                 borderRadius: "20px",
                 textTransform: "none",
                 fontWeight: "bold",
+                "&:hover": {
+                  backgroundImage: "var(--gradientButtonHover)",
+                },
               }}
             >
               Login

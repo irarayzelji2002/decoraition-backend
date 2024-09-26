@@ -102,6 +102,9 @@ export default function ForgotPass1() {
                 borderRadius: "20px",
                 textTransform: "none",
                 fontWeight: "bold",
+                "&:hover": {
+                  backgroundImage: "var(--gradientButtonHover)",
+                },
               }}
             >
               Continue

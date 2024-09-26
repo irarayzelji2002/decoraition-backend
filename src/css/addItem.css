@@ -175,6 +175,10 @@
   font-size: 18px;
 }
 
+.add-item-btn:hover {
+  background: var(--gradientButtonHover);
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .left-column,

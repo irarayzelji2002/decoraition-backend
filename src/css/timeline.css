@@ -3,10 +3,20 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background-color: #1f1e22;
+
   color: var(--color-white);
   height: 100vh;
   padding: 20px;
+}
+.calendar-head {
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--nav-card-modal);
+  justify-content: space-between;
+  padding: 24px;
+  border-radius: 24px;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 /* Calendar section */
@@ -30,22 +40,38 @@
 .custom-calendar {
   background-color: var(--nav-card-modal);
   color: var(--color-white);
-  border-radius: 8px;
+  border: none;
+
   padding: 10px;
 }
+.custom-calendar .react-calendar__tile--active {
+  background-image: var(
+    --gradientButton
+  ); /* Change this to your preferred active color */
+  color: white; /* Text color for active date */
+  border-radius: 12px; /* Change this to your preferred border radius */
+}
+/* Hover effect on calendar tiles */
+.custom-calendar .react-calendar__tile:hover {
+  background-color: var(
+    --color-grey
+  ); /* Change this to your preferred hover color */
+  color: white; /* Text color on hover */
+}
 
+/* Default focus date (clicked but not active) */
+.custom-calendar .react-calendar__tile--now {
+  background-color: var(
+    --nav-card-modal
+  ); /* Change this to the color for today */
+  color: white;
+}
+
+/* To ensure other elements remain styled as you want */
 .custom-calendar .react-calendar__tile {
   color: var(--color-white);
-}
-
-.custom-calendar .react-calendar__tile--now {
-  background: #ff5e5e;
-  color: var(--color-white);
-}
-
-.custom-calendar .react-calendar__tile--active {
-  background: #ff8c8c;
-  color: var(--color-white);
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 /* Task list */
@@ -58,7 +84,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--nav-card-modal);
+  background-color: var(--bgMain);
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -78,11 +104,35 @@
   display: flex;
   gap: 0.5rem;
 }
-
-.edit-icon {
-  color: orange;
+.icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradientButton); /* Use your CSS variable */
+  padding: 8px; /* Adjust the padding for spacing around the icon */
+  border-radius: 50%; /* Rounded background */
+  cursor: pointer; /* Add a pointer cursor for interactivity */
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
 }
 
-.delete-icon {
-  color: orange;
+.icon-container:hover {
+  background: var(--gradientButtonHover); /* Optional: Add a hover effect */
+}
+
+.icon-container svg {
+  color: white; /* Change icon color */
+  font-size: 16px; /* Adjust the icon size */
+}
+
+/* Apply color directly to the SVG icons */
+.svg-icon {
+  color: var(
+    --gradientButton
+  ); /* Use your custom CSS variable for the icon color */
+  font-size: 24px; /* Optional: Adjust the icon size */
+  transition: color 0.3s ease; /* Optional: Add a smooth transition for hover effects */
+}
+
+.svg-icon:hover {
+  color: var(--gradientButtonHover); /* Optional: Change color on hover */
 }

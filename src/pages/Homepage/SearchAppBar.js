@@ -10,7 +10,16 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Paper from "@mui/material/Paper";
 import SearchIcon from "@mui/icons-material/Search";
 
-const SearchAppBar = ({ user, username, onMenuClick }) => {
+const SearchAppBar = ({
+  user,
+  username,
+  onMenuClick,
+  onSearchChange,
+  searchQuery,
+}) => {
+  const handleSearch = (event) => {
+    onSearchChange(event.target.value); // Pass the search value to the parent
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -54,8 +63,10 @@ const SearchAppBar = ({ user, username, onMenuClick }) => {
               <SearchIcon sx={{ color: "var(--color-white)" }} />
             </IconButton>
             <InputBase
+              placeholder="Search..."
+              onChange={handleSearch}
+              value={searchQuery}
               sx={{ ml: 1, flex: 1, color: "var(--color-white)" }}
-              placeholder="Search Item"
               inputProps={{ "aria-label": "search google maps" }}
             />
           </Paper>

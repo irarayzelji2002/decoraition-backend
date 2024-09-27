@@ -23,6 +23,7 @@ const DefaultMenu = ({
   onOpenMakeCopyModal,
   onOpenInfoModal,
   onDelete,
+  setIsSidebarOpen,
   onChangeMode,
 }) => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const DefaultMenu = ({
         </ListItemIcon>
         <ListItemText primary="Copy Link" />
       </MenuItem>
-      <MenuItem onClick={handleRedirect}>
+      <MenuItem onClick={setIsSidebarOpen}>
         <ListItemIcon>
           <HistoryIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>

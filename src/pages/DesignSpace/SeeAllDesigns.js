@@ -8,7 +8,7 @@ import { auth, db } from "../../firebase.js";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DesignIcon from "../../components/DesignIcon.js";
 import "../../css/homepage.css";
 import {
@@ -18,10 +18,9 @@ import {
   onSnapshot,
   doc,
   deleteDoc,
-  setDoc,
 } from "firebase/firestore";
 
-// Define SearchBar and OptionButton here
+// Define styled components
 const SearchBar = styled(Paper)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -30,6 +29,8 @@ const SearchBar = styled(Paper)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   backgroundColor: "#25232A",
   border: "1px solid #4B4A4B",
+  width: "90%",
+  margin: "20px auto",
 }));
 
 const OptionButton = styled(Button)(({ theme }) => ({
@@ -52,23 +53,9 @@ export default function SeeAllDesigns() {
   const [user, setUser] = useState(null);
   const [designs, setDesigns] = useState([]);
   const [username, setUsername] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  useEffect(() => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      onSnapshot(userRef, (doc) => {
-        setUsername(doc.data().username);
-      });
-    }
-  }, [user]);
-  useEffect(() => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      onSnapshot(userRef, (doc) => {
-        setUsername(doc.data().username);
-      });
-    }
-  }, [user]);
+
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -101,7 +88,6 @@ export default function SeeAllDesigns() {
   const handleDeleteDesign = async (designId) => {
     try {
       const currentUser = auth.currentUser;
-
       if (currentUser) {
         const designRef = doc(
           db,
@@ -127,6 +113,7 @@ export default function SeeAllDesigns() {
     setModalContent(null);
   };
 
+  // Add getModalContent function here
   const getModalContent = (content) => {
     switch (content) {
       case "Owner":
@@ -189,9 +176,17 @@ export default function SeeAllDesigns() {
     }
   };
 
+  const filteredDesigns = designs.filter((design) =>
+    design.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
-      <SearchAppBar />
+      <SearchAppBar
+        onSearchChange={(value) => setSearchQuery(value)}
+        user={user}
+        username={username}
+      />
       <div className="bg">
         <div className="dropdown-container">
           {["Owner", "Date Modified", "Date Created", "Sort By", "Order"].map(
@@ -207,12 +202,13 @@ export default function SeeAllDesigns() {
             )
           )}
         </div>
+
         <div className="title">Designs</div>
         <section className="recent-section">
           <div className="recent-designs">
             <div className="layout">
-              {designs.length > 0 ? (
-                designs.map((design) => (
+              {filteredDesigns.length > 0 ? (
+                filteredDesigns.map((design) => (
                   <DesignIcon
                     key={design.id}
                     name={design.name}
@@ -234,6 +230,7 @@ export default function SeeAllDesigns() {
             </div>
           </div>
         </section>
+
         {modalOpen && (
           <Modal onClose={closeModal} content={getModalContent(modalContent)} />
         )}

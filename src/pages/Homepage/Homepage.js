@@ -35,6 +35,9 @@ function Homepage() {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredDesigns, setFilteredDesigns] = useState([]);
+
   useEffect(() => {
     if (user) {
       const userRef = doc(db, "users", user.uid);
@@ -183,6 +186,17 @@ function Homepage() {
     setMenuOpen(!menuOpen);
   };
 
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const results = designs.filter((design) =>
+        design.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredDesigns(results);
+    } else {
+      setFilteredDesigns([]); // Clear search results when no query
+    }
+  }, [searchQuery, designs]);
+
   return (
     <div className={`homepage ${menuOpen ? "darkened" : ""}`}>
       <ToastContainer />
@@ -192,6 +206,7 @@ function Homepage() {
         user={user}
         username={username}
         onMenuClick={() => setDrawerOpen(true)}
+        onSearchChange={setSearchQuery}
       />
 
       <DrawerComponent
@@ -226,6 +241,35 @@ function Homepage() {
           >
             Create a project
           </button>
+        </div>
+
+        <div className="recent-designs">
+          {searchQuery && <h2>Search Results</h2>}
+          {searchQuery && (
+            <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
+              <div className="layout" style={{ marginBottom: "100px" }}>
+                {filteredDesigns.length > 0 ? (
+                  filteredDesigns.slice(0, 3).map((design) => (
+                    <DesignIcon
+                      key={design.id}
+                      name={design.name}
+                      designId={design.id}
+                      onDelete={handleDeleteDesign}
+                      onOpen={() =>
+                        navigate(`/design/${design.id}`, {
+                          state: { designId: design.id },
+                        })
+                      }
+                    />
+                  ))
+                ) : (
+                  <div className="no-content">
+                    <p>No designs found.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <section className="recent-section">

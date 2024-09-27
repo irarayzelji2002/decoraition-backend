@@ -9,6 +9,7 @@ import BottomBar from "../../components/BottomBar";
 import Loading from "../../components/Loading";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
+import Version from "./Version";
 import "../../css/design.css";
 import DrawerComponent from "../Homepage/DrawerComponent";
 
@@ -25,6 +26,7 @@ function Design() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [userId, setUserId] = useState(null);
   const [activeTab, setActiveTab] = useState("design");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // New state for sidebar
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -107,6 +109,17 @@ function Design() {
   const togglePromptBar = () => {
     setShowPromptBar((prev) => !prev);
   };
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden"; // Disable body scroll
+    } else {
+      document.body.style.overflow = "auto"; // Enable body scroll
+    }
+
+    return () => {
+      document.body.style.overflow = "auto"; // Clean up on component unmount
+    };
+  }, [isSidebarOpen]);
 
   if (!designData) {
     return (
@@ -130,6 +143,7 @@ function Design() {
         setIsEditingName={setIsEditingName}
         handleEditNameToggle={handleEditNameToggle}
         setPromptBarOpen={togglePromptBar}
+        setIsSidebarOpen={setIsSidebarOpen}
       />
       {activeTab === "design" && (
         <>
@@ -139,25 +153,24 @@ function Design() {
               {showPromptBar && <DrawerComponent />}
               <PromptBar />
               <div className="working-area">
-                {/* <div className="design-name-section">
-              <h2>Design Name:</h2>
-              {isEditingName ? (
-                <div>
-                  <input
-                    type="text"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                  />
-                  <button onClick={handleNameChange}>Save</button>
-                  <button onClick={handleEditNameToggle}>Cancel</button>
+                <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+                  <button
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="close-sidebar"
+                  >
+                    Close
+                  </button>
+                  <div className="sidebar-content">
+                    <Version />
+                  </div>
                 </div>
-              ) : (
-                <div>
-                  <p>{designData.name}</p>
-                  <button onClick={handleEditNameToggle}>Edit Name</button>
-                </div>
-              )}
-            </div> */}
+
+                {isSidebarOpen && (
+                  <div
+                    className="overlay"
+                    onClick={() => setIsSidebarOpen(false)}
+                  ></div>
+                )}
 
                 <div className="frame-buttons">
                   <button onClick={() => setNumImageFrames(2)}>

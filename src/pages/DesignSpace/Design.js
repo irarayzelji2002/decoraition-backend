@@ -9,9 +9,10 @@ import BottomBar from "../../components/BottomBar";
 import Loading from "../../components/Loading";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
+import Version from "./Version";
 import "../../css/design.css";
 import DrawerComponent from "../Homepage/DrawerComponent";
-
+import { FaCheckCircle, FaEllipsisV, FaAt } from 'react-icons/fa'; // Icons used: Check, Dots, At symbol
 import Budget from "./Budget";
 
 function Design() {
@@ -25,6 +26,11 @@ function Design() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [userId, setUserId] = useState(null);
   const [activeTab, setActiveTab] = useState("design");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // New state for sidebar
+  const [activeCommentTab, setActiveCommentTab] = useState("left"); // For "All Comments / For You"
+  const [activeStatusTab, setActiveStatusTab] = useState("left"); // For "Open / Resolved"
+  const [clicked, setClicked] = useState(false); // Handle click state
+  const [replyVisible, setReplyVisible] = useState(false); // State for reply visibility
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -67,6 +73,17 @@ function Design() {
     setIsEditingName((prev) => !prev);
   };
 
+  const handleCommentTabClick = (side) => {
+    setActiveCommentTab(side);
+  };
+
+  const handleStatusTabClick = (side) => {
+    setActiveStatusTab(side);
+  };
+  const handleContainerClick = () => {
+    setClicked((prev) => !prev); // Toggle clicked state
+  };
+
   const handleNameChange = async () => {
     if (newName.trim() === "") {
       alert("Design name cannot be empty");
@@ -104,9 +121,25 @@ function Design() {
     setShowComments((prev) => !prev);
   };
 
+   const handleReplyClick = (e) => {
+     e.stopPropagation(); 
+     setReplyVisible(true); 
+   };
+
   const togglePromptBar = () => {
     setShowPromptBar((prev) => !prev);
   };
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden"; // Disable body scroll
+    } else {
+      document.body.style.overflow = "auto"; // Enable body scroll
+    }
+
+    return () => {
+      document.body.style.overflow = "auto"; // Clean up on component unmount
+    };
+  }, [isSidebarOpen]);
 
   if (!designData) {
     return (
@@ -130,6 +163,7 @@ function Design() {
         setIsEditingName={setIsEditingName}
         handleEditNameToggle={handleEditNameToggle}
         setPromptBarOpen={togglePromptBar}
+        setIsSidebarOpen={setIsSidebarOpen}
       />
       {activeTab === "design" && (
         <>
@@ -139,25 +173,24 @@ function Design() {
               {showPromptBar && <DrawerComponent />}
               <PromptBar />
               <div className="working-area">
-                {/* <div className="design-name-section">
-              <h2>Design Name:</h2>
-              {isEditingName ? (
-                <div>
-                  <input
-                    type="text"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                  />
-                  <button onClick={handleNameChange}>Save</button>
-                  <button onClick={handleEditNameToggle}>Cancel</button>
+                <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+                  <button
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="close-sidebar"
+                  >
+                    Close
+                  </button>
+                  <div className="sidebar-content">
+                    <Version />
+                  </div>
                 </div>
-              ) : (
-                <div>
-                  <p>{designData.name}</p>
-                  <button onClick={handleEditNameToggle}>Edit Name</button>
-                </div>
-              )}
-            </div> */}
+
+                {isSidebarOpen && (
+                  <div
+                    className="overlay"
+                    onClick={() => setIsSidebarOpen(false)}
+                  ></div>
+                )}
 
                 <div className="frame-buttons">
                   <button onClick={() => setNumImageFrames(2)}>
@@ -207,12 +240,71 @@ function Design() {
               </div>
               {showComments && (
                 <div className="comment-section">
-                  <h4>Comments</h4>
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Add your comment here..."
-                  />
+                  <div className="split-button">
+                    <button
+                      onClick={() => handleCommentTabClick("left")}
+                      className={`button-side ${
+                        activeCommentTab === "left" ? "active" : ""
+                      }`}
+                    >
+                      All Comments
+                    </button>
+                    <button
+                      onClick={() => handleCommentTabClick("right")}
+                      className={`button-side ${
+                        activeCommentTab === "right" ? "active" : ""
+                      }`}
+                    >
+                      For You
+                    </button>
+                  </div>
+
+                  <div className="split-button">
+                    <button
+                      onClick={() => handleStatusTabClick("left")}
+                      className={`button-side ${
+                        activeStatusTab === "left" ? "active" : ""
+                      }`}
+                    >
+                      Open
+                    </button>
+                    <button
+                      onClick={() => handleStatusTabClick("right")}
+                      className={`button-side ${
+                        activeStatusTab === "right" ? "active" : ""
+                      }`}
+                    >
+                      Resolved
+                    </button>
+                  </div>
+                  <div
+                    className={`comment-container ${clicked ? "clicked" : ""}`}
+                    onClick={handleContainerClick}
+                  >
+                    <div className="profile-section">
+                      <div className="profile-info">
+                        <div className="profile-pic"></div>
+                        <div className="user-details">
+                          <span className="username">Juan Dela Cruz</span>
+                          <span className="date">June 17, 2024</span>
+                        </div>
+                      </div>
+                      <div className="profile-status">
+                        <FaCheckCircle className="check-mark" />
+                        <FaEllipsisV className="options-dots" />
+                      </div>
+                    </div>
+                    <div className="comment-text">
+                      Lorem ipsum dolor sit amet...
+                    </div>
+
+                    {clicked && (
+                      <div className="reply-input">
+                        <FaAt className="at-symbol" />
+                        <input type="text" placeholder="Add a Reply" />
+                      </div>
+                    )}
+                  </div>
                   <button className="add-comment-button">Add a comment</button>
                 </div>
               )}

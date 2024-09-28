@@ -236,8 +236,9 @@ select {
   box-sizing: border-box;
 }
 .modal-actions button:hover {
-  background-color: #faa653;
+  background-color: #9f0000 !important;
 }
+
 @media (max-width: 768px) {
   .small-circle-button {
     width: 50px;

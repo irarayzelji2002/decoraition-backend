@@ -14,37 +14,39 @@ function Timeline() {
       <ProjectHead />
       <div className="timeline-container">
         {/* Calendar Section */}
-        <div className="calendar-section">
-          <Calendar
-            onChange={setDate}
-            value={date}
-            className="custom-calendar"
-          />
-        </div>
-
-        {/* Task List */}
-        <div className="task-list">
-          <div className="task-item">
-            <div className="task-text">
-              <h3>Set up tables</h3>
-              <p>Until Oct 17, 2024</p>
-            </div>
-            <div className="task-actions">
-              <FaPen className="icon edit-icon" />
-              <FaTrashAlt className="icon delete-icon" />
-            </div>
+        <div className="calendar-head">
+          {" "}
+          <div className="calendar-section">
+            <Calendar
+              onChange={setDate}
+              value={date}
+              className="custom-calendar"
+            />
           </div>
+          {/* Task List */}
+          <div className="task-list">
+            <div className="task-item">
+              <div className="task-text">
+                <h3>Set up tables</h3>
+                <p>Until Oct 17, 2024</p>
+              </div>
+              <div className="task-actions">
+                <FaPen className="icon-container" />
+                <FaTrashAlt className="icon-container" />
+              </div>
+            </div>
 
-          <div className="task-item">
-            <div className="task-text">
-              <h3>Call catering</h3>
-              <p>Today</p>
+            <div className="task-item">
+              <div className="task-text">
+                <h3>Call catering</h3>
+                <p>Today</p>
+              </div>
+              <div className="task-actions">
+                <FaPen className="icon-container" />
+                <FaTrashAlt className="icon-container" />
+              </div>
             </div>
-            <div className="task-actions">
-              <FaPen className="icon edit-icon" />
-              <FaTrashAlt className="icon delete-icon" />
-            </div>
-          </div>
+          </div>{" "}
         </div>
       </div>
       <BottomBarDesign Timeline={true} />

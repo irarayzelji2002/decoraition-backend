@@ -84,7 +84,7 @@
 }
 
 .promptBar {
-  height: 100%;
+  min-height: 100vh;
   width: 500px;
   background-color: var(--nav-card-modal);
   padding: 40px;
@@ -216,6 +216,9 @@ textarea {
   border: none;
   padding: 10px 15px;
   cursor: pointer;
+}
+.add-comment-button:hover {
+  background-image: var(--gradientButtonHover);
 }
 
 .frame-buttons {
@@ -357,3 +360,191 @@ textarea {
 
   color: var(--color-white);
 }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 33.33%; /* One-third of the screen */
+  height: 100%;
+  background-color: var(--inputBg);
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+  overflow-y: auto; /* Enable scrolling inside the sidebar */
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 50%; /* Half of the screen for mobile */
+  }
+}
+
+/* Sidebar content */
+.sidebar-content {
+  padding: 20px;
+  color: var(--brightFont);
+  height: 100%; /* Ensure full height */
+  overflow-y: auto; /* Scroll content */
+}
+
+/* Close button */
+.close-sidebar {
+  background-color: transparent;
+  border: none;
+  color: var(--brightFont);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 10px;
+}
+
+/* Overlay (background blackout) */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Blackout effect */
+  z-index: 999;
+}
+
+/* Hide scroll bar in WebKit browsers (Chrome, Safari, Edge) */
+.sidebar-content {
+  -ms-overflow-style: none; /* Hide scrollbar in Internet Explorer */
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+}
+
+.sidebar-content::-webkit-scrollbar {
+  display: none; /* Hide scrollbar */
+}
+
+/* comment section */
+.split-button {
+  display: inline-flex;
+  border-radius: 25px;
+  overflow: hidden;
+  border: 2px solid #F68950;
+  margin: 10px 0;
+}
+
+.button-side {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  background-color: #27262C;
+  color: white;
+  transition: background-color 0.3s ease;
+  flex: 1;
+}
+
+.button-side.active {
+  background-color: #F68950;
+  color: white;
+}
+
+.button-side:not(.active) {
+  border-right: 2px solid #F68950;
+}
+
+.button-side:first-child {
+  border-right: 1px solid #F68950;
+}
+
+.button-side:hover {
+  opacity: 0.9;
+}
+
+/* sample reply */
+.comment-container {
+  background-color: #27262C;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.comment-container.clicked {
+  background-color: #3d3c44;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #49484F; /* Placeholder for profile image */
+  margin-right: 10px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.date {
+  color: #c1c1c1;
+  font-size: 12px;
+}
+
+.check-mark {
+  color: #f68950;
+  font-size: 16px;
+}
+
+.options-dots {
+  color: white;
+  font-size: 20px;
+}
+
+.comment-text {
+  color: white;
+  margin-bottom: 10px;
+}
+
+.reply-input {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid #49484F;
+  border-radius: 15px;
+  padding: 10px;
+  color: white;
+  margin-top: 10px;
+}
+
+.reply-input input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: white;
+  margin-left: 10px;
+}
+
+.reply-input .at-symbol {
+  color: #49484F;
+}
+

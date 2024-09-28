@@ -23,9 +23,9 @@ function Version() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        overflow: "auto",
       }}
     >
-      <TopBar state="Version" />
       {images.map((image) => (
         <div
           key={image.version}
@@ -51,15 +51,7 @@ function Version() {
         </div>
       ))}
 
-      <div
-        style={{
-          position: "fixed",
-          bottom: " 12px",
-          left: 0,
-          right: 0,
-          textAlign: "center",
-        }}
-      >
+      <div style={{}}>
         {" "}
         <Button
           type="submit"
@@ -76,9 +68,6 @@ function Version() {
         >
           Select image version
         </Button>
-        {/* <button onClick={() => console.log("Selected Image:", selectedImage)}>
-          Select
-        </button> */}
       </div>
     </div>
   );

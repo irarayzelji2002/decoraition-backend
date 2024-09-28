@@ -25,8 +25,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { Person } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
-import { GoogleIcon, FacebookIcon } from "./CustomIcons";
-import { db } from "../../server/firebase"; // Import Firestore instance
+import { GoogleIcon, FacebookIcon } from "../../components/CustomIcons";
+import { db } from "../../../server/firebase"; // Import Firestore instance
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";

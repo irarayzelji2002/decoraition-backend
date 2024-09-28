@@ -9,9 +9,13 @@
 		<h1>Next Image Generation Test</h1>
 
 		<form id="generate_image_form" enctype="multipart/form-data">
-			<label for="prompt">Prompt:</label><br />
+			<!-- Prompt -->
+			<label for="prompt">Prompt:</label><span id="prompt_err"></span
+			><br />
 			<input type="text" id="prompt" name="prompt" required /><br /><br />
-			<label for="number_of_images">Number of Images:</label><br />
+			<!-- Number of Images -->
+			<label for="number_of_images">Number of Images:</label
+			><span id="number_of_images_err"></span><br />
 			<input
 				type="number"
 				id="number_of_images"
@@ -21,6 +25,52 @@
 				value="1"
 				required
 			/><br /><br />
+			<!-- Color Palette -->
+			<label for="color_palette"
+				>Color Palette (comma-separated hex codes):</label
+			><br />
+			<input
+				type="text"
+				id="color_palette"
+				name="color_palette"
+			/><br /><br />
+			<!-- Init Image -->
+			<label for="init_image">Init Image:</label>
+			<span id="init_image_err"></span>
+			<input
+				type="file"
+				id="init_image"
+				name="init_image"
+				accept="image/png, image/jpg, image/jpeg"
+			/><br /><br />
+			<!-- SAM Mask -->
+			<label for="sam_mask">SAM mask:</label>
+			<span id="sam_mask_err"></span>
+			<input
+				type="file"
+				id="sam_mask"
+				name="sam_mask"
+				accept="image/png, image/jpg, image/jpeg"
+			/><br /><br />
+			<!-- User Mask -->
+			<label for="user_mask">User mask:</label>
+			<span id="user_mask_err"></span>
+			<input
+				type="file"
+				id="user_mask"
+				name="user_mask"
+				accept="image/png, image/jpg, image/jpeg"
+			/><br /><br />
+			<!-- Style Reference -->
+			<label for="style_reference">Style Reference:</label>
+			<span id="style_reference_err"></span>
+			<input
+				type="file"
+				id="style_reference"
+				name="style_reference"
+				accept="image/png, image/jpg, image/jpeg"
+			/><br /><br />
+			<!-- Submit button -->
 			<button type="button" onclick="submitForm()">Generate</button>
 		</form>
 
@@ -32,22 +82,86 @@
 
 		<script>
 			async function submitForm() {
+				// Get form elements
 				const prompt = document.getElementById("prompt").value.trim();
 				const number_of_images = document
 					.getElementById("number_of_images")
 					.value.trim();
+				const color_palette = document
+					.getElementById("color_palette")
+					.value.trim();
+				const base_image =
+					document.getElementById("base_image").files[0];
+				const style_reference =
+					document.getElementById("style_reference").files[0];
 
-				if (!prompt || number_of_images < 1 || number_of_images > 4) {
-					alert(
-						"Invalid input. Ensure prompt is filled and number of images is between 1 and 4."
-					);
+				// Validation
+				if (!prompt) {
+					document.getElementById("prompt_err").innerHTML =
+						"Prompt is required.";
 					return;
 				}
+				if (
+					!number_of_images ||
+					number_of_images < 1 ||
+					number_of_images > 4
+				) {
+					document.getElementById("number_of_images_err").innerHTML =
+						"Please enter a valid number of images (1-4).";
+					return;
+				}
+				if (base_image) {
+					const validExtensions = ["jpg", "jpeg", "png"];
+					const fileExtension = base_image.name
+						.split(".")
+						.pop()
+						.toLowerCase();
 
+					if (!validExtensions.includes(fileExtension)) {
+						document.getElementById("base_image_err").innerHTML =
+							"Invalid file type. Please upload a JPG or PNG image.";
+						return;
+					}
+				}
+				if (style_reference) {
+					const validExtensions = ["jpg", "jpeg", "png"];
+					const fileExtension = style_reference.name
+						.split(".")
+						.pop()
+						.toLowerCase();
+
+					if (!validExtensions.includes(fileExtension)) {
+						document.getElementById(
+							"style_reference_err"
+						).innerHTML =
+							"Invalid file type. Please upload a JPG or PNG image.";
+						return;
+					}
+				}
+
+				// Create FormData object
 				const formData = new FormData();
 				formData.append("prompt", prompt);
 				formData.append("number_of_images", number_of_images);
+				if (color_palette) {
+					const colorsArray = color_palette
+						.split(",")
+						.map((color) => color.trim());
+					formData.append(
+						"color_palette",
+						JSON.stringify(colorsArray)
+					);
+				}
+				if (base_image) {
+					formData.append("base_image", base_image);
+				}
+				if (style_reference) {
+					formData.append("style_reference", style_reference);
+				}
+				console.log("Form Data:");
+				console.log(formData);
 
+				// Fetch API
 				try {
 					const response = await fetch("/generate-first-image", {
 						method: "POST",

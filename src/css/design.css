@@ -458,3 +458,93 @@ textarea {
 .button-side:hover {
   opacity: 0.9;
 }
+
+/* sample reply */
+.comment-container {
+  background-color: #27262C;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.comment-container.clicked {
+  background-color: #3d3c44;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #49484F; /* Placeholder for profile image */
+  margin-right: 10px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.date {
+  color: #c1c1c1;
+  font-size: 12px;
+}
+
+.check-mark {
+  color: #f68950;
+  font-size: 16px;
+}
+
+.options-dots {
+  color: white;
+  font-size: 20px;
+}
+
+.comment-text {
+  color: white;
+  margin-bottom: 10px;
+}
+
+.reply-input {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid #49484F;
+  border-radius: 15px;
+  padding: 10px;
+  color: white;
+  margin-top: 10px;
+}
+
+.reply-input input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: white;
+  margin-left: 10px;
+}
+
+.reply-input .at-symbol {
+  color: #49484F;
+}
+

@@ -11,9 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	let drawing = false;
 
 	let originalImage = null;
-	let strokes = []; // Array to hold all strokes
+	let path = new Path2D(); // Create a new Path2D object
 
 	// Handle image upload
+	const initImagePreview = document.getElementById("init_image_preview");
 	const initImage = document.getElementById("init_image");
 	initImage.addEventListener("change", function (event) {
 		const file = event.target.files[0];
@@ -23,9 +24,14 @@ document.addEventListener("DOMContentLoaded", function () {
 			const img = new Image();
 			img.src = e.target.result;
 			img.onload = function () {
-				canvas.width = img.width;
-				canvas.height = img.height;
-				context.drawImage(img, 0, 0);
+				let img_width = img.width;
+				let img_height = img.height;
+				canvas.width = img_width;
+				canvas.height = img_height;
+				initImagePreview.width = img_width;
+				initImagePreview.height = img_height;
+				initImagePreview.src = img.src;
+				// context.drawImage(img, 0, 0);
 				originalImage = img; // Store the original image
 			};
 		};
@@ -40,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	opacityInput.addEventListener("input", function () {
 		selectedOpacity = opacityInput.value;
-		redrawCanvas();
+		redrawCanvas(); // Redraw canvas with updated opacity
 	});
 
 	selectedColorInput.addEventListener("input", function () {
@@ -62,10 +68,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	canvas.addEventListener("mouseup", function () {
 		drawing = false;
+		redrawCanvas();
 	});
 
 	canvas.addEventListener("mouseout", function () {
 		drawing = false;
+		redrawCanvas();
 	});
 
 	function draw(event) {
@@ -73,40 +81,30 @@ document.addEventListener("DOMContentLoaded", function () {
 		const x = event.clientX - rect.left;
 		const y = event.clientY - rect.top;
 
-		// Save the stroke details
-		strokes.push({
-			x: x,
-			y: y,
-			size: brushSize,
-			color: selectedColor,
-			opacity: 1,
-		});
+		// Create a circle path at the current position with the current brush size
+		const strokePath = new Path2D();
+		strokePath.arc(x, y, brushSize / 2, 0, 2 * Math.PI);
 
-		// Draw on the canvas with the current opacity
-		context.globalAlpha = 1;
+		// Add this stroke to the main path
+		path.addPath(strokePath);
+
+		// Draw the stroke on the canvas
+		context.globalAlpha = 1; // Use fully opaque while drawing
 		context.fillStyle = selectedColor; // Use the current brush color
-		context.beginPath();
-		context.arc(x, y, brushSize / 2, 0, 2 * Math.PI);
-		context.fill();
+		context.fill(strokePath); // Fill the stroke path
 	}
 
 	function redrawCanvas() {
 		// Clear the canvas and redraw the original image
 		context.clearRect(0, 0, canvas.width, canvas.height);
-		if (originalImage) {
-			context.drawImage(originalImage, 0, 0); // Redraw the original image
-		}
+		// if (originalImage) {
+		// 	context.drawImage(originalImage, 0, 0);
+		// }
 
-		// Redraw the strokes with the current color and opacity
-		strokes.forEach(function (stroke) {
-			context.globalAlpha = selectedOpacity; // Use the stroke's saved opacity
-			context.fillStyle = selectedColor; // Use the stroke's saved color
-			context.beginPath();
-			context.arc(stroke.x, stroke.y, stroke.size / 2, 0, 2 * Math.PI);
-			context.fill();
-		});
-
-		context.globalAlpha = 1; // Reset global alpha to 1 after drawing
+		// Set the global opacity and fill the accumulated path
+		context.globalAlpha = selectedOpacity; // Set the combined opacity
+		context.fillStyle = selectedColor; // Use the selected color
+		context.fill(path); // Fill the combined path
 	}
 
 	// Clear canvas
@@ -114,10 +112,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		.getElementById("clear_canvas")
 		.addEventListener("click", function () {
 			context.clearRect(0, 0, canvas.width, canvas.height);
-			strokes = []; // Clear the strokes array
-			if (originalImage) {
-				context.drawImage(originalImage, 0, 0); // Redraw the original image
-			}
+			path = new Path2D(); // Clear the path
+			// if (originalImage) {
+			// 	context.drawImage(originalImage, 0, 0);
+			// }
 		});
 
 	// Convert to base64 black-and-white image (not changed)

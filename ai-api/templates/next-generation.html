@@ -5,6 +5,18 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Next Generation</title>
+	<style>
+		.user_mask_canvas {
+			position: relative;
+			width: 512px;
+			height: 512px;
+		}
+
+		.drawing_canvas,
+		.init_image_preview {
+			position: absolute;
+		}
+	</style>
 </head>
 
 <body>
@@ -41,7 +53,10 @@
 			<button id="clear_canvas">Clear</button>
 		</div>
 		<!-- Canvas for drawing -->
-		<canvas id="drawing_canvas"></canvas>
+		<div id="user_mask_canvas" class="user_mask_canvas">
+			<img src="" id="init_image_preview" class="init_image_preview"></img>
+			<canvas id="drawing_canvas" class="drawing_canvas"></canvas>
+		</div>
 		<!-- Base64 Encoded Output -->
 		<textarea id="user_mask_base64_output" rows="10" cols="50"></textarea>
 

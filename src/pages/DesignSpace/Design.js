@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import Version from "./Version";
 import "../../css/design.css";
 import DrawerComponent from "../Homepage/DrawerComponent";
-
+import { FaCheckCircle, FaEllipsisV, FaAt } from 'react-icons/fa'; // Icons used: Check, Dots, At symbol
 import Budget from "./Budget";
 
 function Design() {
@@ -29,6 +29,8 @@ function Design() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // New state for sidebar
   const [activeCommentTab, setActiveCommentTab] = useState("left"); // For "All Comments / For You"
   const [activeStatusTab, setActiveStatusTab] = useState("left"); // For "Open / Resolved"
+  const [clicked, setClicked] = useState(false); // Handle click state
+  const [replyVisible, setReplyVisible] = useState(false); // State for reply visibility
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -78,6 +80,10 @@ function Design() {
   const handleStatusTabClick = (side) => {
     setActiveStatusTab(side);
   };
+  const handleContainerClick = () => {
+    setClicked((prev) => !prev); // Toggle clicked state
+  };
+
   const handleNameChange = async () => {
     if (newName.trim() === "") {
       alert("Design name cannot be empty");
@@ -114,6 +120,11 @@ function Design() {
   const toggleComments = () => {
     setShowComments((prev) => !prev);
   };
+
+   const handleReplyClick = (e) => {
+     e.stopPropagation(); 
+     setReplyVisible(true); 
+   };
 
   const togglePromptBar = () => {
     setShowPromptBar((prev) => !prev);
@@ -265,6 +276,34 @@ function Design() {
                     >
                       Resolved
                     </button>
+                  </div>
+                  <div
+                    className={`comment-container ${clicked ? "clicked" : ""}`}
+                    onClick={handleContainerClick}
+                  >
+                    <div className="profile-section">
+                      <div className="profile-info">
+                        <div className="profile-pic"></div>
+                        <div className="user-details">
+                          <span className="username">Juan Dela Cruz</span>
+                          <span className="date">June 17, 2024</span>
+                        </div>
+                      </div>
+                      <div className="profile-status">
+                        <FaCheckCircle className="check-mark" />
+                        <FaEllipsisV className="options-dots" />
+                      </div>
+                    </div>
+                    <div className="comment-text">
+                      Lorem ipsum dolor sit amet...
+                    </div>
+
+                    {clicked && (
+                      <div className="reply-input">
+                        <FaAt className="at-symbol" />
+                        <input type="text" placeholder="Add a Reply" />
+                      </div>
+                    )}
                   </div>
                   <button className="add-comment-button">Add a comment</button>
                 </div>

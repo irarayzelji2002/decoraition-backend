@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Password from "./PassInput";
+
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -26,7 +26,7 @@ import { Person } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 import { GoogleIcon, FacebookIcon } from "./CustomIcons";
-import { db } from "../firebase"; // Import Firestore instance
+import { db } from "../../server/firebase"; // Import Firestore instance
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";

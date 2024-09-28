@@ -7,8 +7,8 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import "../css/forgotPass.css";
-import { handleForgotPassword } from "../firebase";
+import "../../css/forgotPass.css";
+import { handleForgotPassword } from "../../firebase";
 import { useState } from "react"; // Import your forgot password function
 
 // TODO: remove, this demo shouldn't need to reset the theme.

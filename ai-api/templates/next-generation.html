@@ -61,15 +61,23 @@
 			<canvas id="drawing_canvas" class="drawing_canvas"></canvas>
 		</div>
 		<!-- Base64 Encoded Output -->
-		<textarea id="user_mask_base64_output" rows="10" cols="50"></textarea>
+		<label for="user_mask">User Mask:</label>
+		<span id="user_mask_err"></span><br />
+		<textarea id="user_mask_base64_output" name="user_mask" rows="3" cols="50"
+			placeholder="Base 64 of User Mask"></textarea><br />
+		<button type="button" id="get_user_mask">
+			Get User Mask
+		</button><br /><br />
 
 		<!-- Mask Prompt -->
 		<label for="mask_prompt">Mask Prompt:</label>
+		<span id="mask_prompt_err"></span><br />
+		<input type="text" id="mask_prompt" name="mask_prompt" required /><br /><br />
 		<!-- Generate Mask button -->
 		<button type="button" onclick="generateMask()">
 			Generate Mask
 		</button>
-		<span id="mask_prompt_err"></span><br />
+
 		<!-- SAM Mask -->
 		<label for="sam_mask">SAM mask:</label>
 		<span id="sam_mask_err"></span>

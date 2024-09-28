@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				initImagePreview.height = img_height;
 				initImagePreview.src = img.src;
 				originalImage = img; // Store the original image
-				context.drawImage(originalImage, 0, 0); // Draw the image on the canvas
+				// context.drawImage(originalImage, 0, 0); // Draw the image on the canvas
 			};
 		};
 
@@ -188,9 +188,9 @@ document.addEventListener("DOMContentLoaded", function () {
 		context.clearRect(0, 0, canvas.width, canvas.height);
 
 		// Redraw the original image
-		if (originalImage) {
-			context.drawImage(originalImage, 0, 0);
-		}
+		// if (originalImage) {
+		// 	context.drawImage(originalImage, 0, 0);
+		// }
 
 		// Set opacity for the drawn path
 		context.globalAlpha = selectedOpacity;
@@ -213,19 +213,38 @@ document.addEventListener("DOMContentLoaded", function () {
 			erasedPath = new Path2D(); // Clear the erased path
 			erasedRegions = []; // Clear erased regions
 			hasDrawnPath = false;
-			if (originalImage) {
-				context.drawImage(originalImage, 0, 0); // Redraw the original image
-			}
+			// if (originalImage) {
+			// 	context.drawImage(originalImage, 0, 0); // Redraw the original image
+			// }
 		});
 
 	// Convert to base64 black-and-white image (not changed)
-	function user_mask_to_base64_black_and_white() {
-		const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+	document
+		.getElementById("get_user_mask")
+		.addEventListener("click", function () {
+			//userMaskBase64BAW();
+			userMaskBase64BAW();
+		});
+	function getCanvasBase64() {
+		// Convert the current canvas content to a base64-encoded string
+		const base64Image = canvas.toDataURL("image/png");
+		document.getElementById("user_mask_base64_output").value = base64Image;
+		return base64Image;
+	}
+
+	function userMaskBase64BAW() {
+		// Create a new canvas to store black and white image data
 		const bwCanvas = document.createElement("canvas");
 		const bwContext = bwCanvas.getContext("2d");
-		bwCanvas.width = imgData.width;
-		bwCanvas.height = imgData.height;
+		bwCanvas.width = canvas.width;
+		bwCanvas.height = canvas.height;
 
+		// Fill the entire canvas with black
+		bwContext.fillStyle = "black";
+		bwContext.fillRect(0, 0, bwCanvas.width, bwCanvas.height);
+
+		// Get the drawn path from the current canvas context
+		const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
 		const bwImageData = bwContext.createImageData(
 			imgData.width,
 			imgData.height
@@ -237,18 +256,35 @@ document.addEventListener("DOMContentLoaded", function () {
 			const b = imgData.data[i + 2];
 			const alpha = imgData.data[i + 3];
 
-			const isColored = alpha > 0; // Any non-transparent area is considered selected
-			const colorValue = isColored ? 255 : 0; // White for selected, black for the rest
+			// Check if this pixel is part of a drawn path (non-black and fully opaque)
+			const isDrawnPath = alpha > 0 && (r !== 0 || g !== 0 || b !== 0);
+			const isErasedPath = alpha === 0; // Alpha 0 represents an erased area
 
-			bwImageData.data[i] = colorValue;
-			bwImageData.data[i + 1] = colorValue;
-			bwImageData.data[i + 2] = colorValue;
-			bwImageData.data[i + 3] = 255; // Fully opaque
+			if (isDrawnPath) {
+				// For drawn paths, set the color to white
+				bwImageData.data[i] = 255;
+				bwImageData.data[i + 1] = 255;
+				bwImageData.data[i + 2] = 255;
+				bwImageData.data[i + 3] = 255; // Fully opaque
+			} else if (isErasedPath) {
+				// Erased path - remains black (0), already black so no change needed
+				bwImageData.data[i] = 0;
+				bwImageData.data[i + 1] = 0;
+				bwImageData.data[i + 2] = 0;
+				bwImageData.data[i + 3] = 255; // Fully opaque
+			} else {
+				// Unaffected background - keep it black
+				bwImageData.data[i] = 0;
+				bwImageData.data[i + 1] = 0;
+				bwImageData.data[i + 2] = 0;
+				bwImageData.data[i + 3] = 255; // Fully opaque
+			}
 		}
 
+		// Put the adjusted black and white image data back on the canvas
 		bwContext.putImageData(bwImageData, 0, 0);
 
-		// Get base64
+		// Convert the black-and-white canvas to a base64 string
 		const base64Image = bwCanvas.toDataURL();
 		document.getElementById("user_mask_base64_output").value = base64Image;
 	}

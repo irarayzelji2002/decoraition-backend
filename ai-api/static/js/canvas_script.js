@@ -2,8 +2,12 @@ document.addEventListener("DOMContentLoaded", function () {
 	const brushSizeInput = document.getElementById("brush_size");
 	const selectedColorInput = document.getElementById("selected_color");
 	const opacityInput = document.getElementById("selected_opacity");
+	const brushModeCheckbox = document.getElementById("selected_brush_mode");
 	const canvas = document.getElementById("drawing_canvas");
 	const context = canvas.getContext("2d");
+	const brushModeDescription = document.getElementById(
+		"selected_brush_mode_desc"
+	);
 
 	let brushSize = brushSizeInput.value;
 	let selectedColor = selectedColorInput.value;
@@ -12,10 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	let originalImage = null;
 	let path = new Path2D(); // Create a new Path2D object
+	let erasedPath = new Path2D(); // Create a separate path for erased areas
+	let hasDrawnPath = false;
 
 	// Handle image upload
 	const initImagePreview = document.getElementById("init_image_preview");
 	const initImage = document.getElementById("init_image");
+	const userMaskCanvas = document.getElementById("user_mask_canvas");
 	initImage.addEventListener("change", function (event) {
 		const file = event.target.files[0];
 		const reader = new FileReader();
@@ -26,13 +33,15 @@ document.addEventListener("DOMContentLoaded", function () {
 			img.onload = function () {
 				let img_width = img.width;
 				let img_height = img.height;
+				userMaskCanvas.width = img_width;
+				userMaskCanvas.height = img_height;
 				canvas.width = img_width;
 				canvas.height = img_height;
 				initImagePreview.width = img_width;
 				initImagePreview.height = img_height;
 				initImagePreview.src = img.src;
-				// context.drawImage(img, 0, 0);
 				originalImage = img; // Store the original image
+				context.drawImage(originalImage, 0, 0); // Draw the image on the canvas
 			};
 		};
 
@@ -52,6 +61,16 @@ document.addEventListener("DOMContentLoaded", function () {
 	selectedColorInput.addEventListener("input", function () {
 		selectedColor = selectedColorInput.value;
 		redrawCanvas(); // Redraw canvas with updated color
+	});
+
+	// Brush Mode Checkbox Logic
+	brushModeCheckbox.addEventListener("change", function () {
+		if (brushModeCheckbox.checked) {
+			brushModeDescription.textContent = "Draw"; // Update mode description
+			selectedColor = selectedColorInput.value; // Restore original color
+		} else {
+			brushModeDescription.textContent = "Erase"; // Update mode description
+		}
 	});
 
 	// Drawing logic
@@ -85,37 +104,51 @@ document.addEventListener("DOMContentLoaded", function () {
 		const strokePath = new Path2D();
 		strokePath.arc(x, y, brushSize / 2, 0, 2 * Math.PI);
 
-		// Add this stroke to the main path
-		path.addPath(strokePath);
+		if (brushModeCheckbox.checked) {
+			// Drawing mode
+			path.addPath(strokePath);
+			hasDrawnPath = true;
+			context.globalAlpha = 1; // Use fully opaque while drawing
+			context.fillStyle = selectedColor; // Use the current brush color
+			context.fill(strokePath); // Fill the stroke path
+		} else {
+			// Erasing mode
+			if (hasDrawnPath === true) {
+				erasedPath.addPath(strokePath); // Keep track of erased areas
+			}
+		}
 
-		// Draw the stroke on the canvas
-		context.globalAlpha = 1; // Use fully opaque while drawing
-		context.fillStyle = selectedColor; // Use the current brush color
-		context.fill(strokePath); // Fill the stroke path
+		// Always redraw the accumulated path after drawing or erasing
+		redrawCanvas();
 	}
 
 	function redrawCanvas() {
 		// Clear the canvas and redraw the original image
 		context.clearRect(0, 0, canvas.width, canvas.height);
-		// if (originalImage) {
-		// 	context.drawImage(originalImage, 0, 0);
-		// }
+		if (originalImage) {
+			context.drawImage(originalImage, 0, 0); // Redraw the original image
+		}
 
-		// Set the global opacity and fill the accumulated path
+		// Set the global opacity for the drawn path
 		context.globalAlpha = selectedOpacity; // Set the combined opacity
 		context.fillStyle = selectedColor; // Use the selected color
 		context.fill(path); // Fill the combined path
+
+		// Set eraser effect to subtract erased areas
+		context.globalCompositeOperation = "destination-out";
+		context.globalAlpha = 1;
+		context.fill(erasedPath); // Fill the erased path
+		context.globalCompositeOperation = "source-over"; // Reset to default
 	}
 
 	// Clear canvas
 	document
 		.getElementById("clear_canvas")
 		.addEventListener("click", function () {
+			console.log("clear");
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			path = new Path2D(); // Clear the path
-			// if (originalImage) {
-			// 	context.drawImage(originalImage, 0, 0);
-			// }
+			erasedPath = new Path2D(); // Clear the erased path
 		});
 
 	// Convert to base64 black-and-white image (not changed)

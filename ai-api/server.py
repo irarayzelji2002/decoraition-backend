@@ -9,7 +9,7 @@ import thecolorapi
 import numpy as np
 from PIL import Image
 from flask_cors import CORS
-from flask import Flask, request, jsonify, send_file, redirect, url_for, send_from_directory
+from flask import Flask, request, jsonify, send_file, redirect, url_for, send_from_directory, render_template
 
 app = Flask(__name__)
 CORS(app)
@@ -58,6 +58,19 @@ def load_and_encode_image(image_file):
     except Exception as e:
         print(f"Error loading and encoding image: {e}")
         return None
+
+def save_images(image_data_list):
+    """Helper function to save images and return file paths."""
+    saved_paths = []
+    for image_data in image_data_list:
+        if image_data:
+            image_bytes = base64.b64decode(image_data.split(",", 1)[-1])
+            img = Image.open(io.BytesIO(image_bytes))
+            filename = generate_image_filename("png")
+            image_path = os.path.join(IMAGES_FOLDER, filename)
+            img.save(image_path)
+            saved_paths.append(f"/static/images/{filename}")
+    return saved_paths
 
 # Color name functions using thecolorapi
 def thecolorapi_hex_to_color_name(hex_code):
@@ -178,8 +191,14 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                 "cfg_scale": 6,
                 "width": 512,
                 "height": 512,
-                "seed": -1,
                 "n_iter": number_of_images,
+                "seed": -1,
+                "enable_hr": True,
+                "hr_scale": 1.5,
+                "hr_upscaler": "4x_NMKD-Siax_200k",
+                "hr_resize_x": 0,
+                "hr_resize_y": 0,
+                "denoising_strength": 0.3,
                 "alwayson_scripts": {
                     "controlnet": {
                         "args": [{
@@ -210,6 +229,12 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
+                "enable_hr": True,
+                "hr_scale": 1.5,
+                "hr_upscaler": "4x_NMKD-Siax_200k",
+                "hr_resize_x": 0,
+                "hr_resize_y": 0,
+                "denoising_strength": 0.3,
                 "alwayson_scripts": {
                     "controlnet": {
                         "args": [{
@@ -240,6 +265,12 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
+                "enable_hr": True,
+                "hr_scale": 1.5,
+                "hr_upscaler": "4x_NMKD-Siax_200k",
+                "hr_resize_x": 0,
+                "hr_resize_y": 0,
+                "denoising_strength": 0.3,
                 "alwayson_scripts": {
                     "controlnet": {
                         "args": [
@@ -284,30 +315,13 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
+                "enable_hr": True,
+                "hr_scale": 1.5,
+                "hr_upscaler": "4x_NMKD-Siax_200k",
+                "hr_resize_x": 0,
+                "hr_resize_y": 0,
+                "denoising_strength": 0.3
             }
-            # {
-            #     "prompt": prompt,
-            #     "negative_prompt": negative_prompt,
-            #     "styles": [
-            #         "No people"
-            #     ],
-            #     "sampler_name": "DPM++ 2M SDE",
-            #     "steps": 30,
-            #     "cfg_scale": 6,
-            #     "width": 512,
-            #     "height": 512,
-            #     "n_iter": number_of_images,
-            #     "seed": -1,
-            #     "enable_hr": True,
-            #     "firstphase_width": 0,
-            #     "firstphase_height": 0,
-            #     "hr_scale": 1.5,
-            #     "hr_upscaler": "4x_NMKD-Siax_200k",
-            #     "hr_resize_x": 0,
-            #     "hr_resize_y": 0,
-            #     "denoising_strength": 0.3,
-            #     "save_images": True,
-            # }
 
         response = requests.post(f"{SD_URL}/sdapi/v1/txt2img", json=payload)
         return response
@@ -333,17 +347,7 @@ def generate_first_image_route():
         # Handle response
         if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
             images_data = response.json().get("images", [])
-            image_paths = []
-            for i, image_data in enumerate(images_data):
-                if image_data:
-                    image_data = image_data.split(",", 1)[-1]
-                    image_bytes = base64.b64decode(image_data)
-                    img = Image.open(io.BytesIO(image_bytes))
-                    filename = generate_image_filename("png")
-                    image_path = os.path.join(IMAGES_FOLDER, filename)
-                    img.save(image_path)
-                    image_paths.append(f"/static/images/{filename}")
-
+            image_paths = save_images(images_data)
             return jsonify({"image_paths": image_paths}), 200
         else:
             return jsonify({"error": "No images were generated. " + response.text}), 500
@@ -355,46 +359,62 @@ def generate_first_image_route():
 # GENERATE SAM MASK
 def generate_sam_mask(init_image, mask_prompt):
     """Generate SAM mask based on an image and text prompt."""
-    try:
-        if mask_prompt:
-            print("========Next Gen: generating mask========")
-            payload = {
-                "sam_model_name": "sam_vit_b_01ec64.pth",
-                "input_image": init_image,
-                "sam_positive_points": [],
-                "sam_negative_points": [],
-                "dino_enabled": True,
-                "dino_model_name": "GroundingDINO_SwinT_OGC (694MB)",
-                "dino_text_prompt": mask_prompt,
-                "dino_box_threshold": 0.3,
-                "dino_preview_checkbox": False,
-            }
-
-            response = requests.post(f"{SD_URL}/sam/sam-predict", json=payload)
-            if response.status_code == 200:
-                reply = response.json()
-                print(reply.get("msg", "No message"))
-            else:
-                return None, response.status_code
-
-            if "masks" in reply and reply["masks"]:
-                try:
-                    payload_dilate = {
-                        "input_image": init_image,
-                        "mask": reply["masks"][0],  # Default first mask
-                        "dilate_amount": 30
-                    }
-                    response_dilate = requests.post(f"{SD_URL}/sam/dilate-mask", json=payload_dilate)
-                    reply_dilate = response_dilate.json()
-                    return reply_dilate, 200
-                except Exception as e:
-                    print(f"Error expanding SAM mask: {e}")
-                    print(f"Using original SAM mask instead.")
-                    return reply, 200
-            else:
-                print("No masks returned from SAM.")
-                return None, 400
+    if not mask_prompt:
         return None, 400
+
+    print("========Next Gen: generating mask========")
+    try:
+        # Prepare SAM request payload
+        payload = {
+            "sam_model_name": "sam_vit_b_01ec64.pth",
+            "input_image": init_image,
+            "sam_positive_points": [],
+            "sam_negative_points": [],
+            "dino_enabled": True,
+            "dino_model_name": "GroundingDINO_SwinT_OGC (694MB)",
+            "dino_text_prompt": mask_prompt,
+            "dino_box_threshold": 0.3,
+            "dino_preview_checkbox": False,
+        }
+
+        # Call SAM API to generate the mask
+        response = requests.post(f"{SD_URL}/sam/sam-predict", json=payload)
+        if response.status_code != 200:
+            return None, response.status_code
+
+        reply_json = response.json()
+        print(reply_json.get("msg", "No message"))
+
+        masks = reply_json.get("masks")
+        if not masks:
+            print("No masks returned from SAM.")
+            return None, 400
+
+        try:
+            # Dilate the masks and collect responses
+            dilate_payloads = [
+                {"input_image": init_image, "mask": masks[i], "dilate_amount": 30}
+                for i in range(min(3, len(masks)))  # Ensure we process up to 3 masks
+            ]
+
+            replies_dilate = []
+            for payload in dilate_payloads:
+                dilate_response = requests.post(f"{SD_URL}/sam/dilate-mask", json=payload)
+                replies_dilate.append(dilate_response.json())
+
+            # Extract blended images, masks, and masked images
+            reply_dilate = {
+                "blended_images": [reply["blended_image"] for reply in replies_dilate],
+                "masks": [reply["mask"] for reply in replies_dilate],
+                "masked_images": [reply["masked_image"] for reply in replies_dilate],
+            }
+            return reply_dilate
+
+        except Exception as e:
+            print(f"Error expanding SAM mask: {e}")
+            print("Returning original SAM mask instead.")
+            return reply_json
+
     except Exception as e:
         print(f"Error generating SAM mask: {e}")
         return {"error": f"An error occurred: {str(e)}"}, 500
@@ -405,31 +425,29 @@ def generate_sam_mask_route():
     try:
         # Validate request data
         data = request.form if request.content_type.startswith('multipart/form-data') else request.json
-        init_image_encoded = None
         mask_prompt = data.get('mask_prompt', "").strip()
-        
-        # Base image
         init_image = request.files.get('init_image')
-        if init_image and allowed_file(init_image.filename):
-            print(f"Base image received.")
-            init_image_encoded = load_and_encode_image(init_image)
-            print(f"Base image successfully loaded.")
-        else:
-            print(f"No base image received.")
-            return jsonify({"error": "Base image is required"}), 400
-
+        
+        if not init_image or not allowed_file(init_image.filename):
+            return jsonify({"error": "Valid base image is required"}), 400
         if not mask_prompt:
-            print("Empty mask prompt")
             return jsonify({"error": "Mask prompt is required"}), 400
+        init_image_encoded = load_and_encode_image(init_image)
 
-        # Generate SAM mask using prompt
-        response, status_code = generate_sam_mask(init_image_encoded, mask_prompt)
+        # Call generate SAM mask function
+        response = generate_sam_mask(init_image_encoded, mask_prompt)
 
         # Handle response
-        if status_code == 200:
-            return jsonify(response), 200
+        if isinstance(response, dict) and all(key in response for key in ["blended_images", "masks", "masked_images"]):
+            # Save images and return paths
+            image_paths = {
+                "blended_images": save_images(response.get("blended_images")),
+                "masks": save_images(response.get("masks")),
+                "masked_images": save_images(response.get("masked_images")),
+            }
+            return jsonify({"image_paths": image_paths}), 200
         else:
-            return jsonify({"error": f"Failed to generate SAM mask. {response.get('error', '')}"}), 500
+            return jsonify({"error": "Failed to generate SAM mask. Incomplete response."}), 500
 
     except Exception as e:
         print(f"Error generating SAM mask: {e}")
@@ -646,13 +664,15 @@ def index():
 def show_first_generation_page():
     """Serve the HTML test page for the first image generation."""
     # return send_from_directory('templates', 'first-generation.html')
-    return send_file('templates/first-generation.html')
+    # return send_file('templates/first-generation.html')
+    return render_template('first-generation.html')
 
 @app.route('/test/next-generation', methods=['GET'])
 def show_next_generation_page():
     """Serve the HTML test page for the next image generation."""
     # return send_from_directory('templates', 'next-generation.html')
-    return send_file('templates/next-generation.html')
+    # return send_file('templates/next-generation.html')
+    return render_template('next-generation.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)

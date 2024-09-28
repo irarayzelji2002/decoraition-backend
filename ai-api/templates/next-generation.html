@@ -1,194 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Next Generation</title>
-	</head>
-	<body>
-		<h1>Next Image Generation Test</h1>
 
-		<form id="generate_image_form" enctype="multipart/form-data">
-			<!-- Prompt -->
-			<label for="prompt">Prompt:</label><span id="prompt_err"></span
-			><br />
-			<input type="text" id="prompt" name="prompt" required /><br /><br />
-			<!-- Number of Images -->
-			<label for="number_of_images">Number of Images:</label
-			><span id="number_of_images_err"></span><br />
-			<input
-				type="number"
-				id="number_of_images"
-				name="number_of_images"
-				min="1"
-				max="4"
-				value="1"
-				required
-			/><br /><br />
-			<!-- Color Palette -->
-			<label for="color_palette"
-				>Color Palette (comma-separated hex codes):</label
-			><br />
-			<input
-				type="text"
-				id="color_palette"
-				name="color_palette"
-			/><br /><br />
-			<!-- Init Image -->
-			<label for="init_image">Init Image:</label>
-			<span id="init_image_err"></span>
-			<input
-				type="file"
-				id="init_image"
-				name="init_image"
-				accept="image/png, image/jpg, image/jpeg"
-			/><br /><br />
-			<!-- SAM Mask -->
-			<label for="sam_mask">SAM mask:</label>
-			<span id="sam_mask_err"></span>
-			<input
-				type="file"
-				id="sam_mask"
-				name="sam_mask"
-				accept="image/png, image/jpg, image/jpeg"
-			/><br /><br />
-			<!-- User Mask -->
-			<label for="user_mask">User mask:</label>
-			<span id="user_mask_err"></span>
-			<input
-				type="file"
-				id="user_mask"
-				name="user_mask"
-				accept="image/png, image/jpg, image/jpeg"
-			/><br /><br />
-			<!-- Style Reference -->
-			<label for="style_reference">Style Reference:</label>
-			<span id="style_reference_err"></span>
-			<input
-				type="file"
-				id="style_reference"
-				name="style_reference"
-				accept="image/png, image/jpg, image/jpeg"
-			/><br /><br />
-			<!-- Submit button -->
-			<button type="button" onclick="submitForm()">Generate</button>
-		</form>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Next Generation</title>
+</head>
 
-		<button onclick="document.location='/test/first-generation'">
-			First Generation
+<body>
+	<h1>Next Image Generation Test</h1>
+
+	<form id="generate_image_form" enctype="multipart/form-data">
+		<!-- Prompt -->
+		<label for="prompt">Prompt:</label>
+		<span id="prompt_err"></span><br />
+		<input type="text" id="prompt" name="prompt" required /><br /><br />
+		<!-- Number of Images -->
+		<label for="number_of_images">Number of Images:</label>
+		<span id="number_of_images_err"></span><br />
+		<input type="range" id="number_of_images" min="1" max="4" value="1" required><br /><br />
+		<!-- Color Palette -->
+		<label for="color_palette">Color Palette (comma-separated hex codes):</label><br />
+		<input type="text" id="color_palette" name="color_palette" /><br /><br />
+
+		<!-- Init Image -->
+		<label for="init_image">Init Image:</label>
+		<span id="init_image_err"></span>
+		<input type="file" id="init_image" name="init_image" accept="image/png, image/jpg, image/jpeg" /><br /><br />
+		<!-- Brush size, color, and opacity controls -->
+		<div>
+			<label for="brush_size">Brush Size:</label>
+			<input type="range" id="brush_size" min="5" max="50" value="10">
+
+			<label for="selected_color">Selected Color:</label>
+			<input type="color" id="selected_color" value="#ff0000">
+
+			<label for="selected_opacity">Selected Opacity:</label>
+			<input type="range" id="selected_opacity" min="0" max="1" step="0.1" value="0.5">
+
+			<button id="clear_canvas">Clear</button>
+		</div>
+		<!-- Canvas for drawing -->
+		<canvas id="drawing_canvas"></canvas>
+		<!-- Base64 Encoded Output -->
+		<textarea id="user_mask_base64_output" rows="10" cols="50"></textarea>
+
+		<!-- Mask Prompt -->
+		<label for="mask_prompt">Mask Prompt:</label>
+		<!-- Generate Mask button -->
+		<button type="button" onclick="generateMask()">
+			Generate Mask
 		</button>
+		<span id="mask_prompt_err"></span><br />
+		<!-- SAM Mask -->
+		<label for="sam_mask">SAM mask:</label>
+		<span id="sam_mask_err"></span>
+		<input type="file" id="sam_mask" name="sam_mask" accept="image/png, image/jpg, image/jpeg" /><br /><br />
+		<div id="sam_mask_preview"></div>
+		<!-- Style Reference -->
+		<label for="style_reference">Style Reference:</label>
+		<span id="style_reference_err"></span>
+		<input type="file" id="style_reference" name="style_reference"
+			accept="image/png, image/jpg, image/jpeg" /><br /><br />
+		<!-- Generate button -->
+		<button type="button" onclick="generateNextImage()">
+			Generate
+		</button>
+	</form>
 
-		<div id="imageContainer"></div>
+	<button onclick="document.location='/test/first-generation'">
+		First Generation
+	</button>
 
-		<script>
-			async function submitForm() {
-				// Get form elements
-				const prompt = document.getElementById("prompt").value.trim();
-				const number_of_images = document
-					.getElementById("number_of_images")
-					.value.trim();
-				const color_palette = document
-					.getElementById("color_palette")
-					.value.trim();
-				const base_image =
-					document.getElementById("base_image").files[0];
-				const style_reference =
-					document.getElementById("style_reference").files[0];
+	<div id="image_container"></div>
 
-				// Validation
-				if (!prompt) {
-					document.getElementById("prompt_err").innerHTML =
-						"Prompt is required.";
-					return;
-				}
-				if (
-					!number_of_images ||
-					number_of_images < 1 ||
-					number_of_images > 4
-				) {
-					document.getElementById("number_of_images_err").innerHTML =
-						"Please enter a valid number of images (1-4).";
-					return;
-				}
-				if (base_image) {
-					const validExtensions = ["jpg", "jpeg", "png"];
-					const fileExtension = base_image.name
-						.split(".")
-						.pop()
-						.toLowerCase();
+	<script src="{{ url_for('static', filename='js/canvas_script.js') }}"></script>
+	<script>
+		async function generateMask() {
+			// Get form elements
+			const mask_prompt = document.getElementById("mask_prompt").value.trim();
+			const init_image = document.getElementById("init_image").files[0];
 
-					if (!validExtensions.includes(fileExtension)) {
-						document.getElementById("base_image_err").innerHTML =
-							"Invalid file type. Please upload a JPG or PNG image.";
-						return;
-					}
-				}
-				if (style_reference) {
-					const validExtensions = ["jpg", "jpeg", "png"];
-					const fileExtension = style_reference.name
-						.split(".")
-						.pop()
-						.toLowerCase();
-
-					if (!validExtensions.includes(fileExtension)) {
-						document.getElementById(
-							"style_reference_err"
-						).innerHTML =
-							"Invalid file type. Please upload a JPG or PNG image.";
-						return;
-					}
-				}
-
-				// Create FormData object
-				const formData = new FormData();
-				formData.append("prompt", prompt);
-				formData.append("number_of_images", number_of_images);
-				if (color_palette) {
-					const colorsArray = color_palette
-						.split(",")
-						.map((color) => color.trim());
-					formData.append(
-						"color_palette",
-						JSON.stringify(colorsArray)
-					);
-				}
-				if (base_image) {
-					formData.append("base_image", base_image);
-				}
-				if (style_reference) {
-					formData.append("style_reference", style_reference);
-				}
-				console.log("Form Data:");
-				console.log(formData);
-
-				// Fetch API
-				try {
-					const response = await fetch("/generate-first-image", {
-						method: "POST",
-						body: formData,
-					});
-
-					if (!response.ok) {
-						throw new Error("Failed to generate image");
-					}
-
-					const data = await response.json();
-					const imageContainer =
-						document.getElementById("imageContainer");
-					imageContainer.innerHTML = "";
-
-					data.image_paths.forEach((path) => {
-						const img = document.createElement("img");
-						img.src = path;
-						img.alt = "Generated Image";
-						img.style.maxWidth = "100%";
-						img.style.height = "auto";
-						imageContainer.appendChild(img);
-					});
-				} catch (error) {
-					console.error("Error:", error);
-				}
+			// Validation
+			if (!mask_prompt) {
+				document.getElementById("mask_prompt_err").innerHTML = "Mask prompt is required to generate a mask.";
+				return;
 			}
-		</script>
-	</body>
+			if (!init_image) {
+				document.getElementById("init_image_err").innerHTML = "Init image is required.";
+				return;
+			}
+
+			// Create FormData object
+			const formData = new FormData();
+			formData.append("mask_prompt", mask_prompt);
+			formData.append("init_image", init_image);
+
+			// Fetch API
+			try {
+				const response = await fetch("/generate-sam-mask", {
+					method: "POST",
+					body: formData,
+				});
+
+				if (!response.ok) {
+					throw new Error("Failed to generate SAM mask");
+				}
+
+				const data = await response.json();
+				const sam_mask_preview = document.getElementById("sam_mask_preview");
+				sam_mask_preview.innerHTML = "";
+				const { blended_images, masks, masked_images } = data.image_paths;
+
+				// Dynamically create a radio group for the 3 mask options
+				blended_images.forEach((blended_image, index) => {
+					const maskOption = document.createElement("div");
+					maskOption.innerHTML = `
+						<input type="radio" id="mask_${index}" name="selected_mask" value="${index}" />
+						<label for="mask_${index}">
+							<img src="${blended_images[index]}" alt="Blended Image" width="100" />
+							<img src="${masks[index]}" alt="Mask Image" width="100" />
+							<img src="${masked_images[index]}" alt="Masked Image" width="100" />
+						</label>
+					`;
+					sam_mask_preview.appendChild(maskOption);
+				});
+			} catch (error) {
+				console.error("Error:", error);
+			}
+		}
+
+		async function generateNextImage() {
+			// Get form elements
+			const prompt = document.getElementById("prompt").value.trim();
+			const number_of_images = document.getElementById("number_of_images").value.trim();
+			const color_palette = document.getElementById("color_palette").value.trim();
+			const init_image = document.getElementById("init_image").files[0];
+			// const user_mask = document.getElementById("user_mask").files[0];
+			user_mask_to_base64_black_and_white()
+			const user_mask = document.getElementById("user_mask_base64_output").value();
+			const style_reference = document.getElementById("style_reference").files[0];
+
+			// Get selected mask index from radio buttons & corresponding mask data
+			const selectedMaskRadio = document.querySelector('input[name="selected_mask"]:checked');
+			if (!selectedMaskRadio) {
+				document.getElementById("sam_mask_err").innerHTML = "Please select a SAM mask.";
+				return;
+			}
+			const selectedIndex = selectedMaskRadio.value;
+			const sam_mask = {
+				"blended_mask": blended_images[selectedIndex],
+				"mask": masks[selectedIndex],
+				"masked_image": masked_images[selectedIndex]
+			};
+
+			// Validation
+			if (!prompt) {
+				document.getElementById("prompt_err").innerHTML = "Prompt is required.";
+				return;
+			}
+			if (!number_of_images || number_of_images < 1 || number_of_images > 4) {
+				document.getElementById("number_of_images_err").innerHTML = "Please enter a valid number of images (1-4).";
+				return;
+			}
+			if (!init_image) {
+				document.getElementById("init_image_err").innerHTML = "Init image is required.";
+				return;
+			}
+
+			// Create FormData object
+			const formData = new FormData();
+			formData.append("prompt", prompt);
+			formData.append("number_of_images", number_of_images);
+			if (color_palette) {
+				const colorsArray = color_palette.split(",").map((color) => color.trim());
+				formData.append("color_palette", JSON.stringify(colorsArray));
+			}
+			formData.append("init_image", init_image);
+			formData.append("sam_mask", JSON.stringify(sam_mask));  // Append the sam_mask object
+			if (user_mask) {
+				formData.append("user_mask", user_mask);
+			}
+			if (style_reference) {
+				formData.append("style_reference", style_reference);
+			}
+
+			// Fetch API call to generate the next image
+			try {
+				const response = await fetch("/generate-next-image", {
+					method: "POST",
+					body: formData,
+				});
+
+				if (!response.ok) {
+					throw new Error("Failed to generate image");
+				}
+
+				const data = await response.json();
+				const imageContainer = document.getElementById("image_container");
+				imageContainer.innerHTML = "";
+
+				// Display generated images
+				data.image_paths.forEach((path) => {
+					const img = document.createElement("img");
+					img.src = path;
+					img.alt = "Generated Image";
+					img.style.maxWidth = "100%";
+					img.style.height = "auto";
+					imageContainer.appendChild(img);
+				});
+			} catch (error) {
+				console.error("Error:", error);
+			}
+		}
+	</script>
+</body>
+
 </html>

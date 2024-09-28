@@ -27,6 +27,8 @@ function Design() {
   const [userId, setUserId] = useState(null);
   const [activeTab, setActiveTab] = useState("design");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // New state for sidebar
+  const [activeCommentTab, setActiveCommentTab] = useState("left"); // For "All Comments / For You"
+  const [activeStatusTab, setActiveStatusTab] = useState("left"); // For "Open / Resolved"
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -69,6 +71,13 @@ function Design() {
     setIsEditingName((prev) => !prev);
   };
 
+  const handleCommentTabClick = (side) => {
+    setActiveCommentTab(side);
+  };
+
+  const handleStatusTabClick = (side) => {
+    setActiveStatusTab(side);
+  };
   const handleNameChange = async () => {
     if (newName.trim() === "") {
       alert("Design name cannot be empty");
@@ -220,15 +229,43 @@ function Design() {
               </div>
               {showComments && (
                 <div className="comment-section">
-                  <h4>Comments</h4>
-                  <textarea
-                    value={comment}
-                    style={{
-                      backgroundColor: "var(--inputBg)",
-                    }}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Add your comment here..."
-                  />
+                  <div className="split-button">
+                    <button
+                      onClick={() => handleCommentTabClick("left")}
+                      className={`button-side ${
+                        activeCommentTab === "left" ? "active" : ""
+                      }`}
+                    >
+                      All Comments
+                    </button>
+                    <button
+                      onClick={() => handleCommentTabClick("right")}
+                      className={`button-side ${
+                        activeCommentTab === "right" ? "active" : ""
+                      }`}
+                    >
+                      For You
+                    </button>
+                  </div>
+
+                  <div className="split-button">
+                    <button
+                      onClick={() => handleStatusTabClick("left")}
+                      className={`button-side ${
+                        activeStatusTab === "left" ? "active" : ""
+                      }`}
+                    >
+                      Open
+                    </button>
+                    <button
+                      onClick={() => handleStatusTabClick("right")}
+                      className={`button-side ${
+                        activeStatusTab === "right" ? "active" : ""
+                      }`}
+                    >
+                      Resolved
+                    </button>
+                  </div>
                   <button className="add-comment-button">Add a comment</button>
                 </div>
               )}

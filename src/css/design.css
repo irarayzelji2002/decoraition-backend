@@ -422,3 +422,39 @@ textarea {
 .sidebar-content::-webkit-scrollbar {
   display: none; /* Hide scrollbar */
 }
+
+/* comment section */
+.split-button {
+  display: inline-flex;
+  border-radius: 25px;
+  overflow: hidden;
+  border: 2px solid #F68950;
+  margin: 10px 0;
+}
+
+.button-side {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  background-color: #27262C;
+  color: white;
+  transition: background-color 0.3s ease;
+  flex: 1;
+}
+
+.button-side.active {
+  background-color: #F68950;
+  color: white;
+}
+
+.button-side:not(.active) {
+  border-right: 2px solid #F68950;
+}
+
+.button-side:first-child {
+  border-right: 1px solid #F68950;
+}
+
+.button-side:hover {
+  opacity: 0.9;
+}

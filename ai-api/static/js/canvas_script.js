@@ -15,9 +15,11 @@ document.addEventListener("DOMContentLoaded", function () {
 	let drawing = false;
 
 	let originalImage = null;
-	let path = new Path2D(); // Create a new Path2D object
-	let erasedPath = new Path2D(); // Create a separate path for erased areas
+	let path = new Path2D(); // For drawn areas
+	let erasedPath = new Path2D(); // For erased areas
+	let erasedRegions = []; // Store erased regions
 	let hasDrawnPath = false;
+	let needsRedraw = false; // To flag when a redraw is necessary
 
 	// Handle image upload
 	const initImagePreview = document.getElementById("init_image_preview");
@@ -87,12 +89,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	canvas.addEventListener("mouseup", function () {
 		drawing = false;
-		redrawCanvas();
+		if (needsRedraw) {
+			redrawCanvas();
+			needsRedraw = false; // Reset after redraw
+		}
 	});
 
 	canvas.addEventListener("mouseout", function () {
 		drawing = false;
-		redrawCanvas();
+		if (needsRedraw) {
+			redrawCanvas();
+			needsRedraw = false; // Reset after redraw
+		}
 	});
 
 	function draw(event) {
@@ -106,38 +114,93 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		if (brushModeCheckbox.checked) {
 			// Drawing mode
+			let isErased = false;
+
+			// Check if the current stroke (with brush size) overlaps any erased region
+			for (let i = 0; i < erasedRegions.length; i++) {
+				const erasedRegion = erasedRegions[i];
+				// Check a few points along the stroke's arc to detect overlap
+				const checkPoints = getBrushArcPoints(x, y, brushSize / 2);
+				for (const point of checkPoints) {
+					if (context.isPointInPath(erasedRegion, point.x, point.y)) {
+						isErased = true;
+						erasedRegions.splice(i, 1); // Remove the erased region
+						break;
+					}
+				}
+				if (isErased) break;
+			}
+
+			// If there was overlap with erased region, remove that part from erased path
+			if (isErased) {
+				rebuildErasedPath(); // Rebuild the erased path without the overlapping region
+			}
+
+			// Add the stroke to the drawn path
 			path.addPath(strokePath);
 			hasDrawnPath = true;
-			context.globalAlpha = 1; // Use fully opaque while drawing
+			context.globalAlpha = 1; // Fully opaque while drawing
 			context.fillStyle = selectedColor; // Use the current brush color
-			context.fill(strokePath); // Fill the stroke path
+			context.fill(strokePath); // Draw the stroke
 		} else {
 			// Erasing mode
-			if (hasDrawnPath === true) {
-				erasedPath.addPath(strokePath); // Keep track of erased areas
+			if (hasDrawnPath) {
+				erasedRegions.push(strokePath); // Add erased region
+
+				// Directly render the erasing stroke for real-time feedback
+				context.globalCompositeOperation = "destination-out";
+				context.globalAlpha = 1;
+				context.fill(strokePath); // Erase the stroke on the canvas
+				context.globalCompositeOperation = "source-over"; // Reset composite operation
+
+				// Rebuild the erased path after stroke
+				rebuildErasedPath();
 			}
 		}
 
-		// Always redraw the accumulated path after drawing or erasing
-		redrawCanvas();
+		// Mark that the canvas needs to be redrawn
+		needsRedraw = true;
+	}
+
+	// Helper function to get points along the arc of a stroke for overlap detection
+	function getBrushArcPoints(centerX, centerY, radius) {
+		const points = [];
+		const numPoints = 10; // Number of points to sample around the stroke
+		for (let i = 0; i < numPoints; i++) {
+			const angle = (2 * Math.PI * i) / numPoints;
+			const x = centerX + radius * Math.cos(angle);
+			const y = centerY + radius * Math.sin(angle);
+			points.push({ x, y });
+		}
+		return points;
+	}
+
+	function rebuildErasedPath() {
+		// Rebuild erasedPath based on erasedRegions
+		erasedPath = new Path2D();
+		for (let i = 0; i < erasedRegions.length; i++) {
+			erasedPath.addPath(erasedRegions[i]);
+		}
 	}
 
 	function redrawCanvas() {
-		// Clear the canvas and redraw the original image
+		// Clear the canvas
 		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		// Redraw the original image
 		if (originalImage) {
-			context.drawImage(originalImage, 0, 0); // Redraw the original image
+			context.drawImage(originalImage, 0, 0);
 		}
 
-		// Set the global opacity for the drawn path
-		context.globalAlpha = selectedOpacity; // Set the combined opacity
-		context.fillStyle = selectedColor; // Use the selected color
-		context.fill(path); // Fill the combined path
+		// Set opacity for the drawn path
+		context.globalAlpha = selectedOpacity;
+		context.fillStyle = selectedColor;
+		context.fill(path); // Redraw the combined path
 
-		// Set eraser effect to subtract erased areas
+		// Erase the areas in the erasedPath
 		context.globalCompositeOperation = "destination-out";
 		context.globalAlpha = 1;
-		context.fill(erasedPath); // Fill the erased path
+		context.fill(erasedPath); // Apply erasing
 		context.globalCompositeOperation = "source-over"; // Reset to default
 	}
 
@@ -145,10 +208,14 @@ document.addEventListener("DOMContentLoaded", function () {
 	document
 		.getElementById("clear_canvas")
 		.addEventListener("click", function () {
-			console.log("clear");
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			path = new Path2D(); // Clear the path
 			erasedPath = new Path2D(); // Clear the erased path
+			erasedRegions = []; // Clear erased regions
+			hasDrawnPath = false;
+			if (originalImage) {
+				context.drawImage(originalImage, 0, 0); // Redraw the original image
+			}
 		});
 
 	// Convert to base64 black-and-white image (not changed)

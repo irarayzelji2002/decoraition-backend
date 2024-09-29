@@ -28,11 +28,20 @@ const DrawerComponent = ({
   handleSettings,
   username = "", // Default to empty string
   userEmail = "", // Default to empty string
-  designs = [], // Default to empty array
+  designs = [], // Default to empty array onOpen,
+  onOpen,
 }) => {
   // State to handle dark mode
   const [darkMode, setDarkMode] = useState(true);
   const navigate = useNavigate();
+  const [showOptions, setShowOptions] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showCopyLinkModal, setShowCopyLinkModal] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+
+  const toggleOptions = () => {
+    setShowOptions(!showOptions);
+  };
   // Load dark mode preference from localStorage on component mount
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -55,6 +64,34 @@ const DrawerComponent = ({
       document.documentElement.classList.remove("light-mode");
       localStorage.setItem("theme", "dark");
     }
+  };
+
+  const closeCopyLinkModal = () => {
+    setShowCopyLinkModal(false);
+  };
+
+  const openRenameModal = () => {
+    setShowRenameModal(true);
+    setShowOptions(false); // Close options when modal opens
+  };
+
+  const closeRenameModal = () => {
+    setShowRenameModal(false);
+  };
+
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+    setShowOptions(false); // Close options when modal opens
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+  const openCopyLinkModal = () => {
+    // Simulate copying the link ( may implement actual copy logic here)
+    navigator.clipboard.writeText(`https://yourapp.com/designs/`);
+    setShowCopyLinkModal(true);
+    setShowOptions(false); // Close options when modal opens
   };
 
   return (
@@ -141,7 +178,29 @@ const DrawerComponent = ({
             <ListItem key={design.id}>
               <ListItemText primary={design.name} />
               <IconButton edge="end" aria-label="more">
-                <MoreHorizIcon sx={{ color: darkMode ? "white" : "black" }} />
+                <MoreHorizIcon
+                  sx={{ color: darkMode ? "white" : "black" }}
+                  onClick={toggleOptions}
+                />
+                {showOptions && (
+                  <div className="dropdown-menu">
+                    <div className="dropdown-item" onClick={onOpen}>
+                      <span className="icon"></span> Open
+                    </div>
+                    <div className="dropdown-item" onClick={openDeleteModal}>
+                      <span className="icon"></span> Delete
+                    </div>
+                    <div className="dropdown-item" onClick={openCopyLinkModal}>
+                      <span className="icon"></span> Copy Link
+                    </div>
+                    <div className="dropdown-item" onClick={openRenameModal}>
+                      <span className="icon"></span> Rename
+                    </div>
+                    <div className="dropdown-item">
+                      <span className="icon"></span> Details
+                    </div>
+                  </div>
+                )}
               </IconButton>
             </ListItem>
           ))

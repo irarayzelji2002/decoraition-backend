@@ -93,10 +93,30 @@ def save_images(image_data_list, folder_name):
             image_bytes = base64.b64decode(image_data.split(",", 1)[-1])
             img = Image.open(io.BytesIO(image_bytes))
             filename = generate_image_filename("png")
+            folder_path = f"static/{folder_name}"
+            os.makedirs(folder_path, exist_ok=True)
             image_path = os.path.join(f"static/{folder_name}", filename)
             img.save(image_path)
             saved_paths.append(f"/static/{folder_name}/{filename}")
     return saved_paths
+
+def save_image_from_base64(image_base64, folder_name):
+    """Helper function to save a combined mask and return its file path."""
+    # Decode the base64 image
+    image_bytes = base64.b64decode(image_base64)
+    img = Image.open(io.BytesIO(image_bytes))
+
+    # Generate filename and save path
+    filename = generate_image_filename("png")
+    folder_path = f"static/{folder_name}"
+    os.makedirs(folder_path, exist_ok=True)  # Ensure the folder exists
+    image_path = os.path.join(folder_path, filename)
+
+    # Save the image to the specified folder
+    img.save(image_path)
+    print(f"Combined mask saved at: {image_path}")
+
+    return f"/static/{folder_name}/{filename}"
 
 # Color name functions using thecolorapi
 def thecolorapi_hex_to_color_name(hex_code):
@@ -468,7 +488,7 @@ def generate_sam_mask_route():
 def combine_masks(sam_mask_path, user_mask_base64):
     # Validate sam_mask_path
     if not sam_mask_path or not os.path.exists(sam_mask_path):
-        print("Error: SAM mask path is invalid or does not exist.")
+        print(f"Error: SAM mask path does not exist at {sam_mask_path}.")
         return None
     
     # Load SAM mask
@@ -483,11 +503,13 @@ def combine_masks(sam_mask_path, user_mask_base64):
     # Check if user_mask is valid
     if user_mask is None:
         print("Error: User mask could not be decoded.")
+        print(f"Combined Mask Path (SAM): {sam_mask_path}")
         return load_and_encode_image(sam_mask_path)
 
     # Check if user mask is all black
     if np.count_nonzero(user_mask) == 0:
         print("User mask is all black; returning SAM mask.")
+        print(f"Combined Mask Path (SAM): {sam_mask_path}")
         return load_and_encode_image(sam_mask_path)
 
     # Resize user mask to match SAM mask dimensions
@@ -502,6 +524,10 @@ def combine_masks(sam_mask_path, user_mask_base64):
     # Save combined mask to a temporary buffer
     _, combined_mask_buffer = cv2.imencode('.png', combined_mask)
     combined_mask_base64 = base64.b64encode(combined_mask_buffer).decode('utf-8')
+
+    # Use save_combined_mask function to save the image
+    combined_mask_path = save_image_from_base64(combined_mask_base64, "masks")
+    print(f"Combined Mask Path: {combined_mask_path}")
 
     return combined_mask_base64
 
@@ -568,7 +594,7 @@ def validate_next_generation_request(data):
                 print(f"No user_mask received.")
                 user_mask_encoded = None
             # Combined mask
-            combined_mask_encoded = combine_masks(sam_mask_img_path, user_mask)
+            combined_mask_encoded = combine_masks(sam_mask_img_path_whole, user_mask)
             if combined_mask_encoded:
                 print("Combined mask successfully created and encoded.")
             else:
@@ -627,6 +653,7 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, s
                 "inpaint_full_res": False,   # Inpaint area = only masked:
                 "inpaint_full_res_padding": 32,
                 "mask_round": True,          # Soft inpainting
+                "include_init_images": True,
                 "alwayson_scripts": {
                     "controlnet": {
                         "args": [
@@ -669,6 +696,7 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, s
                 "inpaint_full_res": False,   # Inpaint area = only masked:
                 "inpaint_full_res_padding": 32,
                 "mask_round": True,          # Soft inpainting
+                "include_init_images": True,
             }
 
         response = requests.post(f"{SD_URL}/sdapi/v1/img2img", json=payload)

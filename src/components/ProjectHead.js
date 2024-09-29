@@ -30,7 +30,7 @@ function ProjectHead({
   toggleComments,
   designId,
   setIsSidebarOpen,
-  designData,
+  projectData,
   newName,
   setNewName,
   isEditingName,
@@ -91,7 +91,7 @@ function ProjectHead({
 
       const unsubscribe = onSnapshot(designRef, (doc) => {
         if (doc.exists()) {
-          const designData = doc.data();
+          const projectData = doc.data();
           setTempName("Untitled");
         }
       });
@@ -309,7 +309,7 @@ function ProjectHead({
               className="headTitleInput"
               style={{ height: "20px" }}
             >
-              {"Untitled"}
+              {projectData?.name || "Untitled"}
             </span>
           )}
         </div>

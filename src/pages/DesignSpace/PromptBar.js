@@ -266,6 +266,9 @@ function PromptBar() {
                 borderRadius: "20px",
                 color: "white",
                 marginBottom: "20px",
+                "&:hover": {
+                  backgroundImage: "var(--gradientButtonHover)",
+                },
               }}
               onClick={() => {
                 console.log("Take a photo clicked");
@@ -281,6 +284,10 @@ function PromptBar() {
                 backgroundImage: "var(--gradientButton)",
                 borderRadius: "20px",
                 color: "white",
+                marginBottom: "20px",
+                "&:hover": {
+                  backgroundImage: "var(--gradientButtonHover)",
+                },
               }}
               onClick={() => {
                 document.getElementById("fileInput").click();

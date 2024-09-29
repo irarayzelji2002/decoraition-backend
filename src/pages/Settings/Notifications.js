@@ -81,7 +81,11 @@ export default function Notifications() {
   return (
     <ThemeProvider theme={theme}>
       <div>
-        <Typography variant="h6" gutterBottom>
+        <Typography
+          variant="h6"
+          gutterBottom
+          style={{ color: "white", fontWeight: "bold" }}
+        >
           Notification preferences
         </Typography>
         <FormGroup>
@@ -109,7 +113,11 @@ export default function Notifications() {
               />
             }
           />
-          <Typography variant="caption" display="block" gutterBottom>
+          <Typography
+            variant="h6"
+            gutterBottom
+            style={{ color: "white", fontWeight: "bold" }}
+          >
             Delete read notifications after how many days?
           </Typography>
           <Slider
@@ -119,10 +127,26 @@ export default function Notifications() {
             valueLabelDisplay="auto"
             min={1}
             max={30}
+            sx={{
+              color: "var(--slider)", // Slider color
+              "& .MuiSlider-thumb": {
+                background: "var(--gradientCircle)", // Gradient thumb
+              },
+              "& .MuiSlider-track": {
+                backgroundColor: "var(--slider)", // Track color
+              },
+              "& .MuiSlider-rail": {
+                backgroundColor: "var(--slider)", // Rail color
+              },
+            }}
           />
         </FormGroup>
 
-        <Typography variant="h6" gutterBottom>
+        <Typography
+          variant="h6"
+          gutterBottom
+          style={{ color: "white", fontWeight: "bold" }}
+        >
           Comment notification preferences
         </Typography>
         <FormGroup>
@@ -203,7 +227,11 @@ export default function Notifications() {
           />
         </FormGroup>
 
-        <Typography variant="h6" gutterBottom>
+        <Typography
+          variant="h6"
+          gutterBottom
+          style={{ color: "white", fontWeight: "bold" }}
+        >
           Timeline notification preferences
         </Typography>
         <FormGroup>
@@ -221,7 +249,11 @@ export default function Notifications() {
           />
         </FormGroup>
 
-        <Typography variant="h6" gutterBottom>
+        <Typography
+          variant="h6"
+          gutterBottom
+          style={{ color: "white", fontWeight: "bold" }}
+        >
           Design notification preferences
         </Typography>
         <FormGroup>
@@ -287,7 +319,11 @@ export default function Notifications() {
           />
         </FormGroup>
 
-        <Typography variant="h6" gutterBottom>
+        <Typography
+          variant="h6"
+          gutterBottom
+          style={{ color: "white", fontWeight: "bold" }}
+        >
           Project notification preferences
         </Typography>
         <FormGroup>
@@ -351,6 +387,7 @@ export default function Notifications() {
               />
             }
           />
+
           <Button
             sx={{
               marginTop: "20px",
@@ -360,6 +397,9 @@ export default function Notifications() {
               fontWeight: "bold",
               borderRadius: "20px",
               textTransform: "none",
+              "&:hover": {
+                backgroundImage: "var(--gradientButtonHover)",
+              },
             }}
           >
             Save Settings

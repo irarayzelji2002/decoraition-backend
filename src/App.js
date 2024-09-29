@@ -81,7 +81,7 @@ function App() {
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
           <Route path="/version" element={<Version />} />
           {/* PROJECT SPACE */}
-          <Route path="/project" element={<Project />} />
+          <Route path="/project/:projectId" element={<Project />} />
           <Route path="/planMap" element={<PlanMap />} />
           <Route path="/timeline" element={<Timeline />} />
           <Route path="/projBudget" element={<ProjBudget />} />

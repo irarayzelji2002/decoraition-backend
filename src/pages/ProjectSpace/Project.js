@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProjectHead from "../../components/ProjectHead";
-import "../../css/project.css";
 import { Paper, Button, IconButton, InputBase } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { getAuth } from "firebase/auth";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
 import Modal from "../../components/Modal";
 import BottomBarDesign from "../../components/BottomBarProject";
 import "../../css/seeAll.css";
+import "../../css/project.css";
 import "../../css/project.css";
 
 const SearchBar = styled(Paper)(({ theme }) => ({
@@ -37,6 +41,42 @@ const OptionButton = styled(Button)(({ theme }) => ({
 function Project() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+  const { designId } = useParams();
+  const [newName, setNewName] = useState("");
+  const [userId, setUserId] = useState(null);
+  const [designData, setDesignData] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+
+        const fetchDesignDetails = async () => {
+          try {
+            const designRef = doc(db, "users", user.uid, "designs", designId);
+            const designSnapshot = await getDoc(designRef);
+            if (designSnapshot.exists()) {
+              const design = designSnapshot.data();
+              setDesignData(design);
+              setNewName(design.name);
+            } else {
+              console.error("Design not found");
+            }
+          } catch (error) {
+            console.error("Error fetching design details:", error);
+          }
+        };
+
+        fetchDesignDetails();
+      } else {
+        console.error("User is not authenticated");
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup listener on component unmount
+  }, [designId]);
 
   const openModal = (content) => {
     setModalContent(content);

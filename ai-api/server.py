@@ -259,7 +259,33 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                             "control_mode": "ControlNet is more important",
                             "pixel_perfect": True
                         }]
-                    }
+                    },
+                    # "freeu": {
+                    #     "args": [{
+                    #         "enabled": True,
+                    #         "start_ratio": 0.2,  # Start at 20% of the steps
+                    #         "stop_ratio": 0.8,   # Stop at 80% of the steps
+                    #         "transition_smoothness": 0.5,
+                    #         "stage_infos": [
+                    #             {
+                    #                 "backbone_factor": 0.4,  # B1
+                    #                 "skip_factor": 0.7,      # S1
+                    #                 "backbone_offset": 0.5,
+                    #                 "backbone_width": 0.75,
+                    #                 "skip_high_end_factor": 1.1,  # High end scale
+                    #                 "skip_cutoff": 0.3 
+                    #             },
+                    #             {
+                    #                 "backbone_factor": 0.4,  # B2
+                    #                 "skip_factor": 0.3,      # S2
+                    #                 "backbone_offset": 0.5,
+                    #                 "backbone_width": 0.75,
+                    #                 "skip_high_end_factor": 1.1,  # High end scale
+                    #                 "skip_cutoff": 0.3 
+                    #             }
+                    #         ]
+                    #     }]
+                    # }
                 }
             }
         elif style_reference and not base_image:
@@ -650,7 +676,7 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, s
                 "mask_blur_x": 4,
                 "mask_blur_y": 4,
                 "inpainting_fill": 0,        # Masked Content = original
-                "inpaint_full_res": False,   # Inpaint area = only masked:
+                "inpaint_full_res": False,   # Inpaint area = only masked
                 "inpaint_full_res_padding": 32,
                 "mask_round": True,          # Soft inpainting
                 "include_init_images": True,
@@ -693,10 +719,10 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, s
                 "mask_blur_x": 4,
                 "mask_blur_y": 4,
                 "inpainting_fill": 0,        # Masked Content = original
-                "inpaint_full_res": False,   # Inpaint area = only masked:
+                "inpaint_full_res": False,   # Inpaint area = only masked
                 "inpaint_full_res_padding": 32,
                 "mask_round": True,          # Soft inpainting
-                "include_init_images": True,
+                "include_init_images": True
             }
 
         response = requests.post(f"{SD_URL}/sdapi/v1/img2img", json=payload)

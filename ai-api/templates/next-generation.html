@@ -16,6 +16,10 @@
 		.init_image_preview {
 			position: absolute;
 		}
+
+		.err_msg {
+			color: rgb(220, 53, 69);
+		}
 	</style>
 </head>
 
@@ -25,20 +29,38 @@
 	<form id="generate_image_form" enctype="multipart/form-data">
 		<!-- Prompt -->
 		<label for="prompt">Prompt:</label>
-		<span id="prompt_err"></span><br />
+		<span id="prompt_err" class="err_msg"></span><br />
 		<input type="text" id="prompt" name="prompt" required /><br /><br />
 		<!-- Number of Images -->
 		<label for="number_of_images">Number of Images:</label>
-		<span id="number_of_images_err"></span><br />
+		<span id="number_of_images_err" class="err_msg"></span><br />
 		<input type="range" id="number_of_images" min="1" max="4" value="1" required><br /><br />
 		<!-- Color Palette -->
 		<label for="color_palette">Color Palette (comma-separated hex codes):</label><br />
 		<input type="text" id="color_palette" name="color_palette" /><br /><br />
-
 		<!-- Init Image -->
 		<label for="init_image">Init Image:</label>
-		<span id="init_image_err"></span>
+		<span id="init_image_err" class="err_msg"></span>
 		<input type="file" id="init_image" name="init_image" accept="image/png, image/jpg, image/jpeg" /><br /><br />
+		<!-- Style Reference -->
+		<label for="style_reference">Style Reference:</label>
+		<span id="style_reference_err" class="err_msg"></span>
+		<input type="file" id="style_reference" name="style_reference"
+			accept="image/png, image/jpg, image/jpeg" /><br /><br />
+		<!-- Mask Prompt -->
+		<label for="mask_prompt">Mask Prompt:</label>
+		<span id="mask_prompt_err" class="err_msg"></span><br />
+		<input type="text" id="mask_prompt" name="mask_prompt" required /><br /><br />
+		<!-- Generate Mask button -->
+		<span id="mask_general_err" class="err_msg"></span><br />
+		<button type="button" onclick="generateMask()">
+			Generate Mask
+		</button><br />
+		<!-- SAM Mask -->
+		<label for="sam_mask">SAM mask:</label>
+		<span id="sam_mask_err" class="err_msg"></span>
+		<div id="sam_mask_preview"></div>
+
 		<!-- Brush size, color, and opacity controls -->
 		<div>
 			<label for="brush_size">Brush Size:</label>
@@ -62,33 +84,15 @@
 		</div>
 		<!-- Base64 Encoded Output -->
 		<label for="user_mask">User Mask:</label>
-		<span id="user_mask_err"></span><br />
+		<span id="user_mask_err" class="err_msg"></span><br />
 		<textarea id="user_mask_base64_output" name="user_mask" rows="3" cols="50"
 			placeholder="Base 64 of User Mask"></textarea><br />
 		<button type="button" id="get_user_mask">
 			Get User Mask
 		</button><br /><br />
 
-		<!-- Mask Prompt -->
-		<label for="mask_prompt">Mask Prompt:</label>
-		<span id="mask_prompt_err"></span><br />
-		<input type="text" id="mask_prompt" name="mask_prompt" required /><br /><br />
-		<!-- Generate Mask button -->
-		<button type="button" onclick="generateMask()">
-			Generate Mask
-		</button>
-
-		<!-- SAM Mask -->
-		<label for="sam_mask">SAM mask:</label>
-		<span id="sam_mask_err"></span>
-		<input type="file" id="sam_mask" name="sam_mask" accept="image/png, image/jpg, image/jpeg" /><br /><br />
-		<div id="sam_mask_preview"></div>
-		<!-- Style Reference -->
-		<label for="style_reference">Style Reference:</label>
-		<span id="style_reference_err"></span>
-		<input type="file" id="style_reference" name="style_reference"
-			accept="image/png, image/jpg, image/jpeg" /><br /><br />
 		<!-- Generate button -->
+		<span id="general_err" class="err_msg"></span><br />
 		<button type="button" onclick="generateNextImage()">
 			Generate
 		</button>
@@ -103,6 +107,11 @@
 	<script src="{{ url_for('static', filename='js/canvas_script.js') }}"></script>
 	<script>
 		async function generateMask() {
+			let err_count = 0;
+			const err_msgs = document.querySelectorAll(".err_msg");
+			for (let i = 0; i < err_msgs.length; i++) {
+				err_msgs[i].innerHTML = "";
+			}
 			// Get form elements
 			const mask_prompt = document.getElementById("mask_prompt").value.trim();
 			const init_image = document.getElementById("init_image").files[0];
@@ -110,10 +119,13 @@
 			// Validation
 			if (!mask_prompt) {
 				document.getElementById("mask_prompt_err").innerHTML = "Mask prompt is required to generate a mask.";
-				return;
+				err_count++;
 			}
 			if (!init_image) {
 				document.getElementById("init_image_err").innerHTML = "Init image is required.";
+				err_count++;
+			}
+			if (err_count > 0) {
 				return;
 			}
 
@@ -130,6 +142,7 @@
 				});
 
 				if (!response.ok) {
+					document.getElementById("mask_general_err").innerHTML = "Failed to generate mask";
 					throw new Error("Failed to generate SAM mask");
 				}
 
@@ -157,40 +170,63 @@
 		}
 
 		async function generateNextImage() {
+			let err_count = 0;
+			const err_msgs = document.querySelectorAll(".err_msg");
+			for (let i = 0; i < err_msgs.length; i++) {
+				err_msgs[i].innerHTML = "";
+			}
 			// Get form elements
 			const prompt = document.getElementById("prompt").value.trim();
 			const number_of_images = document.getElementById("number_of_images").value.trim();
 			const color_palette = document.getElementById("color_palette").value.trim();
 			const init_image = document.getElementById("init_image").files[0];
-			// const user_mask = document.getElementById("user_mask").files[0];
-			user_mask_to_base64_black_and_white()
-			const user_mask = document.getElementById("user_mask_base64_output").value();
+			document.getElementById("get_user_mask").click()
+			const user_mask = document.getElementById("user_mask_base64_output").value;
 			const style_reference = document.getElementById("style_reference").files[0];
+			const mask_prompt = document.getElementById("mask_prompt").value.trim();
+
+			// Validation
+			const selectedMaskRadio = document.querySelectorAll('input[name="selected_mask"]');
+			if (selectedMaskRadio.length == 0) {
+				if (!init_image && !mask_prompt) {
+					document.getElementById("general_err").innerHTML = "Generate a mask first with the mask prompt and init image.";
+					return;
+				} else if (!mask_prompt || !init_image) {
+					if (!mask_prompt) {
+						document.getElementById("mask_prompt_err").innerHTML = "Mask prompt is required to generate a mask.";
+					}
+					if (!init_image) {
+						document.getElementById("init_image_err").innerHTML = "Init image is required to generate a mask.";
+					}
+					return;
+				} else {
+					document.getElementById("general_err").innerHTML = "Generate a mask first.";
+					return;
+				}
+			}
+			if (!prompt) {
+				document.getElementById("prompt_err").innerHTML = "Prompt is required.";
+				err_count++;
+			}
+			if (!number_of_images || number_of_images < 1 || number_of_images > 4) {
+				document.getElementById("number_of_images_err").innerHTML = "Please enter a valid number of images (1-4).";
+				err_count++;
+			}
 
 			// Get selected mask index from radio buttons & corresponding mask data
-			const selectedMaskRadio = document.querySelector('input[name="selected_mask"]:checked');
-			if (!selectedMaskRadio) {
+			const selectedMaskRadioChecked = document.querySelector('input[name="selected_mask"]:checked');
+			if (!selectedMaskRadioChecked) {
 				document.getElementById("sam_mask_err").innerHTML = "Please select a SAM mask.";
-				return;
+				err_count++;
 			}
-			const selectedIndex = selectedMaskRadio.value;
+			const selectedIndex = selectedMaskRadioChecked.value;
 			const sam_mask = {
 				"blended_mask": blended_images[selectedIndex],
 				"mask": masks[selectedIndex],
 				"masked_image": masked_images[selectedIndex]
 			};
 
-			// Validation
-			if (!prompt) {
-				document.getElementById("prompt_err").innerHTML = "Prompt is required.";
-				return;
-			}
-			if (!number_of_images || number_of_images < 1 || number_of_images > 4) {
-				document.getElementById("number_of_images_err").innerHTML = "Please enter a valid number of images (1-4).";
-				return;
-			}
-			if (!init_image) {
-				document.getElementById("init_image_err").innerHTML = "Init image is required.";
+			if (err_count > 0) {
 				return;
 			}
 
@@ -219,6 +255,7 @@
 				});
 
 				if (!response.ok) {
+					document.getElementById("general_err").innerHTML = "Failed to generate image";
 					throw new Error("Failed to generate image");
 				}
 

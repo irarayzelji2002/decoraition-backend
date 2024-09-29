@@ -226,6 +226,11 @@ document.addEventListener("DOMContentLoaded", function () {
 			userMaskBase64BAW();
 		});
 	function getCanvasBase64() {
+		// Ensure that the original image is loaded before proceeding
+		if (!originalImage) {
+			return;
+		}
+
 		// Convert the current canvas content to a base64-encoded string
 		const base64Image = canvas.toDataURL("image/png");
 		document.getElementById("user_mask_base64_output").value = base64Image;
@@ -233,6 +238,11 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 
 	function userMaskBase64BAW() {
+		// Ensure that the original image is loaded before proceeding
+		if (!originalImage) {
+			return;
+		}
+
 		// Create a new canvas to store black and white image data
 		const bwCanvas = document.createElement("canvas");
 		const bwContext = bwCanvas.getContext("2d");

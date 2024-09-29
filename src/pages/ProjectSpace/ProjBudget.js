@@ -1,10 +1,47 @@
 import "../../css/project.css";
 import ProjectHead from "../../components/ProjectHead";
 import BottomBarDesign from "../../components/BottomBarProject";
+import { useState } from "react";
+
 function ProjBudget() {
+  const [designData, setDesignData] = useState(null);
+  const [newName, setNewName] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [showPromptBar, setShowPromptBar] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleNameChange = async () => {
+    if (newName.trim() === "") {
+      alert("Design name cannot be empty");
+      return;
+    }
+  };
+  const toggleComments = () => {
+    setShowComments((prev) => !prev);
+  };
+
+  const handleEditNameToggle = () => {
+    setIsEditingName((prev) => !prev);
+  };
+
+  const togglePromptBar = () => {
+    setShowPromptBar((prev) => !prev);
+  };
   return (
     <>
-      <ProjectHead />
+      <ProjectHead
+        designData={designData}
+        newName={newName}
+        setNewName={setNewName}
+        isEditingName={isEditingName}
+        toggleComments={toggleComments}
+        handleNameChange={handleNameChange}
+        setIsEditingName={setIsEditingName}
+        handleEditNameToggle={handleEditNameToggle}
+        setPromptBarOpen={togglePromptBar}
+        setIsSidebarOpen={setIsSidebarOpen}
+      />
       <div className="budgetHolder">
         <div className="sectionBudget">
           <div>

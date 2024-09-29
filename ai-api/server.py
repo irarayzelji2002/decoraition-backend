@@ -59,7 +59,33 @@ def load_and_encode_image(image_file):
         print(f"Error loading and encoding image: {e}")
         return None
 
-def save_images(image_data_list):
+def decode_base64_image(base64_str):
+    """Decode a base64 image string and convert it to a NumPy array."""
+    try:
+        # Remove the prefix if present
+        if base64_str.startswith("data:image/png;base64,"):
+            base64_str = base64_str.split(",")[1]
+
+        # Decode the base64 string
+        image_data = base64.b64decode(base64_str)
+
+        # Convert to a NumPy array
+        image_array = np.frombuffer(image_data, dtype=np.uint8)
+
+        # Decode into an image using OpenCV
+        image = cv2.imdecode(image_array, cv2.IMREAD_GRAYSCALE)
+
+        return image
+    except Exception as e:
+        print(f"Error decoding base64 image: {e}")
+        return None
+
+def extract_base64_data(data_url):
+    if data_url.startswith("data:image/png;base64,"):
+        return data_url.split(",", 1)[1]  # Get the base64 part only
+    return None 
+
+def save_images(image_data_list, folder_name):
     """Helper function to save images and return file paths."""
     saved_paths = []
     for image_data in image_data_list:
@@ -67,9 +93,9 @@ def save_images(image_data_list):
             image_bytes = base64.b64decode(image_data.split(",", 1)[-1])
             img = Image.open(io.BytesIO(image_bytes))
             filename = generate_image_filename("png")
-            image_path = os.path.join(IMAGES_FOLDER, filename)
+            image_path = os.path.join(f"static/{folder_name}", filename)
             img.save(image_path)
-            saved_paths.append(f"/static/images/{filename}")
+            saved_paths.append(f"/static/{folder_name}/{filename}")
     return saved_paths
 
 # Color name functions using thecolorapi
@@ -193,12 +219,12 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
-                "enable_hr": True,
-                "hr_scale": 1.5,
-                "hr_upscaler": "4x_NMKD-Siax_200k",
-                "hr_resize_x": 0,
-                "hr_resize_y": 0,
-                "denoising_strength": 0.3,
+                # "enable_hr": True,
+                # "hr_scale": 1.5,
+                # "hr_upscaler": "4x_NMKD-Siax_200k",
+                # "hr_resize_x": 0,
+                # "hr_resize_y": 0,
+                # "denoising_strength": 0.3,
                 "alwayson_scripts": {
                     "controlnet": {
                         "args": [{
@@ -229,11 +255,6 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
-                "enable_hr": True,
-                "hr_scale": 1.5,
-                "hr_upscaler": "4x_NMKD-Siax_200k",
-                "hr_resize_x": 0,
-                "hr_resize_y": 0,
                 "denoising_strength": 0.3,
                 "alwayson_scripts": {
                     "controlnet": {
@@ -265,11 +286,6 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
-                "enable_hr": True,
-                "hr_scale": 1.5,
-                "hr_upscaler": "4x_NMKD-Siax_200k",
-                "hr_resize_x": 0,
-                "hr_resize_y": 0,
                 "denoising_strength": 0.3,
                 "alwayson_scripts": {
                     "controlnet": {
@@ -315,11 +331,6 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
-                "enable_hr": True,
-                "hr_scale": 1.5,
-                "hr_upscaler": "4x_NMKD-Siax_200k",
-                "hr_resize_x": 0,
-                "hr_resize_y": 0,
                 "denoising_strength": 0.3
             }
 
@@ -347,7 +358,7 @@ def generate_first_image_route():
         # Handle response
         if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
             images_data = response.json().get("images", [])
-            image_paths = save_images(images_data)
+            image_paths = save_images(images_data, "images")
             return jsonify({"image_paths": image_paths}), 200
         else:
             return jsonify({"error": "No images were generated. " + response.text}), 500
@@ -441,9 +452,9 @@ def generate_sam_mask_route():
         if isinstance(response, dict) and all(key in response for key in ["blended_images", "masks", "masked_images"]):
             # Save images and return paths
             image_paths = {
-                "blended_images": save_images(response.get("blended_images")),
-                "masks": save_images(response.get("masks")),
-                "masked_images": save_images(response.get("masked_images")),
+                "blended_images": save_images(response.get("blended_images"), "masks"),
+                "masks": save_images(response.get("masks"), "masks"),
+                "masked_images": save_images(response.get("masked_images"), "masks"),
             }
             return jsonify({"image_paths": image_paths}), 200
         else:
@@ -454,6 +465,46 @@ def generate_sam_mask_route():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # NEXT IMAGE GENERATION
+def combine_masks(sam_mask_path, user_mask_base64):
+    # Validate sam_mask_path
+    if not sam_mask_path or not os.path.exists(sam_mask_path):
+        print("Error: SAM mask path is invalid or does not exist.")
+        return None
+    
+    # Load SAM mask
+    sam_mask = cv2.imread(sam_mask_path, cv2.IMREAD_GRAYSCALE)
+    if sam_mask is None:
+        print("Error: SAM mask could not be loaded.")
+        return None
+
+    # Decode user mask from base64
+    user_mask = decode_base64_image(user_mask_base64)
+    
+    # Check if user_mask is valid
+    if user_mask is None:
+        print("Error: User mask could not be decoded.")
+        return load_and_encode_image(sam_mask_path)
+
+    # Check if user mask is all black
+    if np.count_nonzero(user_mask) == 0:
+        print("User mask is all black; returning SAM mask.")
+        return load_and_encode_image(sam_mask_path)
+
+    # Resize user mask to match SAM mask dimensions
+    user_mask = cv2.resize(user_mask, (sam_mask.shape[1], sam_mask.shape[0]))
+
+    # Combine the masks
+    combined_mask = cv2.addWeighted(sam_mask, 1, user_mask, 1, 0)
+
+    # Threshold the combined mask to ensure it’s binary (0 and 255)
+    _, combined_mask = cv2.threshold(combined_mask, 1, 255, cv2.THRESH_BINARY)
+
+    # Save combined mask to a temporary buffer
+    _, combined_mask_buffer = cv2.imencode('.png', combined_mask)
+    combined_mask_base64 = base64.b64encode(combined_mask_buffer).decode('utf-8')
+
+    return combined_mask_base64
+
 def validate_next_generation_request(data):
     """Validate the next image generation request"""
     try:
@@ -489,23 +540,40 @@ def validate_next_generation_request(data):
                 print(f"No style reference received.")
                 style_reference_encoded = None
             # SAM mask
-            sam_mask = request.files.get('sam_mask')
-            if sam_mask and allowed_file(sam_mask.filename):
-                print(f"SAM mask received.")
-                sam_mask_encoded = load_and_encode_image(sam_mask)
-                print(f"SAM mask successfully loaded.")
+            sam_mask_str = data.get('sam_mask', '{}')
+            sam_mask = json.loads(sam_mask_str) if sam_mask_str else {}
+            if sam_mask and 'mask' in sam_mask and allowed_file(sam_mask['mask']):
+                print(f"SAM mask received: {sam_mask['mask']}")
+                sam_mask_img_path = sam_mask['mask']
+                sam_mask_img_path_whole = os.path.join(app.root_path, sam_mask_img_path.lstrip('/'))
+                if not os.path.exists(sam_mask_img_path_whole):
+                    return None, None, None, None, None, None, None, None, f"File not found: {sam_mask_img_path_whole}", 400
+                with open(sam_mask_img_path_whole, 'rb') as mask_img_file:
+                    sam_mask_encoded = load_and_encode_image(mask_img_file)
+                print(f"SAM mask successfully loaded and encoded.")
             else:
-                print(f"No SAM mask received.")
+                print(f"No valid SAM mask received or file extension not allowed.")
                 sam_mask_encoded = None
             # User mask
-            user_mask = request.files.get('user_mask')
-            if user_mask and allowed_file(user_mask.filename):
+            user_mask = data.get('user_mask', '')
+            if user_mask:
                 print(f"User mask received.")
-                user_mask_encoded = load_and_encode_image(user_mask)
-                print(f"User mask successfully loaded.")
+                user_mask_encoded = extract_base64_data(user_mask)
+                if user_mask_encoded is not None:
+                    print(f"User mask successfully loaded and encoded.")
+                else:
+                    print(f"User mask format is invalid.")
+                    user_mask_encoded = None
             else:
                 print(f"No user_mask received.")
                 user_mask_encoded = None
+            # Combined mask
+            combined_mask_encoded = combine_masks(sam_mask_img_path, user_mask)
+            if combined_mask_encoded:
+                print("Combined mask successfully created and encoded.")
+            else:
+                combined_mask_encoded = None
+                print("Failed to create the combined mask.")
         else:
             prompt = data.get('prompt', "").strip()
             number_of_images = data.get("number_of_images", 0)
@@ -521,31 +589,24 @@ def validate_next_generation_request(data):
 
         if not prompt:
             print("Empty prompt")
-            return None, None, None, None, None, None, None, "Prompt is required"
+            return None, None, None, None, None, None, None, None, "Prompt is required", 400
         
         prompt, negative_prompt = apply_sdxl_style("3D Model", prompt, color_palette)
         print("========Final Prompt========")
         print(f"Prompt: {prompt}")
         print(f"Negative Prompt: {negative_prompt}")
 
-        return prompt, negative_prompt, number_of_images, init_image_encoded, sam_mask_encoded, user_mask_encoded, style_reference_encoded
+        return prompt, negative_prompt, number_of_images, init_image_encoded, sam_mask_encoded, user_mask_encoded, combined_mask_encoded,style_reference_encoded, None, None
     except Exception as e:
         print(f"Validation error: {e}")
-        return None, None, None, None, f"Validation error: {str(e)}"
+        return None, None, None, None, None, None, None, None, f"Validation error: {str(e)}", 400
 
-def generate_next_image(prompt, negative_prompt, number_of_images, init_image, sam_mask, user_mask, style_reference):
+def generate_next_image(prompt, negative_prompt, number_of_images, init_image, sam_mask, user_mask, combined_mask, style_reference):
     """Next generation core logic"""
     try:
-        if user_mask and not style_reference:
-            # Case 1: prompt, user mask
-            print("========Next Gen: prompt, user mask========")
-            # combine user mask and sam mask
-            # use final mask in generation
-        elif style_reference and not user_mask:
-            # Case 2: prompt, style reference
+        if style_reference:
+            # Case 1: prompt, style reference
             print("========Next Gen: prompt, style reference (Canny)========")
-            # final mask = sam mask
-            # use final mask & style_reference in generation
             payload = {
                 "prompt": prompt,
                 "negative_prompt": negative_prompt,
@@ -556,10 +617,16 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, s
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
-                "init_images": [init_image],  # The original image to refine
-                "mask": sam_mask,  # The mask generated by SAM
+                "init_images": [init_image], # The original image to refine
+                "mask": combined_mask,       # Combined mask generated by SAM & user mask
                 "denoising_strength": 0.75,  # Controls the impact of the original image
-                "resize_mode": 0,  # Crop and resize
+                "resize_mode": 0,            # Crop and resize
+                "mask_blur_x": 4,
+                "mask_blur_y": 4,
+                "inpainting_fill": 0,        # Masked Content = original
+                "inpaint_full_res": False,   # Inpaint area = only masked:
+                "inpaint_full_res_padding": 32,
+                "mask_round": True,          # Soft inpainting
                 "alwayson_scripts": {
                     "controlnet": {
                         "args": [
@@ -579,16 +646,9 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, s
                     }
                 }
             }
-        elif user_mask and style_reference:
-            # Case 3: prompt, user mask, style reference
-            print("========Next Gen: prompt, user mask, style reference (Canny)========")
-            # combine user mask and sam mask
-            # use final mask in generation
         else:
-            # Case 4: prompt, mask prompt
-            print("========Next Gen: prompt, mask prompt-=======")
-            # final mask = sam mask
-            # use final mask in generation
+            # Case 2: prompt
+            print("========Next Gen: prompt=======")
             payload = {
                 "prompt": prompt,
                 "negative_prompt": negative_prompt,
@@ -599,10 +659,16 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, s
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
-                "init_images": [init_image],  # The original image to refine
-                "mask": sam_mask,  # The mask generated by SAM
+                "init_images": [init_image], # The original image to refine
+                "mask": combined_mask,       # Combined mask generated by SAM & user mask
                 "denoising_strength": 0.75,  # Controls the impact of the original image
-                "resize_mode": 0,  # Crop and resize
+                "resize_mode": 0,            # Crop and resize
+                "mask_blur_x": 4,
+                "mask_blur_y": 4,
+                "inpainting_fill": 0,        # Masked Content = original
+                "inpaint_full_res": False,   # Inpaint area = only masked:
+                "inpaint_full_res_padding": 32,
+                "mask_round": True,          # Soft inpainting
             }
 
         response = requests.post(f"{SD_URL}/sdapi/v1/img2img", json=payload)
@@ -618,29 +684,18 @@ def generate_next_image_route():
     try:
         # Validate request data
         data = request.form if request.content_type.startswith('multipart/form-data') else request.json
-        prompt, negative_prompt, number_of_images, init_image, sam_mask, user_mask, style_reference = validate_next_generation_request(data)
+        prompt, negative_prompt, number_of_images, init_image, sam_mask, user_mask, combined_mask, style_reference, error_message, error_status = validate_next_generation_request(data)
         
-        if not prompt:
-            return jsonify({"error": "Prompt is required"}), 400
-
+        if error_message:
+            return jsonify({"error": error_message}), error_status
 
         # Payload for API & Make request to API
-        response = generate_next_image(prompt, negative_prompt, number_of_images, init_image, sam_mask, user_mask, style_reference)
+        response = generate_next_image(prompt, negative_prompt, number_of_images, init_image, sam_mask, user_mask, combined_mask, style_reference)
 
         # Handle response
         if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
             images_data = response.json().get("images", [])
-            image_paths = []
-            for i, image_data in enumerate(images_data):
-                if image_data:
-                    image_data = image_data.split(",", 1)[-1]
-                    image_bytes = base64.b64decode(image_data)
-                    img = Image.open(io.BytesIO(image_bytes))
-                    filename = generate_image_filename("png")
-                    image_path = os.path.join(IMAGES_FOLDER, filename)
-                    img.save(image_path)
-                    image_paths.append(f"/static/images/{filename}")
-
+            image_paths = save_images(images_data, "images")
             return jsonify({"image_paths": image_paths}), 200
         else:
             return jsonify({"error": "No images were generated. " + response.text}), 500

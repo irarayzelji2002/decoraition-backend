@@ -75,6 +75,9 @@
 			<label for="selected_brush_mode">Brush Mode: <span id="selected_brush_mode_desc">Draw</span></label>
 			<input type="checkbox" id="selected_brush_mode" checked>
 
+			<label for="mask_visibility">Mask Visibility:</label>
+			<input type="checkbox" id="mask_visibility" checked>
+
 			<button id="clear_canvas">Clear</button>
 		</div>
 		<!-- Canvas for drawing -->
@@ -106,6 +109,7 @@
 
 	<script src="{{ url_for('static', filename='js/canvas_script.js') }}"></script>
 	<script>
+		let sam_image_paths;
 		async function generateMask() {
 			let err_count = 0;
 			const err_msgs = document.querySelectorAll(".err_msg");
@@ -150,6 +154,7 @@
 				const sam_mask_preview = document.getElementById("sam_mask_preview");
 				sam_mask_preview.innerHTML = "";
 				const { blended_images, masks, masked_images } = data.image_paths;
+				sam_image_paths = data.image_paths
 
 				// Dynamically create a radio group for the 3 mask options
 				blended_images.forEach((blended_image, index) => {
@@ -220,8 +225,9 @@
 				err_count++;
 			}
 			const selectedIndex = selectedMaskRadioChecked.value;
+			const { blended_images, masks, masked_images } = sam_image_paths;
 			const sam_mask = {
-				"blended_mask": blended_images[selectedIndex],
+				"blended_image": blended_images[selectedIndex],
 				"mask": masks[selectedIndex],
 				"masked_image": masked_images[selectedIndex]
 			};
@@ -246,6 +252,8 @@
 			if (style_reference) {
 				formData.append("style_reference", style_reference);
 			}
+			console.log("Form Data:");
+			console.log(formData);
 
 			// Fetch API call to generate the next image
 			try {

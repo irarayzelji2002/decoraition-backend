@@ -204,6 +204,22 @@ document.addEventListener("DOMContentLoaded", function () {
 		context.globalCompositeOperation = "source-over"; // Reset to default
 	}
 
+	function redrawCanvasVisibility(opacity) {
+		// Clear the canvas
+		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		// Set opacity for the drawn path
+		context.globalAlpha = opacity;
+		context.fillStyle = selectedColor;
+		context.fill(path); // Redraw the combined path
+
+		// Erase the areas in the erasedPath
+		context.globalCompositeOperation = "destination-out";
+		context.globalAlpha = 1;
+		context.fill(erasedPath); // Apply erasing
+		context.globalCompositeOperation = "source-over"; // Reset to default
+	}
+
 	// Clear canvas
 	document
 		.getElementById("clear_canvas")
@@ -218,6 +234,16 @@ document.addEventListener("DOMContentLoaded", function () {
 			// }
 		});
 
+	// Toggle mask visibility
+	const maskVisibilityCheckbox = document.getElementById("mask_visibility");
+
+	maskVisibilityCheckbox.addEventListener("change", function () {
+		if (maskVisibilityCheckbox.checked) {
+			redrawCanvasVisibility(selectedOpacity);
+		} else {
+			redrawCanvasVisibility(0);
+		}
+	});
 	// Convert to base64 black-and-white image (not changed)
 	document
 		.getElementById("get_user_mask")

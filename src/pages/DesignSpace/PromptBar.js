@@ -28,9 +28,9 @@ function PromptBar() {
 
   return (
     <div className="promptBar">
-      <div className="bump">
+      {/* <div className="bump">
         <ArrowBackIosIcon />
-      </div>
+      </div> */}
       <h3>
         Describe your Idea
         <span style={{ color: "var(--color-quaternary)" }}> *</span>
@@ -83,10 +83,9 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "90%", marginLeft: "auto" }}
+          sx={{ borderRadius: "100%", marginLeft: "auto", padding: "16px" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
-            height: "40px",
           }}
           onClick={() => handleOpenModal("Upload an image of the space")}
         >
@@ -126,7 +125,7 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "90%", marginLeft: "auto" }}
+          sx={{ borderRadius: "100%", marginLeft: "auto", padding: "16px" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
           }}
@@ -170,7 +169,7 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "50%", marginLeft: "auto" }}
+          sx={{ borderRadius: "100%", marginLeft: "auto", padding: "16px" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
           }}
@@ -204,6 +203,7 @@ function PromptBar() {
         fullWidth
         variant="contained"
         sx={{
+          marginBottom: "40%",
           color: "white",
           mt: 3,
           mb: 2,

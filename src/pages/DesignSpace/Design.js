@@ -15,12 +15,15 @@ import { FaCheckCircle, FaEllipsisV, FaAt } from "react-icons/fa"; // Icons used
 import Budget from "./Budget";
 import TwoFrames from "./svg/TwoFrames";
 import FourFrames from "./svg/FourFrames";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 function Design() {
   const { designId } = useParams(); // Get designId from the URL
   const [designData, setDesignData] = useState(null);
   const [newName, setNewName] = useState("");
   const [showComments, setShowComments] = useState(false);
+  const [showMenu, setShowMenu] = useState(true);
   const [showPromptBar, setShowPromptBar] = useState(true);
   const [numImageFrames, setNumImageFrames] = useState(2);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -126,6 +129,10 @@ function Design() {
     setReplyVisible(true);
   };
 
+  const toggleMenu = () => {
+    setShowMenu((prev) => !prev);
+  };
+
   const togglePromptBar = () => {
     setShowPromptBar((prev) => !prev);
   };
@@ -162,7 +169,7 @@ function Design() {
         handleNameChange={handleNameChange}
         setIsEditingName={setIsEditingName}
         handleEditNameToggle={handleEditNameToggle}
-        setPromptBarOpen={togglePromptBar}
+        setPromptBarOpen={toggleMenu}
         setIsSidebarOpen={setIsSidebarOpen}
       />
       {activeTab === "design" && (
@@ -170,8 +177,18 @@ function Design() {
           {" "}
           <div className="create-design">
             <div className="workspace">
-              {showPromptBar && <DrawerComponent />}
-              <PromptBar />
+              {showMenu && <DrawerComponent />}
+              {showPromptBar && <PromptBar />}
+              <div className="fixed-arrow-button" onClick={togglePromptBar}>
+                <div className="arrow-button">
+                  {showPromptBar ? (
+                    <ArrowBackIosIcon sx={{ color: "var(--color-white) " }} />
+                  ) : (
+                    <ArrowForwardIosIcon sx={{ color: "var(--color-white)" }} />
+                  )}
+                </div>
+              </div>
+
               <div className="working-area">
                 <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
                   <button

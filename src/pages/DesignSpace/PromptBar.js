@@ -28,9 +28,9 @@ function PromptBar() {
 
   return (
     <div className="promptBar">
-      <div className="bump">
+      {/* <div className="bump">
         <ArrowBackIosIcon />
-      </div>
+      </div> */}
       <h3>
         Describe your Idea
         <span style={{ color: "var(--color-quaternary)" }}> *</span>

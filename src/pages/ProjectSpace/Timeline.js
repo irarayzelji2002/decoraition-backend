@@ -3,11 +3,13 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../css/timeline.css";
 import { FaPen, FaTrashAlt } from "react-icons/fa";
-import ProjectHead from "../../components/ProjectHead";
-import BottomBarDesign from "../../components/BottomBarProject";
+import ProjectHead from "./ProjectHead";
+import BottomBarDesign from "./BottomBarProject";
+import { useParams } from "react-router-dom";
 
 function Timeline() {
   const [date, setDate] = useState(new Date());
+  const { projectId } = useParams();
 
   return (
     <>
@@ -49,7 +51,7 @@ function Timeline() {
           </div>{" "}
         </div>
       </div>
-      <BottomBarDesign Timeline={true} />
+      <BottomBarDesign Timeline={true} projId={projectId} />
     </>
   );
 }

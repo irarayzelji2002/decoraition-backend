@@ -22,7 +22,7 @@ import ProjBudget from "./pages/ProjectSpace/ProjBudget.js";
 import PlanMap from "./pages/ProjectSpace/PlanMap.js";
 import Timeline from "./pages/ProjectSpace/Timeline.js";
 import AddPin from "./pages/ProjectSpace/AddPin.js";
-import EditEvent from "./pages/ProjectSpace/EditEvent";
+import EditEvent from "./pages/ProjectSpace/EditEvent.jsx";
 import ProjSetting from "./pages/Settings/ProjSetting.js";
 import Version from "./pages/DesignSpace/Version.js";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
@@ -82,12 +82,12 @@ function App() {
           <Route path="/version" element={<Version />} />
           {/* PROJECT SPACE */}
           <Route path="/project/:projectId" element={<Project />} />
-          <Route path="/planMap" element={<PlanMap />} />
-          <Route path="/timeline" element={<Timeline />} />
-          <Route path="/projBudget" element={<ProjBudget />} />
-          <Route path="/addPin" element={<AddPin />} />
-          <Route path="/editEvent" element={<EditEvent />} />
-          <Route path="/projSetting" element={<ProjSetting />} />
+          <Route path="/planMap/:projectId" element={<PlanMap />} />
+          <Route path="/timeline/:projectId" element={<Timeline />} />
+          <Route path="/projBudget/:projectId" element={<ProjBudget />} />
+          <Route path="/addPin/" element={<AddPin />} />
+          <Route path="/editEvent/" element={<EditEvent />} />
+          <Route path="/projSetting/" element={<ProjSetting />} />
         </Routes>
       </Router>
     </AuthProvider>

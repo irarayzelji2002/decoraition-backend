@@ -83,10 +83,9 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "90%", marginLeft: "auto" }}
+          sx={{ borderRadius: "100%", marginLeft: "auto", padding: "16px" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
-            height: "40px",
           }}
           onClick={() => handleOpenModal("Upload an image of the space")}
         >
@@ -126,7 +125,7 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "90%", marginLeft: "auto" }}
+          sx={{ borderRadius: "100%", marginLeft: "auto", padding: "16px" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
           }}
@@ -170,7 +169,7 @@ function PromptBar() {
 
         <Button
           size="md"
-          sx={{ borderRadius: "50%", marginLeft: "auto" }}
+          sx={{ borderRadius: "100%", marginLeft: "auto", padding: "16px" }}
           style={{
             backgroundImage: "var(--gradientCircle)",
           }}

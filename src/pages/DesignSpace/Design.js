@@ -5,7 +5,7 @@ import { db } from "../../firebase"; // Assuming you have firebase setup
 import DesignHead from "../../components/DesignHead";
 import { getAuth } from "firebase/auth";
 import PromptBar from "./PromptBar";
-import BottomBar from "../../components/BottomBar";
+import BottomBar from "./BottomBar";
 import Loading from "../../components/Loading";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";

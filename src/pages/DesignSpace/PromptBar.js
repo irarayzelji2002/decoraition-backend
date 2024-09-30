@@ -203,6 +203,7 @@ function PromptBar() {
         fullWidth
         variant="contained"
         sx={{
+          marginBottom: "40%",
           color: "white",
           mt: 3,
           mb: 2,

@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import Version from "./Version";
 import "../../css/design.css";
 import DrawerComponent from "../Homepage/DrawerComponent";
-import { FaCheckCircle, FaEllipsisV, FaAt } from 'react-icons/fa'; // Icons used: Check, Dots, At symbol
+import { FaCheckCircle, FaEllipsisV, FaAt } from "react-icons/fa"; // Icons used: Check, Dots, At symbol
 import Budget from "./Budget";
 
 function Design() {
@@ -20,7 +20,6 @@ function Design() {
   const [designData, setDesignData] = useState(null);
   const [newName, setNewName] = useState("");
   const [showComments, setShowComments] = useState(false);
-  const [comment, setComment] = useState("");
   const [showPromptBar, setShowPromptBar] = useState(true);
   const [numImageFrames, setNumImageFrames] = useState(2);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -121,10 +120,10 @@ function Design() {
     setShowComments((prev) => !prev);
   };
 
-   const handleReplyClick = (e) => {
-     e.stopPropagation(); 
-     setReplyVisible(true); 
-   };
+  const handleReplyClick = (e) => {
+    e.stopPropagation();
+    setReplyVisible(true);
+  };
 
   const togglePromptBar = () => {
     setShowPromptBar((prev) => !prev);

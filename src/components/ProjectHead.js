@@ -1,42 +1,43 @@
 import React, { useState } from "react";
-import {
-  IconButton,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Typography,
-  Button,
-  TextField,
-  Checkbox,
-  Select,
-  MenuItem as DropdownItem,
-} from "@mui/material";
+import { IconButton, Menu } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CommentIcon from "@mui/icons-material/Comment";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ContentCopy from "@mui/icons-material/ContentCopy";
-import HistoryIcon from "@mui/icons-material/History";
-import SettingsIcon from "@mui/icons-material/Settings";
-import DownloadIcon from "@mui/icons-material/Download";
-import RestoreIcon from "@mui/icons-material/Restore";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import InfoIcon from "@mui/icons-material/Info";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import "../css/seeAll.css";
-
+import { signOut } from "firebase/auth";
+import ChangeModeMenu from "./ChangeModeMenu.js";
+import CopyLinkModal from "./CopyLinkModal.js";
+import DefaultMenu from "./DefaultMenu.js";
+import DeleteConfirmationModal from "./DeleteConfirmationModal.js";
+import DownloadModal from "./DownloadModal.js";
+import InfoModal from "./InfoModal.js";
+import RenameModal from "./RenameModal.js";
+import RestoreModal from "./RestoreModal.js";
+import ShareModal from "./ShareModal.js";
+import ShareMenu from "./ShareMenu.js";
+import MakeCopyModal from "./MakeCopyModal.js";
+import ShareConfirmationModal from "./ShareConfirmationModal.js";
 import "../css/design.css";
+import { useEffect } from "react";
+import { doc, updateDoc, onSnapshot } from "firebase/firestore";
+import { db, auth } from "../firebase.js";
+import DrawerComponent from "../pages/Homepage/DrawerComponent.js";
+import { useNavigate } from "react-router-dom";
 
-function ProjectHead({ designName, setDesignName, toggleComments }) {
+function ProjectHead({
+  designName,
+  setDesignName,
+  toggleComments,
+  designId,
+  setIsSidebarOpen,
+  projectData,
+  newName,
+  setNewName,
+  isEditingName,
+  setIsEditingName,
+  handleNameChange,
+}) {
   const [anchorEl, setAnchorEl] = useState(null);
-  // const [isCommentDrawerOpen, setIsCommentDrawerOpen] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isChangeModeMenuOpen, setIsChangeModeMenuOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -44,6 +45,7 @@ function ProjectHead({ designName, setDesignName, toggleComments }) {
     useState(false);
   const [isCopyLinkModalOpen, setIsCopyLinkModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
@@ -54,21 +56,53 @@ function ProjectHead({ designName, setDesignName, toggleComments }) {
   const [isSecondPage, setIsSecondPage] = useState(false);
   const [role, setRole] = useState("Editor");
   const [notifyPeople, setNotifyPeople] = useState(true);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [tempName, setTempName] = useState(designName);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState("");
+  const [designs, setDesigns] = useState([]);
 
-  // const open = Boolean(anchorEl);
+  const navigate = useNavigate();
 
-  // const [modalOpen, setModalOpen] = useState(false);
-  // const [modalContent, setModalContent] = useState(null);
+  const handleEditNameToggle = () => {
+    setIsEditingName((prev) => !prev);
+  };
 
-  // const openModal = (content) => {
-  //   setModalContent(content);
-  //   setModalOpen(true);
-  // };
+  useEffect(() => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      onSnapshot(userRef, (doc) => {
+        setUsername(doc.data().username);
+      });
+    }
+  }, [user]);
 
-  // const closeModal = () => {
-  //   setModalOpen(false);
-  //   setModalContent(null);
-  // };
+  useEffect(() => {
+    const fetchDesignTitle = () => {
+      const designRef = doc(
+        db,
+        "users",
+        auth.currentUser.uid,
+        "designs",
+        designId
+      );
+
+      const unsubscribe = onSnapshot(designRef, (doc) => {
+        if (doc.exists()) {
+          const projectData = doc.data();
+          setTempName("Untitled");
+        }
+      });
+
+      return () => unsubscribe();
+    };
+
+    if (designId) {
+      fetchDesignTitle();
+    }
+  }, [designId]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -79,10 +113,6 @@ function ProjectHead({ designName, setDesignName, toggleComments }) {
     setIsShareMenuOpen(false);
     setIsChangeModeMenuOpen(false);
   };
-
-  // const toggleCommentDrawer = () => {
-  //   setIsCommentDrawerOpen((prevState) => !prevState);
-  // };
 
   const handleShareClick = () => {
     setIsShareMenuOpen(true);
@@ -196,217 +226,106 @@ function ProjectHead({ designName, setDesignName, toggleComments }) {
   const handleCloseInfoModal = () => {
     setIsInfoModalOpen(false);
   };
+  const handleInputClick = () => {
+    // Enable edit mode when the input is clicked
+    handleEditNameToggle();
+  };
 
-  const BackButton = ({ onClick }) => (
-    <IconButton onClick={onClick} sx={{ marginRight: "16px" }}>
-      <ArrowBackIcon sx={{ color: "whitesmoke" }} />
-    </IconButton>
-  );
-
-  const ShareConfirmationModal = ({ isOpen, onClose, collaborators }) => (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <BackButton onClick={onClose} />
-        Share Success
-      </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <Typography variant="body1" sx={{ marginBottom: "16px" }}>
-          The following people have been added as collaborators:
-        </Typography>
-        <ul>
-          {collaborators.map((person, index) => (
-            <li key={index}>{person}</li>
-          ))}
-        </ul>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Close
-        </Button>
-      </DialogContent>
-    </Dialog>
-  );
-
-  const CopyLinkModal = ({ isOpen, onClose }) => (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <BackButton onClick={onClose} />
-        Link Copied
-      </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <Typography variant="body1">
-          The link has been copied to your clipboard.
-        </Typography>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Close
-        </Button>
-      </DialogContent>
-    </Dialog>
-  );
-
-  const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <BackButton onClick={onClose} />
-        Confirm Delete
-      </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <Typography variant="body1">
-          Are you sure you want to delete this item? This action cannot be
-          undone.
-        </Typography>
-      </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
-        <Button fullWidth variant="contained" color="error" onClick={onDelete}>
-          Delete
-        </Button>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-
-  const DownloadModal = ({ isOpen, onClose }) => (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <BackButton onClick={onClose} />
-        Download
-      </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <Typography variant="body1">
-          Choose your download options and format.
-        </Typography>
-        {/* Add download options here */}
-      </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Download
-        </Button>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-
-  const RenameModal = ({ isOpen, onClose }) => (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <BackButton onClick={onClose} />
-        Rename
-      </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <TextField
-          label="New Name"
-          variant="outlined"
-          fullWidth
-          sx={{ marginBottom: "16px" }}
-        />
-      </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Rename
-        </Button>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-
-  const RestoreModal = ({ isOpen, onClose }) => (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <BackButton onClick={onClose} />
-        Restore
-      </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <Typography variant="body1">
-          Are you sure you want to restore this item?
-        </Typography>
-      </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Restore
-        </Button>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-
-  const MakeCopyModal = ({ isOpen, onClose }) => (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <BackButton onClick={onClose} />
-        Make a Copy
-      </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <Typography variant="body1">
-          Choose options for making a copy of the item.
-        </Typography>
-        {/* Add copy options here */}
-      </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Make Copy
-        </Button>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-
-  const InfoModal = ({ isOpen, onClose }) => (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <BackButton onClick={onClose} />
-        Info
-      </DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-        <Typography variant="body1">
-          Here is some information about the item.
-        </Typography>
-        {/* Add additional info here */}
-      </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
-        <Button fullWidth variant="contained" color="primary" onClick={onClose}>
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
+  const handleBlur = () => {
+    // Save the name when the user clicks away from the input field
+    if (isEditingName) {
+      handleNameChange();
+    }
+  };
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode", !darkMode);
+  };
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Sign-out error:", error);
+      });
+  };
+  const handleSettings = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/settings");
+      })
+      .catch((error) => {
+        console.error("Settings error:", error);
+      });
+  };
 
   return (
-    <div className="designHead stickyMenu">
+    <div className={`designHead stickyMenu ${menuOpen ? "darkened" : ""}`}>
+      <DrawerComponent
+        isDrawerOpen={isDrawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        toggleDarkMode={toggleDarkMode}
+        handleLogout={handleLogout}
+        handleSettings={handleSettings}
+        darkMode={darkMode}
+        username={username}
+        userEmail={user ? user.email : ""}
+        designs={designs}
+      />
       <div className="left">
         <IconButton
           size="large"
           edge="start"
-          color="inherit"
+          color="var(--color-white)"
           aria-label="open drawer"
+          onClick={setDrawerOpen}
           sx={{ backgroundColor: "transparent", marginTop: "6px" }}
         >
-          <MenuIcon sx={{ color: "white" }} />
+          <MenuIcon sx={{ color: "var(--color-white)" }} />
         </IconButton>
-        <input
-          type="text"
-          value={designName}
-          onChange={(e) => setDesignName(e.target.value)}
-          placeholder="Untitled"
-          className="headTitleInput"
-        />
+        <div className="design-name-section">
+          {isEditingName ? (
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleBlur();
+                  e.target.blur();
+                }
+              }}
+              // onBlur={handleBlur} // Save when the input loses focus
+              autoFocus // Automatically focus on the input when in edit mode
+              className="headTitleInput"
+            />
+          ) : (
+            <span
+              onClick={handleInputClick}
+              className="headTitleInput"
+              style={{ height: "20px" }}
+            >
+              {projectData?.name || "Untitled"}
+            </span>
+          )}
+        </div>
       </div>
       <div className="right">
+        <IconButton onClick={toggleComments}>
+          <CommentIcon sx={{ color: "var(--color-white)" }} />
+        </IconButton>
         <IconButton>
           <ShareIcon
-            sx={{ color: "whitesmoke" }}
+            sx={{ color: "var(--color-white)" }}
             onClick={handleOpenShareModal}
           />
         </IconButton>
         <IconButton onClick={handleClick}>
-          <MoreVertIcon sx={{ color: "whitesmoke" }} />
+          <MoreVertIcon sx={{ color: "var(--color-white)" }} />
         </IconButton>
         <Menu
           anchorEl={anchorEl}
@@ -421,260 +340,75 @@ function ProjectHead({ designName, setDesignName, toggleComments }) {
           }}
         >
           {isShareMenuOpen ? (
-            <>
-              {/* Share Submenu */}
-              <MenuItem onClick={handleBackToMenu}>
-                <ListItemIcon>
-                  <ArrowBackIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Share" />
-              </MenuItem>
-              <MenuItem onClick={handleOpenShareModal}>
-                <ListItemText primary="Add Collaborators" />
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemText primary="Manage Access" />
-              </MenuItem>
-              <MenuItem onClick={handleCopyLink}>
-                <ListItemIcon>
-                  <ContentCopy sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Copy Link" />
-              </MenuItem>
-            </>
+            <ShareMenu
+              onClose={handleClose}
+              onBackToMenu={handleBackToMenu}
+              onOpenShareModal={handleOpenShareModal}
+            />
           ) : isChangeModeMenuOpen ? (
-            <>
-              {/* Change Mode Submenu */}
-              <MenuItem onClick={handleBackToMenu}>
-                <ListItemIcon>
-                  <ArrowBackIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Change Mode" />
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemText primary="Editing" />
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemText primary="Commenting" />
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemText primary="Viewing" />
-              </MenuItem>
-            </>
+            <ChangeModeMenu
+              onClose={handleClose}
+              onBackToMenu={handleBackToMenu}
+            />
           ) : (
-            <>
-              {/* Default Menu */}
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon>
-                  <CommentIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Comment" />
-              </MenuItem>
-              <MenuItem onClick={handleShareClick}>
-                <ListItemIcon>
-                  <ShareIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Share" />
-              </MenuItem>
-              <MenuItem onClick={handleCopyLink}>
-                <ListItemIcon>
-                  <ContentCopy sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Copy Link" />
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon>
-                  <HistoryIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="History" />
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon>
-                  <SettingsIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Settings" />
-              </MenuItem>
-              <MenuItem onClick={handleChangeModeClick}>
-                <ListItemIcon>
-                  <EditIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Change Mode" />
-              </MenuItem>
-              <MenuItem onClick={handleOpenDownloadModal}>
-                <ListItemIcon>
-                  <DownloadIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Download" />
-              </MenuItem>
-              <MenuItem onClick={handleOpenRenameModal}>
-                <ListItemIcon>
-                  <EditIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Rename" />
-              </MenuItem>
-              <MenuItem onClick={handleOpenRestoreModal}>
-                <ListItemIcon>
-                  <RestoreIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Restore" />
-              </MenuItem>
-              <MenuItem onClick={handleOpenMakeCopyModal}>
-                <ListItemIcon>
-                  <FileCopyIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Make a Copy" />
-              </MenuItem>
-              <MenuItem onClick={handleOpenInfoModal}>
-                <ListItemIcon>
-                  <InfoIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Info" />
-              </MenuItem>
-              <MenuItem onClick={handleOpenDeleteModal}>
-                <ListItemIcon>
-                  <DeleteIcon sx={{ color: "whitesmoke" }} />
-                </ListItemIcon>
-                <ListItemText primary="Delete" />
-              </MenuItem>
-            </>
+            <DefaultMenu
+              onClose={handleClose}
+              onCopyLink={handleCopyLink}
+              onOpenDownloadModal={handleOpenDownloadModal}
+              setIsSidebarOpen={setIsSidebarOpen}
+              onOpenRenameModal={handleOpenRenameModal}
+              onOpenRestoreModal={handleOpenRestoreModal}
+              onOpenMakeCopyModal={handleOpenMakeCopyModal}
+              onOpenInfoModal={handleOpenInfoModal}
+              onOpenShareModal={handleShareClick}
+              onDelete={handleOpenDeleteModal}
+              onChangeMode={handleChangeModeClick}
+            />
           )}
         </Menu>
       </div>
-
-      {/* Share Modal */}
-      <Dialog open={isShareModalOpen} onClose={handleCloseShareModal}>
-        <DialogTitle sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-          <BackButton onClick={handleCloseShareModal} />
-          {isSecondPage ? "Set Roles and Notifications" : "Add Collaborators"}
-        </DialogTitle>
-        <DialogContent sx={{ backgroundColor: "#1F1E22", color: "whitesmoke" }}>
-          {!isSecondPage ? (
-            <>
-              <TextField
-                label="Collaborator Email"
-                variant="outlined"
-                fullWidth
-                value={newCollaborator}
-                onChange={(e) => setNewCollaborator(e.target.value)}
-                sx={{ marginBottom: "16px" }}
-              />
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleAddCollaborator}
-              >
-                Add Collaborator
-              </Button>
-              <ul>
-                {collaborators.map((collaborator, index) => (
-                  <li key={index}>{collaborator}</li>
-                ))}
-              </ul>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-              >
-                Next
-              </Button>
-            </>
-          ) : (
-            <>
-              <Typography variant="body1" sx={{ marginBottom: "16px" }}>
-                Assign roles and choose notification settings for the added
-                collaborators.
-              </Typography>
-              {collaborators.map((collaborator, index) => (
-                <div key={index} style={{ marginBottom: "16px" }}>
-                  <Typography variant="body2">{collaborator}</Typography>
-                  <Select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    sx={{ marginRight: "16px", backgroundColor: "#fff" }}
-                  >
-                    <DropdownItem value="Editor">Editor</DropdownItem>
-                    <DropdownItem value="Commenter">Commenter</DropdownItem>
-                    <DropdownItem value="Viewer">Viewer</DropdownItem>
-                  </Select>
-                  <Checkbox
-                    checked={notifyPeople}
-                    onChange={() => setNotifyPeople(!notifyPeople)}
-                  />
-                  <Typography variant="body2" sx={{ display: "inline" }}>
-                    Notify
-                  </Typography>
-                </div>
-              ))}
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleShareProject}
-              >
-                Share
-              </Button>
-            </>
-          )}
-        </DialogContent>
-        <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={handleCloseShareModal}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Share Confirmation Modal */}
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={handleCloseShareModal}
+        onAddCollaborator={handleAddCollaborator}
+        onNext={handleNext}
+        onShareProject={handleShareProject}
+        collaborators={collaborators}
+        newCollaborator={newCollaborator}
+        isSecondPage={isSecondPage}
+        role={role}
+        notifyPeople={notifyPeople}
+      />
       <ShareConfirmationModal
         isOpen={isShareConfirmationModalOpen}
         onClose={handleCloseShareConfirmationModal}
         collaborators={collaborators}
       />
-
-      {/* Copy Link Modal */}
       <CopyLinkModal
         isOpen={isCopyLinkModalOpen}
         onClose={handleCloseCopyLinkModal}
       />
-
-      {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
         onDelete={handleDelete}
       />
-
-      {/* Download Modal */}
       <DownloadModal
         isOpen={isDownloadModalOpen}
         onClose={handleCloseDownloadModal}
       />
-
-      {/* Rename Modal */}
       <RenameModal
         isOpen={isRenameModalOpen}
         onClose={handleCloseRenameModal}
       />
-
-      {/* Restore Modal */}
       <RestoreModal
         isOpen={isRestoreModalOpen}
         onClose={handleCloseRestoreModal}
       />
-
-      {/* Make Copy Modal */}
       <MakeCopyModal
         isOpen={isMakeCopyModalOpen}
         onClose={handleCloseMakeCopyModal}
       />
-
-      {/* Info Modal */}
       <InfoModal isOpen={isInfoModalOpen} onClose={handleCloseInfoModal} />
     </div>
   );

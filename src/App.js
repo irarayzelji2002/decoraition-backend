@@ -61,16 +61,16 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Login />} />
-          <Route path="/forgot" element={<ForgotPass />} />
-          <Route path="/change" element={<ChangePassw />} />
+          <Route path="/login" element={<Login />} /> {/*Checked */}
+          <Route path="/register" element={<Register />} /> {/*Checked */}
+          <Route path="/" element={<Login />} /> {/*Checked */}
+          <Route path="/forgot" element={<ForgotPass />} /> {/*Checked */}
+          <Route path="/change" element={<ChangePassw />} /> {/*Checked */}
           <Route path="/otp" element={<OneTP />} />
-          <Route path="/homepage" element={<Homepage />} />
+          <Route path="/homepage" element={<Homepage />} /> {/*Checked */}
           <Route path="/details" element={<Details />} />
+          {/*Checked */}
           <Route path="/settings" element={<Settings />} />
-
           {/* DESIGN SPACE */}
           <Route path="/design/:designId" element={<Design />} />
           <Route path="/searchItem" element={<SearchItem />} />
@@ -81,7 +81,7 @@ function App() {
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
           <Route path="/version" element={<Version />} />
           {/* PROJECT SPACE */}
-          <Route path="/project" element={<Project />} />
+          <Route path="/project/:projectId" element={<Project />} />
           <Route path="/planMap" element={<PlanMap />} />
           <Route path="/timeline" element={<Timeline />} />
           <Route path="/projBudget" element={<ProjBudget />} />

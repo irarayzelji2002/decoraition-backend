@@ -1,4 +1,4 @@
-import ForgotPass1 from "../../components/ForgotPass1";
+import ForgotPass1 from "./ForgotPass";
 import "../../css/forgotPass.css";
 
 export default function ForgotPass() {

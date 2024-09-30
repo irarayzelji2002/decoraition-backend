@@ -1,27 +1,122 @@
-from flask import Flask, request, jsonify, send_file, redirect, url_for, send_from_directory
-from flask_cors import CORS
-import requests
-from PIL import Image
 import os
 import io
-import base64
-import uuid
+import cv2
 import json
+import uuid
+import base64
+import requests
 import thecolorapi
+import numpy as np
+from PIL import Image
+from flask_cors import CORS
+from flask import Flask, request, jsonify, send_file, redirect, url_for, send_from_directory, render_template
 
 app = Flask(__name__)
 CORS(app)
 
-# Stable Diffusion WebUI URL
+# Constant variables
 SD_URL = "http://127.0.0.1:7860"
-
-# Directory to store generated images
 IMAGES_FOLDER = 'static/images'
 if not os.path.exists(IMAGES_FOLDER):
     os.makedirs(IMAGES_FOLDER)
-
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['IMAGES_FOLDER'] = IMAGES_FOLDER
+sdxl_styles = [
+    {
+        "name": "base",
+        "prompt": "{prompt}",
+        "negative_prompt": ""
+    },
+    {
+        "name": "3D Model",
+        "prompt": "professional 3d model of {prompt} . octane render, highly detailed, volumetric, dramatic lighting",
+        "negative_prompt": "ugly, deformed, noisy, low poly, blurry, painting, person, people, face, hands, legs, feet"
+    }
+]
+
+# File-related functions
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def generate_image_filename(extension="png"):
+    return f"{uuid.uuid4()}.{extension}"
+
+def load_and_encode_image(image_file):
+    """Load an image using PIL and encode it to base64 PNG for ControlNet."""
+    try:
+        # Load image with PIL
+        image = Image.open(image_file).convert('RGB')
+
+        # Convert PIL image to a numpy array
+        image_np = np.array(image)
+
+        # Encode into PNG using OpenCV and then base64
+        retval, bytes_img = cv2.imencode('.png', image_np)
+        encoded_image = base64.b64encode(bytes_img).decode('utf-8')
+
+        return encoded_image
+    except Exception as e:
+        print(f"Error loading and encoding image: {e}")
+        return None
+
+def decode_base64_image(base64_str):
+    """Decode a base64 image string and convert it to a NumPy array."""
+    try:
+        # Remove the prefix if present
+        if base64_str.startswith("data:image/png;base64,"):
+            base64_str = base64_str.split(",")[1]
+
+        # Decode the base64 string
+        image_data = base64.b64decode(base64_str)
+
+        # Convert to a NumPy array
+        image_array = np.frombuffer(image_data, dtype=np.uint8)
+
+        # Decode into an image using OpenCV
+        image = cv2.imdecode(image_array, cv2.IMREAD_GRAYSCALE)
+
+        return image
+    except Exception as e:
+        print(f"Error decoding base64 image: {e}")
+        return None
+
+def extract_base64_data(data_url):
+    if data_url.startswith("data:image/png;base64,"):
+        return data_url.split(",", 1)[1]  # Get the base64 part only
+    return None 
+
+def save_images(image_data_list, folder_name):
+    """Helper function to save images and return file paths."""
+    saved_paths = []
+    for image_data in image_data_list:
+        if image_data:
+            image_bytes = base64.b64decode(image_data.split(",", 1)[-1])
+            img = Image.open(io.BytesIO(image_bytes))
+            filename = generate_image_filename("png")
+            folder_path = f"static/{folder_name}"
+            os.makedirs(folder_path, exist_ok=True)
+            image_path = os.path.join(f"static/{folder_name}", filename)
+            img.save(image_path)
+            saved_paths.append(f"/static/{folder_name}/{filename}")
+    return saved_paths
+
+def save_image_from_base64(image_base64, folder_name):
+    """Helper function to save a combined mask and return its file path."""
+    # Decode the base64 image
+    image_bytes = base64.b64decode(image_base64)
+    img = Image.open(io.BytesIO(image_bytes))
+
+    # Generate filename and save path
+    filename = generate_image_filename("png")
+    folder_path = f"static/{folder_name}"
+    os.makedirs(folder_path, exist_ok=True)  # Ensure the folder exists
+    image_path = os.path.join(folder_path, filename)
+
+    # Save the image to the specified folder
+    img.save(image_path)
+    print(f"Combined mask saved at: {image_path}")
+
+    return f"/static/{folder_name}/{filename}"
 
 # Color name functions using thecolorapi
 def thecolorapi_hex_to_color_name(hex_code):
@@ -39,19 +134,41 @@ def build_prompt_with_color(base_prompt, color_palette):
         return f"{base_prompt} with colors {colors_description}"
     except Exception as e:
         print(f"Error building prompt with color: {e}")
-        return base_prompt  # Fallback to base prompt if there's an error
+        return base_prompt
 
-def generate_image_filename(extension="png"):
-    return f"{uuid.uuid4()}.{extension}"
+# SDXL Styles with color function
+def apply_sdxl_style(selected_style_name, prompt, color_palette=None):
+    """Apply the SDXL style to the user prompt and insert color description right after the {prompt}."""
+    selected_style = next((style for style in sdxl_styles if style["name"] == selected_style_name), None)
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    if selected_style:
+        # Build the color description if the color palette is provided
+        if color_palette:
+            color_names = [thecolorapi_hex_to_color_name(hex_code) for hex_code in color_palette]
+            colors_description = f" with colors {', '.join(color_names)}"
+        else:
+            colors_description = ""
 
+        # Replace the {prompt} placeholder with the user input and insert the color description
+        prompt = selected_style["prompt"].replace("{prompt}", f"{prompt}{colors_description}")
+        negative_prompt = selected_style["negative_prompt"]
+
+        return prompt, negative_prompt
+    else:
+        # In case no style is found, apply color palette to base prompt (if color_palette exists)
+        if color_palette:
+            color_names = [thecolorapi_hex_to_color_name(hex_code) for hex_code in color_palette]
+            colors_description = f" with colors {', '.join(color_names)}"
+            prompt = f"{prompt}{colors_description}"
+        # Return original prompt with no negative prompt
+        return prompt, ""
+
+# FIRST IMAGE GENERATION
 def validate_first_generation_request(data):
     """Validate the first image generation request."""
     try:
-        base_image_loaded = None
-        style_reference_loaded = None
+        base_image_encoded = None
+        style_reference_encoded = None
         
         if request.content_type.startswith('multipart/form-data'):
             print("Multipart form data detected.")
@@ -60,84 +177,184 @@ def validate_first_generation_request(data):
             number_of_images = int(data.get('number_of_images', 0))
             # Color palette
             color_palette_str = data.get('color_palette', '[]')
-            try:
-                color_palette = json.loads(color_palette_str)
-            except json.JSONDecodeError:
-                color_palette = []
+            color_palette = json.loads(color_palette_str) if color_palette_str else []
             # Base image
             base_image = request.files.get('base_image')
             if base_image and allowed_file(base_image.filename):
                 print(f"Base image received.")
-                base_image_loaded = Image.open(base_image).convert("RGB")
+                base_image_encoded = load_and_encode_image(base_image)
                 print(f"Base image successfully loaded.")
             else:
                 print(f"No base image received.")
-                base_image = None
+                base_image_encoded = None
             # Style reference
             style_reference = request.files.get('style_reference')
             if style_reference and allowed_file(style_reference.filename):
                 print(f"Style reference received.")
-                style_reference_loaded = Image.open(style_reference).convert("RGB")
+                style_reference_encoded = load_and_encode_image(style_reference)
                 print(f"Style image successfully loaded.")
             else:
                 print(f"No style reference received.")
-                style_reference_loaded = None
+                style_reference_encoded = None
         else:
             prompt = data.get('prompt', "").strip()
             number_of_images = data.get("number_of_images", 0)
             color_palette = data.get('color_palette', [])
-            base_image_loaded = None
-            style_reference_loaded = None
+            base_image_encoded = None
+            style_reference_encoded = None
         
         # Print received data for debugging
         print("========Received Data========")
         print(f"Prompt: {prompt}")
         print(f"Number of Images: {number_of_images}")
         print(f"Color Palette: {color_palette}")
-        print("========Final Prompt========")
-        print(f"{prompt}")
-
+        
         if not prompt:
             print("Empty prompt")
             return None, None, None, None, "Prompt is required"
         
-        return prompt, number_of_images, base_image_loaded, style_reference_loaded, color_palette
+        prompt, negative_prompt = apply_sdxl_style("3D Model", prompt, color_palette)
+        print("========Final Prompt========")
+        print(f"Prompt: {prompt}")
+        print(f"Negative Prompt: {negative_prompt}")
+
+        return prompt, negative_prompt, number_of_images, base_image_encoded, style_reference_encoded
     except Exception as e:
         print(f"Validation error: {e}")
         return None, None, None, None, f"Validation error: {str(e)}"
 
-def validate_next_generation_request(data):
-    """Validate the next image generation request (e.g., with selected area)."""
-
-def generate_first_image(prompt, number_of_images, base_image, style_reference, color_palette):
-    """Generate first image core"""
+def generate_first_image(prompt, negative_prompt, number_of_images, base_image, style_reference):
+    """First generation core logic"""
     try:
         if base_image and not style_reference:
             # Case 1: prompt with base image
-            print("========1st Gen: prompt with base image========")
-        elif style_reference and not base_image:
-            # Case 2: prompt with style reference
-            print("========1st Gen: prompt with style reference========")
-        elif base_image and style_reference:
-            # Case 3: prompt with base image and style reference
-            print("========1st Gen: prompt with base image and style reference========")
-        else:
-            # Case 4: prompt only
-            print("========1st Gen: prompt only-=======")
-
-            txt2img_payload = {
+            print("========First Gen: prompt with base image (Canny)========")
+            payload = {
                 "prompt": prompt,
-                "steps": 30,
+                "negative_prompt": negative_prompt,
                 "sampler_name": "DPM++ 2M SDE",
+                "steps": 30,
                 "cfg_scale": 6,
                 "width": 512,
                 "height": 512,
                 "n_iter": number_of_images,
-                "seed": -1
+                "seed": -1,
+                # "enable_hr": True,
+                # "hr_scale": 1.5,
+                # "hr_upscaler": "4x_NMKD-Siax_200k",
+                # "hr_resize_x": 0,
+                # "hr_resize_y": 0,
+                # "denoising_strength": 0.3,
+                "alwayson_scripts": {
+                    "controlnet": {
+                        "args": [{
+                            "enabled": True,
+                            "image": base_image,
+                            "model": "diffusion_sd_controlnet_canny [a3cd7cd6]",
+                            "module": "canny",
+                            "weight": 1,
+                            "resize_mode": "Scale to Fit (Inner Fit)",
+                            "guidance_start": 0,
+                            "guidance_end": 1,
+                            "control_mode": "ControlNet is more important",
+                            "pixel_perfect": True
+                        }]
+                    }
+                }
+            }
+        elif style_reference and not base_image:
+            # Case 2: prompt with style reference
+            print("========First Gen: prompt with style reference (T2I-Adapter Color)========")
+            payload = {
+                "prompt": prompt,
+                "negative_prompt": negative_prompt,
+                "sampler_name": "DPM++ 2M SDE",
+                "steps": 30,
+                "cfg_scale": 6,
+                "width": 512,
+                "height": 512,
+                "n_iter": number_of_images,
+                "seed": -1,
+                "denoising_strength": 0.3,
+                "alwayson_scripts": {
+                    "controlnet": {
+                        "args": [{
+                            "enabled": True,
+                            "image": style_reference,
+                            "model": "t2iadapter_color_sd14v1 [8522029d]",
+                            "module": "t2ia_color_grid",
+                            "weight": 1.2,
+                            "resize_mode": "Scale to Fit (Inner Fit)",
+                            "guidance_start": 0,
+                            "guidance_end": 1,
+                            "control_mode": "ControlNet is more important",
+                            "pixel_perfect": True
+                        }]
+                    }
+                }
+            }
+        elif base_image and style_reference:
+            # Case 3: prompt with base image and style reference
+            print("========First Gen: prompt with base image and style reference (Canny + T2I-Adapter Color)========")
+            payload = {
+                "prompt": prompt,
+                "negative_prompt": negative_prompt,
+                "sampler_name": "DPM++ 2M SDE",
+                "steps": 30,
+                "cfg_scale": 6,
+                "width": 512,
+                "height": 512,
+                "n_iter": number_of_images,
+                "seed": -1,
+                "denoising_strength": 0.3,
+                "alwayson_scripts": {
+                    "controlnet": {
+                        "args": [
+                            {
+                                "enabled": True,
+                                "image": base_image,
+                                "model": "diffusion_sd_controlnet_canny [a3cd7cd6]",
+                                "module": "canny",
+                                "weight": 1,
+                                "resize_mode": "Scale to Fit (Inner Fit)",
+                                "guidance_start": 0,
+                                "guidance_end": 1,
+                                "control_mode": "ControlNet is more important",
+                                "pixel_perfect": True
+                            },
+                            {
+                                "enabled": True,
+                                "image": style_reference,
+                                "model": "t2iadapter_color_sd14v1 [8522029d]",
+                                "module": "t2ia_color_grid",
+                                "weight": 1.2,
+                                "resize_mode": "Scale to Fit (Inner Fit)",
+                                "guidance_start": 0,
+                                "guidance_end": 1,
+                                "control_mode": "ControlNet is more important",
+                                "pixel_perfect": True
+                            }
+                        ]
+                    }
+                }
+            }
+        else:
+            # Case 4: prompt only
+            print("========First Gen: prompt only-=======")
+            payload = {
+                "prompt": prompt,
+                "negative_prompt": negative_prompt,
+                "sampler_name": "DPM++ 2M SDE",
+                "steps": 30,
+                "cfg_scale": 6,
+                "width": 512,
+                "height": 512,
+                "n_iter": number_of_images,
+                "seed": -1,
+                "denoising_strength": 0.3
             }
 
-            response = requests.post(f"{SD_URL}/sdapi/v1/txt2img", json=txt2img_payload)
-
+        response = requests.post(f"{SD_URL}/sdapi/v1/txt2img", json=payload)
         return response
 
     except Exception as e:
@@ -146,47 +363,376 @@ def generate_first_image(prompt, number_of_images, base_image, style_reference, 
 
 @app.route('/generate-first-image', methods=['POST'])
 def generate_first_image_route():
+    """Route to generate first image"""
     try:
         # Validate request data
         data = request.form if request.content_type.startswith('multipart/form-data') else request.json
-        prompt, number_of_images, base_image_loaded, style_reference_loaded, color_palette = validate_first_generation_request(data)
+        prompt, negative_prompt, number_of_images, base_image_encoded, style_reference_encoded = validate_first_generation_request(data)
         
         if not prompt:
             return jsonify({"error": "Prompt is required"}), 400
 
-
-        # Payload for API & Make request to API
-        response = generate_first_image(prompt, number_of_images, base_image_loaded, style_reference_loaded, color_palette)
+        # Call the image generation function
+        response = generate_first_image(prompt, negative_prompt, number_of_images, base_image_encoded, style_reference_encoded)
 
         # Handle response
-        if response.status_code == 200:
-            # print(response.json())
+        if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
             images_data = response.json().get("images", [])
-            if not images_data:
-                return jsonify({"error": "No images were generated"}), 500
-
-            image_paths = []
-            if len(images_data) > 0:
-                for i, image_data in enumerate(images_data):
-                    if image_data:
-                        image_data = image_data.split(",", 1)[-1]
-                        image_bytes = base64.b64decode(image_data)
-                        img = Image.open(io.BytesIO(image_bytes))
-                        filename = generate_image_filename("png")
-                        image_path = os.path.join(IMAGES_FOLDER, filename)
-                        img.save(image_path)
-                        image_paths.append(f"/static/images/{filename}")
-            else:
-                return jsonify({"error": "No images were generated"}), 500
-
+            image_paths = save_images(images_data, "images")
             return jsonify({"image_paths": image_paths}), 200
         else:
-            return jsonify({"error": response.text}), response.status_code
+            return jsonify({"error": "No images were generated. " + response.text}), 500
 
     except Exception as e:
         print(f"Error generating image: {e}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
+# GENERATE SAM MASK
+def generate_sam_mask(init_image, mask_prompt):
+    """Generate SAM mask based on an image and text prompt."""
+    if not mask_prompt:
+        return None, 400
+
+    print("========Next Gen: generating mask========")
+    try:
+        # Prepare SAM request payload
+        payload = {
+            "sam_model_name": "sam_vit_b_01ec64.pth",
+            "input_image": init_image,
+            "sam_positive_points": [],
+            "sam_negative_points": [],
+            "dino_enabled": True,
+            "dino_model_name": "GroundingDINO_SwinT_OGC (694MB)",
+            "dino_text_prompt": mask_prompt,
+            "dino_box_threshold": 0.3,
+            "dino_preview_checkbox": False,
+        }
+
+        # Call SAM API to generate the mask
+        response = requests.post(f"{SD_URL}/sam/sam-predict", json=payload)
+        if response.status_code != 200:
+            return None, response.status_code
+
+        reply_json = response.json()
+        print(reply_json.get("msg", "No message"))
+
+        masks = reply_json.get("masks")
+        if not masks:
+            print("No masks returned from SAM.")
+            return None, 400
+
+        try:
+            # Dilate the masks and collect responses
+            dilate_payloads = [
+                {"input_image": init_image, "mask": masks[i], "dilate_amount": 30}
+                for i in range(min(3, len(masks)))  # Ensure we process up to 3 masks
+            ]
+
+            replies_dilate = []
+            for payload in dilate_payloads:
+                dilate_response = requests.post(f"{SD_URL}/sam/dilate-mask", json=payload)
+                replies_dilate.append(dilate_response.json())
+
+            # Extract blended images, masks, and masked images
+            reply_dilate = {
+                "blended_images": [reply["blended_image"] for reply in replies_dilate],
+                "masks": [reply["mask"] for reply in replies_dilate],
+                "masked_images": [reply["masked_image"] for reply in replies_dilate],
+            }
+            return reply_dilate
+
+        except Exception as e:
+            print(f"Error expanding SAM mask: {e}")
+            print("Returning original SAM mask instead.")
+            return reply_json
+
+    except Exception as e:
+        print(f"Error generating SAM mask: {e}")
+        return {"error": f"An error occurred: {str(e)}"}, 500
+
+@app.route('/generate-sam-mask', methods=['POST'])
+def generate_sam_mask_route():
+    """Route to generate SAM mask."""
+    try:
+        # Validate request data
+        data = request.form if request.content_type.startswith('multipart/form-data') else request.json
+        mask_prompt = data.get('mask_prompt', "").strip()
+        init_image = request.files.get('init_image')
+        
+        if not init_image or not allowed_file(init_image.filename):
+            return jsonify({"error": "Valid base image is required"}), 400
+        if not mask_prompt:
+            return jsonify({"error": "Mask prompt is required"}), 400
+        init_image_encoded = load_and_encode_image(init_image)
+
+        # Call generate SAM mask function
+        response = generate_sam_mask(init_image_encoded, mask_prompt)
+
+        # Handle response
+        if isinstance(response, dict) and all(key in response for key in ["blended_images", "masks", "masked_images"]):
+            # Save images and return paths
+            image_paths = {
+                "blended_images": save_images(response.get("blended_images"), "masks"),
+                "masks": save_images(response.get("masks"), "masks"),
+                "masked_images": save_images(response.get("masked_images"), "masks"),
+            }
+            return jsonify({"image_paths": image_paths}), 200
+        else:
+            return jsonify({"error": "Failed to generate SAM mask. Incomplete response."}), 500
+
+    except Exception as e:
+        print(f"Error generating SAM mask: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+# NEXT IMAGE GENERATION
+def combine_masks(sam_mask_path, user_mask_base64):
+    # Validate sam_mask_path
+    if not sam_mask_path or not os.path.exists(sam_mask_path):
+        print(f"Error: SAM mask path does not exist at {sam_mask_path}.")
+        return None
+    
+    # Load SAM mask
+    sam_mask = cv2.imread(sam_mask_path, cv2.IMREAD_GRAYSCALE)
+    if sam_mask is None:
+        print("Error: SAM mask could not be loaded.")
+        return None
+
+    # Decode user mask from base64
+    user_mask = decode_base64_image(user_mask_base64)
+    
+    # Check if user_mask is valid
+    if user_mask is None:
+        print("Error: User mask could not be decoded.")
+        print(f"Combined Mask Path (SAM): {sam_mask_path}")
+        return load_and_encode_image(sam_mask_path)
+
+    # Check if user mask is all black
+    if np.count_nonzero(user_mask) == 0:
+        print("User mask is all black; returning SAM mask.")
+        print(f"Combined Mask Path (SAM): {sam_mask_path}")
+        return load_and_encode_image(sam_mask_path)
+
+    # Resize user mask to match SAM mask dimensions
+    user_mask = cv2.resize(user_mask, (sam_mask.shape[1], sam_mask.shape[0]))
+
+    # Combine the masks
+    combined_mask = cv2.addWeighted(sam_mask, 1, user_mask, 1, 0)
+
+    # Threshold the combined mask to ensure it’s binary (0 and 255)
+    _, combined_mask = cv2.threshold(combined_mask, 1, 255, cv2.THRESH_BINARY)
+
+    # Save combined mask to a temporary buffer
+    _, combined_mask_buffer = cv2.imencode('.png', combined_mask)
+    combined_mask_base64 = base64.b64encode(combined_mask_buffer).decode('utf-8')
+
+    # Use save_combined_mask function to save the image
+    combined_mask_path = save_image_from_base64(combined_mask_base64, "masks")
+    print(f"Combined Mask Path: {combined_mask_path}")
+
+    return combined_mask_base64
+
+def validate_next_generation_request(data):
+    """Validate the next image generation request"""
+    try:
+        init_image_encoded = None
+        style_reference_encoded = None
+        sam_mask = None
+        user_mask_encoded = None
+        
+        if request.content_type.startswith('multipart/form-data'):
+            print("Multipart form data detected.")
+            # Prompt, mask prompt, and number of images
+            prompt = data.get('prompt', "").strip()
+            number_of_images = int(data.get('number_of_images', 0))
+            # Color palette
+            color_palette_str = data.get('color_palette', '[]')
+            color_palette = json.loads(color_palette_str) if color_palette_str else []
+            # Init image
+            init_image = request.files.get('init_image')
+            if init_image and allowed_file(init_image.filename):
+                print(f"Init image received.")
+                init_image_encoded = load_and_encode_image(init_image)
+                print(f"Init image successfully loaded.")
+            else:
+                print(f"No init image received.")
+                init_image_encoded = None
+            # Style reference
+            style_reference = request.files.get('style_reference')
+            if style_reference and allowed_file(style_reference.filename):
+                print(f"Style reference received.")
+                style_reference_encoded = load_and_encode_image(style_reference)
+                print(f"Style image successfully loaded.")
+            else:
+                print(f"No style reference received.")
+                style_reference_encoded = None
+            # SAM mask
+            sam_mask_str = data.get('sam_mask', '{}')
+            sam_mask = json.loads(sam_mask_str) if sam_mask_str else {}
+            if sam_mask and 'mask' in sam_mask and allowed_file(sam_mask['mask']):
+                print(f"SAM mask received: {sam_mask['mask']}")
+                sam_mask_img_path = sam_mask['mask']
+                sam_mask_img_path_whole = os.path.join(app.root_path, sam_mask_img_path.lstrip('/'))
+                if not os.path.exists(sam_mask_img_path_whole):
+                    return None, None, None, None, None, None, None, None, f"File not found: {sam_mask_img_path_whole}", 400
+                with open(sam_mask_img_path_whole, 'rb') as mask_img_file:
+                    sam_mask_encoded = load_and_encode_image(mask_img_file)
+                print(f"SAM mask successfully loaded and encoded.")
+            else:
+                print(f"No valid SAM mask received or file extension not allowed.")
+                sam_mask_encoded = None
+            # User mask
+            user_mask = data.get('user_mask', '')
+            if user_mask:
+                print(f"User mask received.")
+                user_mask_encoded = extract_base64_data(user_mask)
+                if user_mask_encoded is not None:
+                    print(f"User mask successfully loaded and encoded.")
+                else:
+                    print(f"User mask format is invalid.")
+                    user_mask_encoded = None
+            else:
+                print(f"No user_mask received.")
+                user_mask_encoded = None
+            # Combined mask
+            combined_mask_encoded = combine_masks(sam_mask_img_path_whole, user_mask)
+            if combined_mask_encoded:
+                print("Combined mask successfully created and encoded.")
+            else:
+                combined_mask_encoded = None
+                print("Failed to create the combined mask.")
+        else:
+            prompt = data.get('prompt', "").strip()
+            number_of_images = data.get("number_of_images", 0)
+            color_palette = data.get('color_palette', [])
+            init_image_encoded = None
+            style_reference_encoded = None
+        
+        # Print received data for debugging
+        print("========Received Data========")
+        print(f"Prompt: {prompt}")
+        print(f"Number of Images: {number_of_images}")
+        print(f"Color Palette: {color_palette}")
+
+        if not prompt:
+            print("Empty prompt")
+            return None, None, None, None, None, None, None, None, "Prompt is required", 400
+        
+        prompt, negative_prompt = apply_sdxl_style("3D Model", prompt, color_palette)
+        print("========Final Prompt========")
+        print(f"Prompt: {prompt}")
+        print(f"Negative Prompt: {negative_prompt}")
+
+        return prompt, negative_prompt, number_of_images, init_image_encoded, sam_mask_encoded, user_mask_encoded, combined_mask_encoded,style_reference_encoded, None, None
+    except Exception as e:
+        print(f"Validation error: {e}")
+        return None, None, None, None, None, None, None, None, f"Validation error: {str(e)}", 400
+
+def generate_next_image(prompt, negative_prompt, number_of_images, init_image, sam_mask, user_mask, combined_mask, style_reference):
+    """Next generation core logic"""
+    try:
+        if style_reference:
+            # Case 1: prompt, style reference
+            print("========Next Gen: prompt, style reference (Canny)========")
+            payload = {
+                "prompt": prompt,
+                "negative_prompt": negative_prompt,
+                "sampler_name": "DPM++ 2M SDE",
+                "steps": 30,
+                "cfg_scale": 7,
+                "width": 512,
+                "height": 512,
+                "n_iter": number_of_images,
+                "seed": -1,
+                "init_images": [init_image], # The original image to refine
+                "mask": combined_mask,       # Combined mask generated by SAM & user mask
+                "denoising_strength": 0.75,  # Controls the impact of the original image
+                "resize_mode": 0,            # Crop and resize
+                "mask_blur_x": 4,
+                "mask_blur_y": 4,
+                "inpainting_fill": 0,        # Masked Content = original
+                "inpaint_full_res": False,   # Inpaint area = only masked:
+                "inpaint_full_res_padding": 32,
+                "mask_round": True,          # Soft inpainting
+                "include_init_images": True,
+                "alwayson_scripts": {
+                    "controlnet": {
+                        "args": [
+                            {
+                                "enabled": True,
+                                "image": style_reference,
+                                "model": "diffusion_sd_controlnet_canny [a3cd7cd6]",
+                                "module": "canny",
+                                "weight": 1,
+                                "resize_mode": "Scale to Fit (Inner Fit)",
+                                "guidance_start": 0,
+                                "guidance_end": 1,
+                                "control_mode": "ControlNet is more important",
+                                "pixel_perfect": True
+                            },
+                        ]
+                    }
+                }
+            }
+        else:
+            # Case 2: prompt
+            print("========Next Gen: prompt=======")
+            payload = {
+                "prompt": prompt,
+                "negative_prompt": negative_prompt,
+                "sampler_name": "DPM++ 2M SDE",
+                "steps": 30,
+                "cfg_scale": 7,
+                "width": 512,
+                "height": 512,
+                "n_iter": number_of_images,
+                "seed": -1,
+                "init_images": [init_image], # The original image to refine
+                "mask": combined_mask,       # Combined mask generated by SAM & user mask
+                "denoising_strength": 0.75,  # Controls the impact of the original image
+                "resize_mode": 0,            # Crop and resize
+                "mask_blur_x": 4,
+                "mask_blur_y": 4,
+                "inpainting_fill": 0,        # Masked Content = original
+                "inpaint_full_res": False,   # Inpaint area = only masked:
+                "inpaint_full_res_padding": 32,
+                "mask_round": True,          # Soft inpainting
+                "include_init_images": True,
+            }
+
+        response = requests.post(f"{SD_URL}/sdapi/v1/img2img", json=payload)
+        return response
+
+    except Exception as e:
+        print(f"Error generating image: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+@app.route('/generate-next-image', methods=['POST'])
+def generate_next_image_route():
+    """Route to generate next image, must have generated SAM mask beforehand"""
+    try:
+        # Validate request data
+        data = request.form if request.content_type.startswith('multipart/form-data') else request.json
+        prompt, negative_prompt, number_of_images, init_image, sam_mask, user_mask, combined_mask, style_reference, error_message, error_status = validate_next_generation_request(data)
+        
+        if error_message:
+            return jsonify({"error": error_message}), error_status
+
+        # Payload for API & Make request to API
+        response = generate_next_image(prompt, negative_prompt, number_of_images, init_image, sam_mask, user_mask, combined_mask, style_reference)
+
+        # Handle response
+        if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
+            images_data = response.json().get("images", [])
+            image_paths = save_images(images_data, "images")
+            return jsonify({"image_paths": image_paths}), 200
+        else:
+            return jsonify({"error": "No images were generated. " + response.text}), 500
+
+    except Exception as e:
+        print(f"Error generating image: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+# OTHER APP ROUTES
 @app.route('/images/<filename>')
 def serve_image(filename):
     """Serve the generated image files."""
@@ -201,13 +747,16 @@ def index():
 def show_first_generation_page():
     """Serve the HTML test page for the first image generation."""
     # return send_from_directory('templates', 'first-generation.html')
-    return send_file('templates/first-generation.html')
+    # return send_file('templates/first-generation.html')
+    return render_template('first-generation.html')
 
 @app.route('/test/next-generation', methods=['GET'])
 def show_next_generation_page():
     """Serve the HTML test page for the next image generation."""
     # return send_from_directory('templates', 'next-generation.html')
-    return send_file('templates/next-generation.html')
+    # return send_file('templates/next-generation.html')
+    return render_template('next-generation.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
+    # app.run(debug=True, port=8080)

@@ -1,13 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProjectHead from "../../components/ProjectHead";
-import "../../css/project.css";
 import { Paper, Button, IconButton, InputBase } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { getAuth } from "firebase/auth";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
 import Modal from "../../components/Modal";
 import BottomBarDesign from "../../components/BottomBarProject";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import Loading from "../../components/Loading";
 import "../../css/seeAll.css";
+import "../../css/project.css";
 import "../../css/project.css";
 
 const SearchBar = styled(Paper)(({ theme }) => ({
@@ -37,6 +44,86 @@ const OptionButton = styled(Button)(({ theme }) => ({
 function Project() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+  const { projectId } = useParams();
+  const [newName, setNewName] = useState("");
+  const [userId, setUserId] = useState(null);
+  const [projectData, setProjectData] = useState(null);
+  const [isEditingName, setIsEditingName] = useState(false);
+
+  const handleEditNameToggle = () => {
+    setIsEditingName((prev) => !prev);
+  };
+
+  const handleNameChange = async () => {
+    if (newName.trim() === "") {
+      alert("Design name cannot be empty");
+      return;
+    }
+
+    try {
+      const projectRef = doc(db, "users", userId, "projects", projectId);
+      await updateDoc(projectRef, { name: newName });
+      setIsEditingName(false);
+      toast.success("Design name updated successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (error) {
+      console.error("Error updating design name:", error);
+      alert("Failed to update design name");
+    }
+  };
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+
+        const fetchProjectDetails = async () => {
+          try {
+            const projectRef = doc(
+              db,
+              "users",
+              user.uid,
+              "projects",
+              projectId
+            );
+            const projectSnapshot = await getDoc(projectRef);
+            if (projectSnapshot.exists()) {
+              const project = projectSnapshot.data();
+              setProjectData(project);
+              setNewName(project.name);
+            } else {
+              console.error("Project not found");
+            }
+          } catch (error) {
+            console.error("Error fetching project details:", error);
+          }
+        };
+
+        fetchProjectDetails();
+      } else {
+        console.error("User is not authenticated");
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup listener on component unmount
+  }, [projectId]);
 
   const openModal = (content) => {
     setModalContent(content);
@@ -109,9 +196,23 @@ function Project() {
         return null;
     }
   };
+
+  if (!projectData) {
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
   return (
     <div className="app-container">
-      <ProjectHead />
+      <ToastContainer
+        progressStyle={{ backgroundColor: "var(--brightFont)" }}
+      />
+      <ProjectHead
+        projectData={projectData}
+        setIsEditingName={setIsEditingName}
+      />
       <div
         style={{
           display: "flex",

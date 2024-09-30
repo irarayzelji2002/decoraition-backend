@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth, db } from "../../firebase.js";
+import { auth, db } from "../../firebase";
 import { useNavigate, Link } from "react-router-dom";
 import {
   collection,
@@ -26,11 +26,13 @@ import Delete from "@mui/icons-material/Delete.js";
 import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
 import "../../css/design.css";
+import { projectId } from "../../../server/firebaseConfig.js";
 
 function Homepage() {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [designs, setDesigns] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -51,9 +53,11 @@ function Homepage() {
       if (user) {
         setUser(user);
         fetchDesigns(user.uid);
+        fetchProjects(user.uid);
       } else {
         setUser(null);
         setDesigns([]);
+        setProjects([]);
       }
     });
 
@@ -70,6 +74,21 @@ function Homepage() {
         designList.push({ id: doc.id, ...doc.data() });
       });
       setDesigns(designList);
+    });
+
+    return () => unsubscribeDesigns();
+  };
+
+  const fetchProjects = (userId) => {
+    const projectsRef = collection(db, "users", userId, "projects");
+    const q = query(projectsRef, where("createdAt", ">", new Date(0))); // Example query
+
+    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+      const projectList = [];
+      querySnapshot.forEach((doc) => {
+        projectList.push({ id: doc.id, ...doc.data() });
+      });
+      setProjects(projectList);
     });
 
     return () => unsubscribeDesigns();
@@ -100,7 +119,7 @@ function Homepage() {
     document.body.classList.toggle("dark-mode", !darkMode);
   };
 
-  const handleCreateProject = async () => {
+  const handleCreateDesign = async () => {
     try {
       const designId = new Date().getTime().toString(); // Generate a unique ID
       const currentUser = auth.currentUser;
@@ -142,6 +161,58 @@ function Homepage() {
     } catch (error) {
       console.error("Error creating design: ", error);
       toast.error("Error creating design! Please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
+  const handleCreateProject = async () => {
+    try {
+      const projectId = new Date().getTime().toString(); // Generate a unique ID
+      const currentUser = auth.currentUser;
+
+      if (currentUser) {
+        const designRef = doc(
+          db,
+          "users",
+          currentUser.uid,
+          "projects",
+          projectId
+        );
+        await setDoc(designRef, {
+          name: "Untitled", // Default design name
+          createdAt: new Date(),
+        });
+
+        // Show toast notification when the project is created
+        toast.success("Project created successfully!", {
+          icon: <CheckCircle />,
+          position: "top-right",
+          autoClose: 3000, // 3 seconds auto close
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          style: {
+            color: "var(--color-white)",
+            backgroundColor: "var(--inputBg)",
+          },
+          progressStyle: {
+            backgroundColor: "var(--brightFont)",
+          },
+        });
+
+        // Navigate to the newly created design
+        setTimeout(() => navigate(`/project/${projectId}`), 1500);
+      }
+    } catch (error) {
+      console.error("Error creating project: ", error);
+      toast.error("Error creating project! Please try again.", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -232,13 +303,10 @@ function Homepage() {
         </div>
 
         <div className="action-buttons">
-          <button className="design-button" onClick={handleCreateProject}>
+          <button className="design-button" onClick={handleCreateDesign}>
             Create a design
           </button>
-          <button
-            className="project-button"
-            onClick={() => navigate("/project")}
-          >
+          <button className="project-button" onClick={handleCreateProject}>
             Create a project
           </button>
         </div>
@@ -324,20 +392,24 @@ function Homepage() {
             </div>
 
             <div className="layout">
-              {-1 > 0 ? (
-                designs.map((design) => (
+              {projects.length > 0 ? (
+                projects.slice(0, 6).map((project) => (
                   <DesignIcon
-                    key={design.id}
-                    name={design.name}
-                    designId={design.id}
+                    key={project.id}
+                    name={project.name}
+                    designId={project.id}
                     onDelete={handleDeleteDesign}
-                    onOpen={() => navigate(`/design/${design.id}`)}
+                    onOpen={() =>
+                      navigate(`/project/${project.id}`, {
+                        state: { projectId: project.id },
+                      })
+                    }
                   />
                 ))
               ) : (
                 <div className="no-content">
                   <img src="/img/design-placeholder.png" alt="No designs yet" />
-                  <p>No Projects yet. Start creating.</p>
+                  <p>No designs yet. Start creating.</p>
                 </div>
               )}
             </div>

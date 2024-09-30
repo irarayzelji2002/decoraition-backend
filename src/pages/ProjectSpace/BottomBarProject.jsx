@@ -1,4 +1,4 @@
-import "../css/bottomBar.css";
+import "../../css/bottomBar.css";
 import { Link } from "react-router-dom";
 import Button from "@mui/joy/Button";
 
@@ -7,13 +7,14 @@ function BottomBarDesign({
   PlanMap = false,
   Timeline = false,
   Budget = false,
+  projId,
 }) {
   return (
     <div className="bottomBar">
       <Button
         size="md"
         component={Link}
-        to="/project"
+        to={`/project/${projId}`}
         color="#302f37"
         sx={{
           mr: 2,
@@ -84,7 +85,7 @@ function BottomBarDesign({
         size="md"
         color="#302f37"
         component={Link}
-        to="/timeline"
+        to={`/timeline/${projId}`}
         sx={{
           ":hover": {
             backgroundColor: "#2c2f33",
@@ -150,7 +151,7 @@ function BottomBarDesign({
       <Button
         size="md"
         component={Link}
-        to="/planMap"
+        to={`/planMap/${projId}`}
         color="#302f37"
         sx={{
           ":hover": {
@@ -260,7 +261,7 @@ function BottomBarDesign({
         size="md"
         color="#302f37"
         component={Link}
-        to="/projBudget"
+        to={`/projBudget/${projId}`}
         sx={{
           ":hover": {
             backgroundColor: "#2c2f33",

@@ -1,7 +1,8 @@
 import "../../css/project.css";
-import ProjectHead from "../../components/ProjectHead";
-import BottomBarDesign from "../../components/BottomBarProject";
+import ProjectHead from "./ProjectHead";
+import BottomBarDesign from "./BottomBarProject";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 function ProjBudget() {
   const [designData, setDesignData] = useState(null);
@@ -10,6 +11,7 @@ function ProjBudget() {
   const [showComments, setShowComments] = useState(false);
   const [showPromptBar, setShowPromptBar] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { projectId } = useParams();
 
   const handleNameChange = async () => {
     if (newName.trim() === "") {
@@ -166,7 +168,7 @@ function ProjBudget() {
         </div>
       </div>
 
-      <BottomBarDesign Budget={true} />
+      <BottomBarDesign Budget={true} projId={projectId} />
     </>
   );
 }

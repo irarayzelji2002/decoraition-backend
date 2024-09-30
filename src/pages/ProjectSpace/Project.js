@@ -212,6 +212,9 @@ function Project() {
       <ProjectHead
         projectData={projectData}
         setIsEditingName={setIsEditingName}
+        setNewName={setNewName}
+        isEditingName={isEditingName}
+        handleNameChange={handleNameChange}
       />
       <div
         style={{

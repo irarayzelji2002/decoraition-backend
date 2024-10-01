@@ -146,17 +146,31 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Canvas Mode Toggle Logic
 	canvasMode.addEventListener("change", function () {
 		if (canvasMode.checked) {
+			// Switch to "Add to SAM Mask" mode
 			canvasModeDescription.textContent = "Add to SAM Mask";
+
+			// Show both canvases and set appropriate z-index
 			addToSAM.style.display = "block";
-			addCanvas.style.display = "block";
+			addCanvas.style.zIndex = 2;
 			removeFromSAM.style.display = "none";
-			removeCanvas.style.display = "none";
+			removeCanvas.style.zIndex = 1;
+
+			// Make removeCanvas non-interactive
+			removeCanvas.classList.add("inactive-canvas");
+			addCanvas.classList.remove("inactive-canvas"); // Ensure addCanvas is interactive
 		} else {
+			// Switch to "Remove from SAM Mask" mode
 			canvasModeDescription.textContent = "Remove from SAM Mask";
+
+			// Show both canvases and set appropriate z-index
 			removeFromSAM.style.display = "block";
-			removeCanvas.style.display = "block";
+			removeCanvas.style.zIndex = 2;
 			addToSAM.style.display = "none";
-			addCanvas.style.display = "none";
+			addCanvas.style.zIndex = 1;
+
+			// Make addCanvas non-interactive
+			addCanvas.classList.add("inactive-canvas");
+			removeCanvas.classList.remove("inactive-canvas"); // Ensure removeCanvas is interactive
 		}
 	});
 
@@ -173,21 +187,60 @@ document.addEventListener("DOMContentLoaded", function () {
 		brushSizeRemove = brushSizeInputRemove.value;
 	});
 
-	selectedColorInputAdd.addEventListener("input", function () {
-		selectedColorAdd = selectedColorInputAdd.value;
-	});
+	// Debounce utility function to reduce redraw frequency
+	function debounce(func, delay) {
+		let timeout;
+		return function (...args) {
+			clearTimeout(timeout);
+			timeout = setTimeout(() => func.apply(this, args), delay);
+		};
+	}
 
-	selectedColorInputRemove.addEventListener("input", function () {
-		selectedColorRemove = selectedColorInputRemove.value;
-	});
+	// Function to trigger a redraw for Add canvas
+	function requestRedrawAdd() {
+		requestAnimationFrame(() => {
+			redrawCanvasAdd();
+		});
+	}
 
-	opacityInputAdd.addEventListener("input", function () {
-		selectedOpacityAdd = opacityInputAdd.value;
-	});
+	// Function to trigger a redraw for Remove canvas
+	function requestRedrawRemove() {
+		requestAnimationFrame(() => {
+			redrawCanvasRemove();
+		});
+	}
 
-	opacityInputRemove.addEventListener("input", function () {
-		selectedOpacityRemove = opacityInputRemove.value;
-	});
+	selectedColorInputAdd.addEventListener(
+		"input",
+		debounce(function () {
+			selectedColorAdd = selectedColorInputAdd.value;
+			requestRedrawAdd();
+		}, 100)
+	);
+
+	selectedColorInputRemove.addEventListener(
+		"input",
+		debounce(function () {
+			selectedColorRemove = selectedColorInputRemove.value;
+			requestRedrawRemove();
+		}, 100)
+	);
+
+	opacityInputAdd.addEventListener(
+		"input",
+		debounce(function () {
+			selectedOpacityAdd = opacityInputAdd.value;
+			requestRedrawAdd();
+		}, 100)
+	);
+
+	opacityInputRemove.addEventListener(
+		"input",
+		debounce(function () {
+			selectedOpacityRemove = opacityInputRemove.value;
+			requestRedrawRemove();
+		}, 100)
+	);
 
 	brushModeCheckboxAdd.addEventListener("change", function () {
 		brushModeDescriptionAdd.textContent = brushModeCheckboxAdd.checked

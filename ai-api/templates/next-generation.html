@@ -17,6 +17,10 @@
 		.sam_canvas,
 		.init_image_preview {
 			position: absolute !important;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
 		}
 
 		.sam_canvas {
@@ -28,6 +32,25 @@
 			transform: translateY(-1000px);
 		}
 
+		/* Add z-index for layering */
+		.add_canvas {
+			z-index: 2;
+			/* Initially on top in Add mode */
+		}
+
+		.remove_canvas {
+			z-index: 1;
+			/* Initially below Add canvas */
+		}
+
+		/* Class to disable interaction */
+		.inactive-canvas {
+			pointer-events: none;
+			opacity: 0.6;
+			/* To visually indicate it's inactive */
+		}
+
+		/* Display control classes */
 		.display_none {
 			display: none;
 		}
@@ -36,6 +59,7 @@
 			display: block;
 		}
 
+		/* Error message styling */
 		.err_msg {
 			color: rgb(220, 53, 69);
 		}
@@ -70,20 +94,32 @@
 		<!-- Mask Prompt -->
 		<label for="mask_prompt">Mask Prompt:</label>
 		<span id="mask_prompt_err" class="err_msg"></span><br />
-		<input type="text" id="mask_prompt" name="mask_prompt" required /><br /><br />
+		<input type="text" id="mask_prompt" name="mask_prompt" required /><br />
 		<!-- Generate Mask button -->
 		<span id="mask_general_err" class="err_msg"></span><br />
 		<button type="button" onclick="generateMask()">
 			Generate Mask
-		</button><br />
+		</button><br /><br />
 		<!-- SAM Mask -->
 		<label for="sam_mask">SAM mask:</label>
 		<span id="sam_mask_err" class="err_msg"></span>
 		<div id="sam_mask_preview"></div>
 
 		<!-- Brush size, color, and opacity controls -->
+		<br />
 		<label for="canvas_mode">Canvas Mode: <span id="canvas_mode_desc">Add To SAM Mask</span></label>
-		<input type="checkbox" id="canvas_mode" checked>
+		<input type="checkbox" id="canvas_mode" checked><br /><br />
+		<div>
+			<div>Refine Mask Option:</div>
+			<div>
+				<input type="radio" id="refine_option_0" name="refine_option" value="0" checked />
+				<label for="mask_0">Add first then remove</label>
+			</div>
+			<div>
+				<input type="radio" id="refine_option_1" name="refine_option" value="1" />
+				<label for="mask_1">Remove first then add</label>
+			</div>
+		</div>
 		<div id="add_to_sam">
 			<h3>Add To SAM Mask Options</h3>
 			<label for="selected_color">Selected Color:</label>
@@ -134,7 +170,7 @@
 		<div id="user_mask_canvas" class="user_mask_canvas">
 			<img src="" id="init_image_preview" class="init_image_preview"></img>
 			<div id="sam_canvas" class="sam_canvas"></div>
-			<canvas id="remove_canvas" class="remove_canvas" style="display: none;"></canvas>
+			<canvas id="remove_canvas" class="remove_canvas"></canvas>
 			<canvas id="add_canvas" class="add_canvas"></canvas>
 		</div>
 		<!-- Base64 Encoded Output -->
@@ -156,6 +192,12 @@
 				Get User Mask (Remove)
 			</button><br /><br />
 		</div>
+		<button type="button" id="preview_mask">
+			Preview Mask
+		</button>
+		<button type="button" id="apply_mask">
+			Apply Mask
+		</button>
 
 		<!-- Generate button -->
 		<span id="general_err" class="err_msg"></span><br />

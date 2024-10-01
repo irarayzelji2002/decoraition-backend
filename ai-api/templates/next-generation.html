@@ -12,9 +12,28 @@
 			height: 512px;
 		}
 
-		.drawing_canvas,
+		.add_canvas,
+		.remove_canvas,
+		.sam_canvas,
 		.init_image_preview {
-			position: absolute;
+			position: absolute !important;
+		}
+
+		.sam_canvas {
+			overflow: hidden;
+		}
+
+		.sam_canvas img {
+			filter: drop-shadow(0px 1000px 0px rgba(117, 67, 255, 0.5));
+			transform: translateY(-1000px);
+		}
+
+		.display_none {
+			display: none;
+		}
+
+		.display_block {
+			display: block;
 		}
 
 		.err_msg {
@@ -34,7 +53,8 @@
 		<!-- Number of Images -->
 		<label for="number_of_images">Number of Images:</label>
 		<span id="number_of_images_err" class="err_msg"></span><br />
-		<input type="range" id="number_of_images" min="1" max="4" value="1" required><br /><br />
+		<input type="range" id="number_of_images" name="number_of_images" min="1" max="4" value="1"
+			required><br /><br />
 		<!-- Color Palette -->
 		<label for="color_palette">Color Palette (comma-separated hex codes):</label><br />
 		<input type="text" id="color_palette" name="color_palette" /><br /><br />
@@ -62,15 +82,18 @@
 		<div id="sam_mask_preview"></div>
 
 		<!-- Brush size, color, and opacity controls -->
-		<div>
-			<label for="brush_size">Brush Size:</label>
-			<input type="range" id="brush_size" min="5" max="50" value="10">
-
+		<label for="canvas_mode">Canvas Mode: <span id="canvas_mode_desc">Add To SAM Mask</span></label>
+		<input type="checkbox" id="canvas_mode" checked>
+		<div id="add_to_sam">
+			<h3>Add To SAM Mask Options</h3>
 			<label for="selected_color">Selected Color:</label>
-			<input type="color" id="selected_color" value="#ff0000">
+			<input type="color" id="selected_color" value="#00ff40">
 
 			<label for="selected_opacity">Selected Opacity:</label>
 			<input type="range" id="selected_opacity" min="0" max="1" step="0.1" value="0.5">
+
+			<label for="brush_size">Brush Size:</label>
+			<input type="range" id="brush_size" min="5" max="50" value="20">
 
 			<label for="selected_brush_mode">Brush Mode: <span id="selected_brush_mode_desc">Draw</span></label>
 			<input type="checkbox" id="selected_brush_mode" checked>
@@ -80,19 +103,59 @@
 
 			<button id="clear_canvas">Clear</button>
 		</div>
+		<div id="remove_from_sam" class="display_none">
+			<h3>Remove From SAM Mask Options</h3>
+			<label for="selected_color">Selected Color:</label>
+			<input type="color" id="selected_color" value="#ff0000">
+
+			<label for="selected_opacity">Selected Opacity:</label>
+			<input type="range" id="selected_opacity" min="0" max="1" step="0.1" value="0.5">
+
+			<label for="brush_size">Brush Size:</label>
+			<input type="range" id="brush_size" min="5" max="50" value="20">
+
+			<label for="selected_brush_mode">Brush Mode: <span id="selected_brush_mode_desc">Draw</span></label>
+			<input type="checkbox" id="selected_brush_mode" checked>
+
+			<label for="mask_visibility">Mask Visibility:</label>
+			<input type="checkbox" id="mask_visibility" checked>
+
+			<button id="clear_canvas">Clear</button>
+		</div>
+		<div id="is_sam">
+			<h3>SAM Mask Options</h3>
+			<label for="selected_color">Selected Color:</label>
+			<input type="color" id="selected_color" value="#7543ff">
+
+			<label for="selected_opacity">Selected Opacity:</label>
+			<input type="range" id="selected_opacity" min="0" max="1" step="0.1" value="0.5">
+		</div>
 		<!-- Canvas for drawing -->
 		<div id="user_mask_canvas" class="user_mask_canvas">
 			<img src="" id="init_image_preview" class="init_image_preview"></img>
-			<canvas id="drawing_canvas" class="drawing_canvas"></canvas>
+			<div id="sam_canvas" class="sam_canvas"></div>
+			<canvas id="remove_canvas" class="remove_canvas" style="display: none;"></canvas>
+			<canvas id="add_canvas" class="add_canvas"></canvas>
 		</div>
 		<!-- Base64 Encoded Output -->
-		<label for="user_mask">User Mask:</label>
-		<span id="user_mask_err" class="err_msg"></span><br />
-		<textarea id="user_mask_base64_output" name="user_mask" rows="3" cols="50"
-			placeholder="Base 64 of User Mask"></textarea><br />
-		<button type="button" id="get_user_mask">
-			Get User Mask
-		</button><br /><br />
+		<div id="get_user_mask_add">
+			<label for="user_mask">User Mask (Add):</label>
+			<span id="user_mask_err" class="err_msg"></span><br />
+			<textarea id="user_mask_base64_output" name="user_mask" rows="3" cols="50"
+				placeholder="Base 64 of User Mask"></textarea><br />
+			<button type="button" id="get_user_mask">
+				Get User Mask (Add)
+			</button><br /><br />
+		</div>
+		<div id="get_user_mask_remove">
+			<label for="user_mask">User Mask (Remove):</label>
+			<span id="user_mask_err" class="err_msg"></span><br />
+			<textarea id="user_mask_base64_output" name="user_mask" rows="3" cols="50"
+				placeholder="Base 64 of User Mask"></textarea><br />
+			<button type="button" id="get_user_mask">
+				Get User Mask (Remove)
+			</button><br /><br />
+		</div>
 
 		<!-- Generate button -->
 		<span id="general_err" class="err_msg"></span><br />
@@ -107,9 +170,10 @@
 
 	<div id="image_container"></div>
 
-	<script src="{{ url_for('static', filename='js/canvas_script.js') }}"></script>
 	<script>
-		let sam_image_paths;
+		window.sam_image_paths = {};
+		window.selected_sam_mask = {};
+
 		async function generateMask() {
 			let err_count = 0;
 			const err_msgs = document.querySelectorAll(".err_msg");
@@ -154,13 +218,13 @@
 				const sam_mask_preview = document.getElementById("sam_mask_preview");
 				sam_mask_preview.innerHTML = "";
 				const { blended_images, masks, masked_images } = data.image_paths;
-				sam_image_paths = data.image_paths
+				window.sam_image_paths = data.image_paths
 
 				// Dynamically create a radio group for the 3 mask options
 				blended_images.forEach((blended_image, index) => {
 					const maskOption = document.createElement("div");
 					maskOption.innerHTML = `
-						<input type="radio" id="mask_${index}" name="selected_mask" value="${index}" />
+						<input type="radio" id="mask_${index}" name="selected_mask" value="${index}" ${index === 0 ? 'checked' : ''} />
 						<label for="mask_${index}">
 							<img src="${blended_images[index]}" alt="Blended Image" width="100" />
 							<img src="${masks[index]}" alt="Mask Image" width="100" />
@@ -168,6 +232,32 @@
 						</label>
 					`;
 					sam_mask_preview.appendChild(maskOption);
+
+					// Add an event listener for this radio button
+					const radio = maskOption.querySelector('input[name="selected_mask"]');
+					console.log("inside foreach");
+					radio.addEventListener('change', function () {
+						const selectedMaskRadioChecked = document.querySelector('input[name="selected_mask"]:checked');
+						const selectedIndex = selectedMaskRadioChecked.value;
+						const { blended_images, masks, masked_images } = window.sam_image_paths;
+						window.selected_sam_mask = {
+							"blended_image": blended_images[selectedIndex],
+							"mask": masks[selectedIndex],
+							"masked_image": masked_images[selectedIndex]
+						};
+						console.log("1window.sam_image_paths:", window.sam_image_paths);
+						console.log("1window.selected_sam_mask:", window.selected_sam_mask);
+						window.useSelectedMask();
+					});
+
+					if (index == 0) {
+						window.selected_sam_mask = {
+							"blended_image": blended_images[0],
+							"mask": masks[0],
+							"masked_image": masked_images[0]
+						};
+						window.useSelectedMask();
+					}
 				});
 			} catch (error) {
 				console.error("Error:", error);
@@ -225,7 +315,7 @@
 				err_count++;
 			}
 			const selectedIndex = selectedMaskRadioChecked.value;
-			const { blended_images, masks, masked_images } = sam_image_paths;
+			const { blended_images, masks, masked_images } = window.sam_image_paths;
 			const sam_mask = {
 				"blended_image": blended_images[selectedIndex],
 				"mask": masks[selectedIndex],
@@ -285,6 +375,7 @@
 			}
 		}
 	</script>
+	<script src="{{ url_for('static', filename='js/canvas_script.js') }}"></script>
 </body>
 
 </html>

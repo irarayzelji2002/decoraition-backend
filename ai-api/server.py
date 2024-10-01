@@ -50,10 +50,13 @@ def load_and_encode_image(image_file):
         # Convert PIL image to a numpy array
         image_np = np.array(image)
 
-        # Encode into PNG using OpenCV and then base64
-        retval, bytes_img = cv2.imencode('.png', image_np)
-        encoded_image = base64.b64encode(bytes_img).decode('utf-8')
+        # Convert from RGB to BGR for OpenCV (since OpenCV uses BGR by default)
+        image_np_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
 
+        # Encode into PNG using OpenCV and then base64
+        retval, bytes_img = cv2.imencode('.png', image_np_bgr)
+        encoded_image = base64.b64encode(bytes_img).decode('utf-8')
+        
         return encoded_image
     except Exception as e:
         print(f"Error loading and encoding image: {e}")
@@ -523,6 +526,9 @@ def combine_masks(sam_mask_path, user_mask_base64):
         print("Error: SAM mask could not be loaded.")
         return None
 
+    # Convert SAM mask to binary (black and white only)
+    _, sam_mask = cv2.threshold(sam_mask, 127, 255, cv2.THRESH_BINARY)
+
     # Decode user mask from base64
     user_mask = decode_base64_image(user_mask_base64)
     
@@ -540,6 +546,9 @@ def combine_masks(sam_mask_path, user_mask_base64):
 
     # Resize user mask to match SAM mask dimensions
     user_mask = cv2.resize(user_mask, (sam_mask.shape[1], sam_mask.shape[0]))
+
+    # Convert user mask to binary (black and white only)
+    _, user_mask = cv2.threshold(user_mask, 127, 255, cv2.THRESH_BINARY)
 
     # Combine the masks
     combined_mask = cv2.addWeighted(sam_mask, 1, user_mask, 1, 0)

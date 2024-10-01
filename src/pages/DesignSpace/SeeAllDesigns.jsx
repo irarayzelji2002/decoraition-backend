@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import SearchAppBar from "../Homepage/SearchAppBar.js";
+import SearchAppBar from "../Homepage/SearchAppBar.jsx";
 import { onAuthStateChanged } from "firebase/auth";
 import Modal from "../../components/Modal.js";
 import "../../css/seeAll.css";

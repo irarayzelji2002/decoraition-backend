@@ -6,14 +6,85 @@ import CloseIcon from "@mui/icons-material/Close";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import "../../css/budget.css";
+import { db } from "../../firebase"; // Assuming you have firebase setup
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 function Budget() {
   const { designId } = useParams();
   const navigate = useNavigate();
+  const [userId, setUserId] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [designData, setDesignData] = useState(null);
   const [budget, setBudget] = useState("");
+  const [showInput, setShowInput] = useState(false);
+  const [budgetItem, setBudgetItem] = useState("");
+  const [pins, setPins] = useState([]);
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+        fetchPins(user.uid, designId);
+      } else {
+        console.error("User is not authenticated");
+      }
+    });
+    return () => unsubscribe();
+  }, [designId]);
+
+  const fetchPins = async (userId, designId) => {
+    try {
+      const pinRef = collection(
+        db,
+        "users",
+        userId,
+        "designs",
+        designId,
+        "pins"
+      );
+      const pinSnapshot = await getDocs(pinRef);
+      const pinList = pinSnapshot.docs.map((doc) => doc.data());
+      setPins(pinList);
+    } catch (error) {
+      console.error("Error fetching pins:", error);
+    }
+  };
+
+  const handleButtonClick = () => {
+    setShowInput(true);
+  };
+
+  const handleInputChange = (e) => {
+    setBudgetItem(e.target.value);
+  };
+
+  const handleInputSubmit = async () => {
+    if (budgetItem.trim() === "") {
+      alert("Pin cannot be empty");
+      return;
+    }
+
+    try {
+      const pinRef = collection(
+        db,
+        "users",
+        userId,
+        "designs",
+        designId,
+        "budgets"
+      );
+      await addDoc(pinRef, { budgetName: budgetItem });
+      setBudgetItem("");
+      setShowInput(false);
+      alert("Pin added successfully!");
+    } catch (error) {
+      console.error("Error adding pin:", error);
+      alert("Failed to add pin");
+    }
+  };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -22,22 +93,6 @@ function Budget() {
   const toggleModal = () => {
     setModalOpen(!modalOpen);
   };
-
-  useEffect(() => {
-    const fetchDesignData = async () => {
-      try {
-        const response = await fetch(`YOUR_API_ENDPOINT/designs/${designId}`);
-        const data = await response.json();
-        setDesignData(data);
-      } catch (error) {
-        console.error("Error fetching design data:", error);
-      }
-    };
-
-    if (designId) {
-      fetchDesignData();
-    }
-  }, [designId]);
 
   const handleAddBudget = () => {
     console.log("Budget added:", budget);
@@ -53,8 +108,8 @@ function Budget() {
           <span className="priceSum">No Budget yet</span>
           <div className="image-frame">
             <img
-              src="../../img/logoWhitebg.png"
-              alt={`design preview `}
+              src={require("../../img/logoWhitebg.png")}
+              alt="design preview"
               className="image-preview"
             />
           </div>
@@ -62,6 +117,24 @@ function Budget() {
         <div className="budgetSpace">
           <Item />
           <Item />
+          <button onClick={handleButtonClick}>Add Pin</button>
+          {showInput && (
+            <div>
+              <input
+                type="text"
+                value={budgetItem}
+                onChange={handleInputChange}
+                placeholder="Enter pin"
+              />
+              <button onClick={handleInputSubmit}>Submit</button>
+            </div>
+          )}
+          <h3>Pins</h3>
+          <ul>
+            {pins.map((pin, index) => (
+              <li key={index}>{pin.budgetName || pin.budgetItem}</li>
+            ))}
+          </ul>
         </div>
       </div>
 

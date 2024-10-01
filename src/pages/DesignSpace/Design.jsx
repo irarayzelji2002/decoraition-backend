@@ -72,10 +72,6 @@ function Design() {
     return () => unsubscribe(); // Cleanup listener on component unmount
   }, [designId]);
 
-  const handleEditNameToggle = () => {
-    setIsEditingName((prev) => !prev);
-  };
-
   const handleCommentTabClick = (side) => {
     setActiveCommentTab(side);
   };
@@ -168,9 +164,6 @@ function Design() {
         toggleComments={toggleComments}
         handleNameChange={handleNameChange}
         setIsEditingName={setIsEditingName}
-        handleEditNameToggle={handleEditNameToggle}
-        setPromptBarOpen={toggleMenu}
-        setIsSidebarOpen={setIsSidebarOpen}
       />
       {activeTab === "design" && (
         <>

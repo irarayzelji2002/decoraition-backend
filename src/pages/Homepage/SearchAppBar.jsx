@@ -20,6 +20,16 @@ const SearchAppBar = ({
   const handleSearch = (event) => {
     onSearchChange(event.target.value); // Pass the search value to the parent
   };
+  const [isFocused, setIsFocused] = React.useState(false);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -49,10 +59,10 @@ const SearchAppBar = ({
               p: "2px 4px",
               display: "flex",
               alignItems: "center",
-              width: "100%",
+              width: isFocused ? "60%" : "50%",
               borderRadius: "24px",
-
               backgroundColor: "var(--inputBg)",
+              transition: "width 0.3s ease-in-out",
             }}
           >
             <IconButton
@@ -66,10 +76,30 @@ const SearchAppBar = ({
               placeholder="Search..."
               onChange={handleSearch}
               value={searchQuery}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               sx={{ ml: 1, flex: 1, color: "var(--color-white)" }}
               inputProps={{ "aria-label": "search google maps" }}
             />
           </Paper>
+          <Box sx={{ flexGrow: 1 }} />
+          <Box
+            component="img"
+            sx={{
+              height: 40,
+              width: 40,
+              borderRadius: "50%",
+              marginLeft: "auto",
+            }}
+            alt=""
+            style={{
+              background: user?.profilePicture
+                ? "none"
+                : "var(--gradientButton)",
+            }}
+            src={user?.profilePicture || ""}
+            // Replace with actual path to profile picture
+          />
         </Toolbar>
       </AppBar>
     </Box>

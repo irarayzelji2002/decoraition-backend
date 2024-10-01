@@ -17,7 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FolderIcon from "@mui/icons-material/Folder";
 import ImageIcon from "@mui/icons-material/Image";
 import SearchAppBar from "./SearchAppBar.jsx";
-import DesignIcon from "../../components/DesignIcon.js";
+import DesignIcon from "../../components/DesignIcon.jsx";
 import DrawerComponent from "./DrawerComponent.jsx";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";

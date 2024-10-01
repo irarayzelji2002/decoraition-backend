@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import SearchAppBar from "../Homepage/SearchAppBar.js";
+import SearchAppBar from "../Homepage/SearchAppBar.jsx";
 import { onAuthStateChanged } from "firebase/auth";
-import Modal from "../../components/Modal.js";
+import Modal from "../../components/Modal.jsx";
 import "../../css/seeAll.css";
 import { Paper, Button, IconButton, InputBase } from "@mui/material";
 import { auth, db } from "../../firebase.js";
@@ -9,7 +9,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import DesignIcon from "../../components/DesignIcon.js";
+import DesignIcon from "../../components/DesignIcon.jsx";
 import "../../css/homepage.css";
 import {
   collection,

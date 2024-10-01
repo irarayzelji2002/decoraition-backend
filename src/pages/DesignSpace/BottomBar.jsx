@@ -1,10 +1,10 @@
-import "../css/bottomBar.css";
+import "../../css/bottomBar.css";
 import Button from "@mui/joy/Button";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 function BottomBar({ onTabChange }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   return (
     <div className="bottomBar">
       <Button

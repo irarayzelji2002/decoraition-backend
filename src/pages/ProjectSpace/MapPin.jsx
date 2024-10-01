@@ -26,7 +26,10 @@ function MapPin() {
           <svg
             width="30"
             height="30"
-            style={{ marginRight: "18px" }}
+            onClick={() => {
+              window.location.href = "/design";
+            }}
+            style={{ marginRight: "18px", cursor: "pointer" }}
             viewBox="0 0 384 300"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -81,10 +84,13 @@ function MapPin() {
           <svg
             width="20"
             height="30"
-            style={{ marginRight: "18px" }}
+            style={{ marginRight: "18px", cursor: "pointer" }}
             viewBox="0 0 240 240"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            onClick={() => {
+              window.location.href = "/editEvent";
+            }}
           >
             <path
               d="M192.186 4.4241L235.502 47.741C236.921 49.1478 238.049 50.8205 238.821 52.6635C239.592 54.5065 239.993 56.4836 240 58.4816C240.007 60.4796 239.62 62.4594 238.86 64.3076C238.101 66.1558 236.985 67.8362 235.576 69.2526L211.495 93.3339L146.667 28.5054L170.748 4.4241C173.596 1.59063 177.449 0 181.467 0C185.484 0 189.338 1.59063 192.186 4.4241Z"
@@ -132,7 +138,7 @@ function MapPin() {
           <svg
             width="20"
             height="30"
-            style={{ marginRight: "18px" }}
+            style={{ marginRight: "18px", cursor: "pointer" }}
             viewBox="0 0 280 302"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

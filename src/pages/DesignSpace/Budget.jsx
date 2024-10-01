@@ -5,17 +5,38 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import { onSnapshot } from "firebase/firestore";
 import "../../css/budget.css";
-import { Height } from "@mui/icons-material";
-import { height } from "@mui/system";
+import { db } from "../../firebase"; // Assuming you have firebase setup
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 function Budget() {
   const { designId } = useParams();
   const navigate = useNavigate();
+  const [userId, setUserId] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [designData, setDesignData] = useState(null);
   const [budget, setBudget] = useState("");
+  const [showInput, setShowInput] = useState(false);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        console.error("User is not authenticated");
+      }
+    });
+    return () => unsubscribe();
+  }, [designId]);
+
+  const handleButtonClick = () => {
+    setShowInput(true);
+  };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -25,26 +46,42 @@ function Budget() {
     setModalOpen(!modalOpen);
   };
 
-  useEffect(() => {
-    const fetchDesignData = async () => {
-      try {
-        const response = await fetch(`YOUR_API_ENDPOINT/designs/${designId}`);
-        const data = await response.json();
-        setDesignData(data);
-      } catch (error) {
-        console.error("Error fetching design data:", error);
-      }
-    };
-
-    if (designId) {
-      fetchDesignData();
-    }
-  }, [designId]);
-
   const handleAddBudget = () => {
     console.log("Budget added:", budget);
     setModalOpen(false);
     setBudget("");
+  };
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+        subscribeToPins(user.uid, designId);
+      } else {
+        console.error("User is not authenticated");
+      }
+    });
+    return () => unsubscribe();
+  }, [designId]);
+
+  const subscribeToPins = (userId, designId) => {
+    const pinRef = collection(
+      db,
+      "users",
+      userId,
+      "designs",
+      designId,
+      "budgets"
+    );
+
+    const unsubscribe = onSnapshot(pinRef, (snapshot) => {
+      const pinList = snapshot.docs.map((doc) => doc.data());
+      setItems(pinList);
+    });
+
+    return unsubscribe;
   };
 
   return (
@@ -55,19 +92,19 @@ function Budget() {
           <span className="priceSum">No Budget yet</span>
           <div className="image-frame">
             <img
-              src="../../img/logoWhitebg.png"
-              alt={`design preview `}
+              src={"../../img/logoWhitebg.png"}
+              alt="design preview"
               className="image-preview"
             />
           </div>
         </div>
-        <div className="budgetSpace">
-          <Item />
-          <Item />
+        <div className="budgetSpace" style={{ marginBottom: "10%" }}>
+          {items.map((item, index) => (
+            <Item key={index} item={item} />
+          ))}
         </div>
       </div>
 
-      {/* Floating Action Button */}
       <div className="circle-button-container">
         {menuOpen && (
           <div className="small-buttons">
@@ -79,7 +116,7 @@ function Budget() {
             </div>
             <div
               className="small-button-container"
-              onClick={() => navigate("/addItem")}
+              onClick={() => navigate(`/addItem/${designId}`)}
             >
               <span className="small-button-text">Add an Item</span>
               <div className="small-circle-button">
@@ -96,7 +133,6 @@ function Budget() {
         </div>
       </div>
 
-      {/* Modal */}
       {modalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import ProjectHead from "../../components/ProjectHead";
+import ProjectHead from "./ProjectHead";
 import MapPin from "./MapPin";
-import BottomBarDesign from "../../components/BottomBarProject";
-
+import BottomBarDesign from "./BottomBarProject";
+import { useParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
@@ -15,6 +15,7 @@ import "../../css/budget.css";
 
 function PlanMap() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { projectId } = useParams();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -38,7 +39,7 @@ function PlanMap() {
           <MapPin />
         </div>
       </div>
-      <BottomBarDesign PlanMap={true} />
+      <BottomBarDesign PlanMap={true} projId={projectId} />
 
       {/* Floating Action Button */}
       <div className="circle-button-container">

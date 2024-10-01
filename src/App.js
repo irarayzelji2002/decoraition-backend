@@ -2,29 +2,30 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Login from "./pages/Account/Login.js";
-import Register from "./pages/Account/Register.js";
+import Login from "./pages/Account/Login.jsx";
+import Register from "./pages/Account/Register.jsx";
 import Users from "./users.js";
-import ChangePassw from "./pages/Account/ChangePass.js";
-import OneTP from "./pages/Account/Otp.js";
-import ForgotPass from "./pages/Account/ForgotPass1.js";
-import Homepage from "./pages/Homepage/Homepage.js";
-import Details from "./pages/Homepage/Details";
-import Settings from "./pages/Settings/Settings.js";
-import Design from "./pages/DesignSpace/Design.js";
-import SeeAllDesigns from "./pages/DesignSpace/SeeAllDesigns.js";
-import Budget from "./pages/DesignSpace/Budget.js";
-import AddItem from "./pages/DesignSpace/AddItem.js";
-import EditItem from "./pages/DesignSpace/EditItem.js";
-import SearchItem from "./pages/DesignSpace/SearchItem.js";
-import Project from "./pages/ProjectSpace/Project.js";
-import ProjBudget from "./pages/ProjectSpace/ProjBudget.js";
-import PlanMap from "./pages/ProjectSpace/PlanMap.js";
-import Timeline from "./pages/ProjectSpace/Timeline.js";
-import AddPin from "./pages/ProjectSpace/AddPin.js";
-import EditEvent from "./pages/ProjectSpace/EditEvent";
-import ProjSetting from "./pages/Settings/ProjSetting.js";
-import Version from "./pages/DesignSpace/Version.js";
+import ChangePassw from "./pages/Account/ChangePass.jsx";
+import OneTP from "./pages/Account/Otp.jsx";
+import ForgotPass from "./pages/Account/ForgotPass1.jsx";
+import Homepage from "./pages/Homepage/Homepage.jsx";
+import Details from "./pages/Homepage/Details.jsx";
+import Settings from "./pages/Settings/Settings.jsx";
+import Design from "./pages/DesignSpace/Design.jsx";
+import SeeAllDesigns from "./pages/DesignSpace/SeeAllDesigns.jsx";
+import Budget from "./pages/DesignSpace/Budget.jsx";
+import AddItem from "./pages/DesignSpace/AddItem.jsx";
+import EditItem from "./pages/DesignSpace/EditItem.jsx";
+import SearchItem from "./pages/DesignSpace/SearchItem.jsx";
+import Project from "./pages/ProjectSpace/Project.jsx";
+import ProjBudget from "./pages/ProjectSpace/ProjBudget.jsx";
+import PlanMap from "./pages/ProjectSpace/PlanMap.jsx";
+import Timeline from "./pages/ProjectSpace/Timeline.jsx";
+import AddPin from "./pages/ProjectSpace/AddPin.jsx";
+import EditEvent from "./pages/ProjectSpace/EditEvent.jsx";
+import ProjSetting from "./pages/Settings/ProjSetting.jsx";
+import Version from "./pages/DesignSpace/Version.jsx";
+import SeeAllProjects from "./pages/DesignSpace/SeeAllProjects.jsx";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 // import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 // import { Rotate90DegreesCcw } from "@mui/icons-material";
@@ -74,20 +75,21 @@ function App() {
           {/* DESIGN SPACE */}
           <Route path="/design/:designId" element={<Design />} />
           <Route path="/searchItem" element={<SearchItem />} />
-          <Route path="/addItem" element={<AddItem />} />
+          <Route path="/addItem/:designId" element={<AddItem />} />
           <Route path="/editItem" element={<EditItem />} />
           <Route path="/users" element={<Users />} />
           <Route path="/budget/:designId" element={<Budget />} />
+          <Route path="/seeAllProjects" element={<SeeAllProjects />} />
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
           <Route path="/version" element={<Version />} />
           {/* PROJECT SPACE */}
           <Route path="/project/:projectId" element={<Project />} />
-          <Route path="/planMap" element={<PlanMap />} />
-          <Route path="/timeline" element={<Timeline />} />
-          <Route path="/projBudget" element={<ProjBudget />} />
-          <Route path="/addPin" element={<AddPin />} />
-          <Route path="/editEvent" element={<EditEvent />} />
-          <Route path="/projSetting" element={<ProjSetting />} />
+          <Route path="/planMap/:projectId" element={<PlanMap />} />
+          <Route path="/timeline/:projectId" element={<Timeline />} />
+          <Route path="/projBudget/:projectId" element={<ProjBudget />} />
+          <Route path="/addPin/" element={<AddPin />} />
+          <Route path="/editEvent/" element={<EditEvent />} />
+          <Route path="/projSetting/" element={<ProjSetting />} />
         </Routes>
       </Router>
     </AuthProvider>

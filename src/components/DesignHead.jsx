@@ -5,32 +5,31 @@ import CommentIcon from "@mui/icons-material/Comment";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { signOut } from "firebase/auth";
-import ChangeModeMenu from "./ChangeModeMenu.js";
-import CopyLinkModal from "./CopyLinkModal.js";
-import DefaultMenu from "./DefaultMenu.js";
-import DeleteConfirmationModal from "./DeleteConfirmationModal.js";
-import DownloadModal from "./DownloadModal.js";
-import InfoModal from "./InfoModal.js";
-import RenameModal from "./RenameModal.js";
-import RestoreModal from "./RestoreModal.js";
-import ShareModal from "./ShareModal.js";
-import ShareMenu from "./ShareMenu.js";
-import MakeCopyModal from "./MakeCopyModal.js";
-import ShareConfirmationModal from "./ShareConfirmationModal.js";
+import ChangeModeMenu from "./ChangeModeMenu.jsx";
+import CopyLinkModal from "./CopyLinkModal.jsx";
+import DefaultMenu from "./DefaultMenu.jsx";
+import DeleteConfirmationModal from "./DeleteConfirmationModal.jsx";
+import DownloadModal from "./DownloadModal.jsx";
+import InfoModal from "./InfoModal.jsx";
+import RenameModal from "./RenameModal.jsx";
+import RestoreModal from "./RestoreModal.jsx";
+import ShareModal from "./ShareModal.jsx";
+import ShareMenu from "./ShareMenu.jsx";
+import MakeCopyModal from "./MakeCopyModal.jsx";
+import ShareConfirmationModal from "./ShareConfirmationModal.jsx";
 import "../css/design.css";
 import { useEffect } from "react";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase.js";
-import DrawerComponent from "../pages/Homepage/DrawerComponent.js";
+import DrawerComponent from "../pages/Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
 
-function ProjectHead({
+function DesignHead({
   designName,
-  setDesignName,
   toggleComments,
   designId,
   setIsSidebarOpen,
-  projectData,
+  designData,
   newName,
   setNewName,
   isEditingName,
@@ -45,7 +44,6 @@ function ProjectHead({
     useState(false);
   const [isCopyLinkModalOpen, setIsCopyLinkModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
@@ -91,8 +89,8 @@ function ProjectHead({
 
       const unsubscribe = onSnapshot(designRef, (doc) => {
         if (doc.exists()) {
-          const projectData = doc.data();
-          setTempName("Untitled");
+          const designData = doc.data();
+          setTempName(designData.name || "Untitled");
         }
       });
 
@@ -309,7 +307,7 @@ function ProjectHead({
               className="headTitleInput"
               style={{ height: "20px" }}
             >
-              {projectData?.name || "Untitled"}
+              {designData.name || "Untitled"}
             </span>
           )}
         </div>
@@ -414,4 +412,4 @@ function ProjectHead({
   );
 }
 
-export default ProjectHead;
+export default DesignHead;

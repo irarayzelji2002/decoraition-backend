@@ -5,23 +5,23 @@ import CommentIcon from "@mui/icons-material/Comment";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { signOut } from "firebase/auth";
-import ChangeModeMenu from "./ChangeModeMenu.js";
-import CopyLinkModal from "./CopyLinkModal.js";
-import DefaultMenu from "./DefaultMenu.js";
-import DeleteConfirmationModal from "./DeleteConfirmationModal.js";
-import DownloadModal from "./DownloadModal.js";
-import InfoModal from "./InfoModal.js";
-import RenameModal from "./RenameModal.js";
-import RestoreModal from "./RestoreModal.js";
-import ShareModal from "./ShareModal.js";
-import ShareMenu from "./ShareMenu.js";
-import MakeCopyModal from "./MakeCopyModal.js";
-import ShareConfirmationModal from "./ShareConfirmationModal.js";
-import "../css/design.css";
+import ChangeModeMenu from "../../components/ChangeModeMenu.js";
+import CopyLinkModal from "../../components/CopyLinkModal";
+import DefaultMenu from "../../components/DefaultMenu.js";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal.js";
+import DownloadModal from "../../components/DownloadModal.js";
+import InfoModal from "../../components/InfoModal.js";
+import RenameModal from "../../components/RenameModal.js";
+import RestoreModal from "../../components/RestoreModal.js";
+import ShareModal from "../../components/ShareModal.js";
+import ShareMenu from "../../components/ShareMenu.js";
+import MakeCopyModal from "../../components/MakeCopyModal.js";
+import ShareConfirmationModal from "../../components/ShareConfirmationModal.js";
+import "../../css/design.css";
 import { useEffect } from "react";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
-import { db, auth } from "../firebase.js";
-import DrawerComponent from "../pages/Homepage/DrawerComponent.js";
+import { db, auth } from "../../../server/firebase.js";
+import DrawerComponent from "../Homepage/DrawerComponent.js";
 import { useNavigate } from "react-router-dom";
 
 function ProjectHead({
@@ -237,9 +237,7 @@ function ProjectHead({
       handleNameChange();
     }
   };
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     document.body.classList.toggle("dark-mode", !darkMode);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ProjectHead from "../../components/ProjectHead";
+import ProjectHead from "./ProjectHead";
 import { Paper, Button, IconButton, InputBase } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -9,7 +9,7 @@ import { getAuth } from "firebase/auth";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
 import Modal from "../../components/Modal";
-import BottomBarDesign from "../../components/BottomBarProject";
+import BottomBarDesign from "./BottomBarProject";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
@@ -212,6 +212,9 @@ function Project() {
       <ProjectHead
         projectData={projectData}
         setIsEditingName={setIsEditingName}
+        setNewName={setNewName}
+        isEditingName={isEditingName}
+        handleNameChange={handleNameChange}
       />
       <div
         style={{
@@ -330,7 +333,7 @@ function Project() {
         <Modal onClose={closeModal} content={getModalContent(modalContent)} />
       )}
 
-      <BottomBarDesign Design={true} />
+      <BottomBarDesign Design={true} projId={projectId} />
     </div>
   );
 }

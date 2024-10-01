@@ -17,6 +17,7 @@ import TwoFrames from "./svg/TwoFrames";
 import FourFrames from "./svg/FourFrames";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { onSnapshot } from "firebase/firestore";
 
 function Design() {
   const { designId } = useParams(); // Get designId from the URL
@@ -33,7 +34,6 @@ function Design() {
   const [activeCommentTab, setActiveCommentTab] = useState("left"); // For "All Comments / For You"
   const [activeStatusTab, setActiveStatusTab] = useState("left"); // For "Open / Resolved"
   const [clicked, setClicked] = useState(false); // Handle click state
-  const [replyVisible, setReplyVisible] = useState(false); // State for reply visibility
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -47,9 +47,10 @@ function Design() {
       if (user) {
         setUserId(user.uid);
 
+        const designRef = doc(db, "users", user.uid, "designs", designId);
+
         const fetchDesignDetails = async () => {
           try {
-            const designRef = doc(db, "users", user.uid, "designs", designId);
             const designSnapshot = await getDoc(designRef);
             if (designSnapshot.exists()) {
               const design = designSnapshot.data();
@@ -64,6 +65,18 @@ function Design() {
         };
 
         fetchDesignDetails();
+
+        const unsubscribeSnapshot = onSnapshot(designRef, (doc) => {
+          if (doc.exists()) {
+            const design = doc.data();
+            setDesignData(design);
+            setNewName(design.name);
+          } else {
+            console.error("Design not found");
+          }
+        });
+
+        return () => unsubscribeSnapshot();
       } else {
         console.error("User is not authenticated");
       }
@@ -108,8 +121,6 @@ function Design() {
           backgroundColor: "var(--brightFont)",
         },
       });
-
-      setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
       console.error("Error updating design name:", error);
       alert("Failed to update design name");
@@ -118,15 +129,6 @@ function Design() {
 
   const toggleComments = () => {
     setShowComments((prev) => !prev);
-  };
-
-  const handleReplyClick = (e) => {
-    e.stopPropagation();
-    setReplyVisible(true);
-  };
-
-  const toggleMenu = () => {
-    setShowMenu((prev) => !prev);
   };
 
   const togglePromptBar = () => {
@@ -151,6 +153,7 @@ function Design() {
       </>
     );
   }
+
   return (
     <div className="whole">
       <ToastContainer

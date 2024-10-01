@@ -26,7 +26,6 @@ import { useNavigate } from "react-router-dom";
 
 function DesignHead({
   designName,
-  setDesignName,
   toggleComments,
   designId,
   setIsSidebarOpen,
@@ -45,7 +44,6 @@ function DesignHead({
     useState(false);
   const [isCopyLinkModalOpen, setIsCopyLinkModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);

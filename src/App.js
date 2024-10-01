@@ -25,6 +25,7 @@ import AddPin from "./pages/ProjectSpace/AddPin.jsx";
 import EditEvent from "./pages/ProjectSpace/EditEvent.jsx";
 import ProjSetting from "./pages/Settings/ProjSetting.jsx";
 import Version from "./pages/DesignSpace/Version.jsx";
+import SeeAllProjects from "./pages/DesignSpace/SeeAllProjects.jsx";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 // import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 // import { Rotate90DegreesCcw } from "@mui/icons-material";
@@ -78,6 +79,7 @@ function App() {
           <Route path="/editItem" element={<EditItem />} />
           <Route path="/users" element={<Users />} />
           <Route path="/budget/:designId" element={<Budget />} />
+          <Route path="/seeAllProjects" element={<SeeAllProjects />} />
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
           <Route path="/version" element={<Version />} />
           {/* PROJECT SPACE */}

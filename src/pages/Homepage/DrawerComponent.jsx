@@ -20,24 +20,90 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import { auth, db } from "../../firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  setDoc,
+} from "firebase/firestore";
 
 const DrawerComponent = ({
   isDrawerOpen,
   onClose,
   handleLogout,
   handleSettings,
-  username = "", // Default to empty string
-  userEmail = "", // Default to empty string
-  designs = [], // Default to empty array onOpen,
   onOpen,
 }) => {
   // State to handle dark mode
   const [darkMode, setDarkMode] = useState(true);
   const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
+  const [username, setUsername] = useState("");
+  const [user, setUser] = useState(null);
+  const [designs, setDesigns] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCopyLinkModal, setShowCopyLinkModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      onSnapshot(userRef, (doc) => {
+        setUsername(doc.data().username);
+      });
+    }
+  }, [user]);
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        fetchDesigns(user.uid);
+        fetchProjects(user.uid);
+      } else {
+        setUser(null);
+        setDesigns([]);
+        setProjects([]);
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
+
+  const fetchDesigns = (userId) => {
+    const designsRef = collection(db, "users", userId, "designs");
+    const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
+
+    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+      const designList = [];
+      querySnapshot.forEach((doc) => {
+        designList.push({ id: doc.id, ...doc.data() });
+      });
+      setDesigns(designList);
+    });
+
+    return () => unsubscribeDesigns();
+  };
+
+  const fetchProjects = (userId) => {
+    const projectsRef = collection(db, "users", userId, "projects");
+    const q = query(projectsRef, where("createdAt", ">", new Date(0))); // Example query
+
+    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+      const projectList = [];
+      querySnapshot.forEach((doc) => {
+        projectList.push({ id: doc.id, ...doc.data() });
+      });
+      setProjects(projectList);
+    });
+
+    return () => unsubscribeDesigns();
+  };
 
   const toggleOptions = () => {
     setShowOptions(!showOptions);
@@ -66,17 +132,9 @@ const DrawerComponent = ({
     }
   };
 
-  const closeCopyLinkModal = () => {
-    setShowCopyLinkModal(false);
-  };
-
   const openRenameModal = () => {
     setShowRenameModal(true);
     setShowOptions(false); // Close options when modal opens
-  };
-
-  const closeRenameModal = () => {
-    setShowRenameModal(false);
   };
 
   const openDeleteModal = () => {
@@ -84,9 +142,6 @@ const DrawerComponent = ({
     setShowOptions(false); // Close options when modal opens
   };
 
-  const closeDeleteModal = () => {
-    setShowDeleteModal(false);
-  };
   const openCopyLinkModal = () => {
     // Simulate copying the link ( may implement actual copy logic here)
     navigator.clipboard.writeText(`https://yourapp.com/designs/`);
@@ -144,25 +199,30 @@ const DrawerComponent = ({
           {username ? username.charAt(0).toUpperCase() : ""}
         </Avatar>
         <Typography variant="body1">{username || "Guest"}</Typography>
-        <Typography variant="caption">{userEmail || "No email"}</Typography>
+        <Typography variant="caption">{user?.email || "No email"}</Typography>
       </div>
       <Divider sx={{ backgroundColor: "gray", my: 2 }} />
       <List>
-        <ListItem>
-          <ListItem button onClick={() => navigate("/")}>
-            <ListItemIcon>
-              <HomeIcon sx={{ color: darkMode ? "white" : "black" }} />
-            </ListItemIcon>
-            <ListItemText primary="Home" />
-          </ListItem>
+        <ListItem onClick={() => navigate("/")} sx={{ cursor: "pointer" }}>
+          <ListItemIcon>
+            <HomeIcon sx={{ color: darkMode ? "white" : "black" }} />
+          </ListItemIcon>
+          <ListItemText primary="Home" />
         </ListItem>
-        <ListItem>
+
+        <ListItem
+          onClick={() => navigate("/seeAllDesigns")}
+          sx={{ cursor: "pointer" }}
+        >
           <ListItemIcon>
             <PhotoLibraryIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>
           <ListItemText primary="Design" />
         </ListItem>
-        <ListItem>
+        <ListItem
+          onClick={() => navigate("/seeAllProjects")}
+          sx={{ cursor: "pointer" }}
+        >
           <ListItemIcon>
             <FolderIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>

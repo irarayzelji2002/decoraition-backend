@@ -21,7 +21,7 @@ import "../css/design.css";
 import { useEffect } from "react";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase.js";
-import DrawerComponent from "../pages/Homepage/DrawerComponent.js";
+import DrawerComponent from "../pages/Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
 
 function DesignHead({

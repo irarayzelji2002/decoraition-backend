@@ -91,7 +91,24 @@ const EditItem = () => {
         // Optionally handle image updates (requires uploading image to Firebase storage)
       });
 
-      navigate(-1); // Go back to the previous page after saving
+      toast.success(`${itemName} has been updated!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+      setTimeout(() => {
+        window.location.href = `/budget/${designId}`;
+      }, 1000);
     } catch (error) {
       console.error("Error updating document:", error);
     }
@@ -100,6 +117,9 @@ const EditItem = () => {
   return (
     <>
       <TopBar state={"Edit Item"} />
+      <ToastContainer
+        progressStyle={{ backgroundColor: "var(--brightFont)" }}
+      />
       <div className="add-item-container">
         <div className="left-column">
           <div className="upload-section">

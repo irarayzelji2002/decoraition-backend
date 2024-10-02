@@ -8,7 +8,14 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import { onSnapshot } from "firebase/firestore";
 import "../../css/budget.css";
 import { db } from "../../firebase"; // Assuming you have firebase setup
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { ToastContainer, toast } from "react-toastify";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 function Budget() {
@@ -20,6 +27,7 @@ function Budget() {
   const [budget, setBudget] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [items, setItems] = useState([]);
+  const [pins, setPins] = useState([]);
 
   useEffect(() => {
     const auth = getAuth();
@@ -77,19 +85,83 @@ function Budget() {
     );
 
     const unsubscribe = onSnapshot(pinRef, (snapshot) => {
-      const pinList = snapshot.docs.map((doc) => doc.data());
-      setItems(pinList);
+      const pinList = snapshot.docs.map((doc) => ({
+        id: doc.id, // Capture the document ID
+        ...doc.data(), // Spread the item data
+      }));
+      setItems(pinList); // Set items with IDs
     });
-
     return unsubscribe;
   };
 
+  const handleDelete = async (itemId) => {
+    try {
+      const itemRef = doc(
+        db,
+        "users",
+        userId,
+        "designs",
+        designId,
+        "budgets",
+        itemId
+      );
+      await deleteDoc(itemRef); // Delete the document from Firestore
+      setItems(items.filter((item) => item.id !== itemId)); // Update local state
+      toast.success("Item has been deleted!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      toast.error("Failed to delete item", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const totalCost = items
+    .reduce(
+      (sum, item) => sum + parseFloat(item.cost || 0) * (item.quantity || 1),
+      0
+    )
+    .toFixed(2);
+
+  const formattedTotalCost = new Intl.NumberFormat("en-US", {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(totalCost);
+
+  console.log(formattedTotalCost); // Example output: "1,234.56"
+
   return (
     <div className={`budget-page ${menuOpen ? "darkened" : ""}`}>
+      <ToastContainer
+        progressStyle={{ backgroundColor: "var(--brightFont)" }}
+      />
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div className="cutoff">
         <div className="budgetSpace">
-          <span className="priceSum">No Budget yet</span>
+          <span
+            className="priceSum"
+            style={{
+              backgroundColor: totalCost > 0 ? "#397438" : "var(--inputBg)",
+            }}
+          >
+            Total Budget: ₱ <strong>{formattedTotalCost}</strong>
+          </span>
           <div className="image-frame">
             <img
               src={"../../img/logoWhitebg.png"}
@@ -99,9 +171,25 @@ function Budget() {
           </div>
         </div>
         <div className="budgetSpace" style={{ marginBottom: "10%" }}>
-          {items.map((item, index) => (
-            <Item key={index} item={item} />
-          ))}
+          {items.length === 0 ? (
+            <div>
+              <img
+                src={"../../img/project-placeholder.png"}
+                style={{ width: "100px" }}
+                className="image-preview"
+                alt="project placeholder"
+              />
+              <p>No items yet</p>
+            </div>
+          ) : (
+            items.map((item, index) => (
+              <Item
+                key={index}
+                item={item}
+                onDelete={() => handleDelete(item.id)}
+              />
+            ))
+          )}
         </div>
       </div>
 

@@ -193,7 +193,7 @@ export default function LoginModal() {
                     borderWidth: "2px", // Maintain the thickness on hover
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "var(--borderInput)", // Border color when focused
+                    borderColor: "var(--brightFont)", // Border color when focused
                     borderWidth: "2px", // Maintain the thickness on focus
                   },
                 },
@@ -248,7 +248,7 @@ export default function LoginModal() {
                     borderWidth: "2px", // Maintain the thickness on hover
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "var(--borderInput)", // Border color when focused
+                    borderColor: "var(--brightFont)", // Border color when focused
                     borderWidth: "2px", // Maintain the thickness on focus
                   },
                 },
@@ -273,7 +273,7 @@ export default function LoginModal() {
                       sx={{
                         color: "var(--color-white)",
                         "&.Mui-checked": {
-                          color: "var(--color-white)",
+                          color: "var(--brightFont)",
                         },
                         borderRadius: "4px",
                         "& .MuiSvgIcon-root": {
@@ -292,9 +292,10 @@ export default function LoginModal() {
                     href="/forgot"
                     variant="body2"
                     sx={{
-                      color: "#FF894D",
+                      color: "var(--brightFont)",
                       textDecoration: "underline",
                       "&:hover": {
+                        color: "var(--color-white)",
                         textDecoration: "underline",
                       },
                     }}

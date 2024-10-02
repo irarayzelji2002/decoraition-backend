@@ -25,55 +25,14 @@ const style = {
   boxShadow: 24,
 };
 
-function Item({ item }) {
+function Item({ item, onDelete }) {
   const [itemPrice, setItemPrice] = useState("");
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [openDelete, setOpenDelete] = React.useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => setOpenDelete(false);
-  const handleDelete = async () => {
-    try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (user) {
-        const userId = user.uid;
-
-        const itemRef = doc(
-          db,
-          "users",
-          userId,
-          "designs",
-          item.designId,
-          "budgets",
-          item.id
-        );
-        await deleteDoc(itemRef);
-        toast.success("Item has been deleted!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          style: {
-            color: "var(--color-white)",
-            backgroundColor: "var(--inputBg)",
-          },
-          progressStyle: {
-            backgroundColor: "var(--brightFont)",
-          },
-        });
-        handleCloseDelete();
-      } else {
-        console.error("User is not authenticated");
-      }
-    } catch (error) {
-      console.error("Error deleting item:", error);
-      alert("Failed to delete item");
-    }
-  };
 
   return (
     <div
@@ -90,18 +49,9 @@ function Item({ item }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <div
-              style={{
-                display: "flex",
-                marginBottom: "12px",
-                margin: "18px",
-              }}
+              style={{ display: "flex", marginBottom: "12px", margin: "18px" }}
             >
               <span
                 id="modal-modal-title"
@@ -115,7 +65,6 @@ function Item({ item }) {
                 cursor={"pointer"}
               />
             </div>
-
             <Divider sx={{ borderColor: "var(--color-grey)" }} />
             <div
               className="input-group"
@@ -171,25 +120,16 @@ function Item({ item }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <div
-              style={{
-                display: "flex",
-                marginBottom: "12px",
-                margin: "18px",
-              }}
+              style={{ display: "flex", marginBottom: "12px", margin: "18px" }}
             >
               <span
                 id="modal-modal-title"
                 style={{ fontSize: "18px", fontWeight: "600" }}
               >
                 Confirm Budget Removal
-              </span>{" "}
+              </span>
               <CloseIcon
                 sx={{ marginLeft: "auto" }}
                 onClick={handleCloseDelete}
@@ -197,7 +137,6 @@ function Item({ item }) {
               />
             </div>
             <Divider sx={{ borderColor: "var(--color-grey)" }} />
-
             <span style={{ textAlign: "center", margin: "18px" }}>
               Are you sure you want to remove the budget item?
             </span>
@@ -224,13 +163,22 @@ function Item({ item }) {
               >
                 Cancel
               </button>
-              <button className="add-item-btn" onClick={handleDelete}>
+              <button className="add-item-btn" onClick={onDelete}>
                 Confirm
               </button>
             </div>
           </div>
         </Box>
       </Modal>
+      <div
+        style={{
+          alignContent: "center",
+          marginLeft: "8px",
+          marginRight: "-6px",
+        }}
+      >
+        <span style={{ fontSize: "12px" }}> x {item.quantity}</span>
+      </div>
       <img
         src="../../img/Room2.jpg"
         alt={`design preview `}
@@ -244,9 +192,7 @@ function Item({ item }) {
           width: "auto  ",
         }}
       >
-        <span className="itemName">
-          {item.itemName} x {item.quantity}
-        </span>
+        <span className="itemName">{item.itemName}</span>
         <span className="itemPrice">Php {item.cost}</span>
       </div>
       <div

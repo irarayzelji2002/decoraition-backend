@@ -1,12 +1,11 @@
 /* General styling */
-* {
-  font-family: "Inter", sans-serif !important;
-}
+
 .edit-event {
   background-color: var(--bgcolor);
   color: var(--color-white);
   padding: 20px;
   font-weight: bold;
+  font-family: "Inter", sans-serif !important;
 }
 
 .form-container {

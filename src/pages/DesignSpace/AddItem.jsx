@@ -63,6 +63,7 @@ const AddItem = () => {
         description: "",
         cost: cost,
         quantity: itemQuantity,
+        designId,
       });
       setBudgetItem("");
       setShowInput(false);

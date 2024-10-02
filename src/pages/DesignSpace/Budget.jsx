@@ -3,17 +3,80 @@ import { useParams, useNavigate } from "react-router-dom";
 import Item from "./Item";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
+import DesignHead from "../../components/DesignHead";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import { onSnapshot } from "firebase/firestore";
 import "../../css/budget.css";
+import { db } from "../../firebase"; // Assuming you have firebase setup
+import { ToastContainer, toast } from "react-toastify";
+import {
+  collection,
+  updateDoc,
+  doc,
+  deleteDoc,
+  getDoc,
+} from "firebase/firestore";
+import Loading from "../../components/Loading";
+import { getAuth } from "firebase/auth";
+import BottomBar from "./BottomBar";
 
 function Budget() {
   const { designId } = useParams();
   const navigate = useNavigate();
+  const [userId, setUserId] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [designData, setDesignData] = useState(null);
   const [budget, setBudget] = useState("");
+  const [items, setItems] = useState([]);
+  const [newName, setNewName] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+
+        const designRef = doc(db, "users", user.uid, "designs", designId);
+
+        const fetchDesignDetails = async () => {
+          try {
+            const designSnapshot = await getDoc(designRef);
+            if (designSnapshot.exists()) {
+              const design = designSnapshot.data();
+              setDesignData(design);
+              setNewName(design.name);
+            } else {
+              console.error("Design not found");
+            }
+          } catch (error) {
+            console.error("Error fetching design details:", error);
+          }
+        };
+
+        fetchDesignDetails();
+
+        const unsubscribeSnapshot = onSnapshot(designRef, (doc) => {
+          if (doc.exists()) {
+            const design = doc.data();
+            setDesignData(design);
+            setNewName(design.name);
+          } else {
+            console.error("Design not found");
+          }
+        });
+
+        return () => unsubscribeSnapshot();
+      } else {
+        console.error("User is not authenticated");
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup listener on component unmount
+  }, [designId]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -23,49 +86,193 @@ function Budget() {
     setModalOpen(!modalOpen);
   };
 
-  useEffect(() => {
-    const fetchDesignData = async () => {
-      try {
-        const response = await fetch(`YOUR_API_ENDPOINT/designs/${designId}`);
-        const data = await response.json();
-        setDesignData(data);
-      } catch (error) {
-        console.error("Error fetching design data:", error);
-      }
-    };
-
-    if (designId) {
-      fetchDesignData();
-    }
-  }, [designId]);
-
   const handleAddBudget = () => {
     console.log("Budget added:", budget);
     setModalOpen(false);
     setBudget("");
   };
 
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+        subscribeToPins(user.uid, designId);
+      } else {
+        console.error("User is not authenticated");
+      }
+    });
+    return () => unsubscribe();
+  }, [designId]);
+
+  const subscribeToPins = (userId, designId) => {
+    const pinRef = collection(
+      db,
+      "users",
+      userId,
+      "designs",
+      designId,
+      "budgets"
+    );
+
+    const unsubscribe = onSnapshot(pinRef, (snapshot) => {
+      const pinList = snapshot.docs.map((doc) => ({
+        id: doc.id, // Capture the document ID
+        ...doc.data(), // Spread the item data
+      }));
+      setItems(pinList); // Set items with IDs
+    });
+    return unsubscribe;
+  };
+
+  const handleDelete = async (itemId) => {
+    try {
+      const itemRef = doc(
+        db,
+        "users",
+        userId,
+        "designs",
+        designId,
+        "budgets",
+        itemId
+      );
+      await deleteDoc(itemRef); // Delete the document from Firestore
+      setItems(items.filter((item) => item.id !== itemId)); // Update local state
+      toast.success("Item has been deleted!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      toast.error("Failed to delete item", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleNameChange = async () => {
+    if (newName.trim() === "") {
+      alert("Design name cannot be empty");
+      return;
+    }
+
+    try {
+      const designRef = doc(db, "users", userId, "designs", designId);
+      await updateDoc(designRef, { name: newName });
+      setIsEditingName(false);
+      toast.success("Design name updated successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+    } catch (error) {
+      console.error("Error updating design name:", error);
+      alert("Failed to update design name");
+    }
+  };
+
+  const totalCost = items
+    .reduce(
+      (sum, item) => sum + parseFloat(item.cost || 0) * (item.quantity || 1),
+      0
+    )
+    .toFixed(2);
+
+  const formattedTotalCost = new Intl.NumberFormat("en-US", {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(totalCost);
+
+  console.log(formattedTotalCost); // Example output: "1,234.56"
+
+  if (!designData) {
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
   return (
     <div className={`budget-page ${menuOpen ? "darkened" : ""}`}>
+      <ToastContainer
+        progressStyle={{ backgroundColor: "var(--brightFont)" }}
+      />
+      <DesignHead
+        designData={designData}
+        newName={newName}
+        setNewName={setNewName}
+        isEditingName={isEditingName}
+        handleNameChange={handleNameChange}
+        setIsEditingName={setIsEditingName}
+      />
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div className="cutoff">
         <div className="budgetSpace">
-          <span className="priceSum">No Budget yet</span>
+          <span
+            className="priceSum"
+            style={{
+              backgroundColor: totalCost > 0 ? "#397438" : "var(--inputBg)",
+            }}
+          >
+            Total Budget: ₱ <strong>{formattedTotalCost}</strong>
+          </span>
           <div className="image-frame">
             <img
-              src="../../img/logoWhitebg.png"
-              alt={`design preview `}
+              src={"../../img/logoWhitebg.png"}
+              alt="design preview"
               className="image-preview"
             />
           </div>
         </div>
-        <div className="budgetSpace">
-          <Item />
-          <Item />
+        <div className="budgetSpace" style={{ marginBottom: "10%" }}>
+          {items.length === 0 ? (
+            <div>
+              <img
+                src={"../../img/project-placeholder.png"}
+                style={{ width: "100px" }}
+                className="image-preview"
+                alt="project placeholder"
+              />
+              <p>No items yet</p>
+            </div>
+          ) : (
+            items.map((item, index) => (
+              <Item
+                key={index}
+                item={item}
+                onDelete={() => handleDelete(item.id)}
+                onEdit={() => navigate(`/editItem/${designId}/${item.id}`)}
+              />
+            ))
+          )}
         </div>
+        <BottomBar designId={designId} design={false} />
       </div>
 
-      {/* Floating Action Button */}
       <div className="circle-button-container">
         {menuOpen && (
           <div className="small-buttons">
@@ -77,7 +284,7 @@ function Budget() {
             </div>
             <div
               className="small-button-container"
-              onClick={() => navigate("/addItem")}
+              onClick={() => navigate(`/addItem/${designId}`)}
             >
               <span className="small-button-text">Add an Item</span>
               <div className="small-circle-button">
@@ -94,7 +301,6 @@ function Budget() {
         </div>
       </div>
 
-      {/* Modal */}
       {modalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">

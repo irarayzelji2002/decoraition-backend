@@ -46,8 +46,6 @@ function Homepage() {
         setUsername(doc.data().username);
       });
     }
-  }, [user]);
-  useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
@@ -61,7 +59,7 @@ function Homepage() {
     });
 
     return () => unsubscribeAuth();
-  }, []);
+  }, [user]);
 
   const fetchDesigns = (userId) => {
     const designsRef = collection(db, "users", userId, "designs");
@@ -286,9 +284,6 @@ function Homepage() {
         handleLogout={handleLogout}
         handleSettings={handleSettings}
         darkMode={darkMode}
-        username={username}
-        userEmail={user ? user.email : ""}
-        designs={designs}
       />
 
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>
@@ -382,7 +377,7 @@ function Homepage() {
             <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
               <h2>Recent Projects</h2>{" "}
               <Link
-                to="/seeAllDesigns"
+                to="/seeAllProjects"
                 className="seeAll"
                 style={{ marginLeft: "auto" }}
               >

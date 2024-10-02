@@ -53,3 +53,9 @@ h5 {
   font-weight: bold !important;
   text-decoration-color: var(--color-quaternary) !important;
 }
+
+.cancel-link:hover {
+  color: var(--color-white) !important;
+  text-decoration-color: var(--color-white) !important;
+  cursor: pointer;
+}

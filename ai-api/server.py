@@ -50,10 +50,13 @@ def load_and_encode_image(image_file):
         # Convert PIL image to a numpy array
         image_np = np.array(image)
 
-        # Encode into PNG using OpenCV and then base64
-        retval, bytes_img = cv2.imencode('.png', image_np)
-        encoded_image = base64.b64encode(bytes_img).decode('utf-8')
+        # Convert from RGB to BGR for OpenCV (since OpenCV uses BGR by default)
+        image_np_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
 
+        # Encode into PNG using OpenCV and then base64
+        retval, bytes_img = cv2.imencode('.png', image_np_bgr)
+        encoded_image = base64.b64encode(bytes_img).decode('utf-8')
+        
         return encoded_image
     except Exception as e:
         print(f"Error loading and encoding image: {e}")
@@ -259,7 +262,33 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                             "control_mode": "ControlNet is more important",
                             "pixel_perfect": True
                         }]
-                    }
+                    },
+                    # "freeu": {
+                    #     "args": [{
+                    #         "enabled": True,
+                    #         "start_ratio": 0.2,  # Start at 20% of the steps
+                    #         "stop_ratio": 0.8,   # Stop at 80% of the steps
+                    #         "transition_smoothness": 0.5,
+                    #         "stage_infos": [
+                    #             {
+                    #                 "backbone_factor": 0.4,  # B1
+                    #                 "skip_factor": 0.7,      # S1
+                    #                 "backbone_offset": 0.5,
+                    #                 "backbone_width": 0.75,
+                    #                 "skip_high_end_factor": 1.1,  # High end scale
+                    #                 "skip_cutoff": 0.3 
+                    #             },
+                    #             {
+                    #                 "backbone_factor": 0.4,  # B2
+                    #                 "skip_factor": 0.3,      # S2
+                    #                 "backbone_offset": 0.5,
+                    #                 "backbone_width": 0.75,
+                    #                 "skip_high_end_factor": 1.1,  # High end scale
+                    #                 "skip_cutoff": 0.3 
+                    #             }
+                    #         ]
+                    #     }]
+                    # }
                 }
             }
         elif style_reference and not base_image:
@@ -497,6 +526,9 @@ def combine_masks(sam_mask_path, user_mask_base64):
         print("Error: SAM mask could not be loaded.")
         return None
 
+    # Convert SAM mask to binary (black and white only)
+    _, sam_mask = cv2.threshold(sam_mask, 127, 255, cv2.THRESH_BINARY)
+
     # Decode user mask from base64
     user_mask = decode_base64_image(user_mask_base64)
     
@@ -514,6 +546,9 @@ def combine_masks(sam_mask_path, user_mask_base64):
 
     # Resize user mask to match SAM mask dimensions
     user_mask = cv2.resize(user_mask, (sam_mask.shape[1], sam_mask.shape[0]))
+
+    # Convert user mask to binary (black and white only)
+    _, user_mask = cv2.threshold(user_mask, 127, 255, cv2.THRESH_BINARY)
 
     # Combine the masks
     combined_mask = cv2.addWeighted(sam_mask, 1, user_mask, 1, 0)
@@ -650,7 +685,7 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, s
                 "mask_blur_x": 4,
                 "mask_blur_y": 4,
                 "inpainting_fill": 0,        # Masked Content = original
-                "inpaint_full_res": False,   # Inpaint area = only masked:
+                "inpaint_full_res": False,   # Inpaint area = only masked
                 "inpaint_full_res_padding": 32,
                 "mask_round": True,          # Soft inpainting
                 "include_init_images": True,
@@ -693,10 +728,10 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, s
                 "mask_blur_x": 4,
                 "mask_blur_y": 4,
                 "inpainting_fill": 0,        # Masked Content = original
-                "inpaint_full_res": False,   # Inpaint area = only masked:
+                "inpaint_full_res": False,   # Inpaint area = only masked
                 "inpaint_full_res_padding": 32,
                 "mask_round": True,          # Soft inpainting
-                "include_init_images": True,
+                "include_init_images": True
             }
 
         response = requests.post(f"{SD_URL}/sdapi/v1/img2img", json=payload)

@@ -1,4 +1,5 @@
 .navName {
+  font-family: "Open Sans", sans-serif !important;
   font-size: 60px;
   background: var(--gradientButton);
   -webkit-background-clip: text;

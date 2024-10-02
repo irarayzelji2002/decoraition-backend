@@ -83,6 +83,9 @@ const SearchAppBar = ({
             />
           </Paper>
           <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ color: "var(--color-white)", marginRight: 2 }}>
+            {username || "Guest"}
+          </Box>
           <Box
             component="img"
             sx={{

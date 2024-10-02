@@ -76,7 +76,7 @@ function App() {
           <Route path="/design/:designId" element={<Design />} />
           <Route path="/searchItem" element={<SearchItem />} />
           <Route path="/addItem/:designId" element={<AddItem />} />
-          <Route path="/editItem" element={<EditItem />} />
+          <Route path="/editItem/:designId/:itemId" element={<EditItem />} />
           <Route path="/users" element={<Users />} />
           <Route path="/budget/:designId" element={<Budget />} />
           <Route path="/seeAllProjects" element={<SeeAllProjects />} />

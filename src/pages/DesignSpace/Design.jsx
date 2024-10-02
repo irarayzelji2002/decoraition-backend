@@ -29,15 +29,11 @@ function Design() {
   const [numImageFrames, setNumImageFrames] = useState(2);
   const [isEditingName, setIsEditingName] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [activeTab, setActiveTab] = useState("design");
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // New state for sidebar
   const [activeCommentTab, setActiveCommentTab] = useState("left"); // For "All Comments / For You"
   const [activeStatusTab, setActiveStatusTab] = useState("left"); // For "Open / Resolved"
   const [clicked, setClicked] = useState(false); // Handle click state
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
 
   // Fetch design details based on designId
   useEffect(() => {
@@ -168,146 +164,139 @@ function Design() {
         handleNameChange={handleNameChange}
         setIsEditingName={setIsEditingName}
       />
-      {activeTab === "design" && (
-        <>
-          {" "}
-          <div className="create-design">
-            <div className="workspace">
-              {showMenu && <DrawerComponent />}
-              {showPromptBar && <PromptBar />}
-              <div className="fixed-arrow-button" onClick={togglePromptBar}>
-                <div className="arrow-button">
-                  {showPromptBar ? (
-                    <ArrowBackIosIcon sx={{ color: "var(--color-white) " }} />
-                  ) : (
-                    <ArrowForwardIosIcon sx={{ color: "var(--color-white)" }} />
-                  )}
+
+      <>
+        <div className="create-design">
+          <div className="workspace">
+            {showMenu && <DrawerComponent />}
+            {showPromptBar && <PromptBar />}
+            <div className="fixed-arrow-button" onClick={togglePromptBar}>
+              <div className="arrow-button">
+                {showPromptBar ? (
+                  <ArrowBackIosIcon sx={{ color: "var(--color-white) " }} />
+                ) : (
+                  <ArrowForwardIosIcon sx={{ color: "var(--color-white)" }} />
+                )}
+              </div>
+            </div>
+
+            <div className="working-area">
+              <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+                <button
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="close-sidebar"
+                >
+                  Close
+                </button>
+                <div className="sidebar-content">
+                  <Version />
                 </div>
               </div>
 
-              <div className="working-area">
-                <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-                  <button
-                    onClick={() => setIsSidebarOpen(false)}
-                    className="close-sidebar"
-                  >
-                    Close
-                  </button>
-                  <div className="sidebar-content">
-                    <Version />
+              {isSidebarOpen && (
+                <div
+                  className="overlay"
+                  onClick={() => setIsSidebarOpen(false)}
+                ></div>
+              )}
+
+              <div className="frame-buttons">
+                <button onClick={() => setNumImageFrames(2)}>
+                  <TwoFrames />
+                </button>
+                <button onClick={() => setNumImageFrames(4)}>
+                  <FourFrames />
+                </button>
+              </div>
+              <div
+                className={numImageFrames === 4 ? "image-grid" : "image-drop"}
+              >
+                {Array.from({ length: numImageFrames }).map((_, index) => (
+                  <div className="image-frame" key={index}>
+                    <img
+                      src="../../img/Room1.png"
+                      alt={`design preview ${index + 1}`}
+                      className="image-preview"
+                    />
                   </div>
+                ))}
+              </div>
+            </div>
+            {showComments && (
+              <div className="comment-section">
+                <div className="split-button">
+                  <button
+                    onClick={() => handleCommentTabClick("left")}
+                    className={`button-side ${
+                      activeCommentTab === "left" ? "active" : ""
+                    }`}
+                  >
+                    All Comments
+                  </button>
+                  <button
+                    onClick={() => handleCommentTabClick("right")}
+                    className={`button-side ${
+                      activeCommentTab === "right" ? "active" : ""
+                    }`}
+                  >
+                    For You
+                  </button>
                 </div>
 
-                {isSidebarOpen && (
-                  <div
-                    className="overlay"
-                    onClick={() => setIsSidebarOpen(false)}
-                  ></div>
-                )}
-
-                <div className="frame-buttons">
-                  <button onClick={() => setNumImageFrames(2)}>
-                    <TwoFrames />
+                <div className="split-button">
+                  <button
+                    onClick={() => handleStatusTabClick("left")}
+                    className={`button-side ${
+                      activeStatusTab === "left" ? "active" : ""
+                    }`}
+                  >
+                    Open
                   </button>
-                  <button onClick={() => setNumImageFrames(4)}>
-                    <FourFrames />
+                  <button
+                    onClick={() => handleStatusTabClick("right")}
+                    className={`button-side ${
+                      activeStatusTab === "right" ? "active" : ""
+                    }`}
+                  >
+                    Resolved
                   </button>
                 </div>
                 <div
-                  className={numImageFrames === 4 ? "image-grid" : "image-drop"}
+                  className={`comment-container ${clicked ? "clicked" : ""}`}
+                  onClick={handleContainerClick}
                 >
-                  {Array.from({ length: numImageFrames }).map((_, index) => (
-                    <div className="image-frame" key={index}>
-                      <img
-                        src="../../img/Room1.png"
-                        alt={`design preview ${index + 1}`}
-                        className="image-preview"
-                      />
+                  <div className="profile-section">
+                    <div className="profile-info">
+                      <div className="profile-pic"></div>
+                      <div className="user-details">
+                        <span className="username">Juan Dela Cruz</span>
+                        <span className="date">June 17, 2024</span>
+                      </div>
                     </div>
-                  ))}
+                    <div className="profile-status">
+                      <FaCheckCircle className="check-mark" />
+                      <FaEllipsisV className="options-dots" />
+                    </div>
+                  </div>
+                  <div className="comment-text">
+                    Lorem ipsum dolor sit amet...
+                  </div>
+
+                  {clicked && (
+                    <div className="reply-input">
+                      <FaAt className="at-symbol" />
+                      <input type="text" placeholder="Add a Reply" />
+                    </div>
+                  )}
                 </div>
+                <button className="add-comment-button">Add a comment</button>
               </div>
-              {showComments && (
-                <div className="comment-section">
-                  <div className="split-button">
-                    <button
-                      onClick={() => handleCommentTabClick("left")}
-                      className={`button-side ${
-                        activeCommentTab === "left" ? "active" : ""
-                      }`}
-                    >
-                      All Comments
-                    </button>
-                    <button
-                      onClick={() => handleCommentTabClick("right")}
-                      className={`button-side ${
-                        activeCommentTab === "right" ? "active" : ""
-                      }`}
-                    >
-                      For You
-                    </button>
-                  </div>
-
-                  <div className="split-button">
-                    <button
-                      onClick={() => handleStatusTabClick("left")}
-                      className={`button-side ${
-                        activeStatusTab === "left" ? "active" : ""
-                      }`}
-                    >
-                      Open
-                    </button>
-                    <button
-                      onClick={() => handleStatusTabClick("right")}
-                      className={`button-side ${
-                        activeStatusTab === "right" ? "active" : ""
-                      }`}
-                    >
-                      Resolved
-                    </button>
-                  </div>
-                  <div
-                    className={`comment-container ${clicked ? "clicked" : ""}`}
-                    onClick={handleContainerClick}
-                  >
-                    <div className="profile-section">
-                      <div className="profile-info">
-                        <div className="profile-pic"></div>
-                        <div className="user-details">
-                          <span className="username">Juan Dela Cruz</span>
-                          <span className="date">June 17, 2024</span>
-                        </div>
-                      </div>
-                      <div className="profile-status">
-                        <FaCheckCircle className="check-mark" />
-                        <FaEllipsisV className="options-dots" />
-                      </div>
-                    </div>
-                    <div className="comment-text">
-                      Lorem ipsum dolor sit amet...
-                    </div>
-
-                    {clicked && (
-                      <div className="reply-input">
-                        <FaAt className="at-symbol" />
-                        <input type="text" placeholder="Add a Reply" />
-                      </div>
-                    )}
-                  </div>
-                  <button className="add-comment-button">Add a comment</button>
-                </div>
-              )}
-            </div>
+            )}
           </div>
-        </>
-      )}
-      {activeTab === "budget" && (
-        <>
-          <Budget />
-        </>
-      )}
+        </div>
+      </>
 
-      <BottomBar onTabChange={handleTabChange} />
+      <BottomBar design={true} designId={designId} />
     </div>
   );
 }

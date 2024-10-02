@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+	// Buttons
+	const previewMask = document.getElementById("preview_mask");
+	const applyMask = document.getElementById("apply_mask");
+
 	// Canvas Mode
 	const canvasMode = document.getElementById("canvas_mode");
 	const canvasModeDescription = document.getElementById("canvas_mode_desc");
@@ -8,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	const isSAM = document.getElementById("is_sam");
 	const selectedColorInputSAM = isSAM.querySelector("#selected_color");
 	const opacityInputSAM = isSAM.querySelector("#selected_opacity");
+	const getSAMMaskPath = document.getElementById("get_sam_mask_path");
 
 	// Add to SAM elements
 	const addToSAM = document.getElementById("add_to_sam");
@@ -98,6 +103,31 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Handle SAM mask change (new logic to apply color and opacity)
 	window.useSelectedMask = function () {
 		if (window.selected_sam_mask) {
+			const currSAMMaskPathInput =
+				getSAMMaskPath.querySelector("#sam_mask_path");
+			const { masks } = window.sam_image_paths;
+
+			// Check if the input value is not empty
+			if (currSAMMaskPathInput.value !== "") {
+				// Check if the value does not match any mask in the masks array
+				const isValueInMasks = masks.includes(
+					currSAMMaskPathInput.value
+				);
+
+				// If the current value is not in masks, show confirmation dialog
+				if (!isValueInMasks) {
+					if (
+						!window.confirm(
+							"Are you sure you want to change the generated mask? It will reset your previous changes."
+						)
+					) {
+						return; // Exit if the user cancels
+					}
+				}
+			}
+
+			// Proceed to update the mask path input and display the selected mask
+			currSAMMaskPathInput.value = window.selected_sam_mask["mask"];
 			const maskSrc = window.selected_sam_mask["masked_image"];
 			console.log("Selected Mask Source:", maskSrc);
 			samMaskImage.src = maskSrc;
@@ -106,8 +136,8 @@ document.addEventListener("DOMContentLoaded", function () {
 				samCanvas.height = samMaskImage.height;
 				applySAMMaskStyling(); // Apply color and opacity styling
 				samCanvas.innerHTML = `
-                    <img src="${maskSrc}" alt="Blended Image" width="512" height="512"/>
-                `;
+                <img src="${maskSrc}" alt="Blended Image" width="512" height="512"/>
+            `;
 			};
 		} else {
 			console.log("No selected SAM mask found.");
@@ -125,6 +155,16 @@ document.addEventListener("DOMContentLoaded", function () {
 			)}, ${selectedOpacity}))`;
 		}
 	}
+	window.applySAMMaskStyling = function () {
+		const samImage = samCanvas.querySelector("img");
+		const selectedColor = selectedColorInputSAM.value;
+		const selectedOpacity = opacityInputSAM.value;
+		if (samImage) {
+			samImage.style.filter = `drop-shadow(0px 1000px 0px rgba(${hexToRgb(
+				selectedColor
+			)}, ${selectedOpacity}))`;
+		}
+	};
 
 	// Hex to RGB conversion function
 	function hexToRgb(hex) {
@@ -510,6 +550,39 @@ document.addEventListener("DOMContentLoaded", function () {
 			hasDrawnPathRemove = false;
 		});
 
+	window.clearAddRemoveCanvas = function () {
+		addContext.clearRect(0, 0, addCanvas.width, addCanvas.height);
+		pathAdd = new Path2D(); // Clear the path
+		erasedPathAdd = new Path2D(); // Clear the erased path
+		erasedRegionsAdd = []; // Clear erased regions
+		hasDrawnPathAdd = false;
+		removeContext.clearRect(0, 0, removeCanvas.width, removeCanvas.height);
+		pathRemove = new Path2D();
+		erasedPathRemove = new Path2D();
+		erasedRegionsRemove = [];
+		hasDrawnPathRemove = false;
+	};
+
+	window.isCanvasEmpty = function (canvas) {
+		const context = canvas.getContext("2d");
+		const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+		const pixels = imgData.data;
+
+		// Loop through pixels (rgba channels)
+		for (let i = 0; i < pixels.length; i += 4) {
+			const r = pixels[i];
+			const g = pixels[i + 1];
+			const b = pixels[i + 2];
+			const alpha = pixels[i + 3];
+
+			// If any pixel is not fully black or transparent, the canvas is not empty
+			if (r !== 0 || g !== 0 || b !== 0 || alpha !== 0) {
+				return false; // Canvas is not empty
+			}
+		}
+		return true; // Canvas is empty (no strokes/masks)
+	};
+
 	// Visibility for Add
 	function redrawCanvasVisibilityAdd(opacity) {
 		// Clear the canvas
@@ -568,14 +641,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Convert to base64 black-and-white image (not changed)
 	getUserMaskAdd.addEventListener("click", function () {
-		userMaskBase64BAW(addCanvas);
+		userMaskBase64BAW(
+			addCanvas,
+			addContext,
+			getUserMaskAdd,
+			"user_mask_add_base64_output"
+		);
 	});
 
 	getUserMaskRemove.addEventListener("click", function () {
-		userMaskBase64BAW(removeCanvas);
+		userMaskBase64BAW(
+			removeCanvas,
+			removeContext,
+			getUserMaskRemove,
+			"user_mask_remove_base64_output"
+		);
 	});
 
-	function getCanvasBase64() {
+	window.getUserMasks = async function () {
+		await userMaskBase64BAW(
+			addCanvas,
+			addContext,
+			getUserMaskAdd,
+			"user_mask_add_base64_output"
+		);
+		await userMaskBase64BAW(
+			removeCanvas,
+			removeContext,
+			getUserMaskRemove,
+			"user_mask_remove_base64_output"
+		);
+	};
+
+	function getCanvasBase64(getUserMask, id) {
 		// Ensure that the original image is loaded before proceeding
 		if (!originalImage) {
 			return;
@@ -583,76 +681,79 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		// Convert the current canvas content to a base64-encoded string
 		const base64Image = addCanvas.toDataURL("image/png");
-		getUserMaskAdd.getElementById("user_mask_base64_output").value =
-			base64Image;
+		getUserMask.querySelector("#" + id).value = base64Image;
 		return base64Image;
 	}
 
-	function userMaskBase64BAW(canvas) {
-		// Ensure that the original image is loaded before proceeding
-		if (!originalImage) {
-			return;
-		}
-
-		// Create a new canvas to store black and white image data
-		const bwCanvas = document.createElement("canvas");
-		const bwContext = bwCanvas.getContext("2d");
-		bwCanvas.width = canvas.width;
-		bwCanvas.height = canvas.height;
-
-		// Fill the entire canvas with black
-		bwContext.fillStyle = "black";
-		bwContext.fillRect(0, 0, bwCanvas.width, bwCanvas.height);
-
-		// Get the drawn path from the current canvas context
-		const imgData = addContext.getImageData(
-			0,
-			0,
-			canvas.width,
-			canvas.height
-		);
-		const bwImageData = bwContext.createImageData(
-			imgData.width,
-			imgData.height
-		);
-
-		for (let i = 0; i < imgData.data.length; i += 4) {
-			const r = imgData.data[i];
-			const g = imgData.data[i + 1];
-			const b = imgData.data[i + 2];
-			const alpha = imgData.data[i + 3];
-
-			// Check if this pixel is part of a drawn path (non-black and fully opaque)
-			const isDrawnPath = alpha > 0 && (r !== 0 || g !== 0 || b !== 0);
-			const isErasedPath = alpha === 0; // Alpha 0 represents an erased area
-
-			if (isDrawnPath) {
-				// For drawn paths, set the color to white
-				bwImageData.data[i] = 255;
-				bwImageData.data[i + 1] = 255;
-				bwImageData.data[i + 2] = 255;
-				bwImageData.data[i + 3] = 255; // Fully opaque
-			} else if (isErasedPath) {
-				// Erased path - remains black (0), already black so no change needed
-				bwImageData.data[i] = 0;
-				bwImageData.data[i + 1] = 0;
-				bwImageData.data[i + 2] = 0;
-				bwImageData.data[i + 3] = 255; // Fully opaque
-			} else {
-				// Unaffected background - keep it black
-				bwImageData.data[i] = 0;
-				bwImageData.data[i + 1] = 0;
-				bwImageData.data[i + 2] = 0;
-				bwImageData.data[i + 3] = 255; // Fully opaque
+	function userMaskBase64BAW(canvas, context, getUserMask, id) {
+		return new Promise((resolve) => {
+			// Ensure that the original image is loaded before proceeding
+			if (!originalImage) {
+				return;
 			}
-		}
 
-		// Put the adjusted black and white image data back on the canvas
-		bwContext.putImageData(bwImageData, 0, 0);
+			// Create a new canvas to store black and white image data
+			const bwCanvas = document.createElement("canvas");
+			const bwContext = bwCanvas.getContext("2d");
+			bwCanvas.width = canvas.width;
+			bwCanvas.height = canvas.height;
 
-		// Convert the black-and-white canvas to a base64 string
-		const base64Image = bwCanvas.toDataURL();
-		getUserMaskAdd.getElementById("user_mask_base64_output").value =
-			base64Image;
+			// Fill the entire canvas with black
+			bwContext.fillStyle = "black";
+			bwContext.fillRect(0, 0, bwCanvas.width, bwCanvas.height);
+
+			// Get the drawn path from the current canvas context
+			const imgData = context.getImageData(
+				0,
+				0,
+				canvas.width,
+				canvas.height
+			);
+			const bwImageData = bwContext.createImageData(
+				imgData.width,
+				imgData.height
+			);
+
+			for (let i = 0; i < imgData.data.length; i += 4) {
+				const r = imgData.data[i];
+				const g = imgData.data[i + 1];
+				const b = imgData.data[i + 2];
+				const alpha = imgData.data[i + 3];
+
+				// Check if this pixel is part of a drawn path (non-black and fully opaque)
+				const isDrawnPath =
+					alpha > 0 && (r !== 0 || g !== 0 || b !== 0);
+				const isErasedPath = alpha === 0; // Alpha 0 represents an erased area
+
+				if (isDrawnPath) {
+					// For drawn paths, set the color to white
+					bwImageData.data[i] = 255;
+					bwImageData.data[i + 1] = 255;
+					bwImageData.data[i + 2] = 255;
+					bwImageData.data[i + 3] = 255; // Fully opaque
+				} else if (isErasedPath) {
+					// Erased path - remains black (0), already black so no change needed
+					bwImageData.data[i] = 0;
+					bwImageData.data[i + 1] = 0;
+					bwImageData.data[i + 2] = 0;
+					bwImageData.data[i + 3] = 255; // Fully opaque
+				} else {
+					// Unaffected background - keep it black
+					bwImageData.data[i] = 0;
+					bwImageData.data[i + 1] = 0;
+					bwImageData.data[i + 2] = 0;
+					bwImageData.data[i + 3] = 255; // Fully opaque
+				}
+			}
+
+			// Put the adjusted black and white image data back on the canvas
+			bwContext.putImageData(bwImageData, 0, 0);
+
+			// Convert the black-and-white canvas to a base64 string
+			const base64Image = bwCanvas.toDataURL();
+			getUserMask.querySelector("#" + id).value = base64Image;
+
+			resolve();
+		});
 	}
 });

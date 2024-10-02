@@ -1,30 +1,125 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { doc, getDoc, updateDoc } from "firebase/firestore"; // Firebase Firestore methods
+import { db } from "../../firebase"; // Your Firebase config file
 import "../../css/addItem.css";
 import TopBar from "../../components/TopBar";
+import { getAuth } from "firebase/auth";
+import { ToastContainer, toast } from "react-toastify";
 
 const EditItem = () => {
+  const { itemId, designId } = useParams(); // Get IDs from URL
+  const navigate = useNavigate();
+  const [userId, setUserId] = useState(null);
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState("");
   const [itemQuantity, setItemQuantity] = useState(1);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(null); // For image preview and re-upload
 
+  // Fetch the item details when the component mounts
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid);
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup listener on component unmount
+  }, [designId]);
+
+  useEffect(() => {
+    const fetchItemDetails = async () => {
+      try {
+        const itemRef = doc(
+          db,
+          "users",
+          userId,
+          "designs",
+          designId,
+          "budgets",
+          itemId
+        );
+        const itemSnap = await getDoc(itemRef);
+
+        if (itemSnap.exists()) {
+          const itemData = itemSnap.data();
+          setItemName(itemData.itemName);
+          setItemPrice(itemData.cost);
+          setItemQuantity(itemData.quantity);
+          if (itemData.imageUrl) {
+            setImage(itemData.imageUrl); // If the image URL exists, set it
+          }
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching document:", error);
+      }
+    };
+
+    fetchItemDetails();
+  }, [itemId, designId, userId]);
+
+  // Handle image upload for preview (no actual storage handling here)
   const handleImageUpload = (e) => {
-    setImage(URL.createObjectURL(e.target.files[0]));
+    const file = e.target.files[0];
+    if (file) {
+      setImage(URL.createObjectURL(file)); // For preview purposes only
+    }
   };
 
-  const handleSubmit = () => {
-    const item = {
-      name: itemName,
-      price: itemPrice,
-      quantity: itemQuantity,
-      image: image,
-    };
-    console.log(item);
+  // Handle updating the item in Firestore
+  const handleSave = async () => {
+    try {
+      const itemRef = doc(
+        db,
+        "users",
+        userId,
+        "designs",
+        designId,
+        "budgets",
+        itemId
+      );
+
+      await updateDoc(itemRef, {
+        itemName,
+        cost: itemPrice,
+        quantity: itemQuantity,
+        // Optionally handle image updates (requires uploading image to Firebase storage)
+      });
+
+      toast.success(`${itemName} has been updated!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+      setTimeout(() => {
+        window.location.href = `/budget/${designId}`;
+      }, 1000);
+    } catch (error) {
+      console.error("Error updating document:", error);
+    }
   };
 
   return (
     <>
       <TopBar state={"Edit Item"} />
+      <ToastContainer
+        progressStyle={{ backgroundColor: "var(--brightFont)" }}
+      />
       <div className="add-item-container">
         <div className="left-column">
           <div className="upload-section">
@@ -46,7 +141,7 @@ const EditItem = () => {
         </div>
         <div className="right-column">
           <div className="form-section">
-            {/* Item name */}
+            {/* Item Name */}
             <label htmlFor="item-name" className="item-name-label">
               Item name
             </label>
@@ -60,7 +155,7 @@ const EditItem = () => {
               />
             </div>
 
-            {/* Item price */}
+            {/* Item Price */}
             <label htmlFor="item-price" className="price-label">
               Item price
             </label>
@@ -79,8 +174,8 @@ const EditItem = () => {
               </div>
             </div>
 
-            {/* Item quantity */}
-            <label htmlFor="item-price" className="price-label">
+            {/* Item Quantity */}
+            <label htmlFor="item-quantity" className="price-label">
               Item quantity
             </label>
             <div className="quantity-section">
@@ -95,9 +190,9 @@ const EditItem = () => {
               </button>
             </div>
 
-            {/* Add Item Button */}
-            <button className="add-item-btn" onClick={handleSubmit}>
-              Edit item
+            {/* Save Button */}
+            <button className="add-item-btn" onClick={handleSave}>
+              Save Changes
             </button>
           </div>
         </div>

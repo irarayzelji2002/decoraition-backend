@@ -313,9 +313,6 @@ function ProjectHead({
         </div>
       </div>
       <div className="right">
-        <IconButton onClick={toggleComments}>
-          <CommentIcon sx={{ color: "var(--color-white)" }} />
-        </IconButton>
         <IconButton>
           <ShareIcon
             sx={{ color: "var(--color-white)" }}

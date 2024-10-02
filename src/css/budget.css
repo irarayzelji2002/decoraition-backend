@@ -1,13 +1,19 @@
 .titleBudget {
-  font-size: 38px;
+  font-size: 24px;
   color: aliceblue;
+  margin-bottom: -12px;
+}
 
-  font-weight: bold;
+.cutoff {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: start;
 }
 
 .priceSum {
   font-size: 18px;
-  color: var(--corlor-white);
+  color: #fafafa;
   margin-top: 24px;
   background-color: var(--inputBg);
   width: fit-content;
@@ -20,8 +26,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 36px;
-  width: 50%;
+  margin: 18px;
+  width: 80%;
 }
 
 .itemSpace {
@@ -40,6 +46,12 @@
 .itemName {
   font-size: 18px;
   color: var(--corlor-white);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }
 .itemPrice {
   margin-top: 12px;
@@ -243,6 +255,11 @@ select {
   .small-circle-button {
     width: 50px;
     height: 50px;
+  }
+  .cutoff {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 

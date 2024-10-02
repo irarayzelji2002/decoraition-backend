@@ -6,8 +6,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import "../../css/budget.css";
-import { Height } from "@mui/icons-material";
-import { height } from "@mui/system";
 
 function Budget() {
   const { designId } = useParams();

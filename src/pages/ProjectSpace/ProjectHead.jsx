@@ -5,32 +5,32 @@ import CommentIcon from "@mui/icons-material/Comment";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { signOut } from "firebase/auth";
-import ChangeModeMenu from "./ChangeModeMenu.js";
-import CopyLinkModal from "./CopyLinkModal.js";
-import DefaultMenu from "./DefaultMenu.js";
-import DeleteConfirmationModal from "./DeleteConfirmationModal.js";
-import DownloadModal from "./DownloadModal.js";
-import InfoModal from "./InfoModal.js";
-import RenameModal from "./RenameModal.js";
-import RestoreModal from "./RestoreModal.js";
-import ShareModal from "./ShareModal.js";
-import ShareMenu from "./ShareMenu.js";
-import MakeCopyModal from "./MakeCopyModal.js";
-import ShareConfirmationModal from "./ShareConfirmationModal.js";
-import "../css/design.css";
+import ChangeModeMenu from "../../components/ChangeModeMenu.jsx";
+import CopyLinkModal from "../../components/CopyLinkModal.jsx";
+import DefaultMenu from "../../components/DefaultMenu.jsx";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal.jsx";
+import DownloadModal from "../../components/DownloadModal.jsx";
+import InfoModal from "../../components/InfoModal.jsx";
+import RenameModal from "../../components/RenameModal.jsx";
+import RestoreModal from "../../components/RestoreModal.jsx";
+import ShareModal from "../../components/ShareModal.jsx";
+import ShareMenu from "../../components/ShareMenu.jsx";
+import MakeCopyModal from "../../components/MakeCopyModal.jsx";
+import ShareConfirmationModal from "../../components/ShareConfirmationModal.jsx";
+import "../../css/design.css";
 import { useEffect } from "react";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
-import { db, auth } from "../firebase.js";
-import DrawerComponent from "../pages/Homepage/DrawerComponent.js";
+import { db, auth } from "../../../server/firebase.js";
+import DrawerComponent from "../Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
 
-function DesignHead({
+function ProjectHead({
   designName,
   setDesignName,
   toggleComments,
   designId,
   setIsSidebarOpen,
-  designData,
+  projectData,
   newName,
   setNewName,
   isEditingName,
@@ -91,8 +91,8 @@ function DesignHead({
 
       const unsubscribe = onSnapshot(designRef, (doc) => {
         if (doc.exists()) {
-          const designData = doc.data();
-          setTempName(designData.name || "Untitled");
+          const projectData = doc.data();
+          setTempName("Untitled");
         }
       });
 
@@ -237,9 +237,7 @@ function DesignHead({
       handleNameChange();
     }
   };
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     document.body.classList.toggle("dark-mode", !darkMode);
@@ -309,7 +307,7 @@ function DesignHead({
               className="headTitleInput"
               style={{ height: "20px" }}
             >
-              {designData.name || "Untitled"}
+              {projectData?.name || "Untitled"}
             </span>
           )}
         </div>
@@ -414,4 +412,4 @@ function DesignHead({
   );
 }
 
-export default DesignHead;
+export default ProjectHead;

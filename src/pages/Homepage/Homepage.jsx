@@ -16,9 +16,9 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import FolderIcon from "@mui/icons-material/Folder";
 import ImageIcon from "@mui/icons-material/Image";
-import SearchAppBar from "./SearchAppBar.js";
-import DesignIcon from "../../components/DesignIcon.js";
-import DrawerComponent from "./DrawerComponent.js";
+import SearchAppBar from "./SearchAppBar.jsx";
+import DesignIcon from "../../components/DesignIcon.jsx";
+import DrawerComponent from "./DrawerComponent.jsx";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import { CheckCircle } from "@mui/icons-material";
@@ -26,7 +26,6 @@ import Delete from "@mui/icons-material/Delete.js";
 import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
 import "../../css/design.css";
-import { projectId } from "../../../server/firebaseConfig.js";
 
 function Homepage() {
   const [user, setUser] = useState(null);

@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../css/timeline.css";
-import { FaPen, FaTrashAlt } from "react-icons/fa";
 import ProjectHead from "./ProjectHead";
 import BottomBarDesign from "./BottomBarProject";
 import { useParams } from "react-router-dom";
+import EditPen from "../DesignSpace/svg/EditPen";
+import Trash from "../DesignSpace/svg/Trash";
 
 function Timeline() {
   const [date, setDate] = useState(new Date());
@@ -33,8 +34,8 @@ function Timeline() {
                 <p>Until Oct 17, 2024</p>
               </div>
               <div className="task-actions">
-                <FaPen className="icon-container" />
-                <FaTrashAlt className="icon-container" />
+                <EditPen />
+                <Trash />
               </div>
             </div>
 
@@ -44,8 +45,8 @@ function Timeline() {
                 <p>Today</p>
               </div>
               <div className="task-actions">
-                <FaPen className="icon-container" />
-                <FaTrashAlt className="icon-container" />
+                <EditPen />
+                <Trash />
               </div>
             </div>
           </div>{" "}

@@ -40,6 +40,12 @@ function Homepage() {
   const [filteredDesigns, setFilteredDesigns] = useState([]);
 
   useEffect(() => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      onSnapshot(userRef, (doc) => {
+        setUsername(doc.data().username);
+      });
+    }
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
@@ -53,7 +59,7 @@ function Homepage() {
     });
 
     return () => unsubscribeAuth();
-  }, []);
+  }, [user]);
 
   const fetchDesigns = (userId) => {
     const designsRef = collection(db, "users", userId, "designs");

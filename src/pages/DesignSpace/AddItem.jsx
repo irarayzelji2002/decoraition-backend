@@ -12,9 +12,7 @@ const AddItem = () => {
   const [itemQuantity, setItemQuantity] = useState(1);
   const [image, setImage] = useState(null);
   const { designId } = useParams();
-
   const [userId, setUserId] = useState(null);
-  const [showInput, setShowInput] = useState(false);
   const [budgetItem, setBudgetItem] = useState("");
   const [cost, setCost] = useState(0);
 
@@ -66,7 +64,7 @@ const AddItem = () => {
         designId,
       });
       setBudgetItem("");
-      setShowInput(false);
+
       const itemName = budgetItem;
       toast.success(`${itemName} has been added!`, {
         position: "top-right",
@@ -83,6 +81,9 @@ const AddItem = () => {
           backgroundColor: "var(--brightFont)",
         },
       });
+      setTimeout(() => {
+        window.location.href = `/budget/${designId}`;
+      }, 1000);
     } catch (error) {
       console.error("Error adding pin:", error);
       alert("Failed to add pin");

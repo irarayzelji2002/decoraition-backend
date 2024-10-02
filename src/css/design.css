@@ -121,10 +121,10 @@
 .create-design {
   display: flex;
   height: 100%;
+  width: 100%;
 }
 .whole {
   min-height: 100%;
-  width: 100%;
 }
 
 h3 {

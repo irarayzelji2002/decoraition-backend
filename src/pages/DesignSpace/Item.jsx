@@ -25,7 +25,7 @@ const style = {
   boxShadow: 24,
 };
 
-function Item({ item, onDelete }) {
+function Item({ item, onDelete, onEdit }) {
   const [itemPrice, setItemPrice] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -205,7 +205,7 @@ function Item({ item, onDelete }) {
           alignItems: "center",
         }}
       >
-        <div onClick={handleOpen}>
+        <div onClick={onEdit}>
           <EditPen />
         </div>
         <div onClick={handleOpenDelete}>

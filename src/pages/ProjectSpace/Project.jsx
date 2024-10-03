@@ -2,8 +2,18 @@ import React, { useState, useEffect } from "react";
 import ProjectHead from "./ProjectHead";
 import { Paper, Button, IconButton, InputBase } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  updateDoc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
+import { auth, db } from "../../firebase";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { getAuth } from "firebase/auth";
 import SearchIcon from "@mui/icons-material/Search";
@@ -13,9 +23,18 @@ import BottomBarDesign from "./BottomBarProject";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
+import { useNavigate, Link } from "react-router-dom";
 import "../../css/seeAll.css";
 import "../../css/project.css";
 import "../../css/project.css";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import FolderIcon from "@mui/icons-material/Folder";
+import ImageIcon from "@mui/icons-material/Image";
+import { CheckCircle } from "@mui/icons-material";
+import { onAuthStateChanged } from "firebase/auth";
+import DesignIcon from "../../components/DesignIcon.jsx";
+import Delete from "@mui/icons-material/Delete.js";
 
 const SearchBar = styled(Paper)(({ theme }) => ({
   display: "flex",
@@ -49,11 +68,138 @@ function Project() {
   const [userId, setUserId] = useState(null);
   const [projectData, setProjectData] = useState(null);
   const [isEditingName, setIsEditingName] = useState(false);
+  const [designs, setDesigns] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  const handleEditNameToggle = () => {
-    setIsEditingName((prev) => !prev);
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
   };
 
+  useEffect(() => {
+    if (user) {
+    }
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        fetchDesigns(user.uid);
+      } else {
+        setUser(null);
+        setDesigns([]);
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, [user]);
+
+  const fetchDesigns = (userId) => {
+    const designsRef = collection(
+      db,
+      "users",
+      userId,
+      "projects",
+      projectId,
+      "designs"
+    );
+    const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
+
+    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+      const designList = [];
+      querySnapshot.forEach((doc) => {
+        designList.push({ id: doc.id, ...doc.data() });
+      });
+      setDesigns(designList);
+    });
+
+    return () => unsubscribeDesigns();
+  };
+  const handleCreateDesign = async () => {
+    try {
+      const designId = new Date().getTime().toString(); // Generate a unique ID
+      const currentUser = auth.currentUser;
+
+      if (currentUser) {
+        const projectRef = doc(
+          db,
+          "users",
+          currentUser.uid,
+          "projects",
+          projectId
+        );
+
+        // Design reference within the specific project
+        const designRef = doc(projectRef, "designs", designId);
+
+        await setDoc(designRef, {
+          name: "Untitled", // Default design name
+          createdAt: new Date(),
+          projectId: projectId, // Linking design to the project
+        });
+
+        // Show toast notification when the project is created
+        toast.success("Design created successfully!", {
+          icon: <CheckCircle />,
+          position: "top-right",
+          autoClose: 3000, // 3 seconds auto close
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          style: {
+            color: "var(--color-white)",
+            backgroundColor: "var(--inputBg)",
+          },
+          progressStyle: {
+            backgroundColor: "var(--brightFont)",
+          },
+        });
+
+        // Navigate to the newly created design
+        setTimeout(() => navigate(`/design/${designId}`), 1500);
+      }
+    } catch (error) {
+      console.error("Error creating design: ", error);
+      toast.error("Error creating design! Please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+  const handleDeleteDesign = async (designId) => {
+    try {
+      const currentUser = auth.currentUser;
+
+      if (currentUser) {
+        const projectRef = doc(
+          db,
+          "users",
+          currentUser.uid,
+          "projects",
+          projectId
+        );
+
+        await deleteDoc(projectRef);
+
+        toast.success("Design deleted", {
+          icon: <Delete />,
+          style: {
+            color: "var(--color-white)",
+            backgroundColor: "var(--inputBg)",
+          },
+          progressStyle: {
+            backgroundColor: "var(--brightFont)",
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting design: ", error);
+    }
+  };
   const handleNameChange = async () => {
     if (newName.trim() === "") {
       alert("Design name cannot be empty");
@@ -134,68 +280,7 @@ function Project() {
     setModalOpen(false);
     setModalContent(null);
   };
-
-  const getModalContent = (content) => {
-    switch (content) {
-      case "Owner":
-        return (
-          <>
-            <SearchBar>
-              <InputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-                sx={{ flex: 1, color: "var(--color-white)" }}
-              />
-              <IconButton type="submit" aria-label="search">
-                <SearchIcon sx={{ color: "var(--color-white)" }} />
-              </IconButton>
-            </SearchBar>
-            <OptionButton>Any owner</OptionButton>
-            <OptionButton>Owned by me</OptionButton>
-          </>
-        );
-      case "Date Modified":
-        return (
-          <>
-            <OptionButton>Any time</OptionButton>
-            <OptionButton>Today</OptionButton>
-            <OptionButton>This week</OptionButton>
-            <OptionButton>This month</OptionButton>
-            <OptionButton>This year</OptionButton>
-            <OptionButton>Choose date range</OptionButton>
-          </>
-        );
-      case "Date Created":
-        return (
-          <>
-            <OptionButton>Any time</OptionButton>
-            <OptionButton>Today</OptionButton>
-            <OptionButton>This week</OptionButton>
-            <OptionButton>This month</OptionButton>
-            <OptionButton>This year</OptionButton>
-            <OptionButton>Choose date range</OptionButton>
-          </>
-        );
-      case "Sort By":
-        return (
-          <>
-            <OptionButton>Date modified</OptionButton>
-            <OptionButton>Date created</OptionButton>
-            <OptionButton>Name</OptionButton>
-            <OptionButton>Owner</OptionButton>
-          </>
-        );
-      case "Order":
-        return (
-          <>
-            <OptionButton>Descending</OptionButton>
-            <OptionButton>Ascending</OptionButton>
-          </>
-        );
-      default:
-        return null;
-    }
-  };
+  const proj = "proj";
 
   if (!projectData) {
     return (
@@ -314,24 +399,57 @@ function Project() {
         </span>
       </div>
       <div className="designs-list">
-        {[...Array(5)].map((_, index) => (
-          <div className="design-card" key={index}>
-            <img
-              src="/img/design-placeholder.png"
-              alt="Modern Bedroom"
-              className="design-image"
+        {designs.length > 0 ? (
+          designs.slice(0, 6).map((design) => (
+            <DesignIcon
+              key={design.id}
+              name={design.name}
+              designId={design.id}
+              onDelete={handleDeleteDesign}
+              onOpen={() =>
+                navigate(`/design/${design.id}/project`, {
+                  state: { designId: design.id },
+                })
+              }
             />
-            <div className="design-info">
-              <h3>Modern Bedroom</h3>
-              <p>Modified July 10, 2024</p>
-            </div>
+          ))
+        ) : (
+          <div className="no-content">
+            <img src="/img/design-placeholder.png" alt="No designs yet" />
+            <p>No designs yet. Start creating.</p>
           </div>
-        ))}
+        )}
       </div>
 
-      {modalOpen && (
-        <Modal onClose={closeModal} content={getModalContent(modalContent)} />
-      )}
+      <div className="circle-button-container">
+        {menuOpen && (
+          <div className="small-buttons">
+            <div className="small-button-container">
+              <span className="small-button-text">Import a Project</span>
+              <div className="small-circle-button">
+                <FolderIcon className="icon" />
+              </div>
+            </div>
+            <div
+              className="small-button-container"
+              onClick={handleCreateDesign}
+            >
+              <span className="small-button-text">Create a Design</span>
+              <div className="small-circle-button">
+                <ImageIcon className="icon" />
+              </div>
+            </div>
+          </div>
+        )}
+        <div
+          className={`circle-button ${menuOpen ? "rotate" : ""}`}
+          onClick={toggleMenu}
+        >
+          {menuOpen ? <CloseIcon /> : <AddIcon />}
+        </div>
+      </div>
+
+      {modalOpen && <Modal onClose={closeModal} />}
 
       <BottomBarDesign Design={true} projId={projectId} />
     </div>

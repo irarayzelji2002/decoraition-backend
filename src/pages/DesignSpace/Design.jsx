@@ -43,7 +43,16 @@ function Design() {
       if (user) {
         setUserId(user.uid);
 
-        const designRef = doc(db, "users", user.uid, "designs", designId);
+        const isProjectPath = window.location.pathname.includes("/project");
+
+        let designRef;
+        if (isProjectPath) {
+          // Use a different reference when "/project" is in the URL
+          designRef = doc(db, "users", user.uid, "projects", designId);
+        } else {
+          // Use the original design reference
+          designRef = doc(db, "users", user.uid, "designs", designId);
+        }
 
         const fetchDesignDetails = async () => {
           try {
@@ -145,6 +154,7 @@ function Design() {
   if (!designData) {
     return (
       <>
+        {designId}
         <Loading />
       </>
     );

@@ -415,13 +415,19 @@ function Homepage() {
             <div className="small-buttons">
               <div className="small-button-container">
                 <span className="small-button-text">Create a Project</span>
-                <div className="small-circle-button">
+                <div
+                  className="small-circle-button"
+                  onClick={handleCreateDesign}
+                >
                   <FolderIcon className="icon" />
                 </div>
               </div>
               <div className="small-button-container">
                 <span className="small-button-text">Create a Design</span>
-                <div className="small-circle-button">
+                <div
+                  className="small-circle-button"
+                  onClick={handleCreateProject}
+                >
                   <ImageIcon className="icon" />
                 </div>
               </div>

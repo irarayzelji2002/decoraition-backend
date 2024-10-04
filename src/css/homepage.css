@@ -5,6 +5,17 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.separator {
+  display: flex;
+  text-align: left;
+  width: 100%;
+  background-color: var(--bright-grey);
+  padding: 10px;
+  border-radius: 10px;
+  align-items: center;
+  margin-top: 20px;
+}
+
 .homepage {
   background-image: var(--bg-image);
   background-repeat: no-repeat;
@@ -96,7 +107,6 @@ h2 {
 .recent-projects h2 {
   color: var(--color-white);
   font-size: 24px;
-  margin-bottom: 10px;
 }
 
 .no-content p {

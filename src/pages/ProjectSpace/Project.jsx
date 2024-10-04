@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ProjectHead from "./ProjectHead";
-import { Paper, Button, IconButton, InputBase } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   collection,
   query,
@@ -13,52 +11,28 @@ import {
   getDoc,
   setDoc,
 } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Paper, IconButton, InputBase } from "@mui/material";
+import {
+  Search as SearchIcon,
+  Add as AddIcon,
+  Close as CloseIcon,
+  Folder as FolderIcon,
+  Image as ImageIcon,
+  CheckCircle,
+  Delete,
+} from "@mui/icons-material";
+import { ToastContainer, toast } from "react-toastify";
+
 import { auth, db } from "../../firebase";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { getAuth } from "firebase/auth";
-import SearchIcon from "@mui/icons-material/Search";
-import { styled } from "@mui/material/styles";
+import ProjectHead from "./ProjectHead";
 import Modal from "../../components/Modal";
 import BottomBarDesign from "./BottomBarProject";
-import { ToastContainer } from "react-toastify";
-import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
-import { useNavigate, Link } from "react-router-dom";
+import DesignIcon from "../../components/DesignIcon";
+
 import "../../css/seeAll.css";
 import "../../css/project.css";
-import "../../css/project.css";
-import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
-import FolderIcon from "@mui/icons-material/Folder";
-import ImageIcon from "@mui/icons-material/Image";
-import { CheckCircle } from "@mui/icons-material";
-import { onAuthStateChanged } from "firebase/auth";
-import DesignIcon from "../../components/DesignIcon.jsx";
-import Delete from "@mui/icons-material/Delete.js";
-
-const SearchBar = styled(Paper)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  borderRadius: "10px",
-  padding: theme.spacing(1),
-  marginBottom: theme.spacing(2),
-  backgroundColor: "#25232A",
-  border: "1px solid #4B4A4B",
-}));
-
-const OptionButton = styled(Button)(({ theme }) => ({
-  display: "block",
-  width: "100%",
-  textAlign: "left",
-  padding: theme.spacing(1),
-  borderRadius: "10px",
-  marginTop: theme.spacing(1),
-  backgroundColor: "#25232A",
-  color: "var(--color-white)",
-  "&:hover": {
-    backgroundColor: "#3B393F",
-  },
-}));
 
 function Project() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -271,16 +245,10 @@ function Project() {
     return () => unsubscribe(); // Cleanup listener on component unmount
   }, [projectId]);
 
-  const openModal = (content) => {
-    setModalContent(content);
-    setModalOpen(true);
-  };
-
   const closeModal = () => {
     setModalOpen(false);
     setModalContent(null);
   };
-  const proj = "proj";
 
   if (!projectData) {
     return (
@@ -349,25 +317,7 @@ function Project() {
               flexDirection: "row",
               overflow: "hidden",
             }}
-          >
-            {["Owner", "Date Modified", "Date Created", "Sort By", "Order"].map(
-              (item, index) => (
-                <div
-                  key={index}
-                  className="dropdown"
-                  onClick={() => openModal(item)}
-                >
-                  <span
-                    className="dropdown-text"
-                    style={{ whiteSpace: "nowrap" }}
-                  >
-                    {item}
-                  </span>
-                  <ArrowDropDownIcon className="dropdown-icon" />
-                </div>
-              )
-            )}
-          </main>
+          ></main>
         </div>
       </div>
       <div
@@ -398,7 +348,7 @@ function Project() {
           See All
         </span>
       </div>
-      <div className="designs-list">
+      <div className="designs-list" style={{ marginBottom: "20%" }}>
         {designs.length > 0 ? (
           designs.slice(0, 6).map((design) => (
             <DesignIcon

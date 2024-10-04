@@ -336,7 +336,7 @@ function Homepage() {
 
         <section className="recent-section">
           <div className="recent-designs">
-            <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
+            <div className="separator">
               <h2>Recent Designs</h2>{" "}
               <Link
                 to="/seeAllDesigns"
@@ -374,7 +374,7 @@ function Homepage() {
 
         <section className="recent-section">
           <div className="recent-designs">
-            <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
+            <div className="separator">
               <h2>Recent Projects</h2>{" "}
               <Link
                 to="/seeAllProjects"

@@ -30,6 +30,7 @@ body {
   --color-tertiary: #27262c;
   --borders: #5e5e5e;
   --color-grey: #9d9ca6;
+  --bright-grey: #4a4a4a;
   --color-quaternary: #ef4f56;
   --color-white: #fafafa;
   --color-black: #080808;
@@ -60,6 +61,7 @@ body {
   --color-secondary: #ff6347;
   --color-tertiary: #f0f0f0;
   --color-grey: #666666;
+  --bright-grey: #afaeae;
   --color-quaternary: #ff4500;
   --color-white: #0a0a0a;
   --color-black: #f8f8f8;

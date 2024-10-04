@@ -296,7 +296,10 @@ function Homepage() {
             src="/img/Logo-Colored.png"
             alt="logo"
           />
-          <h1 className="navName">DecorAItion</h1>
+          <div>
+            <h1 className="navName">DecorAItion</h1>
+            <p className="navTagline">Forming ideas with generative AI</p>
+          </div>
         </div>
 
         <div className="action-buttons">

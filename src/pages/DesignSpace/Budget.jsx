@@ -326,9 +326,11 @@ function Budget() {
                 item={item}
                 onDelete={() => handleDelete(item.id)}
                 onEdit={() =>
-                  navigate(
-                    `/editItem/${designId}/${item.id}/${projectId}/project`
-                  )
+                  projectId
+                    ? navigate(
+                        `/editItem/${designId}/${item.id}/${projectId}/project`
+                      )
+                    : navigate(`/editItem/${designId}/${item.id}`)
                 }
               />
             ))

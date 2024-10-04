@@ -23,9 +23,12 @@ import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import { CheckCircle } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete.js";
+
 import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
 import "../../css/design.css";
+import ProjectIcon from "./svg/ProjectIcon.jsx";
+import DesignSvg from "./svg/DesignSvg.jsx";
 
 function Homepage() {
   const [user, setUser] = useState(null);
@@ -308,7 +311,14 @@ function Homepage() {
         <div className="recent-designs">
           {searchQuery && <h2>Search Results</h2>}
           {searchQuery && (
-            <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
+            <div
+              style={{
+                display: "flex",
+                textAlign: "left",
+                width: "100%",
+                marginLeft: "20px",
+              }}
+            >
               <div className="layout" style={{ marginBottom: "100px" }}>
                 {filteredDesigns.length > 0 ? (
                   filteredDesigns.slice(0, 3).map((design) => (
@@ -337,6 +347,7 @@ function Homepage() {
         <section className="recent-section">
           <div className="recent-designs">
             <div className="separator">
+              <DesignSvg />
               <h2>Recent Designs</h2>{" "}
               <Link
                 to="/seeAllDesigns"
@@ -375,6 +386,7 @@ function Homepage() {
         <section className="recent-section">
           <div className="recent-designs">
             <div className="separator">
+              <ProjectIcon />
               <h2>Recent Projects</h2>{" "}
               <Link
                 to="/seeAllProjects"

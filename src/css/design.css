@@ -56,7 +56,7 @@
   color: var(--brightFont) !important;
   text-align: right;
   margin-left: auto;
-
+  margin-right: 12px;
   display: block;
 
   font-weight: bold !important;

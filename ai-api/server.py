@@ -16,6 +16,7 @@ CORS(app)
 
 # Constant variables
 SD_URL = "http://127.0.0.1:7860"
+SERVER_URL = "http://127.0.0.1:8080"
 IMAGES_FOLDER = 'static/images'
 if not os.path.exists(IMAGES_FOLDER):
     os.makedirs(IMAGES_FOLDER)
@@ -120,6 +121,24 @@ def save_images(image_data_list, folder_name):
             folder_path = f"static/{folder_name}"
             os.makedirs(folder_path, exist_ok=True)
             image_path = os.path.join(f"static/{folder_name}", filename)
+            img.save(image_path)
+            saved_paths.append(f"/static/{folder_name}/{filename}")
+    return saved_paths
+
+def save_images_agent_scheduler(image_data_list, folder_name):
+    """Helper function to save images and return file paths."""
+    saved_paths = []
+    for image_data in image_data_list:
+        if image_data.get("image"):  # Check if "image" key exists
+            # Access the base64 image string from the dictionary
+            image_str = image_data["image"]
+            # Decode the base64 image data
+            image_bytes = base64.b64decode(image_str.split(",", 1)[-1])
+            img = Image.open(io.BytesIO(image_bytes))
+            filename = generate_image_filename("png")
+            folder_path = f"static/{folder_name}"
+            os.makedirs(folder_path, exist_ok=True)
+            image_path = os.path.join(folder_path, filename)
             img.save(image_path)
             saved_paths.append(f"/static/{folder_name}/{filename}")
     return saved_paths
@@ -232,6 +251,103 @@ def apply_sdxl_style(selected_style_name, prompt, color_palette=None):
             prompt = f"{prompt}{colors_description}"
         # Return original prompt with no negative prompt
         return prompt, ""
+
+# STATUS & PROGRESS TRACKING
+def get_task_status(task_id):
+    """Check the status of a specific task in agent scheduler"""
+    try:
+        response = requests.get(f"{SD_URL}/agent-scheduler/v1/queue")
+        if response.status_code == 200:
+            tasks = response.json().get("pending_tasks", [])
+            for task in tasks:
+                if task.get("id") == task_id:
+                    return task
+            return None
+        else:
+            print(f"Error fetching task status: {response.status_code}, {response.text}")
+            return None
+    except Exception as e:
+        print(f"Error fetching task status: {e}")
+        return None
+
+@app.route('/generate-image/task-status', methods=['GET'])
+def get_task_status_route():
+    """Route to get the current progress of tasks in agent scheduler"""
+    try:
+        task_id = request.args.get('task_id')
+
+        # Handle resposne
+        # {current_task_id:task(tgv9v9s95rappk3),
+        # pending_tasks:[],
+        # total_pending_tasks:1,
+        # paused:false
+        # }
+        if task_id:
+            status = get_task_status(task_id)
+            if status:
+                return jsonify(status), 200
+        return jsonify({"error": "Task not found"}), 404
+    except Exception as e:
+        print(f"Error getting status: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+@app.route('/generate-image/image-status', methods=['GET'])
+def track_image_generation_progress():
+    """Route to get progress of task's image generation"""
+    try:
+        # Request progress API using GET
+        response = requests.get(f"{SD_URL}/sdapi/v1/progress?skip_current_image=false")
+        
+        if response.status_code == 200:
+            return jsonify(response.json()), 200
+        else:
+            print(f"Error fetching progress: {response.status_code}, {response.text}")
+            return jsonify({"error": "Failed to retrieve progress"}), response.status_code
+
+    except Exception as e:
+        print(f"Error tracking progress: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+# GET TASK RESULTS
+def get_task_results(task_id):
+    """Retrieve the results of a completed task from the agent scheduler"""
+    try:
+        response = requests.get(f"{SD_URL}/agent-scheduler/v1/task/{task_id}/results")
+
+        # Handle response
+        if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("data") and response.json().get("success") == True:
+            images_data = response.json().get("data", [])
+            image_paths = save_images_agent_scheduler(images_data, "images")
+            return jsonify({"image_paths": image_paths}), 200
+        else:
+            return jsonify({"error": "No images were generated. " + response.text}), 500
+
+    except Exception as e:
+        print(f"Error fetching task results: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+@app.route('/generate-image/get-results', methods=['GET'])
+def get_task_results_route():
+    """Route to get the generated images once the task is completed"""
+    try:
+        task_id = request.args.get('task_id')
+
+        if not task_id:
+            return jsonify({"error": "Task ID is required"}), 400
+
+        return get_task_results(task_id)
+        # Check task status in case it's not completed
+        # status = get_task_status(task_id)
+        # print("STATUS:")
+        # print(status)
+        # if status:
+        #     return get_task_results(task_id)
+        # else:
+        #     return jsonify({"error": "Task is not yet completed"}), 400
+
+    except Exception as e:
+        print(f"Error getting task results: {e}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # FIRST IMAGE GENERATION
 def validate_first_generation_request(data):
@@ -356,6 +472,7 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                     #         ]
                     #     }]
                     # }
+                    "callback_url": f"{SERVER_URL}/generate-image/get-results"
                 }
             }
         elif style_reference and not base_image:
@@ -387,7 +504,8 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                             "pixel_perfect": True
                         }]
                     }
-                }
+                },
+                "callback_url": f"{SERVER_URL}/generate-image/get-results"
             }
         elif base_image and style_reference:
             # Case 3: prompt with base image and style reference
@@ -432,7 +550,8 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                             }
                         ]
                     }
-                }
+                },
+                "callback_url": f"{SERVER_URL}/generate-image/get-results"
             }
         else:
             # Case 4: prompt only
@@ -447,10 +566,12 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                 "height": 512,
                 "n_iter": number_of_images,
                 "seed": -1,
-                "denoising_strength": 0.3
+                "denoising_strength": 0.3,
+                #"callback_url": f"{SERVER_URL}/generate-image/get-results"
             }
 
-        response = requests.post(f"{SD_URL}/sdapi/v1/txt2img", json=payload)
+        #response = requests.post(f"{SD_URL}/sdapi/v1/txt2img", json=payload)
+        response = requests.post(f"{SD_URL}/agent-scheduler/v1/queue/txt2img", json=payload)
         return response
 
     except Exception as e:
@@ -472,15 +593,23 @@ def generate_first_image_route():
         response = generate_first_image(prompt, negative_prompt, number_of_images, base_image_encoded, style_reference_encoded)
 
         # Handle response
-        if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
-            images_data = response.json().get("images", [])
-            image_paths = save_images(images_data, "images")
-            return jsonify({"image_paths": image_paths}), 200
+        # if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
+        #     images_data = response.json().get("images", [])
+        #     image_paths = save_images(images_data, "images")
+        #     return jsonify({"image_paths": image_paths}), 200
+        # else:
+        #     return jsonify({"error": "No images were generated. " + response.text}), 500
+
+        if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("task_id"):
+            task_id = response.json().get("task_id")
+            print(f"Task ID: {task_id}")
+            return jsonify({"task_id": task_id}), 200
         else:
-            return jsonify({"error": "No images were generated. " + response.text}), 500
+            return jsonify({"error": "Failed to queue task"}), 500
 
     except Exception as e:
-        print(f"Error generating image: {e}")
+        #print(f"Error generating image: {e}")
+        print(f"Error queuing image generation task: {e}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # GENERATE SAM MASK

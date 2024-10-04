@@ -40,6 +40,7 @@
 
 		<!-- Generate button -->
 		<span id="general_err" class="err_msg"></span><br />
+
 		<button type="button" onclick="generateFirstImage()">
 			Generate
 		</button>
@@ -49,15 +50,20 @@
 		Next Generation
 	</button>
 
+	<span id="status_message"></span><br />
+	<span id="progress_message"></span><br />
+	<span id="time_remaining_message"></span><br />
 	<div id="image_container"></div>
 
 	<script>
+		// Function when Generate is clicked
 		async function generateFirstImage() {
 			let err_count = 0;
 			const err_msgs = document.querySelectorAll(".err_msg");
 			for (let i = 0; i < err_msgs.length; i++) {
 				err_msgs[i].innerHTML = "";
 			}
+
 			// Get form elements
 			const prompt = document.getElementById("prompt").value.trim();
 			const number_of_images = document.getElementById("number_of_images").value.trim();
@@ -111,36 +117,146 @@
 			if (style_reference) {
 				formData.append("style_reference", style_reference);
 			}
-			console.log("Form Data:");
-			console.log(formData);
 
-			// Fetch API
 			try {
-				const response = await fetch("/generate-first-image", {
+				// Call the backend to start image generation
+				const generateResponse = await fetch("/generate-first-image", {
 					method: "POST",
 					body: formData,
 				});
 
-				if (!response.ok) {
-					document.getElementById("general_err").innerHTML = "Failed to generate image";
-					throw new Error("Failed to generate image");
+				if (!generateResponse.ok) {
+					document.getElementById("general_err").innerHTML = "Failed to queue task";
+					throw new Error("Failed to queue task");
 				}
 
-				const data = await response.json();
-				const imageContainer = document.getElementById("image_container");
-				imageContainer.innerHTML = "";
+				const generateData = await generateResponse.json();
+				const taskId = generateData.task_id;
+				console.log(`Task ID: ${taskId}`);
 
-				data.image_paths.forEach((path) => {
-					const img = document.createElement("img");
-					img.src = path;
-					img.alt = "Generated Image";
-					img.style.maxWidth = "100%";
-					img.style.height = "auto";
-					imageContainer.appendChild(img);
-				});
+				// Track the task status	
+				let task = await checkTaskStatus(taskId);
+
+
 			} catch (error) {
 				console.error("Error:", error);
 			}
+		}
+
+		// Function to check task status
+		async function checkTaskStatus(taskId) {
+			let running = false;
+
+			while (!running) {
+				const response = await fetch(`/generate-image/task-status?task_id=${taskId}`);
+
+				if (!response.ok) {
+					const errorMessage = await response.json();
+					throw new Error(errorMessage.error || "Failed to get task results");
+				}
+
+				const data = await response.json();
+
+				if (data.position != 0) {
+					document.getElementById("status_message").innerHTML = `Your task is in queue at position ${data.position}`;
+					console.log(`Your task is in queue at position ${data.position}`);
+				} else {
+					running = true;
+					document.getElementById("status_message").innerHTML = "Image generation in progress...";
+					// Track progress until task is complete
+					console.log("Tracking Image: ");
+					await trackImageGenerationProgress(taskId);
+					// Fetch and display the generated images
+					console.log("Displaying Image: ");
+					await displayGeneratedImages(taskId);
+				}
+
+				if (!running) {
+					await new Promise(resolve => setTimeout(resolve, 100));
+				}
+			}
+		}
+
+		// Function to track progress of image generation
+		async function trackImageGenerationProgress(taskId) {
+			let progress = 0;
+			let eta_relative = 0;
+			let current_image = null;
+			let previous_image = null;
+			let completed = false;
+
+			while (!completed) {
+				// Fetch API
+				const response = await fetch(`/generate-image/image-status`, {
+					method: 'GET'
+				});
+
+				if (!response.ok) {
+					const errorMessage = await response.json();
+					throw new Error(errorMessage.error || "Failed to get progress.");
+				}
+
+				const data = await response.json();
+				progress = data.progress;
+				eta_relative = data.eta_relative;
+				current_image = data.current_image;
+
+				// Display progress and preview image if current_image is available
+				if (current_image != null) {
+					document.getElementById("progress_message").innerHTML = `Progress: ${Math.round(progress * 100).toFixed(0)}%`;
+					document.getElementById("time_remaining_message").innerHTML = `ETA: ${Math.round(eta_relative).toFixed(0)}s`;
+					console.log(`Progress: ${Math.round(progress * 100).toFixed(0)}%; ETA: ${Math.round(eta_relative).toFixed(0)}s; Sampling Step: ${data.state.sampling_step}`);
+
+					const imageContainer = document.getElementById("image_container");
+					imageContainer.innerHTML = "";
+					const img = document.createElement("img");
+					img.src = `data:image/png;base64,${current_image}`;
+					img.alt = "Preview Image";
+					img.style.maxWidth = "100%";
+					img.style.height = "auto";
+					imageContainer.appendChild(img);
+
+					previous_image = current_image;
+				}
+
+				// Mark the task as completed if `current_image` becomes null after being non-null
+				if (previous_image != null && current_image == null) {
+					completed = true;
+					console.log("Image generation completed.");
+					document.getElementById("status_message").innerHTML = "Image generation complete!";
+					document.getElementById("progress_message").innerHTML = "";
+					document.getElementById("time_remaining_message").innerHTML = "";
+				}
+
+				if (!completed) {
+					await new Promise(resolve => setTimeout(resolve, 100));
+				}
+			}
+		}
+
+		// Function to fetch and display the generated images
+		async function displayGeneratedImages(taskId) {
+			const response = await fetch(`/generate-image/get-results?task_id=${taskId}`, {
+				method: "GET"
+			});
+
+			if (!response.ok) {
+				const errorMessage = await response.json();
+				throw new Error(errorMessage.error || "Failed to get task results");
+			}
+
+			const data = await response.json();
+			const imageContainer = document.getElementById("image_container");
+			imageContainer.innerHTML = "";
+
+			data.image_paths.forEach((path) => {
+				const img = document.createElement("img");
+				img.src = path;
+				img.alt = "Generated Image";
+				img.style.maxWidth = "100%";
+				img.style.height = "auto";
+				imageContainer.appendChild(img);
+			});
 		}
 	</script>
 </body>

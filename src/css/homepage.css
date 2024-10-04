@@ -4,7 +4,16 @@
   background: var(--gradientButton);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin-bottom: -10px;
 }
+
+.navTagline {
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
 .separator {
   display: flex;
   text-align: left;

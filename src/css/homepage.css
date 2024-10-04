@@ -8,9 +8,9 @@
 .separator {
   display: flex;
   text-align: left;
-  width: 100%;
+  width: 99%;
   background-color: var(--bright-grey);
-  padding: 10px;
+
   border-radius: 10px;
   align-items: center;
   margin-top: 20px;
@@ -26,6 +26,8 @@
 h2 {
   text-align: left;
   text-wrap: nowrap;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 
 .header {
@@ -107,6 +109,7 @@ h2 {
 .recent-projects h2 {
   color: var(--color-white);
   font-size: 24px;
+  margin-left: 12px;
 }
 
 .no-content p {

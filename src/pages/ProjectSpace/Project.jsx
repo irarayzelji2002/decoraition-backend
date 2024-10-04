@@ -284,7 +284,7 @@ function Project() {
             alignItems: "center",
             width: "90%",
             marginTop: "40px",
-            backgroundColor: "#25232A",
+            backgroundColor: "var(--inputBg)",
             borderRadius: "20px",
             border: "1px solid #4B4A4B",
           }}
@@ -348,7 +348,7 @@ function Project() {
           See All
         </span>
       </div>
-      <div className="designs-list" style={{ marginBottom: "20%" }}>
+      <div className="layout" style={{ marginBottom: "20%" }}>
         {designs.length > 0 ? (
           designs.slice(0, 6).map((design) => (
             <DesignIcon

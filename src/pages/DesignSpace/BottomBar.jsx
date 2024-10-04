@@ -1,15 +1,22 @@
 import "../../css/bottomBar.css";
 import Button from "@mui/joy/Button";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function BottomBar({ design = true, designId }) {
+function BottomBar({ design = true, designId, projectId }) {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(`/design/${designId}`);
+    if (projectId) {
+      navigate(`/design/${designId}/${projectId}/project`);
+    } else {
+      navigate(`/design/${designId}`);
+    }
   };
   const handleClick2 = () => {
-    navigate(`/budget/${designId}`);
+    if (projectId) {
+      navigate(`/budget/${designId}/${projectId}/project`);
+    } else {
+      navigate(`/budget/${designId}`);
+    }
   };
 
   return (

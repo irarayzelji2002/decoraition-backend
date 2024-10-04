@@ -18,11 +18,11 @@ import {
   getDoc,
 } from "firebase/firestore";
 import Loading from "../../components/Loading";
-import { getAuth } from "firebase/auth";
+import { getAuth, prodErrorMap } from "firebase/auth";
 import BottomBar from "./BottomBar";
 
 function Budget() {
-  const { designId } = useParams();
+  const { designId, projectId } = useParams();
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -39,37 +39,74 @@ function Budget() {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserId(user.uid);
+        const isProjectPath = window.location.pathname.includes("/project");
+        if (isProjectPath) {
+          const projectRef = doc(
+            db,
+            "users",
+            user.uid,
+            "projects",
+            projectId,
+            "designs",
+            designId
+          );
+          const fetchProjectDetails = async () => {
+            try {
+              const projectSnapshot = await getDoc(projectRef);
+              if (projectSnapshot.exists()) {
+                const project = projectSnapshot.data();
+                setDesignData(project);
+                setNewName(project.name);
+              } else {
+                console.error("Project not found");
+              }
+            } catch (error) {
+              console.error("Error fetching project details:", error);
+            }
+          };
+          fetchProjectDetails();
+          const unsubscribeSnapshot = onSnapshot(projectRef, (doc) => {
+            if (doc.exists()) {
+              const project = doc.data();
+              setDesignData(project);
+              setNewName(project.name);
+            } else {
+              console.error("Project not found");
+            }
+          });
+          return () => unsubscribeSnapshot();
+        } else {
+          const designRef = doc(db, "users", user.uid, "designs", designId);
 
-        const designRef = doc(db, "users", user.uid, "designs", designId);
+          const fetchDesignDetails = async () => {
+            try {
+              const designSnapshot = await getDoc(designRef);
+              if (designSnapshot.exists()) {
+                const design = designSnapshot.data();
+                setDesignData(design);
+                setNewName(design.name);
+              } else {
+                console.error("Design not found");
+              }
+            } catch (error) {
+              console.error("Error fetching design details:", error);
+            }
+          };
 
-        const fetchDesignDetails = async () => {
-          try {
-            const designSnapshot = await getDoc(designRef);
-            if (designSnapshot.exists()) {
-              const design = designSnapshot.data();
+          fetchDesignDetails();
+
+          const unsubscribeSnapshot = onSnapshot(designRef, (doc) => {
+            if (doc.exists()) {
+              const design = doc.data();
               setDesignData(design);
               setNewName(design.name);
             } else {
               console.error("Design not found");
             }
-          } catch (error) {
-            console.error("Error fetching design details:", error);
-          }
-        };
+          });
 
-        fetchDesignDetails();
-
-        const unsubscribeSnapshot = onSnapshot(designRef, (doc) => {
-          if (doc.exists()) {
-            const design = doc.data();
-            setDesignData(design);
-            setNewName(design.name);
-          } else {
-            console.error("Design not found");
-          }
-        });
-
-        return () => unsubscribeSnapshot();
+          return () => unsubscribeSnapshot();
+        }
       } else {
         console.error("User is not authenticated");
       }
@@ -105,16 +142,23 @@ function Budget() {
     });
     return () => unsubscribe();
   }, [designId]);
-
+  const isProjectPath = window.location.pathname.includes("/project");
   const subscribeToPins = (userId, designId) => {
-    const pinRef = collection(
-      db,
-      "users",
-      userId,
-      "designs",
-      designId,
-      "budgets"
-    );
+    let pinRef;
+    if (isProjectPath) {
+      pinRef = collection(
+        db,
+        "users",
+        userId,
+        "projects",
+        projectId,
+        "designs",
+        designId,
+        "budgets"
+      );
+    } else {
+      pinRef = collection(db, "users", userId, "designs", designId, "budgets");
+    }
 
     const unsubscribe = onSnapshot(pinRef, (snapshot) => {
       const pinList = snapshot.docs.map((doc) => ({
@@ -128,15 +172,31 @@ function Budget() {
 
   const handleDelete = async (itemId) => {
     try {
-      const itemRef = doc(
-        db,
-        "users",
-        userId,
-        "designs",
-        designId,
-        "budgets",
-        itemId
-      );
+      let itemRef;
+      if (isProjectPath) {
+        itemRef = doc(
+          db,
+          "users",
+          userId,
+          "projects",
+          projectId,
+          "designs",
+          designId,
+          "budgets",
+          itemId
+        );
+      } else {
+        itemRef = doc(
+          db,
+          "users",
+          userId,
+          "designs",
+          designId,
+          "budgets",
+          itemId
+        );
+      }
+
       await deleteDoc(itemRef); // Delete the document from Firestore
       setItems(items.filter((item) => item.id !== itemId)); // Update local state
       toast.success("Item has been deleted!", {
@@ -265,12 +325,16 @@ function Budget() {
                 key={index}
                 item={item}
                 onDelete={() => handleDelete(item.id)}
-                onEdit={() => navigate(`/editItem/${designId}/${item.id}`)}
+                onEdit={() =>
+                  navigate(
+                    `/editItem/${designId}/${item.id}/${projectId}/project`
+                  )
+                }
               />
             ))
           )}
         </div>
-        <BottomBar designId={designId} design={false} />
+        <BottomBar designId={designId} design={false} projectId={projectId} />
       </div>
 
       <div className="circle-button-container">
@@ -284,7 +348,11 @@ function Budget() {
             </div>
             <div
               className="small-button-container"
-              onClick={() => navigate(`/addItem/${designId}`)}
+              onClick={() =>
+                projectId
+                  ? navigate(`/addItem/${designId}/${projectId}/project`)
+                  : navigate(`/addItem/${designId}`)
+              }
             >
               <span className="small-button-text">Add an Item</span>
               <div className="small-circle-button">

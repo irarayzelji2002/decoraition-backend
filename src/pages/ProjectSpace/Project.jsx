@@ -130,7 +130,10 @@ function Project() {
         });
 
         // Navigate to the newly created design
-        setTimeout(() => navigate(`/design/${designId}`), 1500);
+        setTimeout(
+          () => navigate(`/design/${designId}/${projectId}/project`),
+          1500
+        );
       }
     } catch (error) {
       console.error("Error creating design: ", error);
@@ -357,7 +360,7 @@ function Project() {
               designId={design.id}
               onDelete={handleDeleteDesign}
               onOpen={() =>
-                navigate(`/design/${design.id}/project`, {
+                navigate(`/design/${design.id}/${projectId}/project`, {
                   state: { designId: design.id },
                 })
               }

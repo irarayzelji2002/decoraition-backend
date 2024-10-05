@@ -97,7 +97,7 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
 
       {/* Design image */}
       <img
-        src={Math.random() < 0.5 ? "/img/Room2.jpg" : "/img/Room1.png"}
+        src={"/img/Room1.png"}
         className="pic"
         alt="Design"
         onClick={onOpen}

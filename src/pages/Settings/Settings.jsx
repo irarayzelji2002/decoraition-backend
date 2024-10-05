@@ -9,19 +9,20 @@ import {
   Box,
   InputAdornment,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BedtimeIcon from "@mui/icons-material/Bedtime";
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Bedtime as BedtimeIcon,
+  Save as SaveIcon,
+} from "@mui/icons-material";
 import Notifications from "./Notifications";
-import SaveIcon from "@mui/icons-material/Save";
 import TopBar from "../../components/TopBar";
 import "../../css/settings.css";
 import EditableInput from "./EditableInput";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { ToastContainer } from "react-toastify";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { db } from "../../firebase";
 
@@ -56,6 +57,7 @@ function Settings() {
               const userData = userDoc.data();
               console.log("User data:", userData);
               setUserDetails(userData);
+              setAvatarPreview(userData.photoURL || "");
             } else {
               console.error("User document not found");
             }
@@ -86,6 +88,7 @@ function Settings() {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      setSelectedFile(file); // Set the selected file
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarPreview(reader.result); // Set the avatar preview
@@ -127,8 +130,7 @@ function Settings() {
         await updateDoc(userDocRef, {
           photoURL,
         });
-
-        console.log("Photo updated successfully");
+        toast.success("Photo updated successfully");
       } catch (error) {
         console.error("Error updating photo:", error);
       }

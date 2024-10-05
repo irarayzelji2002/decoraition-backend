@@ -10,6 +10,9 @@ import numpy as np
 from PIL import Image
 from flask_cors import CORS
 from flask import Flask, request, jsonify, send_file, redirect, url_for, send_from_directory, render_template
+from datetime import datetime
+import threading
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -34,6 +37,8 @@ sdxl_styles = [
         "negative_prompt": "ugly, deformed, noisy, low poly, blurry, painting, person, people, face, hands, legs, feet"
     }
 ]
+task_queue = []
+task_history = []
 
 # File-related functions
 def allowed_file(filename):
@@ -252,40 +257,117 @@ def apply_sdxl_style(selected_style_name, prompt, color_palette=None):
         # Return original prompt with no negative prompt
         return prompt, ""
 
-# STATUS & PROGRESS TRACKING
-def get_task_status(task_id):
-    """Check the status of a specific task in agent scheduler"""
+# SCHEDULER
+def execute_task(task, type):
+    """Execute the task based on its parameters with retry logic."""
+    task_id = task.get("task_id")
+    task["status"] = "running"
+    
+    # Attempt to execute the task twice
+    for attempt in range(2):  # Retry once (0 and 1)
+        try:
+            print(f"Executing task {task_id}.")
+            response = requests.post(f"{SD_URL}/sdapi/v1/{type}", json=task.get("parameters"))
+            print(f"Response: {response.status_code}")
+            if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
+                # On success
+                images_data = response.json().get("images", [])
+                print(f"Received {len(images_data)} images")
+                image_paths = save_images(images_data, "images")
+                task["status"] = "success"
+                task["result"] = image_paths
+                task["finished_at"] = datetime.utcnow().isoformat()
+                task_history.append(task)
+                task_queue.remove(task)
+                for remaining_task in task_queue:
+                    remaining_task["position"] -= 1
+                return
+            else:
+                # If the first attempt fails
+                if attempt == 0:
+                    print(f"Attempt {attempt + 1} failed for task {task_id}. Retrying...")
+                else:
+                    # On failure (after second attempt)
+                    print(f"Task {task_id} failed after two attempts.")
+                    task["status"] = "failed"
+                    task_history.append(task)
+                    task_queue.remove(task)
+                    for remaining_task in task_queue:
+                        remaining_task["position"] -= 1
+                    return
+        except Exception as e:
+            print(f"Error executing task {task_id} on attempt {attempt + 1}: {e}")
+            if attempt == 1:  # Second attempt failed
+                task["status"] = "failed"
+                task_history.append(task)
+                task_queue.remove(task)
+                for remaining_task in task_queue:
+                    remaining_task["position"] -= 1
+
+def task_manager():
+    """Manage the task queue and execute tasks based on position changes."""
+    while True:
+        if task_queue:
+            # Only check the task at position 0 with a status of 'pending'
+            for task in task_queue:
+                if task.get("position") == 1 and task.get("status") == "pending":
+                    threading.Thread(target=execute_task, args=(task,task.get("type"))).start()
+                    break  # Only execute one task at a time
+        time.sleep(0.5)  # Shorter sleep to check more frequently
+
+# Start the task manager in a background thread
+threading.Thread(target=task_manager, daemon=True).start()
+
+# QUEUEING, STATUS & PROGRESS TRACKING
+def queue_task(payload, type):
     try:
-        response = requests.get(f"{SD_URL}/agent-scheduler/v1/queue")
-        if response.status_code == 200:
-            tasks = response.json().get("pending_tasks", [])
-            for task in tasks:
-                if task.get("id") == task_id:
-                    return task
-            return None
-        else:
-            print(f"Error fetching task status: {response.status_code}, {response.text}")
-            return None
+        task_id = str(uuid.uuid4())
+        queued_at = datetime.utcnow().isoformat()
+        task = {
+            "task_id": task_id,
+            "status": "pending",
+            "position": len(task_queue) + 1,
+            "type": type,
+            "parameters": payload,
+            "queued_at": queued_at,
+            "finished_at": None,
+            "result": None
+        }
+        task_queue.append(task)
+        return task
     except Exception as e:
-        print(f"Error fetching task status: {e}")
+        print(f"Error queueing task: {e}")
+        return None
+
+def get_task_queue_status(task_id):
+    """Check the status of a specific task."""
+    try:
+        # Check task queue first
+        for task in task_queue:
+            if task.get("task_id") == task_id:
+                return task
+
+        # Check task history if not found in queue
+        for task in task_history:
+            if task.get("task_id") == task_id:
+                return task
+
+        # Return None if not found in both
+        return None
+    except Exception as e:
+        print(f"Error fetching task status for {task_id}: {e}")
         return None
 
 @app.route('/generate-image/task-status', methods=['GET'])
 def get_task_status_route():
-    """Route to get the current progress of tasks in agent scheduler"""
+    """Route to get the current progress of tasks in agent scheduler."""
     try:
         task_id = request.args.get('task_id')
-
-        # Handle resposne
-        # {current_task_id:task(tgv9v9s95rappk3),
-        # pending_tasks:[],
-        # total_pending_tasks:1,
-        # paused:false
-        # }
-        if task_id:
-            status = get_task_status(task_id)
-            if status:
-                return jsonify(status), 200
+        
+        # Check the status of the task by ID
+        task = get_task_queue_status(task_id)
+        if task:
+            return jsonify(task), 200
         return jsonify({"error": "Task not found"}), 404
     except Exception as e:
         print(f"Error getting status: {e}")
@@ -293,13 +375,24 @@ def get_task_status_route():
 
 @app.route('/generate-image/image-status', methods=['GET'])
 def track_image_generation_progress():
-    """Route to get progress of task's image generation"""
+    """Route to get progress of task's image generation."""
     try:
+        # Get task ID from the request
+        task_id = request.args.get('task_id')
+        task = get_task_queue_status(task_id)
+        if task:
+            status = task.get("status")
+        else:
+            print(f"Task {task_id} not found in queue or history.")
+            return jsonify({"error": "Task not found"}), 404
+
         # Request progress API using GET
         response = requests.get(f"{SD_URL}/sdapi/v1/progress?skip_current_image=false")
-        
+
         if response.status_code == 200:
-            return jsonify(response.json()), 200
+            progress_data = response.json()
+            progress_data['status'] = status # Add task status to the progress data
+            return jsonify(progress_data), 200
         else:
             print(f"Error fetching progress: {response.status_code}, {response.text}")
             return jsonify({"error": "Failed to retrieve progress"}), response.status_code
@@ -310,18 +403,18 @@ def track_image_generation_progress():
 
 # GET TASK RESULTS
 def get_task_results(task_id):
-    """Retrieve the results of a completed task from the agent scheduler"""
+    """Retrieve the results of a completed task from the scheduler"""
     try:
-        response = requests.get(f"{SD_URL}/agent-scheduler/v1/task/{task_id}/results")
-
-        # Handle response
-        if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("data") and response.json().get("success") == True:
-            images_data = response.json().get("data", [])
-            image_paths = save_images_agent_scheduler(images_data, "images")
-            return jsonify({"image_paths": image_paths}), 200
-        else:
-            return jsonify({"error": "No images were generated. " + response.text}), 500
-
+        for task in task_history + task_queue:
+            if task.get("task_id") == task_id:
+                if task.get("status") == "success" and task.get("result"):
+                    image_paths = task.get("result", [])
+                    return jsonify({"message": "Images retrieved.", "image_paths": image_paths}), 200
+                elif task.get("status") == "failed":
+                    return jsonify({"error": "No images were generated."}), 500
+                else:
+                    return jsonify({"message": f"Task is {task.get('status')} at {task.get('position')}.", "task": task}), 202
+        return jsonify({"error": "Task not found."}), 404
     except Exception as e:
         print(f"Error fetching task results: {e}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
@@ -331,20 +424,9 @@ def get_task_results_route():
     """Route to get the generated images once the task is completed"""
     try:
         task_id = request.args.get('task_id')
-
         if not task_id:
             return jsonify({"error": "Task ID is required"}), 400
-
         return get_task_results(task_id)
-        # Check task status in case it's not completed
-        # status = get_task_status(task_id)
-        # print("STATUS:")
-        # print(status)
-        # if status:
-        #     return get_task_results(task_id)
-        # else:
-        #     return jsonify({"error": "Task is not yet completed"}), 400
-
     except Exception as e:
         print(f"Error getting task results: {e}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
@@ -412,28 +494,62 @@ def validate_first_generation_request(data):
 def generate_first_image(prompt, negative_prompt, number_of_images, base_image, style_reference):
     """First generation core logic"""
     try:
+        payload = {
+            "prompt": prompt,
+            "negative_prompt": negative_prompt,
+            "sampler_name": "DPM++ 2M SDE",
+            "steps": 30,
+            "cfg_scale": 6,
+            "width": 512,
+            "height": 512,
+            "n_iter": number_of_images,
+            "seed": -1,
+            "denoising_strength": 0.3,
+        }
+
+        # Determine case for payload based on input
         if base_image and not style_reference:
-            # Case 1: prompt with base image
             print("========First Gen: prompt with base image (Canny)========")
-            payload = {
-                "prompt": prompt,
-                "negative_prompt": negative_prompt,
-                "sampler_name": "DPM++ 2M SDE",
-                "steps": 30,
-                "cfg_scale": 6,
-                "width": 512,
-                "height": 512,
-                "n_iter": number_of_images,
-                "seed": -1,
-                # "enable_hr": True,
-                # "hr_scale": 1.5,
-                # "hr_upscaler": "4x_NMKD-Siax_200k",
-                # "hr_resize_x": 0,
-                # "hr_resize_y": 0,
-                # "denoising_strength": 0.3,
-                "alwayson_scripts": {
-                    "controlnet": {
-                        "args": [{
+            payload["alwayson_scripts"] = {
+                "ControlNet": {
+                    "args": [{
+                        "enabled": True,
+                        "image": base_image,
+                        "model": "diffusion_sd_controlnet_canny [a3cd7cd6]",
+                        "module": "canny",
+                        "weight": 1,
+                        "resize_mode": "Scale to Fit (Inner Fit)",
+                        "guidance_start": 0,
+                        "guidance_end": 1,
+                        "control_mode": "ControlNet is more important",
+                        "pixel_perfect": True
+                    }]
+                }
+            }
+        elif style_reference and not base_image:
+            print("========First Gen: prompt with style reference (T2I-Adapter Color)========")
+            payload["alwayson_scripts"] = {
+                "controlnet": {
+                    "args": [{
+                        "enabled": True,
+                        "image": style_reference,
+                        "model": "t2iadapter_color_sd14v1 [8522029d]",
+                        "module": "t2ia_color_grid",
+                        "weight": 1.2,
+                        "resize_mode": "Scale to Fit (Inner Fit)",
+                        "guidance_start": 0,
+                        "guidance_end": 1,
+                        "control_mode": "ControlNet is more important",
+                        "pixel_perfect": True
+                    }]
+                }
+            }
+        elif base_image and style_reference:
+            print("========First Gen: prompt with base image and style reference (Canny + T2I-Adapter Color)========")
+            payload["alwayson_scripts"] = {
+                "controlnet": {
+                    "args": [
+                        {
                             "enabled": True,
                             "image": base_image,
                             "model": "diffusion_sd_controlnet_canny [a3cd7cd6]",
@@ -444,54 +560,8 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                             "guidance_end": 1,
                             "control_mode": "ControlNet is more important",
                             "pixel_perfect": True
-                        }]
-                    },
-                    # "freeu": {
-                    #     "args": [{
-                    #         "enabled": True,
-                    #         "start_ratio": 0.2,  # Start at 20% of the steps
-                    #         "stop_ratio": 0.8,   # Stop at 80% of the steps
-                    #         "transition_smoothness": 0.5,
-                    #         "stage_infos": [
-                    #             {
-                    #                 "backbone_factor": 0.4,  # B1
-                    #                 "skip_factor": 0.7,      # S1
-                    #                 "backbone_offset": 0.5,
-                    #                 "backbone_width": 0.75,
-                    #                 "skip_high_end_factor": 1.1,  # High end scale
-                    #                 "skip_cutoff": 0.3 
-                    #             },
-                    #             {
-                    #                 "backbone_factor": 0.4,  # B2
-                    #                 "skip_factor": 0.3,      # S2
-                    #                 "backbone_offset": 0.5,
-                    #                 "backbone_width": 0.75,
-                    #                 "skip_high_end_factor": 1.1,  # High end scale
-                    #                 "skip_cutoff": 0.3 
-                    #             }
-                    #         ]
-                    #     }]
-                    # }
-                    "callback_url": f"{SERVER_URL}/generate-image/get-results"
-                }
-            }
-        elif style_reference and not base_image:
-            # Case 2: prompt with style reference
-            print("========First Gen: prompt with style reference (T2I-Adapter Color)========")
-            payload = {
-                "prompt": prompt,
-                "negative_prompt": negative_prompt,
-                "sampler_name": "DPM++ 2M SDE",
-                "steps": 30,
-                "cfg_scale": 6,
-                "width": 512,
-                "height": 512,
-                "n_iter": number_of_images,
-                "seed": -1,
-                "denoising_strength": 0.3,
-                "alwayson_scripts": {
-                    "controlnet": {
-                        "args": [{
+                        },
+                        {
                             "enabled": True,
                             "image": style_reference,
                             "model": "t2iadapter_color_sd14v1 [8522029d]",
@@ -502,82 +572,24 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
                             "guidance_end": 1,
                             "control_mode": "ControlNet is more important",
                             "pixel_perfect": True
-                        }]
-                    }
-                },
-                "callback_url": f"{SERVER_URL}/generate-image/get-results"
-            }
-        elif base_image and style_reference:
-            # Case 3: prompt with base image and style reference
-            print("========First Gen: prompt with base image and style reference (Canny + T2I-Adapter Color)========")
-            payload = {
-                "prompt": prompt,
-                "negative_prompt": negative_prompt,
-                "sampler_name": "DPM++ 2M SDE",
-                "steps": 30,
-                "cfg_scale": 6,
-                "width": 512,
-                "height": 512,
-                "n_iter": number_of_images,
-                "seed": -1,
-                "denoising_strength": 0.3,
-                "alwayson_scripts": {
-                    "controlnet": {
-                        "args": [
-                            {
-                                "enabled": True,
-                                "image": base_image,
-                                "model": "diffusion_sd_controlnet_canny [a3cd7cd6]",
-                                "module": "canny",
-                                "weight": 1,
-                                "resize_mode": "Scale to Fit (Inner Fit)",
-                                "guidance_start": 0,
-                                "guidance_end": 1,
-                                "control_mode": "ControlNet is more important",
-                                "pixel_perfect": True
-                            },
-                            {
-                                "enabled": True,
-                                "image": style_reference,
-                                "model": "t2iadapter_color_sd14v1 [8522029d]",
-                                "module": "t2ia_color_grid",
-                                "weight": 1.2,
-                                "resize_mode": "Scale to Fit (Inner Fit)",
-                                "guidance_start": 0,
-                                "guidance_end": 1,
-                                "control_mode": "ControlNet is more important",
-                                "pixel_perfect": True
-                            }
-                        ]
-                    }
-                },
-                "callback_url": f"{SERVER_URL}/generate-image/get-results"
+                        }
+                    ]
+                }
             }
         else:
-            # Case 4: prompt only
             print("========First Gen: prompt only-=======")
-            payload = {
-                "prompt": prompt,
-                "negative_prompt": negative_prompt,
-                "sampler_name": "DPM++ 2M SDE",
-                "steps": 30,
-                "cfg_scale": 6,
-                "width": 512,
-                "height": 512,
-                "n_iter": number_of_images,
-                "seed": -1,
-                "denoising_strength": 0.3,
-                #"callback_url": f"{SERVER_URL}/generate-image/get-results"
-            }
 
-        #response = requests.post(f"{SD_URL}/sdapi/v1/txt2img", json=payload)
-        response = requests.post(f"{SD_URL}/agent-scheduler/v1/queue/txt2img", json=payload)
-        return response
+        # Queue the task for image generation
+        task = queue_task(payload, "txt2img")
+        if task:
+            return jsonify(task=task), 200
+        else:
+            return jsonify({"error": "Failed to queue task"}), 500
 
     except Exception as e:
         print(f"Error generating image: {e}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
+    
 @app.route('/generate-first-image', methods=['POST'])
 def generate_first_image_route():
     """Route to generate first image"""
@@ -590,9 +602,9 @@ def generate_first_image_route():
             return jsonify({"error": "Prompt is required"}), 400
 
         # Call the image generation function
-        response = generate_first_image(prompt, negative_prompt, number_of_images, base_image_encoded, style_reference_encoded)
+        response, status_code = generate_first_image(prompt, negative_prompt, number_of_images, base_image_encoded, style_reference_encoded)
 
-        # Handle response
+        # Handle response (SDAPI sync)
         # if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
         #     images_data = response.json().get("images", [])
         #     image_paths = save_images(images_data, "images")
@@ -600,11 +612,21 @@ def generate_first_image_route():
         # else:
         #     return jsonify({"error": "No images were generated. " + response.text}), 500
 
-        if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("task_id"):
-            task_id = response.json().get("task_id")
-            print(f"Task ID: {task_id}")
-            return jsonify({"task_id": task_id}), 200
+        # Handle response (Angent Scheduler async)
+        # if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("task_id"):
+        #     task_id = response.json().get("task_id")
+        #     print(f"Task ID: {task_id}")
+        #     return jsonify({"task_id": task_id}), 200
+        # else:
+        #     return jsonify({"error": "Failed to queue task"}), 500
+
+        # Handle response (own quque system)
+        if status_code == 200:
+            task_data = response.get_json()
+            print(f"Task queued successfully: {task_data}")
+            return task_data, 200
         else:
+            print("Failed to queue task.")
             return jsonify({"error": "Failed to queue task"}), 500
 
     except Exception as e:
@@ -619,61 +641,70 @@ def generate_sam_mask(init_image, mask_prompt):
         return None, 400
 
     print("========Next Gen: generating mask========")
-    try:
-        # Prepare SAM request payload
-        payload = {
-            "sam_model_name": "sam_vit_b_01ec64.pth",
-            "input_image": init_image,
-            "sam_positive_points": [],
-            "sam_negative_points": [],
-            "dino_enabled": True,
-            "dino_model_name": "GroundingDINO_SwinT_OGC (694MB)",
-            "dino_text_prompt": mask_prompt,
-            "dino_box_threshold": 0.3,
-            "dino_preview_checkbox": False,
-        }
-
-        # Call SAM API to generate the mask
-        response = requests.post(f"{SD_URL}/sam/sam-predict", json=payload)
-        if response.status_code != 200:
-            return None, response.status_code
-
-        reply_json = response.json()
-        print(reply_json.get("msg", "No message"))
-
-        masks = reply_json.get("masks")
-        if not masks:
-            print("No masks returned from SAM.")
-            return None, 400
-
+    for attempt in range(2):  # Try to generate the mask twice
         try:
-            # Dilate the masks and collect responses
-            dilate_payloads = [
-                {"input_image": init_image, "mask": masks[i], "dilate_amount": 30}
-                for i in range(min(3, len(masks)))  # Ensure we process up to 3 masks
-            ]
-
-            replies_dilate = []
-            for payload in dilate_payloads:
-                dilate_response = requests.post(f"{SD_URL}/sam/dilate-mask", json=payload)
-                replies_dilate.append(dilate_response.json())
-
-            # Extract blended images, masks, and masked images
-            reply_dilate = {
-                "blended_images": [reply["blended_image"] for reply in replies_dilate],
-                "masks": [reply["mask"] for reply in replies_dilate],
-                "masked_images": [reply["masked_image"] for reply in replies_dilate],
+            # Prepare SAM request payload
+            payload = {
+                "sam_model_name": "sam_vit_b_01ec64.pth",
+                "input_image": init_image,
+                "sam_positive_points": [],
+                "sam_negative_points": [],
+                "dino_enabled": True,
+                "dino_model_name": "GroundingDINO_SwinT_OGC (694MB)",
+                "dino_text_prompt": mask_prompt,
+                "dino_box_threshold": 0.3,
+                "dino_preview_checkbox": False,
             }
-            return reply_dilate
+
+            # Call SAM API to generate the mask
+            response = requests.post(f"{SD_URL}/sam/sam-predict", json=payload)
+            if response.status_code != 200:
+                if attempt == 0:  # If the first attempt fails
+                    print(f"Attempt {attempt + 1} failed with status code: {response.status_code}. Retrying...")
+                    continue  # Retry on the second attempt
+                else:  # If the second attempt fails
+                    print("Failed to generate SAM mask after two attempts.")
+                    return None, response.status_code
+
+            reply_json = response.json()
+            print(reply_json.get("msg", "No message"))
+
+            masks = reply_json.get("masks")
+            if not masks:
+                print("No masks returned from SAM.")
+                return None, 400
+
+            try:
+                # Dilate the masks and collect responses
+                dilate_payloads = [
+                    {"input_image": init_image, "mask": masks[i], "dilate_amount": 10}
+                    for i in range(min(3, len(masks)))  # Ensure we process up to 3 masks
+                ]
+
+                replies_dilate = []
+                for payload in dilate_payloads:
+                    dilate_response = requests.post(f"{SD_URL}/sam/dilate-mask", json=payload)
+                    replies_dilate.append(dilate_response.json())
+
+                # Extract blended images, masks, and masked images
+                reply_dilate = {
+                    "blended_images": [reply["blended_image"] for reply in replies_dilate],
+                    "masks": [reply["mask"] for reply in replies_dilate],
+                    "masked_images": [reply["masked_image"] for reply in replies_dilate],
+                }
+                return reply_dilate
+
+            except Exception as e:
+                print(f"Error expanding SAM mask: {e}")
+                print("Returning original SAM mask instead.")
+                return reply_json
 
         except Exception as e:
-            print(f"Error expanding SAM mask: {e}")
-            print("Returning original SAM mask instead.")
-            return reply_json
-
-    except Exception as e:
-        print(f"Error generating SAM mask: {e}")
-        return {"error": f"An error occurred: {str(e)}"}, 500
+            print(f"Error generating SAM mask: {e}")
+            if attempt == 0:  # If it's the first attempt that failed
+                print("Retrying to generate SAM mask...")
+                continue  # Retry
+            return {"error": f"An error occurred: {str(e)}"}, 500
 
 @app.route('/generate-sam-mask', methods=['POST'])
 def generate_sam_mask_route():
@@ -1080,10 +1111,10 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, c
                                 "model": "diffusion_sd_controlnet_canny [a3cd7cd6]",
                                 "module": "canny",
                                 "weight": 1,
-                                "resize_mode": "Scale to Fit (Inner Fit)",
+                                "resize_mode": "Scale to Fit (Inner Fit)", #1
                                 "guidance_start": 0,
                                 "guidance_end": 1,
-                                "control_mode": "ControlNet is more important",
+                                "control_mode": "ControlNet is more important", #2
                                 "pixel_perfect": True
                             },
                         ]
@@ -1116,7 +1147,8 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, c
                 "include_init_images": True
             }
 
-        response = requests.post(f"{SD_URL}/sdapi/v1/img2img", json=payload)
+        #response = requests.post(f"{SD_URL}/sdapi/v1/img2img", json=payload)
+        response = requests.post(f"{SD_URL}/agent-scheduler/v1/queue/img2img", json=payload)
         return response
 
     except Exception as e:
@@ -1138,12 +1170,19 @@ def generate_next_image_route():
         response = generate_next_image(prompt, negative_prompt, number_of_images, init_image, combined_mask, style_reference)
 
         # Handle response
-        if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
-            images_data = response.json().get("images", [])
-            image_paths = save_images(images_data, "images")
-            return jsonify({"image_paths": image_paths}), 200
+        # if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("images"):
+        #     images_data = response.json().get("images", [])
+        #     image_paths = save_images(images_data, "images")
+        #     return jsonify({"image_paths": image_paths}), 200
+        # else:
+        #     return jsonify({"error": "No images were generated. " + response.text}), 500
+
+        if response.status_code == 200 and isinstance(response.json(), dict) and response.json().get("task_id"):
+            task_id = response.json().get("task_id")
+            print(f"Task ID: {task_id}")
+            return jsonify({"task_id": task_id}), 200
         else:
-            return jsonify({"error": "No images were generated. " + response.text}), 500
+            return jsonify({"error": "Failed to queue task"}), 500
 
     except Exception as e:
         print(f"Error generating image: {e}")

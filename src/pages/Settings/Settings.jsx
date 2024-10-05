@@ -13,11 +13,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
 import Notifications from "./Notifications";
+import SaveIcon from "@mui/icons-material/Save";
 import TopBar from "../../components/TopBar";
 import "../../css/settings.css";
 import EditableInput from "./EditableInput";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -34,6 +36,9 @@ function Settings() {
     username: "",
   });
   const [userId, setUserId] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -81,6 +86,11 @@ function Settings() {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result); // Set the avatar preview
+      };
+      reader.readAsDataURL(file);
       console.log("File uploaded:", file);
     }
   };
@@ -101,6 +111,26 @@ function Settings() {
         toast.success(`${field} updated successfully`);
       } catch (error) {
         toast.error(`Error updating ${field}: ${error.message}`);
+      }
+    }
+  };
+
+  const handleSavePhoto = async () => {
+    if (selectedFile && userId) {
+      try {
+        const storage = getStorage();
+        const storageRef = ref(storage, `avatars/${userId}`);
+        await uploadBytes(storageRef, selectedFile);
+        const photoURL = await getDownloadURL(storageRef);
+
+        const userDocRef = doc(db, "users", userId);
+        await updateDoc(userDocRef, {
+          photoURL,
+        });
+
+        console.log("Photo updated successfully");
+      } catch (error) {
+        console.error("Error updating photo:", error);
       }
     }
   };
@@ -162,7 +192,7 @@ function Settings() {
             >
               <Avatar
                 alt="User Avatar"
-                src=""
+                src={avatarPreview || ""} // Use avatarPreview as the source
                 sx={{
                   width: 150,
                   height: 150,
@@ -201,6 +231,19 @@ function Settings() {
                   }}
                 >
                   Change photo
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<SaveIcon />}
+                  className="save-photo-btn"
+                  onClick={handleSavePhoto}
+                  sx={{
+                    background: "linear-gradient(to right, #4CAF50, #81C784)",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Save photo
                 </Button>
 
                 {/* Remove Photo Button */}

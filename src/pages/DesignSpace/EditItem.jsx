@@ -8,7 +8,7 @@ import { getAuth } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 
 const EditItem = () => {
-  const { itemId, designId } = useParams(); // Get IDs from URL
+  const { itemId, designId, projectId } = useParams(); // Get IDs from URL
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
   const [itemName, setItemName] = useState("");
@@ -31,17 +31,34 @@ const EditItem = () => {
   }, [designId]);
 
   useEffect(() => {
+    const isProjectPath = window.location.pathname.includes("/project");
     const fetchItemDetails = async () => {
       try {
-        const itemRef = doc(
-          db,
-          "users",
-          userId,
-          "designs",
-          designId,
-          "budgets",
-          itemId
-        );
+        let itemRef;
+        if (isProjectPath) {
+          itemRef = doc(
+            db,
+            "users",
+            userId,
+            "projects",
+            projectId,
+            "designs",
+            designId,
+            "budgets",
+            itemId
+          );
+        } else {
+          itemRef = doc(
+            db,
+            "users",
+            userId,
+            "designs",
+            designId,
+            "budgets",
+            itemId
+          );
+        }
+
         const itemSnap = await getDoc(itemRef);
 
         if (itemSnap.exists()) {
@@ -70,19 +87,34 @@ const EditItem = () => {
       setImage(URL.createObjectURL(file)); // For preview purposes only
     }
   };
-
+  const isProjectPath = window.location.pathname.includes("/project");
   // Handle updating the item in Firestore
   const handleSave = async () => {
     try {
-      const itemRef = doc(
-        db,
-        "users",
-        userId,
-        "designs",
-        designId,
-        "budgets",
-        itemId
-      );
+      let itemRef;
+      if (isProjectPath) {
+        itemRef = doc(
+          db,
+          "users",
+          userId,
+          "projects",
+          projectId,
+          "designs",
+          designId,
+          "budgets",
+          itemId
+        );
+      } else {
+        itemRef = doc(
+          db,
+          "users",
+          userId,
+          "designs",
+          designId,
+          "budgets",
+          itemId
+        );
+      }
 
       await updateDoc(itemRef, {
         itemName,
@@ -107,7 +139,7 @@ const EditItem = () => {
         },
       });
       setTimeout(() => {
-        window.location.href = `/budget/${designId}`;
+        navigate(-1);
       }, 1000);
     } catch (error) {
       console.error("Error updating document:", error);

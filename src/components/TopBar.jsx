@@ -7,7 +7,7 @@ function TopBar({ state }) {
     <div className="itemHead">
       <IconButton
         onClick={() => window.history.back()}
-        style={{ color: "white", fontSize: "2.5rem" }}
+        style={{ color: "var(--color-white)", fontSize: "2.5rem" }}
       >
         <ArrowBackIosNewIcon />
       </IconButton>

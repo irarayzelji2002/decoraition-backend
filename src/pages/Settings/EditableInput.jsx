@@ -3,9 +3,8 @@ import { TextField, InputAdornment, IconButton, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 
-export default function EditableInput({ fieldName, value, onChange }) {
+export default function EditableInput({ onSave, value, onChange }) {
   const [isEditing, setIsEditing] = useState(false);
-  console.log(value);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -13,12 +12,12 @@ export default function EditableInput({ fieldName, value, onChange }) {
 
   const handleSaveClick = () => {
     setIsEditing(false);
+    onSave();
     // Save the new value to your state or backend here
   };
 
   return (
     <TextField
-      label={fieldName}
       value={value}
       onChange={onChange}
       fullWidth

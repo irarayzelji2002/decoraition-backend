@@ -17,8 +17,11 @@ import TopBar from "../../components/TopBar";
 import "../../css/settings.css";
 import EditableInput from "./EditableInput";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { collection, doc, getDoc } from "firebase/firestore";
-import { db } from "../../../server/firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { db } from "../../firebase";
 
 function Settings() {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -30,12 +33,13 @@ function Settings() {
     lastName: "",
     username: "",
   });
-
+  const [userId, setUserId] = useState(null);
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log(`User is signed in with UID: ${user.uid}`);
+        setUserId(user.uid);
 
         const fetchUserDetails = async (userId) => {
           try {
@@ -87,6 +91,20 @@ function Settings() {
     });
   };
 
+  const handleSave = async (field) => {
+    if (userId) {
+      try {
+        const userDocRef = doc(db, "users", userId);
+        await updateDoc(userDocRef, {
+          [field]: userDetails[field],
+        });
+        toast.success(`${field} updated successfully`);
+      } catch (error) {
+        toast.error(`Error updating ${field}: ${error.message}`);
+      }
+    }
+  };
+
   // Trigger file input click
   const handleChangePhotoClick = () => {
     fileInputRef.current.click();
@@ -94,7 +112,8 @@ function Settings() {
 
   return (
     <>
-      <TopBar state="Settings" />{" "}
+      <TopBar state="Settings" />
+      <ToastContainer />
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
@@ -206,21 +225,25 @@ function Settings() {
               fieldName="Email"
               value={userDetails.email}
               onChange={handleInputChange("email")}
+              onSave={() => handleSave("email")}
             />
             <EditableInput
               fieldName="First Name"
               value={userDetails.firstName}
               onChange={handleInputChange("firstName")}
+              onSave={() => handleSave("firstName")}
             />
             <EditableInput
               fieldName="Last Name"
               value={userDetails.lastName}
               onChange={handleInputChange("lastName")}
+              onSave={() => handleSave("lastName")}
             />
             <EditableInput
               fieldName="Username"
               value={userDetails.username}
               onChange={handleInputChange("username")}
+              onSave={() => handleSave("username")}
             />
             <TextField
               label="Password"

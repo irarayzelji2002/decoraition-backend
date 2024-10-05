@@ -272,23 +272,15 @@
 			const previewCheckedInput = document.getElementById('to_preview');
 			const newMaskPreview = document.getElementById('new_mask_preview_cont')
 			previewCheckedInput.addEventListener("change", function () {
-				if (previewCheckedInput.checked) {
-					newMaskPreview.style.display = "block";
-				} else {
-					newMaskPreview.style.display = "none";
-				}
+				newMaskPreview.style.display = previewCheckedInput.checked ? "block" : "none";
 			});
 
 			// Progress
-			const progress = document.getElementById('progress');
 			const progress_bar = document.getElementById('progress_bar');
-			if (progress_bar.value != 0) {
-				progress_bar.style.display = "block";
-			} else {
-				progress_bar.style.display = "none";
-			}
+			progress_bar.style.display = progress_bar.value != 0 ? "block" : "none";
 		});
 
+		// Function when Generate Mask is clicked
 		async function generateMask() {
 			let err_count = 0;
 			const err_msgs = document.querySelectorAll(".err_msg");
@@ -379,6 +371,7 @@
 			}
 		}
 
+		// Function when Preview Mask is clicked/called
 		async function previewMask() {
 			await window.getUserMasks();
 
@@ -461,6 +454,7 @@
 			}
 		}
 
+		// Function when Apply Mask is clicked/called
 		async function applyMask() {
 			const data = await previewMask(); // return mask
 			if (!data) {
@@ -491,6 +485,7 @@
 			};
 		}
 
+		// Function when Generate is clicked
 		async function generateNextImage() {
 			let err_count = 0;
 			const err_msgs = document.querySelectorAll(".err_msg");
@@ -599,7 +594,7 @@
 				}
 
 				const generateData = await generateResponse.json();
-				const taskId = generateData.task_id;
+				const taskId = generateData.task.task_id;
 				console.log(`Task ID: ${taskId}`);
 				let task = await checkTaskStatus(taskId);
 			} catch (error) {
@@ -621,7 +616,7 @@
 
 				const data = await response.json();
 
-				if (data.position != 0) {
+				if (data.position != 1) {
 					document.getElementById("status_message").innerHTML = `Your task is in queue at position ${data.position}`;
 					console.log(`Your task is in queue at position ${data.position}`);
 				} else {
@@ -648,12 +643,11 @@
 			let current_image = null;
 			let previous_image = null;
 			let completed = false;
+			let status = "pending";
 
 			while (!completed) {
 				// Fetch API
-				const response = await fetch(`/generate-image/image-status`, {
-					method: 'GET'
-				});
+				const response = await fetch(`/generate-image/image-status?task_id=${taskId}`);
 
 				if (!response.ok) {
 					const errorMessage = await response.json();
@@ -664,6 +658,7 @@
 				progress = data.progress;
 				eta_relative = data.eta_relative;
 				current_image = data.current_image;
+				status = data.status;
 
 				// Display progress and preview image if current_image is available
 				if (progress != 0) {
@@ -674,22 +669,17 @@
 					document.getElementById("time_remaining_message").innerHTML = `ETA: ${Math.round(eta_relative).toFixed(0)}s`;
 					console.log(`Progress: ${Math.round(progress * 100).toFixed(0)}%; ETA: ${Math.round(eta_relative).toFixed(0)}s; Sampling Step: ${data.state.sampling_step}`);
 
-					if (current_image != null) {
+					if (current_image != null && previous_image != current_image) {
 						const imageContainer = document.getElementById("image_container");
-						imageContainer.innerHTML = "";
-						const img = document.createElement("img");
-						img.src = `data:image/png;base64,${current_image}`;
-						img.alt = "Preview Image";
-						img.style.maxWidth = "100%";
-						img.style.height = "auto";
-						imageContainer.appendChild(img);
-
+						imageContainer.innerHTML = `
+							<img src="data:image/png;base64,${data.current_image}" alt="Preview Image" style="max-width:100%; height:auto;">
+						`;
 						previous_image = current_image;
 					}
 				}
 
-				// Mark the task as completed if `current_image` becomes null after being non-null
-				if (previous_image != null && current_image == null) {
+				// Mark the task as completed if `current_image` becomes null after being non-null & status is success/failed
+				if (previous_image != null && current_image == null && (status === 'success' || status === 'failed')) {
 					completed = true;
 					console.log("Image generation completed.");
 					progress_bar.style.display = "none";
@@ -719,14 +709,16 @@
 			const imageContainer = document.getElementById("image_container");
 			imageContainer.innerHTML = "";
 
-			data.image_paths.forEach((path) => {
-				const img = document.createElement("img");
-				img.src = path;
-				img.alt = "Generated Image";
-				img.style.maxWidth = "100%";
-				img.style.height = "auto";
-				imageContainer.appendChild(img);
-			});
+			if (data && data.image_paths) {
+				data.image_paths.forEach((path) => {
+					const img = document.createElement("img");
+					img.src = path;
+					img.alt = "Generated Image";
+					img.style.maxWidth = "100%";
+					img.style.height = "auto";
+					imageContainer.appendChild(img);
+				});
+			}
 		}
 	</script>
 	<script src="{{ url_for('static', filename='js/canvas_script.js') }}"></script>

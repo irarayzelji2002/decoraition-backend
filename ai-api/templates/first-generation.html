@@ -164,7 +164,6 @@
 				}
 
 				const data = await response.json();
-				console.log(data);
 
 				if (data.position != 1) {
 					document.getElementById("status_message").innerHTML = `Your task is in queue at position ${data.position}`;
@@ -228,7 +227,7 @@
 					}
 				}
 
-				// Mark the task as completed if `current_image` becomes null after being non-null
+				// Mark the task as completed if `current_image` becomes null after being non-null & status is success/failed
 				if (previous_image != null && current_image == null && (status === 'success' || status === 'failed')) {
 					completed = true;
 					console.log("Image generation completed.");
@@ -256,8 +255,6 @@
 			}
 
 			const data = await response.json();
-			console.log("Received Images Data: ");
-			console.log(data);
 			const imageContainer = document.getElementById("image_container");
 			imageContainer.innerHTML = "";
 

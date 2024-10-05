@@ -38,6 +38,7 @@ const DrawerComponent = ({
   handleLogout,
   handleSettings,
   onOpen,
+  pic,
 }) => {
   // State to handle dark mode
   const [darkMode, setDarkMode] = useState(true);
@@ -188,13 +189,13 @@ const DrawerComponent = ({
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
         <Avatar
           sx={{
-            bgcolor: "gray",
             width: 56,
             height: 56,
             marginBottom: "10px",
             marginLeft: "auto",
             marginRight: "auto",
           }}
+          src={pic || ""}
         >
           {username ? username.charAt(0).toUpperCase() : ""}
         </Avatar>

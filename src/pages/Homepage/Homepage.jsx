@@ -42,6 +42,19 @@ function Homepage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDesigns, setFilteredDesigns] = useState([]);
 
+  const fetchUserData = (user) => {
+    const userRef = doc(db, "users", user.uid);
+    onSnapshot(userRef, (doc) => {
+      const userData = doc.data();
+      setUsername(userData.username);
+      setUser({
+        uid: user.uid,
+        email: user.email,
+        profilePicture: userData.photoURL || "", // Fetch profile picture from Firestore
+      });
+    });
+  };
+
   useEffect(() => {
     if (user) {
       const userRef = doc(db, "users", user.uid);
@@ -52,6 +65,7 @@ function Homepage() {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
+        fetchUserData(user);
         fetchDesigns(user.uid);
         fetchProjects(user.uid);
       } else {
@@ -287,6 +301,7 @@ function Homepage() {
         handleLogout={handleLogout}
         handleSettings={handleSettings}
         darkMode={darkMode}
+        pic={user?.profilePicture}
       />
 
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>
@@ -432,7 +447,7 @@ function Homepage() {
                 <span className="small-button-text">Create a Project</span>
                 <div
                   className="small-circle-button"
-                  onClick={handleCreateDesign}
+                  onClick={handleCreateProject}
                 >
                   <FolderIcon className="icon" />
                 </div>
@@ -441,7 +456,7 @@ function Homepage() {
                 <span className="small-button-text">Create a Design</span>
                 <div
                   className="small-circle-button"
-                  onClick={handleCreateProject}
+                  onClick={handleCreateDesign}
                 >
                   <ImageIcon className="icon" />
                 </div>

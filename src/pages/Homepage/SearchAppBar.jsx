@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -93,15 +93,16 @@ const SearchAppBar = ({
               width: 40,
               borderRadius: "50%",
               marginLeft: "auto",
+              marginRight: "12px",
+              border: "2px solid var(--brightFont)",
             }}
-            alt=""
+            alt="User Profile Picture"
             style={{
               background: user?.profilePicture
                 ? "none"
                 : "var(--gradientButton)",
             }}
             src={user?.profilePicture || ""}
-            // Replace with actual path to profile picture
           />
         </Toolbar>
       </AppBar>

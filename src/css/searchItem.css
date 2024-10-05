@@ -97,7 +97,7 @@
 }
 
 .select-button:hover {
-  background: var(--gradientButton);
+  background: var(--gradientButtonHover);
   color: var(--color-white);
 }
 

@@ -40,9 +40,13 @@ function PromptBar() {
         maxRows={2}
         sx={{
           color: "var(--color-white)",
+          border: "2px solid var(--borderInput)",
           backgroundColor: "transparent",
           "&::before": {
             display: "none",
+          },
+          "&:focus-within": {
+            borderColor: "var(--brightFont)",
           },
         }}
       />

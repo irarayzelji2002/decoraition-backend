@@ -1088,7 +1088,7 @@ def generate_next_image(prompt, negative_prompt, number_of_images, init_image, c
             "prompt": prompt,
             "negative_prompt": negative_prompt,
             "sampler_name": "DPM++ 2M SDE",
-            "steps": 30,
+            "steps": 40,
             "cfg_scale": 7,
             "width": 512,
             "height": 512,

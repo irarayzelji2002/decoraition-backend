@@ -8,6 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Textarea from "@mui/joy/Textarea";
 import AddImage from "./svg/AddImage";
 import { Add } from "@mui/icons-material";
+
 function PromptBar() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
@@ -28,9 +29,6 @@ function PromptBar() {
 
   return (
     <div className="promptBar">
-      {/* <div className="bump">
-        <ArrowBackIosIcon />
-      </div> */}
       <h3>
         Describe your Idea
         <span style={{ color: "var(--color-quaternary)" }}> *</span>
@@ -61,7 +59,7 @@ function PromptBar() {
         sx={{
           color: "var(--slider)", // Slider color
           "& .MuiSlider-thumb": {
-            background: "var( --gradientCircle)", // Gradient thumb
+            background: "var(--gradientCircle)", // Gradient thumb
           },
           "& .MuiSlider-track": {
             backgroundColor: "var(--slider)", // Track color
@@ -190,7 +188,7 @@ function PromptBar() {
       >
         <Box
           sx={{
-            backgroundColor: "#27262c",
+            backgroundColor: "var(--color-tertiary)",
             color: "var(--color-white)",
             width: "500px",
             maxWidth: "90%",
@@ -202,7 +200,10 @@ function PromptBar() {
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <h2 id="modal-title" style={{ color: "white", margin: 0 }}>
+            <h2
+              id="modal-title"
+              style={{ color: "var(--color-white)", margin: 0 }}
+            >
               {modalTitle}
             </h2>
             <Button
@@ -266,13 +267,21 @@ function PromptBar() {
             />
 
             <MuiColorInput
-              style={{
+              sx={{
                 width: "100%",
                 margin: "10px",
-                "& .MuiInput-root": {
-                  borderColor: "var(--borderInput)",
-                  "&:hover": {
-                    borderColor: "var(--borderInput)",
+                "& .MuiInputBase-root": {
+                  color: "var(--color-white)", // Set input text color to white
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    border: "2px solid var(--borderInput)",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "var(--borderInput)", // Set border color on hover
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "var(--brightFont)", // Set border color on focus
                   },
                 },
               }}

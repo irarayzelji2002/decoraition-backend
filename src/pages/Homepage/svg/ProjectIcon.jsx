@@ -3,7 +3,7 @@ function ProjectIcon() {
     <svg
       width="30"
       height="30"
-      style={{ marginLeft: "8px" }}
+      style={{ marginTop: "-5px", marginLeft: "8px" }}
       viewBox="0 0 568 442"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

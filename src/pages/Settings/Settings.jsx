@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Tabs,
   Tab,
@@ -15,11 +15,55 @@ import BedtimeIcon from "@mui/icons-material/Bedtime";
 import Notifications from "./Notifications";
 import TopBar from "../../components/TopBar";
 import "../../css/settings.css";
+import EditableInput from "./EditableInput";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { collection, doc, getDoc } from "firebase/firestore";
+import { db } from "../../../server/firebase";
 
-function SettingsPage() {
+function Settings() {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
-  const fileInputRef = useRef(null); // Reference for the file input
+  const fileInputRef = useRef(null); // Reference for the file input\
+  const [userDetails, setUserDetails] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    username: "",
+  });
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(`User is signed in with UID: ${user.uid}`);
+
+        const fetchUserDetails = async (userId) => {
+          try {
+            console.log(`Fetching document for user ID: ${userId}`);
+            const userDocRef = doc(db, "users", userId);
+            const userDoc = await getDoc(userDocRef);
+
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              console.log("User data:", userData);
+              setUserDetails(userData);
+            } else {
+              console.error("User document not found");
+            }
+          } catch (error) {
+            console.error("Error fetching user details:", error);
+          }
+        };
+
+        fetchUserDetails(user.uid);
+      } else {
+        console.error("No user is signed in");
+        // Optionally, redirect to login page
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -35,6 +79,12 @@ function SettingsPage() {
     if (file) {
       console.log("File uploaded:", file);
     }
+  };
+  const handleInputChange = (field) => (event) => {
+    setUserDetails({
+      ...userDetails,
+      [field]: event.target.value,
+    });
   };
 
   // Trigger file input click
@@ -151,40 +201,27 @@ function SettingsPage() {
               </div>
             </div>
 
-            {["First name", "Last name", "Username", "Email address"].map(
-              (label, index) => (
-                <TextField
-                  key={index}
-                  label={label}
-                  value=""
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: !isEditing,
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={toggleEdit}>
-                          <EditIcon sx={{ color: "#FF894D" }} />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                    sx: {
-                      "& .MuiInput-root": {
-                        color: "#FF894D",
-                      },
-                      "& .MuiInputLabel-root": {
-                        color: "#FF894D",
-                      },
-                      "& .MuiFormHelperText-root": {
-                        color: "#FF894D",
-                      },
-                    },
-                  }}
-                />
-              )
-            )}
-
             {/* Additional Fields */}
+            <EditableInput
+              fieldName="Email"
+              value={userDetails.email}
+              onChange={handleInputChange("email")}
+            />
+            <EditableInput
+              fieldName="First Name"
+              value={userDetails.firstName}
+              onChange={handleInputChange("firstName")}
+            />
+            <EditableInput
+              fieldName="Last Name"
+              value={userDetails.lastName}
+              onChange={handleInputChange("lastName")}
+            />
+            <EditableInput
+              fieldName="Username"
+              value={userDetails.username}
+              onChange={handleInputChange("username")}
+            />
             <TextField
               label="Password"
               value="*******"
@@ -250,4 +287,4 @@ function SettingsPage() {
   );
 }
 
-export default SettingsPage;
+export default Settings;

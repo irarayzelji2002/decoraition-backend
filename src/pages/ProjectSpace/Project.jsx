@@ -157,7 +157,9 @@ function Project() {
           "users",
           currentUser.uid,
           "projects",
-          projectId
+          projectId,
+          "designs",
+          designId
         );
 
         await deleteDoc(projectRef);

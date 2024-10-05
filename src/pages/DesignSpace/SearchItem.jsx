@@ -26,6 +26,11 @@ function SearchItem() {
           width: "69%",
           marginTop: "40px",
           backgroundColor: "var(--color-tertiary)",
+          border: "2px solid var(--borderInput)",
+          borderRadius: "8px",
+          "&:focus-within": {
+            borderColor: "var(--brightFont)",
+          },
         }}
       >
         <IconButton

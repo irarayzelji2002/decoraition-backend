@@ -6,7 +6,7 @@ function DesignSvg() {
       viewBox="0 0 1187 1126"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style={{ marginLeft: "8px" }}
+      style={{ marginTop: "-5px", marginLeft: "8px" }}
     >
       <path
         fill-rule="evenodd"

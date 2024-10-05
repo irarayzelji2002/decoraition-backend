@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Tabs,
   Tab,
@@ -9,17 +9,72 @@ import {
   Box,
   InputAdornment,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BedtimeIcon from "@mui/icons-material/Bedtime";
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Bedtime as BedtimeIcon,
+  Save as SaveIcon,
+} from "@mui/icons-material";
 import Notifications from "./Notifications";
 import TopBar from "../../components/TopBar";
 import "../../css/settings.css";
+import EditableInput from "./EditableInput";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { db } from "../../firebase";
 
-function SettingsPage() {
+function Settings() {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
-  const fileInputRef = useRef(null); // Reference for the file input
+  const fileInputRef = useRef(null); // Reference for the file input\
+  const [userDetails, setUserDetails] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    username: "",
+  });
+  const [userId, setUserId] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(`User is signed in with UID: ${user.uid}`);
+        setUserId(user.uid);
+
+        const fetchUserDetails = async (userId) => {
+          try {
+            console.log(`Fetching document for user ID: ${userId}`);
+            const userDocRef = doc(db, "users", userId);
+            const userDoc = await getDoc(userDocRef);
+
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              console.log("User data:", userData);
+              setUserDetails(userData);
+              setAvatarPreview(userData.photoURL || "");
+            } else {
+              console.error("User document not found");
+            }
+          } catch (error) {
+            console.error("Error fetching user details:", error);
+          }
+        };
+
+        fetchUserDetails(user.uid);
+      } else {
+        console.error("No user is signed in");
+        // Optionally, redirect to login page
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -33,7 +88,52 @@ function SettingsPage() {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      setSelectedFile(file); // Set the selected file
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result); // Set the avatar preview
+      };
+      reader.readAsDataURL(file);
       console.log("File uploaded:", file);
+    }
+  };
+  const handleInputChange = (field) => (event) => {
+    setUserDetails({
+      ...userDetails,
+      [field]: event.target.value,
+    });
+  };
+
+  const handleSave = async (field) => {
+    if (userId) {
+      try {
+        const userDocRef = doc(db, "users", userId);
+        await updateDoc(userDocRef, {
+          [field]: userDetails[field],
+        });
+        toast.success(`${field} updated successfully`);
+      } catch (error) {
+        toast.error(`Error updating ${field}: ${error.message}`);
+      }
+    }
+  };
+
+  const handleSavePhoto = async () => {
+    if (selectedFile && userId) {
+      try {
+        const storage = getStorage();
+        const storageRef = ref(storage, `avatars/${userId}`);
+        await uploadBytes(storageRef, selectedFile);
+        const photoURL = await getDownloadURL(storageRef);
+
+        const userDocRef = doc(db, "users", userId);
+        await updateDoc(userDocRef, {
+          photoURL,
+        });
+        toast.success("Photo updated successfully");
+      } catch (error) {
+        console.error("Error updating photo:", error);
+      }
     }
   };
 
@@ -44,7 +144,8 @@ function SettingsPage() {
 
   return (
     <>
-      <TopBar state="Settings" />{" "}
+      <TopBar state="Settings" />
+      <ToastContainer />
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
@@ -93,7 +194,7 @@ function SettingsPage() {
             >
               <Avatar
                 alt="User Avatar"
-                src=""
+                src={avatarPreview || ""} // Use avatarPreview as the source
                 sx={{
                   width: 150,
                   height: 150,
@@ -133,6 +234,19 @@ function SettingsPage() {
                 >
                   Change photo
                 </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<SaveIcon />}
+                  className="save-photo-btn"
+                  onClick={handleSavePhoto}
+                  sx={{
+                    background: "linear-gradient(to right, #4CAF50, #81C784)",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Save photo
+                </Button>
 
                 {/* Remove Photo Button */}
                 <Button
@@ -151,40 +265,31 @@ function SettingsPage() {
               </div>
             </div>
 
-            {["First name", "Last name", "Username", "Email address"].map(
-              (label, index) => (
-                <TextField
-                  key={index}
-                  label={label}
-                  value=""
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: !isEditing,
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={toggleEdit}>
-                          <EditIcon sx={{ color: "#FF894D" }} />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                    sx: {
-                      "& .MuiInput-root": {
-                        color: "#FF894D",
-                      },
-                      "& .MuiInputLabel-root": {
-                        color: "#FF894D",
-                      },
-                      "& .MuiFormHelperText-root": {
-                        color: "#FF894D",
-                      },
-                    },
-                  }}
-                />
-              )
-            )}
-
             {/* Additional Fields */}
+            <EditableInput
+              fieldName="Email"
+              value={userDetails.email}
+              onChange={handleInputChange("email")}
+              onSave={() => handleSave("email")}
+            />
+            <EditableInput
+              fieldName="First Name"
+              value={userDetails.firstName}
+              onChange={handleInputChange("firstName")}
+              onSave={() => handleSave("firstName")}
+            />
+            <EditableInput
+              fieldName="Last Name"
+              value={userDetails.lastName}
+              onChange={handleInputChange("lastName")}
+              onSave={() => handleSave("lastName")}
+            />
+            <EditableInput
+              fieldName="Username"
+              value={userDetails.username}
+              onChange={handleInputChange("username")}
+              onSave={() => handleSave("username")}
+            />
             <TextField
               label="Password"
               value="*******"
@@ -250,4 +355,4 @@ function SettingsPage() {
   );
 }
 
-export default SettingsPage;
+export default Settings;

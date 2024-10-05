@@ -22,6 +22,9 @@
   font-size: 18px;
   margin-bottom: 20px;
 }
+.search-section input:focus-within {
+  border-color: var(--brightFont);
+}
 
 /* Upload Section */
 .upload-section {
@@ -92,12 +95,23 @@
   font-weight: bold;
 }
 
+.search-section input:focus-within {
+  border-color: var(--brightFont);
+}
+
 .input-group {
   background-color: var(--nav-card-modal);
   border: 2px solid var(--borderInput);
   border-radius: 8px;
-
   margin-bottom: 20px;
+}
+
+.input-group:focus-within {
+  border-color: var(--brightFont);
+}
+
+.search-section input:focus-within {
+  border-color: var(--brightFont);
 }
 
 /* Input styling */
@@ -156,7 +170,7 @@
 }
 
 .quantity-section button:hover {
-  background-color: #ff8a00;
+  background: var(--gradientCircle);
 }
 
 /* Add Item Button */

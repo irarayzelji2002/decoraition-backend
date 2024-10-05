@@ -70,8 +70,8 @@ function App() {
           <Route path="/otp" element={<OneTP />} />
           <Route path="/homepage" element={<Homepage />} /> {/*Checked */}
           <Route path="/details" element={<Details />} />
-          {/*Checked */}
           <Route path="/settings" element={<Settings />} />
+          {/*Checked */}
           {/* DESIGN SPACE */}
           <Route path="/design/:designId" element={<Design />} />
           <Route path="/searchItem" element={<SearchItem />} />

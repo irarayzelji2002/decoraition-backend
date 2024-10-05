@@ -84,7 +84,7 @@ export default function Notifications() {
         <Typography
           variant="h6"
           gutterBottom
-          style={{ color: "white", fontWeight: "bold" }}
+          style={{ color: "var(--color-white)", fontWeight: "bold" }}
         >
           Notification preferences
         </Typography>
@@ -116,7 +116,7 @@ export default function Notifications() {
           <Typography
             variant="h6"
             gutterBottom
-            style={{ color: "white", fontWeight: "bold" }}
+            style={{ color: "var(--color-white)", fontWeight: "bold" }}
           >
             Delete read notifications after how many days?
           </Typography>
@@ -145,7 +145,7 @@ export default function Notifications() {
         <Typography
           variant="h6"
           gutterBottom
-          style={{ color: "white", fontWeight: "bold" }}
+          style={{ color: "var(--color-white)", fontWeight: "bold" }}
         >
           Comment notification preferences
         </Typography>
@@ -230,7 +230,7 @@ export default function Notifications() {
         <Typography
           variant="h6"
           gutterBottom
-          style={{ color: "white", fontWeight: "bold" }}
+          style={{ color: "var(--color-white)", fontWeight: "bold" }}
         >
           Timeline notification preferences
         </Typography>
@@ -252,7 +252,7 @@ export default function Notifications() {
         <Typography
           variant="h6"
           gutterBottom
-          style={{ color: "white", fontWeight: "bold" }}
+          style={{ color: "var(--color-white)", fontWeight: "bold" }}
         >
           Design notification preferences
         </Typography>
@@ -322,7 +322,7 @@ export default function Notifications() {
         <Typography
           variant="h6"
           gutterBottom
-          style={{ color: "white", fontWeight: "bold" }}
+          style={{ color: "var(--color-white)", fontWeight: "bold" }}
         >
           Project notification preferences
         </Typography>

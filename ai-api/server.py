@@ -511,7 +511,7 @@ def generate_first_image(prompt, negative_prompt, number_of_images, base_image, 
         if base_image and not style_reference:
             print("========First Gen: prompt with base image (Canny)========")
             payload["alwayson_scripts"] = {
-                "ControlNet": {
+                "controlnet": {
                     "args": [{
                         "enabled": True,
                         "image": base_image,

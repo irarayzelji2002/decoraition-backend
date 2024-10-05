@@ -15,7 +15,7 @@
 <body>
 	<h1>First Image Generation Test</h1>
 
-	<form id="generate_image_form" enctype="multipart/form-data">
+	<form id="generate_image_form" method="POST" enctype="multipart/form-data">
 		<!-- Prompt -->
 		<label for="prompt">Prompt:</label>
 		<span id="prompt_err" class="err_msg"></span><br />
@@ -31,13 +31,19 @@
 		<!-- Base Image -->
 		<label for="base_image">Base Image:</label>
 		<span id="base_image_err" class="err_msg"></span>
-		<input type="file" id="base_image" name="base_image" accept="image/png, image/jpg, image/jpeg" /><br /><br />
+		<input type="file" id="base_image" name="base_image" accept="image/png, image/jpg, image/jpeg" />
+		<button type="button" onclick="removeUploadedFile('base_image')">
+			Remove Base Image
+		</button>
+		<br /><br />
 		<!-- Style Reference -->
 		<label for="style_reference">Style Reference:</label>
 		<span id="style_reference_err" class="err_msg"></span>
-		<input type="file" id="style_reference" name="style_reference"
-			accept="image/png, image/jpg, image/jpeg" /><br /><br />
-
+		<input type="file" id="style_reference" name="style_reference" accept="image/png, image/jpg, image/jpeg" />
+		<button type="button" onclick="removeUploadedFile('style_reference')">
+			Remove Style Reference
+		</button>
+		<br /><br />
 		<!-- Generate button -->
 		<span id="general_err" class="err_msg"></span><br />
 
@@ -46,17 +52,16 @@
 		</button>
 	</form>
 
-	<button onclick="document.location='/test/next-generation'">
+	<button type="button" onclick="document.location='/test/next-generation'">
 		Next Generation
 	</button>
 
 	<div>
-		<span id="status_message"></span><br />
+		<span id=" status_message"></span><br />
 		<div class="progress">
 			<progress id="progress_bar" value="0" max="100"></progress><br />
 			<span id="progress_message"></span><br />
 			<span id="time_remaining_message"></span><br />
-
 		</div>
 		<div id="image_container"></div>
 	</div>
@@ -67,6 +72,17 @@
 			const progress_bar = document.getElementById('progress_bar');
 			progress_bar.style.display = progress_bar.value != 0 ? "block" : "none";
 		});
+
+		// Function to remove uploaded file
+		function removeUploadedFile(inputId) {
+			const fileInput = document.getElementById(inputId);
+			if (fileInput) {
+				fileInput.value = "";
+				console.log(`${inputId} has been cleared.`);
+			} else {
+				console.error(`Input element with id "${inputId}" not found.`);
+			}
+		}
 
 		// Function when Generate is clicked
 		async function generateFirstImage() {

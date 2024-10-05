@@ -92,7 +92,7 @@
 <body>
 	<h1>Next Image Generation Test</h1>
 
-	<form id="generate_image_form" enctype="multipart/form-data">
+	<form id="generate_image_form" method="POST" enctype="multipart/form-data">
 		<!-- Prompt -->
 		<label for="prompt">Prompt:</label>
 		<span id="prompt_err" class="err_msg"></span><br />
@@ -112,8 +112,11 @@
 		<!-- Style Reference -->
 		<label for="style_reference">Style Reference:</label>
 		<span id="style_reference_err" class="err_msg"></span>
-		<input type="file" id="style_reference" name="style_reference"
-			accept="image/png, image/jpg, image/jpeg" /><br /><br />
+		<input type="file" id="style_reference" name="style_reference" accept="image/png, image/jpg, image/jpeg" />
+		<button type="button" onclick="removeUploadedFile('style_reference')">
+			Remove Style Reference
+		</button>
+		<br /><br />
 		<!-- Mask Prompt -->
 		<label for="mask_prompt">Mask Prompt:</label>
 		<span id="mask_prompt_err" class="err_msg"></span><br />
@@ -160,7 +163,7 @@
 			<label for="mask_visibility">Mask Visibility:</label>
 			<input type="checkbox" id="mask_visibility" checked>
 
-			<button id="clear_canvas">Clear</button>
+			<button type="button" id="clear_canvas">Clear</button>
 		</div>
 		<div id="remove_from_sam" class="display_none">
 			<h3>Remove From SAM Mask Options</h3>
@@ -179,7 +182,7 @@
 			<label for="mask_visibility">Mask Visibility:</label>
 			<input type="checkbox" id="mask_visibility" checked>
 
-			<button id="clear_canvas">Clear</button>
+			<button type="button" id="clear_canvas">Clear</button>
 		</div>
 		<div id="is_sam">
 			<h3>SAM Mask Options</h3>
@@ -247,7 +250,7 @@
 		</button>
 	</form>
 
-	<button onclick="document.location='/test/first-generation'">
+	<button type="button" onclick="document.location='/test/first-generation'">
 		First Generation
 	</button>
 
@@ -257,7 +260,6 @@
 			<progress id="progress_bar" value="0" max="100"></progress><br />
 			<span id="progress_message"></span><br />
 			<span id="time_remaining_message"></span><br />
-
 		</div>
 		<div id="image_container"></div>
 	</div>
@@ -279,6 +281,17 @@
 			const progress_bar = document.getElementById('progress_bar');
 			progress_bar.style.display = progress_bar.value != 0 ? "block" : "none";
 		});
+
+		// Function to remove uploaded file
+		function removeUploadedFile(inputId) {
+			const fileInput = document.getElementById(inputId);
+			if (fileInput) {
+				fileInput.value = "";
+				console.log(`${inputId} has been cleared.`);
+			} else {
+				console.error(`Input element with id "${inputId}" not found.`);
+			}
+		}
 
 		// Function when Generate Mask is clicked
 		async function generateMask() {

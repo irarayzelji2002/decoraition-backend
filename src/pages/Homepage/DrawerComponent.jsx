@@ -273,7 +273,7 @@ const DrawerComponent = ({
         <Divider sx={{ backgroundColor: "gray", my: 2 }} />
 
         {/* Settings Menu Item */}
-        <ListItem button onClick={handleSettings}>
+        <ListItem button onClick={() => navigate("/settings")}>
           <ListItemIcon>
             <SettingsIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>

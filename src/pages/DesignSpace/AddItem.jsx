@@ -11,7 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 const AddItem = () => {
   const [itemQuantity, setItemQuantity] = useState(1);
   const [image, setImage] = useState(null);
-  const { designId } = useParams();
+  const { designId, projectId } = useParams();
   const [userId, setUserId] = useState(null);
   const [budgetItem, setBudgetItem] = useState("");
   const [cost, setCost] = useState(0);
@@ -41,6 +41,8 @@ const AddItem = () => {
     setCost(e.target.value);
   };
 
+  const isProjectPath = window.location.pathname.includes("/project");
+
   const handleInputSubmit = async () => {
     if (budgetItem.trim() === "") {
       alert("Pin cannot be empty");
@@ -48,14 +50,30 @@ const AddItem = () => {
     }
 
     try {
-      const pinRef = collection(
-        db,
-        "users",
-        userId,
-        "designs",
-        designId,
-        "budgets"
-      );
+      let pinRef;
+
+      if (isProjectPath) {
+        pinRef = collection(
+          db,
+          "users",
+          userId,
+          "projects",
+          projectId,
+          "designs",
+          designId,
+          "budgets"
+        );
+      } else {
+        pinRef = collection(
+          db,
+          "users",
+          userId,
+          "designs",
+          designId,
+          "budgets"
+        );
+      }
+
       await addDoc(pinRef, {
         itemName: budgetItem,
         description: "",
@@ -82,7 +100,7 @@ const AddItem = () => {
         },
       });
       setTimeout(() => {
-        window.location.href = `/budget/${designId}`;
+        window.history.back();
       }, 1000);
     } catch (error) {
       console.error("Error adding pin:", error);

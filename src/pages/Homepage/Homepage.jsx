@@ -23,9 +23,12 @@ import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import { CheckCircle } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete.js";
+
 import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
 import "../../css/design.css";
+import ProjectIcon from "./svg/ProjectIcon.jsx";
+import DesignSvg from "./svg/DesignSvg.jsx";
 
 function Homepage() {
   const [user, setUser] = useState(null);
@@ -293,7 +296,10 @@ function Homepage() {
             src="/img/Logo-Colored.png"
             alt="logo"
           />
-          <h1 className="navName">DecorAItion</h1>
+          <div>
+            <h1 className="navName">DecorAItion</h1>
+            <p className="navTagline">Forming ideas with generative AI</p>
+          </div>
         </div>
 
         <div className="action-buttons">
@@ -308,7 +314,14 @@ function Homepage() {
         <div className="recent-designs">
           {searchQuery && <h2>Search Results</h2>}
           {searchQuery && (
-            <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
+            <div
+              style={{
+                display: "flex",
+                textAlign: "left",
+                width: "100%",
+                marginLeft: "20px",
+              }}
+            >
               <div className="layout" style={{ marginBottom: "100px" }}>
                 {filteredDesigns.length > 0 ? (
                   filteredDesigns.slice(0, 3).map((design) => (
@@ -336,7 +349,8 @@ function Homepage() {
 
         <section className="recent-section">
           <div className="recent-designs">
-            <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
+            <div className="separator">
+              <DesignSvg />
               <h2>Recent Designs</h2>{" "}
               <Link
                 to="/seeAllDesigns"
@@ -374,7 +388,8 @@ function Homepage() {
 
         <section className="recent-section">
           <div className="recent-designs">
-            <div style={{ display: "flex", textAlign: "left", width: "100%" }}>
+            <div className="separator">
+              <ProjectIcon />
               <h2>Recent Projects</h2>{" "}
               <Link
                 to="/seeAllProjects"
@@ -415,13 +430,19 @@ function Homepage() {
             <div className="small-buttons">
               <div className="small-button-container">
                 <span className="small-button-text">Create a Project</span>
-                <div className="small-circle-button">
+                <div
+                  className="small-circle-button"
+                  onClick={handleCreateDesign}
+                >
                   <FolderIcon className="icon" />
                 </div>
               </div>
               <div className="small-button-container">
                 <span className="small-button-text">Create a Design</span>
-                <div className="small-circle-button">
+                <div
+                  className="small-circle-button"
+                  onClick={handleCreateProject}
+                >
                   <ImageIcon className="icon" />
                 </div>
               </div>

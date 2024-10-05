@@ -12,7 +12,6 @@ import Version from "./Version";
 import "../../css/design.css";
 import DrawerComponent from "../Homepage/DrawerComponent";
 import { FaCheckCircle, FaEllipsisV, FaAt } from "react-icons/fa"; // Icons used: Check, Dots, At symbol
-import Budget from "./Budget";
 import TwoFrames from "./svg/TwoFrames";
 import FourFrames from "./svg/FourFrames";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -20,7 +19,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { onSnapshot } from "firebase/firestore";
 
 function Design() {
-  const { designId } = useParams(); // Get designId from the URL
+  const { designId, projectId } = useParams(); // Get designId from the URL
   const [designData, setDesignData] = useState(null);
   const [newName, setNewName] = useState("");
   const [showComments, setShowComments] = useState(false);
@@ -36,6 +35,7 @@ function Design() {
   const [clicked, setClicked] = useState(false); // Handle click state
 
   // Fetch design details based on designId
+
   useEffect(() => {
     const auth = getAuth();
 
@@ -43,7 +43,24 @@ function Design() {
       if (user) {
         setUserId(user.uid);
 
-        const designRef = doc(db, "users", user.uid, "designs", designId);
+        const isProjectPath = window.location.pathname.includes("/project");
+
+        let designRef;
+        if (isProjectPath) {
+          // Use a different reference when "/project" is in the URL
+          designRef = doc(
+            db,
+            "users",
+            user.uid,
+            "projects",
+            projectId,
+            "designs",
+            designId
+          );
+        } else {
+          // Use the original design reference
+          designRef = doc(db, "users", user.uid, "designs", designId);
+        }
 
         const fetchDesignDetails = async () => {
           try {
@@ -99,8 +116,23 @@ function Design() {
     }
 
     try {
-      const designRef = doc(db, "users", userId, "designs", designId);
-      await updateDoc(designRef, { name: newName });
+      const isProjectPath = window.location.pathname.includes("/project");
+      if (isProjectPath) {
+        const designRef = doc(
+          db,
+          "users",
+          userId,
+          "projects",
+          projectId,
+          "designs",
+          designId
+        );
+        await updateDoc(designRef, { name: newName });
+      } else {
+        const designRef = doc(db, "users", userId, "designs", designId);
+        await updateDoc(designRef, { name: newName });
+      }
+
       setIsEditingName(false);
       toast.success("Design name updated successfully!", {
         position: "top-right",
@@ -296,7 +328,7 @@ function Design() {
         </div>
       </>
 
-      <BottomBar design={true} designId={designId} />
+      <BottomBar design={true} designId={designId} projectId={projectId} />
     </div>
   );
 }

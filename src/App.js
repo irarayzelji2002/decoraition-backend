@@ -84,6 +84,22 @@ function App() {
           <Route path="/version" element={<Version />} />
           {/* PROJECT SPACE */}
           <Route path="/project/:projectId" element={<Project />} />
+          <Route
+            path="/design/:designId/:projectId/project"
+            element={<Design />}
+          />
+          <Route
+            path="/budget/:designId/:projectId/project"
+            element={<Budget />}
+          />
+          <Route
+            path="/addItem/:designId/:projectId/project"
+            element={<AddItem />}
+          />
+          <Route
+            path="/editItem/:designId/:itemId/:projectId/project"
+            element={<EditItem />}
+          />
           <Route path="/planMap/:projectId" element={<PlanMap />} />
           <Route path="/timeline/:projectId" element={<Timeline />} />
           <Route path="/projBudget/:projectId" element={<ProjBudget />} />

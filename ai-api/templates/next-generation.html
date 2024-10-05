@@ -6,17 +6,83 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Next Generation</title>
 	<style>
-		.user_mask_canvas {
+		.user_mask_canvas,
+		.new_mask_preview_cont {
 			position: relative;
 			width: 512px;
 			height: 512px;
 		}
 
-		.drawing_canvas,
-		.init_image_preview {
-			position: absolute;
+		.new_mask_preview {
+			overflow: hidden;
 		}
 
+		.new_mask_preview_img {
+			width: 512px;
+			height: 512px;
+			filter: drop-shadow(0px 1000px 0px rgba(117, 67, 255, 0.5));
+			transform: translateY(-1000px);
+		}
+
+		.add_canvas,
+		.remove_canvas,
+		.sam_canvas,
+		.init_image_preview {
+			position: absolute !important;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		.init_image_preview_mask,
+		.new_mask_preview {
+			position: absolute !important;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		.sam_canvas {
+			overflow: hidden;
+		}
+
+		.sam_canvas img {
+			width: 512px;
+			height: 512px;
+			filter: drop-shadow(0px 1000px 0px rgba(117, 67, 255, 0.5));
+			transform: translateY(-1000px);
+		}
+
+		/* Add z-index for layering */
+		.add_canvas {
+			z-index: 2;
+			/* Initially on top in Add mode */
+		}
+
+		.remove_canvas {
+			z-index: 1;
+			/* Initially below Add canvas */
+		}
+
+		/* Class to disable interaction */
+		.inactive-canvas {
+			pointer-events: none;
+			opacity: 0.6;
+			/* To visually indicate it's inactive */
+		}
+
+		/* Display control classes */
+		.display_none {
+			display: none;
+		}
+
+		.display_block {
+			display: block;
+		}
+
+		/* Error message styling */
 		.err_msg {
 			color: rgb(220, 53, 69);
 		}
@@ -34,7 +100,8 @@
 		<!-- Number of Images -->
 		<label for="number_of_images">Number of Images:</label>
 		<span id="number_of_images_err" class="err_msg"></span><br />
-		<input type="range" id="number_of_images" min="1" max="4" value="1" required><br /><br />
+		<input type="range" id="number_of_images" name="number_of_images" min="1" max="4" value="1"
+			required><br /><br />
 		<!-- Color Palette -->
 		<label for="color_palette">Color Palette (comma-separated hex codes):</label><br />
 		<input type="text" id="color_palette" name="color_palette" /><br /><br />
@@ -50,27 +117,42 @@
 		<!-- Mask Prompt -->
 		<label for="mask_prompt">Mask Prompt:</label>
 		<span id="mask_prompt_err" class="err_msg"></span><br />
-		<input type="text" id="mask_prompt" name="mask_prompt" required /><br /><br />
+		<input type="text" id="mask_prompt" name="mask_prompt" required /><br />
 		<!-- Generate Mask button -->
 		<span id="mask_general_err" class="err_msg"></span><br />
 		<button type="button" onclick="generateMask()">
 			Generate Mask
-		</button><br />
+		</button><br /><br />
 		<!-- SAM Mask -->
 		<label for="sam_mask">SAM mask:</label>
 		<span id="sam_mask_err" class="err_msg"></span>
 		<div id="sam_mask_preview"></div>
 
 		<!-- Brush size, color, and opacity controls -->
+		<br />
+		<label for="canvas_mode">Canvas Mode: <span id="canvas_mode_desc">Add To SAM Mask</span></label>
+		<input type="checkbox" id="canvas_mode" checked><br /><br />
 		<div>
-			<label for="brush_size">Brush Size:</label>
-			<input type="range" id="brush_size" min="5" max="50" value="10">
-
+			<div>Refine Mask Option: <span id="refine_option_err" class="err_msg"></span></div>
+			<div>
+				<input type="radio" id="refine_option_0" name="refine_option" value="0" checked />
+				<label for="mask_0">Add first then remove</label>
+			</div>
+			<div>
+				<input type="radio" id="refine_option_1" name="refine_option" value="1" />
+				<label for="mask_1">Remove first then add</label>
+			</div>
+		</div>
+		<div id="add_to_sam">
+			<h3>Add To SAM Mask Options</h3>
 			<label for="selected_color">Selected Color:</label>
-			<input type="color" id="selected_color" value="#ff0000">
+			<input type="color" id="selected_color" value="#00ff40">
 
 			<label for="selected_opacity">Selected Opacity:</label>
 			<input type="range" id="selected_opacity" min="0" max="1" step="0.1" value="0.5">
+
+			<label for="brush_size">Brush Size:</label>
+			<input type="range" id="brush_size" min="5" max="50" value="30">
 
 			<label for="selected_brush_mode">Brush Mode: <span id="selected_brush_mode_desc">Draw</span></label>
 			<input type="checkbox" id="selected_brush_mode" checked>
@@ -80,18 +162,82 @@
 
 			<button id="clear_canvas">Clear</button>
 		</div>
+		<div id="remove_from_sam" class="display_none">
+			<h3>Remove From SAM Mask Options</h3>
+			<label for="selected_color">Selected Color:</label>
+			<input type="color" id="selected_color" value="#ff0000">
+
+			<label for="selected_opacity">Selected Opacity:</label>
+			<input type="range" id="selected_opacity" min="0" max="1" step="0.1" value="0.5">
+
+			<label for="brush_size">Brush Size:</label>
+			<input type="range" id="brush_size" min="5" max="50" value="30">
+
+			<label for="selected_brush_mode">Brush Mode: <span id="selected_brush_mode_desc">Draw</span></label>
+			<input type="checkbox" id="selected_brush_mode" checked>
+
+			<label for="mask_visibility">Mask Visibility:</label>
+			<input type="checkbox" id="mask_visibility" checked>
+
+			<button id="clear_canvas">Clear</button>
+		</div>
+		<div id="is_sam">
+			<h3>SAM Mask Options</h3>
+			<label for="selected_color">Selected Color:</label>
+			<input type="color" id="selected_color" value="#7543ff">
+
+			<label for="selected_opacity">Selected Opacity:</label>
+			<input type="range" id="selected_opacity" min="0" max="1" step="0.1" value="0.5">
+		</div>
 		<!-- Canvas for drawing -->
 		<div id="user_mask_canvas" class="user_mask_canvas">
-			<img src="" id="init_image_preview" class="init_image_preview"></img>
-			<canvas id="drawing_canvas" class="drawing_canvas"></canvas>
+			<img src="" id="init_image_preview" class="init_image_preview" />
+			<div id="sam_canvas" class="sam_canvas"></div>
+			<canvas id="remove_canvas" class="remove_canvas"></canvas>
+			<canvas id="add_canvas" class="add_canvas"></canvas>
 		</div>
 		<!-- Base64 Encoded Output -->
-		<label for="user_mask">User Mask:</label>
-		<span id="user_mask_err" class="err_msg"></span><br />
-		<textarea id="user_mask_base64_output" name="user_mask" rows="3" cols="50"
-			placeholder="Base 64 of User Mask"></textarea><br />
-		<button type="button" id="get_user_mask">
-			Get User Mask
+		<div id="get_sam_mask_path">
+			<label for="sam_mask_path">Get SAM Mask Path:</label>
+			<span id="sam_mask_path_err" class="err_msg"></span><br />
+			<textarea id="sam_mask_path" name="sam_mask_path" rows="3" cols="50"
+				placeholder="SAM Mask Path"></textarea><br /><br />
+		</div>
+		<div id="get_user_mask_add">
+			<label for="user_mask_add">User Mask (Add):</label>
+			<span id="user_mask_add_err" class="err_msg"></span><br />
+			<textarea id="user_mask_add_base64_output" name="user_mask_add" rows="3" cols="50"
+				placeholder="Base 64 of User Mask (Add)"></textarea><br />
+			<button type="button" id="get_user_mask_add">
+				Get User Mask (Add)
+			</button><br /><br />
+		</div>
+		<div id="get_user_mask_remove">
+			<label for="user_mask_remove">User Mask (Remove):</label>
+			<span id="user_mask_remove_err" class="err_msg"></span><br />
+			<textarea id="user_mask_remove_base64_output" name="user_mask_remove" rows="3" cols="50"
+				placeholder="Base 64 of User Mask (Remove)"></textarea><br />
+			<button type="button" id="get_user_mask_remove">
+				Get User Mask (Remove)
+			</button><br /><br />
+		</div>
+		<div>
+			<label for="to_preview">Preview:</label>
+			<input type="checkbox" id="to_preview" checked>
+		</div>
+		<div id="new_mask_preview_cont" class="new_mask_preview_cont">
+			<img src="" id="init_image_preview_mask" class="init_image_preview_mask" />
+			<div id="new_mask_preview" class="new_mask_preview">
+				<img src="" id="new_mask_preview_img" class="new_mask_preview_img" />
+			</div>
+		</div>
+		<span id="combine_mask_general_err" class="err_msg"></span><br />
+		<button type="button" id="preview_mask" onclick="previewMask()">
+			Preview Mask
+		</button><br />
+		<span id="apply_mask_general_err" class="err_msg"></span><br />
+		<button type="button" id="apply_mask" onclick="applyMask()">
+			Apply Mask
 		</button><br /><br />
 
 		<!-- Generate button -->
@@ -107,9 +253,23 @@
 
 	<div id="image_container"></div>
 
-	<script src="{{ url_for('static', filename='js/canvas_script.js') }}"></script>
 	<script>
-		let sam_image_paths;
+		window.sam_image_paths = {};
+		window.selected_sam_mask = {};
+		window.combined_mask = {}
+
+		document.addEventListener("DOMContentLoaded", function () {
+			const previewCheckedInput = document.getElementById('to_preview');
+			const newMaskPreview = document.getElementById('new_mask_preview_cont')
+			previewCheckedInput.addEventListener("change", function () {
+				if (previewCheckedInput.checked) {
+					newMaskPreview.style.display = "block";
+				} else {
+					newMaskPreview.style.display = "none";
+				}
+			});
+		});
+
 		async function generateMask() {
 			let err_count = 0;
 			const err_msgs = document.querySelectorAll(".err_msg");
@@ -154,13 +314,13 @@
 				const sam_mask_preview = document.getElementById("sam_mask_preview");
 				sam_mask_preview.innerHTML = "";
 				const { blended_images, masks, masked_images } = data.image_paths;
-				sam_image_paths = data.image_paths
+				window.sam_image_paths = data.image_paths
 
 				// Dynamically create a radio group for the 3 mask options
 				blended_images.forEach((blended_image, index) => {
 					const maskOption = document.createElement("div");
 					maskOption.innerHTML = `
-						<input type="radio" id="mask_${index}" name="selected_mask" value="${index}" />
+						<input type="radio" id="mask_${index}" name="selected_mask" value="${index}" ${index === 0 ? 'checked' : ''} />
 						<label for="mask_${index}">
 							<img src="${blended_images[index]}" alt="Blended Image" width="100" />
 							<img src="${masks[index]}" alt="Mask Image" width="100" />
@@ -168,10 +328,148 @@
 						</label>
 					`;
 					sam_mask_preview.appendChild(maskOption);
+
+					// Add an event listener for this radio button
+					const radio = maskOption.querySelector('input[name="selected_mask"]');
+					console.log("inside foreach");
+					radio.addEventListener('change', function () {
+						const selectedMaskRadioChecked = document.querySelector('input[name="selected_mask"]:checked');
+						const selectedIndex = selectedMaskRadioChecked.value;
+						const { blended_images, masks, masked_images } = window.sam_image_paths;
+						window.selected_sam_mask = {
+							"blended_image": blended_images[selectedIndex],
+							"mask": masks[selectedIndex],
+							"masked_image": masked_images[selectedIndex]
+						};
+						console.log("1window.sam_image_paths:", window.sam_image_paths);
+						console.log("1window.selected_sam_mask:", window.selected_sam_mask);
+						window.useSelectedMask();
+					});
+
+					if (index == 0) {
+						window.selected_sam_mask = {
+							"blended_image": blended_images[0],
+							"mask": masks[0],
+							"masked_image": masked_images[0]
+						};
+						window.useSelectedMask();
+					}
 				});
 			} catch (error) {
 				console.error("Error:", error);
 			}
+		}
+
+		async function previewMask() {
+			await window.getUserMasks();
+
+			let err_count = 0;
+			// Validate data
+			const refineOptionRadioChecked = document.querySelector('input[name="refine_option"]:checked');
+			if (!refineOptionRadioChecked) {
+				document.getElementById("refine_option_err").innerHTML = "Please select a refine mask option.";
+				err_count++;
+			}
+			const selectedMaskRadioChecked = document.querySelector('input[name="selected_mask"]:checked');
+			if (!selectedMaskRadioChecked) {
+				document.getElementById("sam_mask_err").innerHTML = "Please select a SAM mask.";
+				err_count++;
+			}
+			const sam_mask_path = document.getElementById("sam_mask_path").value;
+			const user_mask_add = document.getElementById("user_mask_add_base64_output").value;
+			const user_mask_remove = document.getElementById("user_mask_remove_base64_output").value;
+			if (!user_mask_add) {
+				document.getElementById("user_mask_add_err").innerHTML = "Please provide the add mask.";
+				err_count++;
+			}
+			if (!user_mask_remove) {
+				document.getElementById("user_mask_remove_err").innerHTML = "Please provide the remove mask.";
+				err_count++;
+			}
+			if (err_count > 0) {
+				return;
+			}
+
+			const refineOptionIndex = refineOptionRadioChecked.value;
+			const selectedMaskIndex = selectedMaskRadioChecked.value;
+			const { blended_images, masks, masked_images } = window.sam_image_paths;
+			window.selected_sam_mask = {
+				"blended_image": blended_images[selectedMaskIndex],
+				"mask": masks[selectedMaskIndex],
+				"masked_image": masked_images[selectedMaskIndex]
+			};
+
+			// Create FormData object
+			const formData = new FormData();
+			formData.append("refine_option", refineOptionIndex);
+			// formData.append("sam_mask", JSON.stringify(window.selected_sam_mask));
+			formData.append("sam_mask", sam_mask_path);
+			formData.append("user_mask_add", user_mask_add);
+			formData.append("user_mask_remove", user_mask_remove);
+			console.log("Form Data:");
+			console.log(formData);
+
+			// Fetch API
+			try {
+				const response = await fetch("/preview-mask", {
+					method: "POST",
+					body: formData,
+				});
+
+				if (!response.ok) {
+					document.getElementById("combine_mask_general_err").innerHTML = "Failed to combine masks";
+					throw new Error("Failed to combine masks");
+				}
+
+				const data = await response.json();
+				const previewCheckedInput = document.getElementById('to_preview');
+				console.log(data);
+				console.log("previewChecked; " + previewCheckedInput.checked);
+				if (previewCheckedInput.checked) {
+					const initImage = document.querySelector('#user_mask_canvas #init_image_preview')
+					const initImagePreview = document.querySelector('#new_mask_preview_cont #init_image_preview_mask')
+					initImagePreview.src = initImage.src
+					const { mask, masked_image } = data
+					const newMaskPreview = document.getElementById("new_mask_preview");
+					newMaskPreview.innerHTML = `
+						<img src="${masked_image}" id="new_mask_preview_img" class="new_mask_preview_img"/>
+					`;
+				}
+				return data;
+			} catch (error) {
+				console.error("Error:", error);
+				document.getElementById("combine_mask_general_err").innerHTML = "An error occurred. Please try again.";
+			}
+		}
+
+		async function applyMask() {
+			const data = await previewMask(); // return mask
+			if (!data) {
+				console.error("Error:", error);
+				document.getElementById("combine_mask_general_err").innerHTML = "An error occurred. Please try again.";
+			}
+			const { mask, masked_image } = data;
+			window.combined_mask = data
+			const newMaskPreview = document.querySelector("#new_mask_preview");
+			const samCanvas = document.getElementById("sam_canvas");
+			const getSAMMaskPath = document.getElementById("get_sam_mask_path");
+			newMaskPreview.innerHTML = ""; // Clear the preview area
+
+			// Add masked_image to samCanvas with styles
+			const initImagePreview = document.querySelector('#new_mask_preview_cont #init_image_preview_mask')
+			initImagePreview.src = "";
+			let samMaskImage = new Image();
+			samMaskImage.src = masked_image;
+			samMaskImage.onload = function () {
+				samCanvas.width = samMaskImage.width;
+				samCanvas.height = samMaskImage.height;
+				window.applySAMMaskStyling();
+				samCanvas.innerHTML = `
+                    <img src="${masked_image}" alt="Blended Image" width="512" height="512"/>
+                `;
+				getSAMMaskPath.querySelector("#sam_mask_path").value = mask;
+				window.clearAddRemoveCanvas();
+			};
 		}
 
 		async function generateNextImage() {
@@ -185,14 +483,17 @@
 			const number_of_images = document.getElementById("number_of_images").value.trim();
 			const color_palette = document.getElementById("color_palette").value.trim();
 			const init_image = document.getElementById("init_image").files[0];
-			document.getElementById("get_user_mask").click()
-			const user_mask = document.getElementById("user_mask_base64_output").value;
+			const combinedMaskImg = document.querySelector("#sam_canvas img")
+			let combined_masked_image = "";
+			let combined_mask = "";
 			const style_reference = document.getElementById("style_reference").files[0];
 			const mask_prompt = document.getElementById("mask_prompt").value.trim();
 
 			// Validation
+			// Combine mask
+			const samCanvas = document.getElementById("sam_canvas");
 			const selectedMaskRadio = document.querySelectorAll('input[name="selected_mask"]');
-			if (selectedMaskRadio.length == 0) {
+			if (samCanvas.innerHTML == "" && selectedMaskRadio.length == 0) {
 				if (!init_image && !mask_prompt) {
 					document.getElementById("general_err").innerHTML = "Generate a mask first with the mask prompt and init image.";
 					return;
@@ -208,6 +509,34 @@
 					document.getElementById("general_err").innerHTML = "Generate a mask first.";
 					return;
 				}
+			} else if (samCanvas.innerHTML == "") {
+				document.getElementById("general_err").innerHTML = "Generate a mask first.";
+			}
+			if (combinedMaskImg) {
+				combined_masked_image = combinedMaskImg.src; //path
+			}
+			if (combined_masked_image == "" || !combined_masked_image) {
+				if (combined_masked_image == "" && samCanvas.innerHTML == "") {
+					document.getElementById("general_err").innerHTML = "Generate a mask first.";
+				} else {
+					document.getElementById("general_err").innerHTML = "Generate a mask first with the mask prompt and init image.";
+				}
+				return;
+			} else { //combined_masked_image not empty
+				await applyMask();
+				const { mask, masked_image } = window.combined_mask;
+				combined_mask = mask;
+				// const addCanvas = document.getElementById("add_canvas");
+				// const removeCanvas = document.getElementById("remove_canvas");
+
+				// const isAddCanvasEmpty = window.isCanvasEmpty(addCanvas);
+				// const isRemoveCanvasEmpty = window.isCanvasEmpty(removeCanvas);
+
+				// // both canvas not empty, haven't applied mask
+				// if (!(isAddCanvasEmpty && isRemoveCanvasEmpty)) {
+				// 	document.getElementById("general_err").innerHTML = "Please apply the mask before generating.";
+				// 	err_count++;
+				// }
 			}
 			if (!prompt) {
 				document.getElementById("prompt_err").innerHTML = "Prompt is required.";
@@ -217,20 +546,6 @@
 				document.getElementById("number_of_images_err").innerHTML = "Please enter a valid number of images (1-4).";
 				err_count++;
 			}
-
-			// Get selected mask index from radio buttons & corresponding mask data
-			const selectedMaskRadioChecked = document.querySelector('input[name="selected_mask"]:checked');
-			if (!selectedMaskRadioChecked) {
-				document.getElementById("sam_mask_err").innerHTML = "Please select a SAM mask.";
-				err_count++;
-			}
-			const selectedIndex = selectedMaskRadioChecked.value;
-			const { blended_images, masks, masked_images } = sam_image_paths;
-			const sam_mask = {
-				"blended_image": blended_images[selectedIndex],
-				"mask": masks[selectedIndex],
-				"masked_image": masked_images[selectedIndex]
-			};
 
 			if (err_count > 0) {
 				return;
@@ -245,10 +560,7 @@
 				formData.append("color_palette", JSON.stringify(colorsArray));
 			}
 			formData.append("init_image", init_image);
-			formData.append("sam_mask", JSON.stringify(sam_mask));  // Append the sam_mask object
-			if (user_mask) {
-				formData.append("user_mask", user_mask);
-			}
+			formData.append("combined_mask", combined_mask);
 			if (style_reference) {
 				formData.append("style_reference", style_reference);
 			}
@@ -284,7 +596,9 @@
 				console.error("Error:", error);
 			}
 		}
+
 	</script>
+	<script src="{{ url_for('static', filename='js/canvas_script.js') }}"></script>
 </body>
 
 </html>

@@ -1,7 +1,17 @@
-import React, { useState } from "react";
-import { db } from "../../firebase";
+import React, { useState, useEffect } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth, db } from "../../firebase";
 import { useNavigate, Link } from "react-router-dom";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  setDoc,
+} from "firebase/firestore";
+
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -10,21 +20,15 @@ import SearchAppBar from "./SearchAppBar.jsx";
 import DesignIcon from "../../components/DesignIcon.jsx";
 import DrawerComponent from "./DrawerComponent.jsx";
 import { ToastContainer } from "react-toastify";
-import { useUserData } from "./UserDetails";
+import { toast } from "react-toastify";
+import { CheckCircle } from "@mui/icons-material";
+import Delete from "@mui/icons-material/Delete.js";
+
 import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
 import "../../css/design.css";
 import ProjectIcon from "./svg/ProjectIcon.jsx";
 import DesignSvg from "./svg/DesignSvg.jsx";
-import {
-  handleLogout,
-  handleSettings,
-  toggleDarkMode,
-  handleCreateDesign,
-  handleCreateProject,
-  handleDeleteDesign,
-  toggleMenu,
-} from "./HomepageActions.jsx";
 
 function Homepage() {
   const [user, setUser] = useState(null);
@@ -37,6 +41,42 @@ function Homepage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDesigns, setFilteredDesigns] = useState([]);
+
+  const fetchUserData = (user) => {
+    const userRef = doc(db, "users", user.uid);
+    onSnapshot(userRef, (doc) => {
+      const userData = doc.data();
+      setUsername(userData.username);
+      setUser({
+        uid: user.uid,
+        email: user.email,
+        profilePicture: userData.photoURL || "", // Fetch profile picture from Firestore
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      onSnapshot(userRef, (doc) => {
+        setUsername(doc.data().username);
+      });
+    }
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        fetchUserData(user);
+        fetchDesigns(user.uid);
+        fetchProjects(user.uid);
+      } else {
+        setUser(null);
+        setDesigns([]);
+        setProjects([]);
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, [user]);
 
   const fetchDesigns = (userId) => {
     const designsRef = collection(db, "users", userId, "designs");
@@ -68,15 +108,179 @@ function Homepage() {
     return () => unsubscribeDesigns();
   };
 
-  useUserData(
-    user,
-    setUser,
-    setUsername,
-    fetchDesigns,
-    setDesigns,
-    fetchProjects,
-    setProjects
-  );
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Sign-out error:", error);
+      });
+  };
+
+  const handleSettings = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/settings");
+      })
+      .catch((error) => {
+        console.error("Settings error:", error);
+      });
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode", !darkMode);
+  };
+
+  const handleCreateDesign = async () => {
+    try {
+      const designId = new Date().getTime().toString(); // Generate a unique ID
+      const currentUser = auth.currentUser;
+
+      if (currentUser) {
+        const designRef = doc(
+          db,
+          "users",
+          currentUser.uid,
+          "designs",
+          designId
+        );
+        await setDoc(designRef, {
+          name: "Untitled", // Default design name
+          createdAt: new Date(),
+        });
+
+        // Show toast notification when the project is created
+        toast.success("Design created successfully!", {
+          icon: <CheckCircle />,
+          position: "top-right",
+          autoClose: 3000, // 3 seconds auto close
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          style: {
+            color: "var(--color-white)",
+            backgroundColor: "var(--inputBg)",
+          },
+          progressStyle: {
+            backgroundColor: "var(--brightFont)",
+          },
+        });
+
+        // Navigate to the newly created design
+        setTimeout(() => navigate(`/design/${designId}`), 1500);
+      }
+    } catch (error) {
+      console.error("Error creating design: ", error);
+      toast.error("Error creating design! Please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
+  const handleCreateProject = async () => {
+    try {
+      const projectId = new Date().getTime().toString(); // Generate a unique ID
+      const currentUser = auth.currentUser;
+
+      if (currentUser) {
+        const designRef = doc(
+          db,
+          "users",
+          currentUser.uid,
+          "projects",
+          projectId
+        );
+        await setDoc(designRef, {
+          name: "Untitled", // Default design name
+          createdAt: new Date(),
+        });
+
+        // Show toast notification when the project is created
+        toast.success("Project created successfully!", {
+          icon: <CheckCircle />,
+          position: "top-right",
+          autoClose: 3000, // 3 seconds auto close
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          style: {
+            color: "var(--color-white)",
+            backgroundColor: "var(--inputBg)",
+          },
+          progressStyle: {
+            backgroundColor: "var(--brightFont)",
+          },
+        });
+
+        // Navigate to the newly created design
+        setTimeout(() => navigate(`/project/${projectId}`), 1500);
+      }
+    } catch (error) {
+      console.error("Error creating project: ", error);
+      toast.error("Error creating project! Please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
+  const handleDeleteDesign = async (designId) => {
+    try {
+      const currentUser = auth.currentUser;
+
+      if (currentUser) {
+        const designRef = doc(
+          db,
+          "users",
+          currentUser.uid,
+          "designs",
+          designId
+        );
+        await deleteDoc(designRef);
+
+        toast.success("Design deleted", {
+          icon: <Delete />,
+          style: {
+            color: "var(--color-white)",
+            backgroundColor: "var(--inputBg)",
+          },
+          progressStyle: {
+            backgroundColor: "var(--brightFont)",
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting design: ", error);
+    }
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const results = designs.filter((design) =>
+        design.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredDesigns(results);
+    } else {
+      setFilteredDesigns([]); // Clear search results when no query
+    }
+  }, [searchQuery, designs]);
 
   return (
     <div className={`homepage ${menuOpen ? "darkened" : ""}`}>

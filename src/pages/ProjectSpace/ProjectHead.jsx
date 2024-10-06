@@ -26,8 +26,7 @@ import { useNavigate } from "react-router-dom";
 
 function ProjectHead({
   designName,
-  setDesignName,
-  toggleComments,
+
   designId,
   setIsSidebarOpen,
   projectData,

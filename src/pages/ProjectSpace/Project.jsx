@@ -204,8 +204,6 @@ function Project() {
           backgroundColor: "var(--brightFont)",
         },
       });
-
-      setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
       console.error("Error updating design name:", error);
       alert("Failed to update design name");
@@ -233,6 +231,18 @@ function Project() {
               const project = projectSnapshot.data();
               setProjectData(project);
               setNewName(project.name);
+
+              // Listen for real-time updates to the project document
+              const unsubscribeProject = onSnapshot(projectRef, (doc) => {
+                if (doc.exists()) {
+                  const updatedProject = doc.data();
+                  setProjectData(updatedProject);
+                  setNewName(updatedProject.name);
+                }
+              });
+
+              // Cleanup listener on component unmount
+              return () => unsubscribeProject();
             } else {
               console.error("Project not found");
             }

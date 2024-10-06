@@ -23,14 +23,13 @@ import {
   Delete,
 } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
-
 import { auth, db } from "../../firebase";
 import ProjectHead from "./ProjectHead";
 import Modal from "../../components/Modal";
 import BottomBarDesign from "./BottomBarProject";
 import Loading from "../../components/Loading";
 import DesignIcon from "../../components/DesignIcon";
-
+import Dropdowns from "../../components/Dropdowns";
 import "../../css/seeAll.css";
 import "../../css/project.css";
 
@@ -41,7 +40,6 @@ function Project() {
   const [newName, setNewName] = useState("");
   const [userId, setUserId] = useState(null);
   const [projectData, setProjectData] = useState(null);
-  const [isEditingName, setIsEditingName] = useState(false);
   const [designs, setDesigns] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -281,6 +279,7 @@ function Project() {
             inputProps={{ "aria-label": "search google maps" }}
           />
         </Paper>
+        <Dropdowns />
         <div
           style={{
             display: "flex",

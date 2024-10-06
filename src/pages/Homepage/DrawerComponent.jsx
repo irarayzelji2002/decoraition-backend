@@ -32,14 +32,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 
-const DrawerComponent = ({
-  isDrawerOpen,
-  onClose,
-  handleLogout,
-  handleSettings,
-  onOpen,
-  pic,
-}) => {
+const DrawerComponent = ({ isDrawerOpen, onClose }) => {
   // State to handle dark mode
   const [darkMode, setDarkMode] = useState(true);
   const navigate = useNavigate();
@@ -47,16 +40,15 @@ const DrawerComponent = ({
   const [username, setUsername] = useState("");
   const [user, setUser] = useState(null);
   const [designs, setDesigns] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showCopyLinkModal, setShowCopyLinkModal] = useState(false);
-  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [profileURL, setProfileURL] = useState("");
 
   useEffect(() => {
     if (user) {
       const userRef = doc(db, "users", user.uid);
       onSnapshot(userRef, (doc) => {
-        setUsername(doc.data().username);
+        const userData = doc.data();
+        setUsername(userData.username);
+        setProfileURL(userData.photoURL);
       });
     }
   }, [user]);
@@ -65,11 +57,9 @@ const DrawerComponent = ({
       if (user) {
         setUser(user);
         fetchDesigns(user.uid);
-        fetchProjects(user.uid);
       } else {
         setUser(null);
         setDesigns([]);
-        setProjects([]);
       }
     });
 
@@ -86,21 +76,6 @@ const DrawerComponent = ({
         designList.push({ id: doc.id, ...doc.data() });
       });
       setDesigns(designList);
-    });
-
-    return () => unsubscribeDesigns();
-  };
-
-  const fetchProjects = (userId) => {
-    const projectsRef = collection(db, "users", userId, "projects");
-    const q = query(projectsRef, where("createdAt", ">", new Date(0))); // Example query
-
-    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
-      const projectList = [];
-      querySnapshot.forEach((doc) => {
-        projectList.push({ id: doc.id, ...doc.data() });
-      });
-      setProjects(projectList);
     });
 
     return () => unsubscribeDesigns();
@@ -133,21 +108,13 @@ const DrawerComponent = ({
     }
   };
 
-  const openRenameModal = () => {
-    setShowRenameModal(true);
-    setShowOptions(false); // Close options when modal opens
-  };
-
-  const openDeleteModal = () => {
-    setShowDeleteModal(true);
-    setShowOptions(false); // Close options when modal opens
-  };
-
-  const openCopyLinkModal = () => {
-    // Simulate copying the link ( may implement actual copy logic here)
-    navigator.clipboard.writeText(`https://yourapp.com/designs/`);
-    setShowCopyLinkModal(true);
-    setShowOptions(false); // Close options when modal opens
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
 
   return (
@@ -195,7 +162,7 @@ const DrawerComponent = ({
             marginLeft: "auto",
             marginRight: "auto",
           }}
-          src={pic || ""}
+          src={profileURL || ""}
         >
           {username ? username.charAt(0).toUpperCase() : ""}
         </Avatar>
@@ -245,16 +212,16 @@ const DrawerComponent = ({
                 />
                 {showOptions && (
                   <div className="dropdown-menu">
-                    <div className="dropdown-item" onClick={onOpen}>
+                    <div className="dropdown-item">
                       <span className="icon"></span> Open
                     </div>
-                    <div className="dropdown-item" onClick={openDeleteModal}>
+                    <div className="dropdown-item">
                       <span className="icon"></span> Delete
                     </div>
-                    <div className="dropdown-item" onClick={openCopyLinkModal}>
+                    <div className="dropdown-item">
                       <span className="icon"></span> Copy Link
                     </div>
-                    <div className="dropdown-item" onClick={openRenameModal}>
+                    <div className="dropdown-item">
                       <span className="icon"></span> Rename
                     </div>
                     <div className="dropdown-item">

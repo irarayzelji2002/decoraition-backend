@@ -179,36 +179,6 @@ function Project() {
       console.error("Error deleting design: ", error);
     }
   };
-  const handleNameChange = async () => {
-    if (newName.trim() === "") {
-      alert("Design name cannot be empty");
-      return;
-    }
-
-    try {
-      const projectRef = doc(db, "users", userId, "projects", projectId);
-      await updateDoc(projectRef, { name: newName });
-      setIsEditingName(false);
-      toast.success("Design name updated successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
-    } catch (error) {
-      console.error("Error updating design name:", error);
-      alert("Failed to update design name");
-    }
-  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -277,13 +247,7 @@ function Project() {
       <ToastContainer
         progressStyle={{ backgroundColor: "var(--brightFont)" }}
       />
-      <ProjectHead
-        projectData={projectData}
-        setIsEditingName={setIsEditingName}
-        setNewName={setNewName}
-        isEditingName={isEditingName}
-        handleNameChange={handleNameChange}
-      />
+      <ProjectHead />
       <div
         style={{
           display: "flex",

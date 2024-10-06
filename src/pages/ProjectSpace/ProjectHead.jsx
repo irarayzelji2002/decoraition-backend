@@ -23,19 +23,13 @@ import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../../../server/firebase.js";
 import DrawerComponent from "../Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
+import {
+  useHandleNameChange,
+  useProjectDetails,
+} from "./backend/ProjectDetails";
+import { useParams } from "react-router-dom";
 
-function ProjectHead({
-  designName,
-
-  designId,
-  setIsSidebarOpen,
-  projectData,
-  newName,
-  setNewName,
-  isEditingName,
-  setIsEditingName,
-  handleNameChange,
-}) {
+function ProjectHead({ designName, designId, setIsSidebarOpen }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isChangeModeMenuOpen, setIsChangeModeMenuOpen] = useState(false);
@@ -62,8 +56,21 @@ function ProjectHead({
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [designs, setDesigns] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [projectData, setProjectData] = useState(null);
+  const [newName, setNewName] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const { projectId } = useParams();
 
   const navigate = useNavigate();
+
+  useProjectDetails(projectId, setUserId, setProjectData, setNewName);
+  const handleNameChange = useHandleNameChange(
+    newName,
+    userId,
+    projectId,
+    setIsEditingName
+  );
 
   const handleEditNameToggle = () => {
     setIsEditingName((prev) => !prev);

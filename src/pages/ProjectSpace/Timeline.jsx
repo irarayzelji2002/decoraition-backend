@@ -7,6 +7,7 @@ import BottomBarDesign from "./BottomBarProject";
 import { useParams } from "react-router-dom";
 import EditPen from "../DesignSpace/svg/EditPen";
 import Trash from "../DesignSpace/svg/Trash";
+import { useProjectDetails } from "./backend/ProjectDetails";
 
 function Timeline() {
   const [date, setDate] = useState(new Date());

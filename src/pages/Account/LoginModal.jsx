@@ -342,16 +342,13 @@ export default function LoginModal() {
             sx={{
               textTransform: "none",
               fontWeight: "bold",
-              color: "white",
+              color: "var(--color-white)",
               backgroundColor: "transparent",
               border: "none",
               "&:hover": {
                 background: "transparent", // Ensure background remains transparent
-                boxShadow: "none", // Disable box shadow
-                backgroundImage: "var(--gradientFont)", // Apply the gradient to the background
-                WebkitBackgroundClip: "text", // Clip the background to the text (for WebKit browsers)
-                WebkitTextFillColor: "transparent", // Set text fill to transparent (for WebKit browsers)
-                color: "transparent", // Ensure color is transparent to reveal the gradient
+
+                color: "var(--color-white)", // Ensure color is transparent to reveal the gradient
               },
               "&:active": {
                 backgroundColor: "transparent",
@@ -374,16 +371,13 @@ export default function LoginModal() {
             sx={{
               textTransform: "none",
               fontWeight: "bold",
-              color: "white",
+              color: "var(--color-white)",
               backgroundColor: "transparent",
               border: "none",
               "&:hover": {
                 background: "transparent", // Ensure background remains transparent
-                boxShadow: "none", // Disable box shadow
-                backgroundImage: "var(--gradientFont)", // Apply the gradient to the background
-                WebkitBackgroundClip: "text", // Clip the background to the text (for WebKit browsers)
-                WebkitTextFillColor: "transparent", // Set text fill to transparent (for WebKit browsers)
-                color: "transparent", // Ensure color is transparent to reveal the gradient
+
+                color: "var(--color-white)", // Ensure color is transparent to reveal the gradient
               },
               "&:active": {
                 backgroundColor: "transparent",

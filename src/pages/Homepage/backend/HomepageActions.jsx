@@ -11,7 +11,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
 import { CheckCircle } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete.js";
-import { db, auth } from "../../firebase"; // Adjust the import path as needed
+import { db, auth } from "../../../firebase"; // Adjust the import path as needed
 
 export const fetchUserData = (user, setUsername, setUser) => {
   const userRef = doc(db, "users", user.uid);

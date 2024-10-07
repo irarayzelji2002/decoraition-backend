@@ -28,7 +28,7 @@ import {
   handleCreateProject,
   handleDeleteDesign,
   toggleMenu,
-} from "./HomepageActions.jsx";
+} from "./backend/HomepageActions.jsx";
 import Loading from "../../components/Loading.jsx";
 
 function Homepage() {
@@ -107,7 +107,6 @@ function Homepage() {
         handleLogout={() => handleLogout(navigate)}
         handleSettings={() => handleSettings(navigate)}
         darkMode={darkMode}
-        pic={user?.profilePicture}
       />
 
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>

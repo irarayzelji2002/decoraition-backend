@@ -6,9 +6,11 @@ html,
 }
 h1 {
   font-size: 50px;
-  background: linear-gradient(20deg, #faa653, #f04f59);
+  background: var(--gradientFont);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 h2,
 h5 {

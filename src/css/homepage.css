@@ -5,6 +5,8 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: -10px;
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 
 .navTagline {

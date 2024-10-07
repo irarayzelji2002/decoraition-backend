@@ -17,6 +17,15 @@ import FourFrames from "./svg/FourFrames";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { onSnapshot } from "firebase/firestore";
+import {
+  handleCommentTabClick,
+  handleStatusTabClick,
+  handleContainerClick,
+  handleNameChange,
+  toggleComments,
+  togglePromptBar,
+  handleSidebarEffect,
+} from "./backend/DesignActions"; // Import the functions from the backend file
 
 function Design() {
   const { designId, projectId } = useParams(); // Get designId from the URL

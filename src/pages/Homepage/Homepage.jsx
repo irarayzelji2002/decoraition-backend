@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { useNavigate, Link } from "react-router-dom";
-import { doc, onSnapshot } from "firebase/firestore";
 
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -10,7 +9,6 @@ import FolderIcon from "@mui/icons-material/Folder";
 import ImageIcon from "@mui/icons-material/Image";
 import SearchAppBar from "./SearchAppBar.jsx";
 import DesignIcon from "../../components/DesignIcon.jsx";
-import DrawerComponent from "./DrawerComponent.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
@@ -21,9 +19,6 @@ import {
   fetchUserData,
   fetchDesigns,
   fetchProjects,
-  handleLogout,
-  handleSettings,
-  toggleDarkMode,
   handleCreateDesign,
   handleCreateProject,
   handleDeleteDesign,
@@ -37,12 +32,12 @@ function Homepage() {
   const [designs, setDesigns] = useState([]);
   const [projects, setProjects] = useState([]);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDesigns, setFilteredDesigns] = useState([]);
-  const [isAuthSetup, setIsAuthSetup] = useState(false);
+
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const handleAuthChange = async (user) => {
@@ -98,15 +93,6 @@ function Homepage() {
         username={username}
         onMenuClick={() => setDrawerOpen(true)}
         onSearchChange={setSearchQuery}
-      />
-
-      <DrawerComponent
-        isDrawerOpen={isDrawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        toggleDarkMode={() => toggleDarkMode(darkMode, setDarkMode)}
-        handleLogout={() => handleLogout(navigate)}
-        handleSettings={() => handleSettings(navigate)}
-        darkMode={darkMode}
       />
 
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>

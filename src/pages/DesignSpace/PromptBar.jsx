@@ -8,6 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Textarea from "@mui/joy/Textarea";
 import AddImage from "./svg/AddImage";
 import { Add } from "@mui/icons-material";
+import AddColor from "./svg/AddColor";
 
 function PromptBar() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -88,7 +89,7 @@ function PromptBar() {
           sx={{
             borderRadius: "100%",
             marginLeft: "auto",
-            padding: "16px",
+            padding: "12px",
             backgroundImage: "var(--gradientCircle)",
             "&:hover": {
               backgroundImage: "var(--gradientCircleHover)",
@@ -116,7 +117,7 @@ function PromptBar() {
           sx={{
             borderRadius: "100%",
             marginLeft: "auto",
-            padding: "16px",
+            padding: "12px",
             backgroundImage: "var(--gradientCircle)",
             "&:hover": {
               backgroundImage: "var(--gradientCircleHover)",
@@ -146,7 +147,7 @@ function PromptBar() {
           sx={{
             borderRadius: "100%",
             marginLeft: "auto",
-            padding: "16px",
+            padding: "12px",
             backgroundImage: "var(--gradientCircle)",
             "&:hover": {
               backgroundImage: "var(--gradientCircleHover)",
@@ -154,7 +155,7 @@ function PromptBar() {
           }}
           onClick={() => handleOpenModal("Add a Color Palette")}
         >
-          <AddImage />
+          <AddColor />
         </Button>
       </div>
 

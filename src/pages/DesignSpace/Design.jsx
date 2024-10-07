@@ -200,7 +200,6 @@ function Design() {
       <>
         <div className="create-design">
           <div className="workspace">
-            {showMenu && <DrawerComponent />}
             {showPromptBar && <PromptBar />}
             <div className="fixed-arrow-button" onClick={togglePromptBar}>
               <div className="arrow-button">

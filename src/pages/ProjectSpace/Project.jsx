@@ -23,14 +23,13 @@ import {
   Delete,
 } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
-
 import { auth, db } from "../../firebase";
 import ProjectHead from "./ProjectHead";
 import Modal from "../../components/Modal";
 import BottomBarDesign from "./BottomBarProject";
 import Loading from "../../components/Loading";
 import DesignIcon from "../../components/DesignIcon";
-
+import Dropdowns from "../../components/Dropdowns";
 import "../../css/seeAll.css";
 import "../../css/project.css";
 
@@ -41,7 +40,6 @@ function Project() {
   const [newName, setNewName] = useState("");
   const [userId, setUserId] = useState(null);
   const [projectData, setProjectData] = useState(null);
-  const [isEditingName, setIsEditingName] = useState(false);
   const [designs, setDesigns] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -157,7 +155,9 @@ function Project() {
           "users",
           currentUser.uid,
           "projects",
-          projectId
+          projectId,
+          "designs",
+          designId
         );
 
         await deleteDoc(projectRef);
@@ -175,38 +175,6 @@ function Project() {
       }
     } catch (error) {
       console.error("Error deleting design: ", error);
-    }
-  };
-  const handleNameChange = async () => {
-    if (newName.trim() === "") {
-      alert("Design name cannot be empty");
-      return;
-    }
-
-    try {
-      const projectRef = doc(db, "users", userId, "projects", projectId);
-      await updateDoc(projectRef, { name: newName });
-      setIsEditingName(false);
-      toast.success("Design name updated successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
-
-      setTimeout(() => window.location.reload(), 1500);
-    } catch (error) {
-      console.error("Error updating design name:", error);
-      alert("Failed to update design name");
     }
   };
 
@@ -231,6 +199,18 @@ function Project() {
               const project = projectSnapshot.data();
               setProjectData(project);
               setNewName(project.name);
+
+              // Listen for real-time updates to the project document
+              const unsubscribeProject = onSnapshot(projectRef, (doc) => {
+                if (doc.exists()) {
+                  const updatedProject = doc.data();
+                  setProjectData(updatedProject);
+                  setNewName(updatedProject.name);
+                }
+              });
+
+              // Cleanup listener on component unmount
+              return () => unsubscribeProject();
             } else {
               console.error("Project not found");
             }
@@ -265,13 +245,7 @@ function Project() {
       <ToastContainer
         progressStyle={{ backgroundColor: "var(--brightFont)" }}
       />
-      <ProjectHead
-        projectData={projectData}
-        setIsEditingName={setIsEditingName}
-        setNewName={setNewName}
-        isEditingName={isEditingName}
-        handleNameChange={handleNameChange}
-      />
+      <ProjectHead />
       <div
         style={{
           display: "flex",
@@ -305,6 +279,7 @@ function Project() {
             inputProps={{ "aria-label": "search google maps" }}
           />
         </Paper>
+        <Dropdowns />
         <div
           style={{
             display: "flex",

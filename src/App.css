@@ -1,6 +1,11 @@
 body {
   background-color: var(--bgMain) !important;
   font-family: "Inter", sans-serif !important;
+  overflow: auto !important;
+  overflow-x: hidden;
+}
+html {
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 .headTitle {
   font-size: 18px;
@@ -19,9 +24,6 @@ select:-webkit-autofill {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-body {
-  overflow: auto !important;
-}
 :root {
   --bg-image: url("../public/img/bg-login.png");
 

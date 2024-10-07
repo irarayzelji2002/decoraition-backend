@@ -105,7 +105,7 @@ const ShareModal = ({
                 sx={{
                   color: "var(--color-white)",
                   "&.Mui-checked": {
-                    color: "var(--color-quaternary)", // Change color when checked
+                    color: "var(--brightFont)", // Change color when checked
                   },
                 }}
               />

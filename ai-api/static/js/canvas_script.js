@@ -218,13 +218,57 @@ document.addEventListener("DOMContentLoaded", function () {
 	opacityInputSAM.addEventListener("input", applySAMMaskStyling);
 	selectedColorInputSAM.addEventListener("input", applySAMMaskStyling);
 
-	// Separate canvas logic for add and remove operations
-	brushSizeInputAdd.addEventListener("input", function () {
-		brushSizeAdd = brushSizeInputAdd.value;
+	// Function to set custom cursor
+	function setCustomCursor(brushSize, canvas) {
+		const sizeOffset = Math.max(0, -1.1 * brushSize + 83);
+		const svgWidth = brushSize + sizeOffset;
+
+		// Dynamically create the SVG with consistent stroke width and drop shadow
+		const svgCursor = `
+		<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgWidth}" viewBox="-10 -10 84 84">
+			<defs>
+				<filter id="dropshadow" x="-30%" y="-30%" width="160%" height="160%">
+					<feGaussianBlur in="SourceAlpha" stdDeviation="5"/> <!-- Increase the blur -->
+					<feOffset dx="0" dy="0" result="offsetblur"/> <!-- Shadow offset set to 0 -->
+					<feFlood flood-color="rgba(0, 0, 0, 0.3)"/> <!-- Set shadow color and opacity -->
+					<feComposite in2="offsetblur" operator="in"/> <!-- Composite the shadow -->
+					<feMerge>
+						<feMergeNode/> <!-- Shadow -->
+						<feMergeNode in="SourceGraphic"/> <!-- Original graphic -->
+					</feMerge>
+				</filter>
+			</defs>
+			<circle cx="32" cy="32" r="${brushSize / 2}" 
+				fill="rgba(255,255,255,0.5)" 
+				stroke="rgb(255,255,255)" 
+				stroke-width="4" filter="url(#dropshadow)"/>
+		</svg>`;
+
+		// Convert the SVG to a base64 URL, ensuring proper encoding
+		const svgDataUrl = `data:image/svg+xml;base64,${btoa(
+			unescape(encodeURIComponent(svgCursor))
+		)}`;
+
+		// Set the canvas cursor to the dynamically generated SVG
+		canvas.style.cursor = `url('${svgDataUrl}') ${svgWidth / 2} ${
+			svgWidth / 2
+		}, auto`;
+	}
+
+	// Initialize the cursors on page load
+	setCustomCursor(30, addCanvas);
+	setCustomCursor(30, removeCanvas);
+
+	// addCanvas brush Size inout change
+	brushSizeInputAdd.addEventListener("input", function (e) {
+		brushSizeAdd = parseInt(brushSizeInputAdd.value);
+		setCustomCursor(brushSizeAdd, addCanvas);
 	});
 
-	brushSizeInputRemove.addEventListener("input", function () {
-		brushSizeRemove = brushSizeInputRemove.value;
+	// removeCanvas brush Size inout change
+	brushSizeInputRemove.addEventListener("input", function (e) {
+		brushSizeRemove = parseInt(brushSizeInputRemove.value);
+		setCustomCursor(brushSizeRemove, removeCanvas);
 	});
 
 	// Debounce utility function to reduce redraw frequency

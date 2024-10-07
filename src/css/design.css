@@ -177,6 +177,7 @@ h6 {
 }
 .fixed-arrow-button {
   display: flex;
+  height: 700px;
   justify-content: center;
   align-items: center;
   align-content: center;

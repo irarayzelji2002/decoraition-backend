@@ -1,8 +1,8 @@
 function AddImage() {
   return (
     <svg
-      width="15"
-      height="15"
+      width="22"
+      height="22"
       viewBox="0 0 391 322"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

@@ -25,7 +25,8 @@ select:-webkit-autofill {
 }
 
 :root {
-  --bg-image: url("../public/img/bg-login.png");
+  /* --bg-image: url("../public/img/bg-login.png"); */
+  --bg-image: #1f1e22;
 
   --color-primary: #faa653;
   --color-secondary: #f04f59;

@@ -195,11 +195,15 @@ h2 {
   opacity: 0.8;
   height: 34px;
   width: 34px;
-  background-color: #474747;
+  background-color: var(--bgMain);
   top: 40px;
   position: relative;
   cursor: pointer;
   border-radius: 30px;
+}
+
+.options:hover {
+  background-color: var(--nav-card-modal);
 }
 
 .selectOption {

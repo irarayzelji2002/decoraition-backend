@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Drawer,
   IconButton,
@@ -41,6 +41,8 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
   const [user, setUser] = useState(null);
   const [designs, setDesigns] = useState([]);
   const [profileURL, setProfileURL] = useState("");
+  const [activeItem, setActiveItem] = useState(null);
+  const optionsRef = useRef(null);
 
   useEffect(() => {
     if (user) {
@@ -116,6 +118,19 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
       console.error("Error signing out: ", error);
     }
   };
+
+  const handleClickOutside = (event) => {
+    if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+      setActiveItem(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <Drawer
@@ -202,34 +217,32 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
         </Typography>
 
         {designs.length > 0 ? (
-          designs.slice(0, 5).map((design) => (
+          designs.slice(0, 5).map((design, index) => (
             <ListItem key={design.id}>
               <ListItemText primary={design.name} />
-              <IconButton edge="end" aria-label="more">
-                <MoreHorizIcon
-                  sx={{ color: darkMode ? "white" : "black" }}
-                  onClick={toggleOptions}
-                />
-                {showOptions && (
-                  <div className="dropdown-menu">
-                    <div className="dropdown-item">
-                      <span className="icon"></span> Open
-                    </div>
-                    <div className="dropdown-item">
-                      <span className="icon"></span> Delete
-                    </div>
-                    <div className="dropdown-item">
-                      <span className="icon"></span> Copy Link
-                    </div>
-                    <div className="dropdown-item">
-                      <span className="icon"></span> Rename
-                    </div>
-                    <div className="dropdown-item">
-                      <span className="icon"></span> Details
-                    </div>
-                  </div>
-                )}
+              <IconButton
+                edge="end"
+                aria-label="more"
+                onClick={() => setActiveItem(index)}
+              >
+                <MoreHorizIcon sx={{ color: darkMode ? "white" : "black" }} />
               </IconButton>
+              {activeItem === index && (
+                <div ref={optionsRef} className="dropdown-menu">
+                  <div className="dropdown-item">
+                    <span className="icon"></span> Open
+                  </div>
+                  <div className="dropdown-item">
+                    <span className="icon"></span> Delete
+                  </div>
+                  <div className="dropdown-item">
+                    <span className="icon"></span> Copy Link
+                  </div>
+                  <div className="dropdown-item">
+                    <span className="icon"></span> Rename
+                  </div>
+                </div>
+              )}
             </ListItem>
           ))
         ) : (

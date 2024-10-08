@@ -10,7 +10,6 @@ import Loading from "../../components/Loading";
 import { ToastContainer, toast } from "react-toastify";
 import Version from "./Version";
 import "../../css/design.css";
-import DrawerComponent from "../Homepage/DrawerComponent";
 import { FaCheckCircle, FaEllipsisV, FaAt } from "react-icons/fa"; // Icons used: Check, Dots, At symbol
 import TwoFrames from "./svg/TwoFrames";
 import FourFrames from "./svg/FourFrames";
@@ -42,8 +41,6 @@ function Design() {
   const [activeCommentTab, setActiveCommentTab] = useState("left"); // For "All Comments / For You"
   const [activeStatusTab, setActiveStatusTab] = useState("left"); // For "Open / Resolved"
   const [clicked, setClicked] = useState(false); // Handle click state
-
-  // Fetch design details based on designId
 
   useEffect(() => {
     const auth = getAuth();
@@ -107,80 +104,9 @@ function Design() {
     return () => unsubscribe(); // Cleanup listener on component unmount
   }, [designId]);
 
-  const handleCommentTabClick = (side) => {
-    setActiveCommentTab(side);
-  };
-
-  const handleStatusTabClick = (side) => {
-    setActiveStatusTab(side);
-  };
-  const handleContainerClick = () => {
-    setClicked((prev) => !prev); // Toggle clicked state
-  };
-
-  const handleNameChange = async () => {
-    if (newName.trim() === "") {
-      alert("Design name cannot be empty");
-      return;
-    }
-
-    try {
-      const isProjectPath = window.location.pathname.includes("/project");
-      if (isProjectPath) {
-        const designRef = doc(
-          db,
-          "users",
-          userId,
-          "projects",
-          projectId,
-          "designs",
-          designId
-        );
-        await updateDoc(designRef, { name: newName });
-      } else {
-        const designRef = doc(db, "users", userId, "designs", designId);
-        await updateDoc(designRef, { name: newName });
-      }
-
-      setIsEditingName(false);
-      toast.success("Design name updated successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
-    } catch (error) {
-      console.error("Error updating design name:", error);
-      alert("Failed to update design name");
-    }
-  };
-
-  const toggleComments = () => {
-    setShowComments((prev) => !prev);
-  };
-
-  const togglePromptBar = () => {
-    setShowPromptBar((prev) => !prev);
-  };
   useEffect(() => {
-    if (isSidebarOpen) {
-      document.body.style.overflow = "hidden"; // Disable body scroll
-    } else {
-      document.body.style.overflow = "auto"; // Enable body scroll
-    }
-
-    return () => {
-      document.body.style.overflow = "auto"; // Clean up on component unmount
-    };
+    const cleanup = handleSidebarEffect(isSidebarOpen);
+    return cleanup;
   }, [isSidebarOpen]);
 
   if (!designData) {
@@ -201,8 +127,16 @@ function Design() {
         newName={newName}
         setNewName={setNewName}
         isEditingName={isEditingName}
-        toggleComments={toggleComments}
-        handleNameChange={handleNameChange}
+        toggleComments={() => toggleComments(setShowComments)}
+        handleNameChange={() =>
+          handleNameChange(
+            newName,
+            userId,
+            projectId,
+            designId,
+            setIsEditingName
+          )
+        }
         setIsEditingName={setIsEditingName}
       />
 
@@ -210,7 +144,10 @@ function Design() {
         <div className="create-design">
           <div className="workspace">
             {showPromptBar && <PromptBar />}
-            <div className="fixed-arrow-button" onClick={togglePromptBar}>
+            <div
+              className="fixed-arrow-button"
+              onClick={() => togglePromptBar(setShowPromptBar)}
+            >
               <div className="arrow-button">
                 {showPromptBar ? (
                   <ArrowBackIosIcon sx={{ color: "var(--color-white) " }} />
@@ -266,7 +203,9 @@ function Design() {
               <div className="comment-section">
                 <div className="split-button">
                   <button
-                    onClick={() => handleCommentTabClick("left")}
+                    onClick={() =>
+                      handleCommentTabClick("left", setActiveCommentTab)
+                    }
                     className={`button-side ${
                       activeCommentTab === "left" ? "active" : ""
                     }`}
@@ -274,7 +213,9 @@ function Design() {
                     All Comments
                   </button>
                   <button
-                    onClick={() => handleCommentTabClick("right")}
+                    onClick={() =>
+                      handleCommentTabClick("right", setActiveCommentTab)
+                    }
                     className={`button-side ${
                       activeCommentTab === "right" ? "active" : ""
                     }`}
@@ -285,7 +226,9 @@ function Design() {
 
                 <div className="split-button">
                   <button
-                    onClick={() => handleStatusTabClick("left")}
+                    onClick={() =>
+                      handleStatusTabClick("left", setActiveStatusTab)
+                    }
                     className={`button-side ${
                       activeStatusTab === "left" ? "active" : ""
                     }`}
@@ -293,7 +236,9 @@ function Design() {
                     Open
                   </button>
                   <button
-                    onClick={() => handleStatusTabClick("right")}
+                    onClick={() =>
+                      handleStatusTabClick("right", setActiveStatusTab)
+                    }
                     className={`button-side ${
                       activeStatusTab === "right" ? "active" : ""
                     }`}
@@ -303,7 +248,7 @@ function Design() {
                 </div>
                 <div
                   className={`comment-container ${clicked ? "clicked" : ""}`}
-                  onClick={handleContainerClick}
+                  onClick={() => handleContainerClick(setClicked)}
                 >
                   <div className="profile-section">
                     <div className="profile-info">

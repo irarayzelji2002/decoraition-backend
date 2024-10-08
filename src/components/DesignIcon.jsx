@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../css/homepage.css";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import CopyLinkModal from "./CopyLinkModal";
@@ -9,6 +9,7 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCopyLinkModal, setShowCopyLinkModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
+  const optionsRef = useRef(null);
 
   // Toggle the visibility of options
   const toggleOptions = () => {
@@ -30,11 +31,22 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
   };
 
   const openCopyLinkModal = () => {
-    // Simulate copying the link ( may implement actual copy logic here)
+    // Simulate copying the link (may implement actual copy logic here)
     navigator.clipboard.writeText(`https://yourapp.com/designs/${designId}`);
     setShowCopyLinkModal(true);
     setShowOptions(false); // Close options when modal opens
   };
+  const handleClickOutside = (event) => {
+    if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+      setShowOptions(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const closeCopyLinkModal = () => {
     setShowCopyLinkModal(false);
@@ -49,11 +61,6 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
     setShowRenameModal(false);
   };
 
-  const handleRename = () => {
-    // Implement rename logic here (e.g., API call to rename)
-    closeRenameModal();
-  };
-
   return (
     <div className="iconFrame">
       {/* Options button */}
@@ -62,7 +69,7 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
           <center>&#8942;</center>
         </h3>
         {showOptions && (
-          <div className="dropdown-menu">
+          <div ref={optionsRef} className="dropdown-menu">
             <div className="dropdown-item" onClick={onOpen}>
               <span className="icon"></span> Open
             </div>

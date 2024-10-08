@@ -196,7 +196,6 @@ h2 {
   height: 34px;
   width: 34px;
   background-color: #474747;
-  left: 85%;
   top: 40px;
   position: relative;
   cursor: pointer;
@@ -272,18 +271,12 @@ h2 {
   .layout {
     grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */
   }
-  .options {
-    left: 80%;
-  }
 }
 
 /* Small screen sizes */
 @media (max-width: 600px) {
   .layout {
     grid-template-columns: repeat(1, 1fr); /* 1 column for small screens */
-  }
-  .options {
-    left: 80%;
   }
 }
 @media only screen and (max-width: 720px) {
@@ -294,9 +287,6 @@ h2 {
   }
   .layout {
     flex-direction: column;
-  }
-  .options {
-    left: 85%;
   }
 
   .navName {

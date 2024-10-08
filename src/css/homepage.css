@@ -5,6 +5,8 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: -10px;
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 
 .navTagline {
@@ -155,6 +157,7 @@ h2 {
 
   width: 100%;
   height: fit-content;
+  gap: 20px;
 
   /* Grid template for different screen sizes */
   grid-template-columns: repeat(3, 1fr); /* 3 equal columns by default */

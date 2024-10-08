@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  deleteDoc,
-  setDoc,
-} from "firebase/firestore";
 
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -18,17 +9,22 @@ import FolderIcon from "@mui/icons-material/Folder";
 import ImageIcon from "@mui/icons-material/Image";
 import SearchAppBar from "./SearchAppBar.jsx";
 import DesignIcon from "../../components/DesignIcon.jsx";
-import DrawerComponent from "./DrawerComponent.jsx";
 import { ToastContainer } from "react-toastify";
-import { toast } from "react-toastify";
-import { CheckCircle } from "@mui/icons-material";
-import Delete from "@mui/icons-material/Delete.js";
-
 import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
 import "../../css/design.css";
 import ProjectIcon from "./svg/ProjectIcon.jsx";
 import DesignSvg from "./svg/DesignSvg.jsx";
+import {
+  fetchUserData,
+  fetchDesigns,
+  fetchProjects,
+  handleCreateDesign,
+  handleCreateProject,
+  handleDeleteDesign,
+  toggleMenu,
+} from "./backend/HomepageActions.jsx";
+import Loading from "../../components/Loading.jsx";
 
 function Homepage() {
   const [user, setUser] = useState(null);
@@ -36,240 +32,32 @@ function Homepage() {
   const [designs, setDesigns] = useState([]);
   const [projects, setProjects] = useState([]);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDesigns, setFilteredDesigns] = useState([]);
 
-  const fetchUserData = (user) => {
-    const userRef = doc(db, "users", user.uid);
-    onSnapshot(userRef, (doc) => {
-      const userData = doc.data();
-      setUsername(userData.username);
-      setUser({
-        uid: user.uid,
-        email: user.email,
-        profilePicture: userData.photoURL || "", // Fetch profile picture from Firestore
-      });
-    });
-  };
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      onSnapshot(userRef, (doc) => {
-        setUsername(doc.data().username);
-      });
-    }
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+    const handleAuthChange = async (user) => {
       if (user) {
         setUser(user);
-        fetchUserData(user);
-        fetchDesigns(user.uid);
-        fetchProjects(user.uid);
+        await fetchUserData(user, setUsername, setUser);
+        await fetchDesigns(user.uid, setDesigns);
+        await fetchProjects(user.uid, setProjects);
       } else {
         setUser(null);
         setDesigns([]);
         setProjects([]);
       }
-    });
+      setLoading(false);
+    };
+
+    const unsubscribeAuth = onAuthStateChanged(auth, handleAuthChange);
 
     return () => unsubscribeAuth();
-  }, [user]);
-
-  const fetchDesigns = (userId) => {
-    const designsRef = collection(db, "users", userId, "designs");
-    const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
-
-    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
-      const designList = [];
-      querySnapshot.forEach((doc) => {
-        designList.push({ id: doc.id, ...doc.data() });
-      });
-      setDesigns(designList);
-    });
-
-    return () => unsubscribeDesigns();
-  };
-
-  const fetchProjects = (userId) => {
-    const projectsRef = collection(db, "users", userId, "projects");
-    const q = query(projectsRef, where("createdAt", ">", new Date(0))); // Example query
-
-    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
-      const projectList = [];
-      querySnapshot.forEach((doc) => {
-        projectList.push({ id: doc.id, ...doc.data() });
-      });
-      setProjects(projectList);
-    });
-
-    return () => unsubscribeDesigns();
-  };
-
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Sign-out error:", error);
-      });
-  };
-
-  const handleSettings = () => {
-    signOut(auth)
-      .then(() => {
-        navigate("/settings");
-      })
-      .catch((error) => {
-        console.error("Settings error:", error);
-      });
-  };
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle("dark-mode", !darkMode);
-  };
-
-  const handleCreateDesign = async () => {
-    try {
-      const designId = new Date().getTime().toString(); // Generate a unique ID
-      const currentUser = auth.currentUser;
-
-      if (currentUser) {
-        const designRef = doc(
-          db,
-          "users",
-          currentUser.uid,
-          "designs",
-          designId
-        );
-        await setDoc(designRef, {
-          name: "Untitled", // Default design name
-          createdAt: new Date(),
-        });
-
-        // Show toast notification when the project is created
-        toast.success("Design created successfully!", {
-          icon: <CheckCircle />,
-          position: "top-right",
-          autoClose: 3000, // 3 seconds auto close
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          style: {
-            color: "var(--color-white)",
-            backgroundColor: "var(--inputBg)",
-          },
-          progressStyle: {
-            backgroundColor: "var(--brightFont)",
-          },
-        });
-
-        // Navigate to the newly created design
-        setTimeout(() => navigate(`/design/${designId}`), 1500);
-      }
-    } catch (error) {
-      console.error("Error creating design: ", error);
-      toast.error("Error creating design! Please try again.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-    }
-  };
-
-  const handleCreateProject = async () => {
-    try {
-      const projectId = new Date().getTime().toString(); // Generate a unique ID
-      const currentUser = auth.currentUser;
-
-      if (currentUser) {
-        const designRef = doc(
-          db,
-          "users",
-          currentUser.uid,
-          "projects",
-          projectId
-        );
-        await setDoc(designRef, {
-          name: "Untitled", // Default design name
-          createdAt: new Date(),
-        });
-
-        // Show toast notification when the project is created
-        toast.success("Project created successfully!", {
-          icon: <CheckCircle />,
-          position: "top-right",
-          autoClose: 3000, // 3 seconds auto close
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          style: {
-            color: "var(--color-white)",
-            backgroundColor: "var(--inputBg)",
-          },
-          progressStyle: {
-            backgroundColor: "var(--brightFont)",
-          },
-        });
-
-        // Navigate to the newly created design
-        setTimeout(() => navigate(`/project/${projectId}`), 1500);
-      }
-    } catch (error) {
-      console.error("Error creating project: ", error);
-      toast.error("Error creating project! Please try again.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-    }
-  };
-
-  const handleDeleteDesign = async (designId) => {
-    try {
-      const currentUser = auth.currentUser;
-
-      if (currentUser) {
-        const designRef = doc(
-          db,
-          "users",
-          currentUser.uid,
-          "designs",
-          designId
-        );
-        await deleteDoc(designRef);
-
-        toast.success("Design deleted", {
-          icon: <Delete />,
-          style: {
-            color: "var(--color-white)",
-            backgroundColor: "var(--inputBg)",
-          },
-          progressStyle: {
-            backgroundColor: "var(--brightFont)",
-          },
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting design: ", error);
-    }
-  };
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  }, []);
 
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -282,26 +70,29 @@ function Homepage() {
     }
   }, [searchQuery, designs]);
 
+  if (loading) {
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
+
   return (
     <div className={`homepage ${menuOpen ? "darkened" : ""}`}>
       <ToastContainer />
-      {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
+      {menuOpen && (
+        <div
+          className="overlay"
+          onClick={() => toggleMenu(menuOpen, setMenuOpen)}
+        ></div>
+      )}
 
       <SearchAppBar
         user={user}
         username={username}
         onMenuClick={() => setDrawerOpen(true)}
         onSearchChange={setSearchQuery}
-      />
-
-      <DrawerComponent
-        isDrawerOpen={isDrawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        toggleDarkMode={toggleDarkMode}
-        handleLogout={handleLogout}
-        handleSettings={handleSettings}
-        darkMode={darkMode}
-        pic={user?.profilePicture}
       />
 
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>
@@ -318,10 +109,16 @@ function Homepage() {
         </div>
 
         <div className="action-buttons">
-          <button className="design-button" onClick={handleCreateDesign}>
+          <button
+            className="design-button"
+            onClick={() => handleCreateDesign(navigate, setDesigns)}
+          >
             Create a design
           </button>
-          <button className="project-button" onClick={handleCreateProject}>
+          <button
+            className="project-button"
+            onClick={() => handleCreateProject(navigate, setProjects)}
+          >
             Create a project
           </button>
         </div>
@@ -344,7 +141,7 @@ function Homepage() {
                       key={design.id}
                       name={design.name}
                       designId={design.id}
-                      onDelete={handleDeleteDesign}
+                      onDelete={() => handleDeleteDesign(design.id, setDesigns)}
                       onOpen={() =>
                         navigate(`/design/${design.id}`, {
                           state: { designId: design.id },
@@ -383,7 +180,7 @@ function Homepage() {
                     key={design.id}
                     name={design.name}
                     designId={design.id}
-                    onDelete={handleDeleteDesign}
+                    onDelete={() => handleDeleteDesign(design.id, setDesigns)}
                     onOpen={() =>
                       navigate(`/design/${design.id}`, {
                         state: { designId: design.id },
@@ -422,7 +219,7 @@ function Homepage() {
                     key={project.id}
                     name={project.name}
                     designId={project.id}
-                    onDelete={handleDeleteDesign}
+                    onDelete={() => handleDeleteDesign(project.id, setProjects)}
                     onOpen={() =>
                       navigate(`/project/${project.id}`, {
                         state: { projectId: project.id },
@@ -447,7 +244,7 @@ function Homepage() {
                 <span className="small-button-text">Create a Project</span>
                 <div
                   className="small-circle-button"
-                  onClick={handleCreateProject}
+                  onClick={() => handleCreateProject(navigate, setProjects)}
                 >
                   <FolderIcon className="icon" />
                 </div>
@@ -456,7 +253,7 @@ function Homepage() {
                 <span className="small-button-text">Create a Design</span>
                 <div
                   className="small-circle-button"
-                  onClick={handleCreateDesign}
+                  onClick={() => handleCreateDesign(navigate, setDesigns)}
                 >
                   <ImageIcon className="icon" />
                 </div>
@@ -465,7 +262,7 @@ function Homepage() {
           )}
           <div
             className={`circle-button ${menuOpen ? "rotate" : ""}`}
-            onClick={toggleMenu}
+            onClick={() => toggleMenu(menuOpen, setMenuOpen)}
           >
             {menuOpen ? <CloseIcon /> : <AddIcon />}
           </div>

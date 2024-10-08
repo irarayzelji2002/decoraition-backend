@@ -1,17 +1,62 @@
-import React from "react";
-import { signOut } from "firebase/auth";
-import { auth, db } from "../../firebase";
-import { Navigate } from "react-router-dom";
-import { doc, deleteDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  collection,
+  query,
+  where,
+  onSnapshot,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
 import { CheckCircle } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete.js";
-import "react-toastify/dist/ReactToastify.css";
-import "../../css/homepage.css";
-import "../../css/design.css";
+import { db, auth } from "../../../firebase"; // Adjust the import path as needed
 
-export const handleLogout = () => {
-  const navigate = Navigate;
+export const fetchUserData = (user, setUsername, setUser) => {
+  const userRef = doc(db, "users", user.uid);
+  onSnapshot(userRef, (doc) => {
+    const userData = doc.data();
+    setUsername(userData.username);
+    setUser({
+      uid: user.uid,
+      email: user.email,
+      profilePicture: userData.photoURL || "",
+    });
+  });
+};
+
+export const fetchDesigns = (userId, setDesigns) => {
+  const designsRef = collection(db, "users", userId, "designs");
+  const q = query(designsRef, where("createdAt", ">", new Date(0)));
+
+  const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+    const designList = [];
+    querySnapshot.forEach((doc) => {
+      designList.push({ id: doc.id, ...doc.data() });
+    });
+    setDesigns(designList);
+  });
+
+  return () => unsubscribeDesigns();
+};
+
+export const fetchProjects = (userId, setProjects) => {
+  const projectsRef = collection(db, "users", userId, "projects");
+  const q = query(projectsRef, where("createdAt", ">", new Date(0)));
+
+  const unsubscribeProjects = onSnapshot(q, (querySnapshot) => {
+    const projectList = [];
+    querySnapshot.forEach((doc) => {
+      projectList.push({ id: doc.id, ...doc.data() });
+    });
+    setProjects(projectList);
+  });
+
+  return () => unsubscribeProjects();
+};
+
+export const handleLogout = (navigate) => {
   signOut(auth)
     .then(() => {
       navigate("/");
@@ -21,8 +66,7 @@ export const handleLogout = () => {
     });
 };
 
-export const handleSettings = () => {
-  const navigate = Navigate;
+export const handleSettings = (navigate) => {
   signOut(auth)
     .then(() => {
       navigate("/settings");
@@ -37,24 +81,22 @@ export const toggleDarkMode = (darkMode, setDarkMode) => {
   document.body.classList.toggle("dark-mode", !darkMode);
 };
 
-export const handleCreateDesign = async (setDesigns) => {
-  const navigate = Navigate;
+export const handleCreateDesign = async (navigate) => {
   try {
-    const designId = new Date().getTime().toString(); // Generate a unique ID
+    const designId = new Date().getTime().toString();
     const currentUser = auth.currentUser;
 
     if (currentUser) {
       const designRef = doc(db, "users", currentUser.uid, "designs", designId);
       await setDoc(designRef, {
-        name: "Untitled", // Default design name
+        name: "Untitled",
         createdAt: new Date(),
       });
 
-      // Show toast notification when the project is created
       toast.success("Design created successfully!", {
         icon: <CheckCircle />,
         position: "top-right",
-        autoClose: 3000, // 3 seconds auto close
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -68,7 +110,6 @@ export const handleCreateDesign = async (setDesigns) => {
         },
       });
 
-      // Navigate to the newly created design
       setTimeout(() => navigate(`/design/${designId}`), 1500);
     }
   } catch (error) {
@@ -84,30 +125,28 @@ export const handleCreateDesign = async (setDesigns) => {
   }
 };
 
-export const handleCreateProject = async (setProjects) => {
-  const navigate = Navigate;
+export const handleCreateProject = async (navigate) => {
   try {
-    const projectId = new Date().getTime().toString(); // Generate a unique ID
+    const projectId = new Date().getTime().toString();
     const currentUser = auth.currentUser;
 
     if (currentUser) {
-      const designRef = doc(
+      const projectRef = doc(
         db,
         "users",
         currentUser.uid,
         "projects",
         projectId
       );
-      await setDoc(designRef, {
-        name: "Untitled", // Default design name
+      await setDoc(projectRef, {
+        name: "Untitled",
         createdAt: new Date(),
       });
 
-      // Show toast notification when the project is created
       toast.success("Project created successfully!", {
         icon: <CheckCircle />,
         position: "top-right",
-        autoClose: 3000, // 3 seconds auto close
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -121,7 +160,6 @@ export const handleCreateProject = async (setProjects) => {
         },
       });
 
-      // Navigate to the newly created design
       setTimeout(() => navigate(`/project/${projectId}`), 1500);
     }
   } catch (error) {

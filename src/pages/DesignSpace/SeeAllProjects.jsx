@@ -90,7 +90,7 @@ export default function SeeAllProjects() {
           <Dropdowns />
         </div>
 
-        <div className="title">Designs</div>
+        <div className="title">Projects</div>
         <section className="recent-section">
           <div className="recent-designs">
             <div className="layout">

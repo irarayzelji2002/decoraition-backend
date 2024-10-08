@@ -13,6 +13,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 import { fetchUserData } from "./backend/HomepageActions";
+import SettingsIcon from "@mui/icons-material/Settings";
+import Badge from "@mui/material/Badge";
+import Avatar from "@mui/material/Avatar";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
   const [user, setUser] = useState(null);
@@ -43,6 +47,9 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
 
   const handleBlur = () => {
     setIsFocused(false);
+  };
+  const getInitial = (name) => {
+    return name ? name.charAt(0).toUpperCase() : "";
   };
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -114,27 +121,64 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             />
           </Paper>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ color: "var(--color-white)", marginRight: 2 }}>
-            {username || "Guest"}
+          <Box sx={{ marginRight: 2 }}>
+            <SettingsIcon sx={{ color: "var(--color-white)" }} />
+          </Box>
+          <Box sx={{ marginRight: 2 }}>
+            <Badge
+              sx={{
+                "& .MuiBadge-badge": {
+                  backgroundColor: "var(--color-secondary)", // Optional: to set the badge color
+                  color: "white", // Optional: to set the text color inside the badge
+                },
+              }}
+              badgeContent={2}
+            >
+              <NotificationsIcon />
+            </Badge>
           </Box>
           <Box
-            component="img"
             sx={{
-              height: 40,
-              width: 40,
-              borderRadius: "50%",
-              marginLeft: "auto",
-              marginRight: "12px",
-              border: "2px solid var(--brightFont)",
+              color: "var(--color-white)",
+              marginRight: 1,
+
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
             }}
-            alt="User Profile Picture"
-            style={{
-              background: user?.profilePicture
-                ? "none"
-                : "var(--gradientButton)",
-            }}
-            src={user?.profilePicture || ""}
-          />
+          >
+            {username || "Guest"}
+          </Box>
+          {user?.profilePicture ? (
+            <Box
+              component="img"
+              sx={{
+                height: 40,
+                width: 40,
+                borderRadius: "50%",
+                marginLeft: "auto",
+                marginRight: "12px",
+                border: "2px solid var(--brightFont)",
+              }}
+              alt="User Profile Picture"
+              src={user.profilePicture}
+            />
+          ) : (
+            <Avatar
+              sx={{
+                height: 40,
+                width: 40,
+                borderRadius: "50%",
+                marginLeft: "auto",
+                marginRight: "12px",
+                background: "var(--gradientButton)",
+                border: "2px solid var(--brightFont)",
+                color: "white", // Optional: to set the text color inside the avatar
+              }}
+            >
+              {username ? getInitial(username) : ""}
+            </Avatar>
+          )}
         </Toolbar>
       </AppBar>
     </Box>

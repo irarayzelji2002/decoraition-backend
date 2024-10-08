@@ -218,18 +218,36 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
 
         {designs.length > 0 ? (
           designs.slice(0, 5).map((design, index) => (
-            <ListItem key={design.id}>
+            <ListItem
+              key={design.id}
+              button
+              onClick={() =>
+                navigate(`/design/${design.id}`, {
+                  state: { designId: design.id },
+                })
+              }
+            >
               <ListItemText primary={design.name} />
               <IconButton
                 edge="end"
                 aria-label="more"
-                onClick={() => setActiveItem(index)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent the ListItem onClick from firing
+                  setActiveItem(index);
+                }}
               >
                 <MoreHorizIcon sx={{ color: darkMode ? "white" : "black" }} />
               </IconButton>
               {activeItem === index && (
                 <div ref={optionsRef} className="dropdown-menu">
-                  <div className="dropdown-item">
+                  <div
+                    className="dropdown-item"
+                    onClick={() =>
+                      navigate(`/design/${design.id}`, {
+                        state: { designId: design.id },
+                      })
+                    }
+                  >
                     <span className="icon"></span> Open
                   </div>
                   <div className="dropdown-item">

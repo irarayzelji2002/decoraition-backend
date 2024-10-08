@@ -202,3 +202,8 @@ export const handleDeleteDesign = async (designId) => {
 export const toggleMenu = (menuOpen, setMenuOpen) => {
   setMenuOpen(!menuOpen);
 };
+
+export const formatDate = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleString(); // This will format the date and time based on the user's locale
+};

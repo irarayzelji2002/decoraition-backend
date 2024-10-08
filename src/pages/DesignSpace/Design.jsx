@@ -78,6 +78,9 @@ function Design() {
             } else {
               console.error("Design not found");
             }
+            await updateDoc(designRef, {
+              lastAccessed: new Date(),
+            });
           } catch (error) {
             console.error("Error fetching design details:", error);
           }

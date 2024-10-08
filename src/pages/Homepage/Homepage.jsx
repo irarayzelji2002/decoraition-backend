@@ -23,6 +23,7 @@ import {
   handleCreateProject,
   handleDeleteDesign,
   toggleMenu,
+  formatDate,
 } from "./backend/HomepageActions.jsx";
 import Loading from "../../components/Loading.jsx";
 
@@ -141,6 +142,7 @@ function Homepage() {
                       key={design.id}
                       name={design.name}
                       designId={design.id}
+                      lastAccessed={design.lastAccessed}
                       onDelete={() => handleDeleteDesign(design.id, setDesigns)}
                       onOpen={() =>
                         navigate(`/design/${design.id}`, {
@@ -180,6 +182,7 @@ function Homepage() {
                     key={design.id}
                     name={design.name}
                     designId={design.id}
+                    lastAccessed={design.lastAccessed}
                     onDelete={() => handleDeleteDesign(design.id, setDesigns)}
                     onOpen={() =>
                       navigate(`/design/${design.id}`, {
@@ -219,6 +222,7 @@ function Homepage() {
                     key={project.id}
                     name={project.name}
                     designId={project.id}
+                    lastAccessed={project.lastAccessed}
                     onDelete={() => handleDeleteDesign(project.id, setProjects)}
                     onOpen={() =>
                       navigate(`/project/${project.id}`, {

@@ -97,31 +97,36 @@ function Homepage() {
       />
 
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>
-        <div className="header">
-          <img
-            style={{ height: "100px", paddingTop: "18px", marginRight: "14px" }}
-            src="/img/Logo-Colored.png"
-            alt="logo"
-          />
-          <div>
-            <h1 className="navName">DecorAItion</h1>
-            <p className="navTagline">Forming ideas with generative AI</p>
+        <div className="headerPlace">
+          <div className="header">
+            <img
+              style={{
+                height: "100px",
+                paddingTop: "18px",
+                marginRight: "14px",
+              }}
+              src="/img/Logo-Colored.png"
+              alt="logo"
+            />
+            <div>
+              <h1 className="navName">DecorAItion</h1>
+              <p className="navTagline">Forming ideas with generative AI</p>
+            </div>
+          </div>{" "}
+          <div className="action-buttons">
+            <button
+              className="design-button"
+              onClick={() => handleCreateDesign(navigate, setDesigns)}
+            >
+              Create a design
+            </button>
+            <button
+              className="project-button"
+              onClick={() => handleCreateProject(navigate, setProjects)}
+            >
+              Create a project
+            </button>
           </div>
-        </div>
-
-        <div className="action-buttons">
-          <button
-            className="design-button"
-            onClick={() => handleCreateDesign(navigate, setDesigns)}
-          >
-            Create a design
-          </button>
-          <button
-            className="project-button"
-            onClick={() => handleCreateProject(navigate, setProjects)}
-          >
-            Create a project
-          </button>
         </div>
 
         <div className="recent-designs">

@@ -8,7 +8,13 @@
   font-weight: 800;
   letter-spacing: -1px;
 }
-
+.headerPlace {
+  background-image: var(--bg-header);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  min-width: 100vh;
+}
 .navTagline {
   font-family: "Open Sans", sans-serif !important;
   font-size: 20px;

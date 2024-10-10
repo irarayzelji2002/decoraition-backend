@@ -9,13 +9,30 @@
   letter-spacing: -1px;
 }
 .headerPlace {
+  position: relative;
   background-image: var(--bg-header);
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
   min-width: 100vh;
-  /* add comment */
 }
+
+.headerPlace::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 0, 0, 0.5),
+    transparent
+  );
+  pointer-events: none; /* Ensure the overlay doesn't interfere with interactions */
+}
+
 .navTagline {
   font-family: "Open Sans", sans-serif !important;
   font-size: 20px;

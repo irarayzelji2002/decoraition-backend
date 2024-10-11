@@ -54,7 +54,7 @@
 /* Hover effect on calendar tiles */
 .custom-calendar .react-calendar__tile:hover {
   background-color: var(
-    --color-grey
+    --color-white
   ); /* Change this to your preferred hover color */
   color: white; /* Text color on hover */
 }
@@ -78,6 +78,11 @@
 .task-list {
   width: 100%;
   max-width: 600px;
+}
+.add-event-button {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
 }
 
 .task-item {

@@ -104,7 +104,7 @@ function App() {
           <Route path="/timeline/:projectId" element={<Timeline />} />
           <Route path="/projBudget/:projectId" element={<ProjBudget />} />
           <Route path="/addPin/" element={<AddPin />} />
-          <Route path="/editEvent/" element={<EditEvent />} />
+          <Route path="/editEvent/:projectId" element={<EditEvent />} />
           <Route path="/projSetting/" element={<ProjSetting />} />
         </Routes>
       </Router>

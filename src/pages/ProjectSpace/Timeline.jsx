@@ -7,7 +7,7 @@ import BottomBarDesign from "./BottomBarProject";
 import { useParams } from "react-router-dom";
 import EditPen from "../DesignSpace/svg/EditPen";
 import Trash from "../DesignSpace/svg/Trash";
-import { fetchTasks } from "./backend/ProjectDetails";
+import { fetchTasks, deleteTask } from "./backend/ProjectDetails";
 import { ToastContainer } from "react-toastify";
 import { auth } from "../../firebase";
 
@@ -17,23 +17,35 @@ function Timeline() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      const fetchAndSetTasks = async () => {
+    const fetchAndSetTasks = async () => {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
         await fetchTasks(currentUser.uid, projectId, setTasks);
-      };
+      }
+    };
 
-      fetchAndSetTasks();
+    fetchAndSetTasks(); // Fetch tasks immediately when the component mounts
 
-      const intervalId = setInterval(fetchAndSetTasks, 60000); // Refresh every 60 seconds
+    const intervalId = setInterval(fetchAndSetTasks, 1000); // Refresh every 60 seconds
 
-      return () => clearInterval(intervalId);
-    }
+    return () => clearInterval(intervalId); // Clear interval on component unmount
   }, [projectId]);
-
   const formatDate = (date) => {
     const options = { month: "short", day: "numeric" };
     return date.toLocaleDateString(undefined, options);
+  };
+
+  const handleDelete = async (taskId) => {
+    console.log("handleDelete called with taskId:", taskId); // Debugging statement
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      try {
+        await deleteTask(currentUser.uid, projectId, taskId);
+        console.log("Task deleted successfully"); // Debugging statement
+      } catch (error) {
+        console.error("Error deleting task:", error); // Debugging statement
+      }
+    }
   };
 
   return (
@@ -72,7 +84,9 @@ function Timeline() {
                   </div>
                   <div className="task-actions">
                     <EditPen />
-                    <Trash />
+                    <div onClick={() => handleDelete(task.id)}>
+                      <Trash />
+                    </div>
                   </div>
                 </div>
               ))

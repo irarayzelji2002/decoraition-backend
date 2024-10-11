@@ -243,7 +243,7 @@ const saveData = async (projectId, formData) => {
     );
     toast.success("Document successfully written!", {
       position: "top-right",
-      autoClose: 3000,
+      autoClose: 1500,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -291,4 +291,44 @@ export const fetchTasks = (userId, projectId, setTasks) => {
   });
 
   return () => unsubscribeTasks();
+};
+
+export const deleteTask = async (userId, projectId, taskId) => {
+  try {
+    const taskRef = doc(
+      db,
+      "users",
+      userId,
+      "projects",
+      projectId,
+      "timeline",
+      taskId
+    );
+    await deleteDoc(taskRef);
+    toast.success("Task successfully deleted!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      style: {
+        color: "var(--color-white)",
+        backgroundColor: "var(--inputBg)",
+      },
+      progressStyle: {
+        backgroundColor: "var(--brightFont)",
+      },
+    });
+  } catch (e) {
+    console.error("Error deleting document: ", e);
+    toast.error("Error deleting task! Please try again.", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  }
 };

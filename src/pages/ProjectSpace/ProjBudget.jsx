@@ -4,6 +4,7 @@ import BottomBarDesign from "./BottomBarProject";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import ExportIcon from "./svg/ExportIcon";
+import { ToastContainer } from "react-toastify";
 
 function ProjBudget() {
   const [designData, setDesignData] = useState(null);
@@ -33,6 +34,7 @@ function ProjBudget() {
   };
   return (
     <>
+      <ToastContainer />
       <ProjectHead
         designData={designData}
         newName={newName}

@@ -4,32 +4,46 @@ import TopBar from "../../components/TopBar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import { saveData } from "./backend/ProjectDetails";
+import { useParams } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 function EditEvent() {
+  const { projectId } = useParams();
   const [formData, setFormData] = useState({
-    taskName: "Set up tables",
-    startDate: "2024-07-14",
-    endDate: "2024-07-17",
-    description: "Lorem ipsum dolor sit amet...",
+    taskName: "",
+    startDate: "",
+    endDate: "",
+    description: "",
     repeat: {
-      frequency: 1,
-      unit: "week",
+      frequency: "",
+      unit: "day",
     },
     reminders: [
-      { id: 1, time: "1 day, 6:00AM" },
-      { id: 2, time: "2 days, 7:00AM" },
+      { id: 1, time: "" },
+      { id: 2, time: "" },
     ],
     repeatEnabled: true,
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleInputChange = (e, fieldName, nestedField = null) => {
+    const { value } = e.target;
+    setFormData((prevFormData) => {
+      if (nestedField) {
+        return {
+          ...prevFormData,
+          [nestedField]: {
+            ...prevFormData[nestedField],
+            [fieldName]: value,
+          },
+        };
+      }
+      return {
+        ...prevFormData,
+        [fieldName]: value,
+      };
+    });
   };
-
   const handleReminderChange = (index, value) => {
     const newReminders = [...formData.reminders];
     newReminders[index].time = value;
@@ -59,6 +73,7 @@ function EditEvent() {
 
   return (
     <div>
+      <ToastContainer />
       <TopBar state={"Edit Event"} />
       <div className="edit-event">
         <div className="form-container">
@@ -69,7 +84,7 @@ function EditEvent() {
               id="taskName"
               name="taskName"
               value={formData.taskName}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange(e, "taskName")}
             />
           </div>
           <div className="form-group">
@@ -79,7 +94,7 @@ function EditEvent() {
               id="startDate"
               name="startDate"
               value={formData.startDate}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange(e, "startDate")}
             />
           </div>
           <div className="form-group">
@@ -89,7 +104,7 @@ function EditEvent() {
               id="endDate"
               name="endDate"
               value={formData.endDate}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange(e, "endDate")}
             />
           </div>
           <div className="form-group">
@@ -98,7 +113,7 @@ function EditEvent() {
               id="description"
               name="description"
               value={formData.description}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange(e, "description")}
             />
           </div>
           <div className="form-group repeat">
@@ -108,12 +123,12 @@ function EditEvent() {
                 type="number"
                 name="frequency"
                 value={formData.repeat.frequency}
-                onChange={handleInputChange}
+                onChange={(e) => handleInputChange(e, "frequency")}
               />
               <select
                 name="unit"
                 value={formData.repeat.unit}
-                onChange={handleInputChange}
+                onChange={(e) => handleInputChange(e, "unit")}
               >
                 <option value="day">Day</option>
                 <option value="week">Week</option>
@@ -160,7 +175,12 @@ function EditEvent() {
             ))}
           </div>
 
-          <button className="edit-event-button">Edit event</button>
+          <button
+            className="edit-event-button"
+            onClick={() => saveData(projectId, formData)}
+          >
+            Save event
+          </button>
         </div>
       </div>
     </div>

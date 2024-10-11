@@ -1,8 +1,129 @@
 import { useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
-import { db } from "../../../firebase"; // Adjust the import path as necessary
+import { db, auth } from "../../../firebase"; // Adjust the import path as necessary
 import { toast } from "react-toastify";
+import { collection, addDoc } from "firebase/firestore";
+
+import { query, where, setDoc, deleteDoc } from "firebase/firestore";
+import { CheckCircle, Delete } from "@mui/icons-material";
+
+// Adjust the import path as necessary
+
+export const fetchDesigns = (userId, projectId, setDesigns) => {
+  const designsRef = collection(
+    db,
+    "users",
+    userId,
+    "projects",
+    projectId,
+    "designs"
+  );
+  const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
+
+  const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+    const designList = [];
+    querySnapshot.forEach((doc) => {
+      designList.push({ id: doc.id, ...doc.data() });
+    });
+    setDesigns(designList);
+  });
+
+  return () => unsubscribeDesigns();
+};
+
+export const handleCreateDesign = async (projectId, navigate) => {
+  try {
+    const designId = new Date().getTime().toString(); // Generate a unique ID
+    const currentUser = auth.currentUser;
+
+    if (currentUser) {
+      const projectRef = doc(
+        db,
+        "users",
+        currentUser.uid,
+        "projects",
+        projectId
+      );
+
+      // Design reference within the specific project
+      const designRef = doc(projectRef, "designs", designId);
+
+      await setDoc(designRef, {
+        name: "Untitled", // Default design name
+        createdAt: new Date(),
+        projectId: projectId, // Linking design to the project
+      });
+
+      // Show toast notification when the project is created
+      toast.success("Design created successfully!", {
+        icon: <CheckCircle />,
+        position: "top-right",
+        autoClose: 3000, // 3 seconds auto close
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+
+      // Navigate to the newly created design
+      // setTimeout(
+      //   () => navigate(`/design/${designId}/${projectId}/project`),
+      //   1500
+      // );
+    }
+  } catch (error) {
+    console.error("Error creating design: ", error);
+    toast.error("Error creating design! Please try again.", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  }
+};
+
+export const handleDeleteDesign = async (projectId, designId) => {
+  try {
+    const currentUser = auth.currentUser;
+
+    if (currentUser) {
+      const projectRef = doc(
+        db,
+        "users",
+        currentUser.uid,
+        "projects",
+        projectId,
+        "designs",
+        designId
+      );
+
+      await deleteDoc(projectRef);
+
+      toast.success("Design deleted", {
+        icon: <Delete />,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Error deleting design: ", error);
+  }
+};
 
 export const useHandleNameChange = (
   newName,
@@ -99,4 +220,75 @@ export const useProjectDetails = (
 
     return () => unsubscribe(); // Cleanup listener on component unmount
   }, [projectId, setUserId, setProjectData, setNewName]);
+};
+
+const saveData = async (projectId, formData) => {
+  const currentUser = auth.currentUser;
+  if (!currentUser) {
+    throw new Error("User is not authenticated");
+  }
+  const userId = currentUser.uid;
+  try {
+    await addDoc(
+      collection(db, "users", userId, "projects", projectId, "timeline"),
+      {
+        projectId,
+        taskName: formData.taskName,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        description: formData.description,
+        repeat: formData.repeat,
+        reminders: formData.reminders,
+      }
+    );
+    toast.success("Document successfully written!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      style: {
+        color: "var(--color-white)",
+        backgroundColor: "var(--inputBg)",
+      },
+      progressStyle: {
+        backgroundColor: "var(--brightFont)",
+      },
+      onClose: () => window.history.back(),
+    });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    toast.error("Error adding document! Please try again.", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  }
+};
+
+export { saveData };
+
+export const fetchTasks = (userId, projectId, setTasks) => {
+  const tasksRef = collection(
+    db,
+    "users",
+    userId,
+    "projects",
+    projectId,
+    "timeline"
+  );
+
+  const unsubscribeTasks = onSnapshot(tasksRef, (querySnapshot) => {
+    const taskList = [];
+    querySnapshot.forEach((doc) => {
+      taskList.push({ id: doc.id, ...doc.data() });
+    });
+    setTasks(taskList);
+  });
+
+  return () => unsubscribeTasks();
 };

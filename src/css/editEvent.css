@@ -108,3 +108,7 @@ textarea {
   display: flex;
   align-items: center;
 }
+/* editEvent.css */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

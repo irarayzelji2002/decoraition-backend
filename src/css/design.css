@@ -400,7 +400,7 @@ textarea {
 /* Hover effect for small and main buttons */
 .small-circle-button:hover,
 .circle-button:hover {
-  opacity: 0.8;
+  background-image: var(--gradientCircleHover);
 }
 
 .itemHead {

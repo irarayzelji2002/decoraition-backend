@@ -26,17 +26,17 @@ export default function SeeAllProjects() {
   const [designs, setDesigns] = useState([]);
   const [username, setUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [lastVisible, setLastVisible] = useState(null); // Track last document for pagination
-  const [page, setPage] = useState(1); // Current page
-  const [isLastPage, setIsLastPage] = useState(false); // To check if last page
-  const [totalPages, setTotalPages] = useState(5); // Assume 5 pages for demonstration
+  const [lastVisible, setLastVisible] = useState(null);
+  const [page, setPage] = useState(1);
+  const [isLastPage, setIsLastPage] = useState(false);
+  const [totalPages, setTotalPages] = useState(5);
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        fetchDesigns(user.uid, 1); // Fetch designs for page 1 on load
+        fetchDesigns(user.uid, 1);
       } else {
         setUser(null);
         setDesigns([]);
@@ -84,7 +84,7 @@ export default function SeeAllProjects() {
           designId
         );
         await deleteDoc(designRef);
-        fetchDesigns(currentUser.uid, page); // Refresh designs after deletion
+        fetchDesigns(currentUser.uid, page);
       }
     } catch (error) {
       console.error("Error deleting design: ", error);

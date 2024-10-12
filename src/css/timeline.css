@@ -68,6 +68,7 @@
 }
 
 /* To ensure other elements remain styled as you want */
+
 .custom-calendar .react-calendar__tile {
   color: var(--color-white);
   border-radius: 5px;

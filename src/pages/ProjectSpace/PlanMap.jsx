@@ -26,6 +26,7 @@ function PlanMap() {
     <div className="app-container">
       <ToastContainer />
       <ProjectHead />
+      {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div className="budgetSpace">
           <div className="image-frame">

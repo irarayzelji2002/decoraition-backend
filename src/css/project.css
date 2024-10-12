@@ -91,13 +91,14 @@ body {
 }
 
 .sectionBudget {
-  width: 90%;
+  width: 100%;
   height: fit-content;
   background-color: var(--nav-card-modal);
   display: flex;
   justify-content: start;
   align-items: center;
   padding: 30px;
+  margin-bottom: 12px;
 }
 
 .budgetHolder {
@@ -107,7 +108,7 @@ body {
   padding-top: 30px;
   justify-content: start;
   width: 100%;
-  height: 100%;
+  height: max-content;
 }
 
 .image-frame-project {

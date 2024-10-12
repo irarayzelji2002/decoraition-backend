@@ -277,7 +277,7 @@ function Budget() {
     );
   }
   return (
-    <div className={`budget-page ${menuOpen ? "darkened" : ""}`}>
+    <div className={`budget-page ${menuOpen ? "" : ""}`}>
       <ToastContainer
         progressStyle={{ backgroundColor: "var(--brightFont)" }}
       />
@@ -336,9 +336,7 @@ function Budget() {
             ))
           )}
         </div>
-        <BottomBar designId={designId} design={false} projectId={projectId} />
       </div>
-
       <div className="circle-button-container">
         {menuOpen && (
           <div className="small-buttons">
@@ -370,7 +368,6 @@ function Budget() {
           {menuOpen ? <CloseIcon /> : <AddIcon />}
         </div>
       </div>
-
       {modalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -397,7 +394,8 @@ function Budget() {
             </button>
           </div>
         </div>
-      )}
+      )}{" "}
+      <BottomBar designId={designId} design={false} projectId={projectId} />
     </div>
   );
 }

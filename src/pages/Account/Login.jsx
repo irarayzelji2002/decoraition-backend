@@ -3,7 +3,7 @@ import "../../css/loginModal.css";
 
 export default function Login() {
   return (
-    <div className="bg">
+    <div className="bg-login">
       <div className="headtext">
         <h1>Welcome Back!</h1>
       </div>

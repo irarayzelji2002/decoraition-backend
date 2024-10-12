@@ -18,8 +18,8 @@ h1 {
 .headtext {
   margin-bottom: 24px;
 }
-.bg {
-  background-image: var(--bg-image);
+.bg-login {
+  background-image: var(--bg-header);
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;

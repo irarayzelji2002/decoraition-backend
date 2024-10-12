@@ -31,7 +31,7 @@ function Design() {
   const [designData, setDesignData] = useState(null);
   const [newName, setNewName] = useState("");
   const [showComments, setShowComments] = useState(false);
-  const [showMenu, setShowMenu] = useState(true);
+
   const [showPromptBar, setShowPromptBar] = useState(true);
   const [numImageFrames, setNumImageFrames] = useState(2);
   const [isEditingName, setIsEditingName] = useState(false);

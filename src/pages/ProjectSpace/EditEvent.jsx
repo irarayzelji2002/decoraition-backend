@@ -1,30 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import "../../css/editEvent.css";
 import TopBar from "../../components/TopBar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
-import { saveData } from "./backend/ProjectDetails";
-import { useParams } from "react-router-dom";
+import { saveData, updateTask } from "./backend/ProjectDetails";
 import { ToastContainer } from "react-toastify";
+import { auth } from "../../firebase";
 
 function EditEvent() {
   const { projectId } = useParams();
-  const [formData, setFormData] = useState({
-    taskName: "",
-    startDate: "",
-    endDate: "",
-    description: "",
-    repeat: {
-      frequency: "",
-      unit: "day",
-    },
-    reminders: [
-      { id: 1, time: "" },
-      { id: 2, time: "" },
-    ],
-    repeatEnabled: true,
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const selectedDate = queryParams.get("date");
+  const taskDetails = queryParams.get("task");
+
+  const initialFormData = taskDetails
+    ? JSON.parse(decodeURIComponent(taskDetails))
+    : {
+        taskName: "",
+        startDate: selectedDate || "",
+        endDate: selectedDate || "",
+        description: "",
+        repeat: {
+          frequency: "",
+          unit: "day",
+        },
+        reminders: [
+          { id: 1, time: "" },
+          { id: 2, time: "" },
+        ],
+        repeatEnabled: true,
+      };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   const handleInputChange = (e, fieldName, nestedField = null) => {
     const { value } = e.target;
@@ -44,6 +55,7 @@ function EditEvent() {
       };
     });
   };
+
   const handleReminderChange = (index, value) => {
     const newReminders = [...formData.reminders];
     newReminders[index].time = value;
@@ -69,6 +81,21 @@ function EditEvent() {
       ...prevData,
       reminders: newReminders,
     }));
+  };
+
+  const handleSave = async () => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      if (taskDetails) {
+        // Update existing task
+        const taskId = JSON.parse(decodeURIComponent(taskDetails)).id;
+        await updateTask(currentUser.uid, projectId, taskId, formData);
+      } else {
+        // Save new task
+        await saveData(projectId, formData);
+      }
+      navigate(-1); // Go back to the previous page
+    }
   };
 
   return (
@@ -123,12 +150,12 @@ function EditEvent() {
                 type="number"
                 name="frequency"
                 value={formData.repeat.frequency}
-                onChange={(e) => handleInputChange(e, "frequency")}
+                onChange={(e) => handleInputChange(e, "frequency", "repeat")}
               />
               <select
                 name="unit"
                 value={formData.repeat.unit}
-                onChange={(e) => handleInputChange(e, "unit")}
+                onChange={(e) => handleInputChange(e, "unit", "repeat")}
               >
                 <option value="day">Day</option>
                 <option value="week">Week</option>
@@ -175,10 +202,7 @@ function EditEvent() {
             ))}
           </div>
 
-          <button
-            className="edit-event-button"
-            onClick={() => saveData(projectId, formData)}
-          >
+          <button className="edit-event-button" onClick={handleSave}>
             Save event
           </button>
         </div>

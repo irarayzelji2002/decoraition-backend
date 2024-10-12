@@ -3,7 +3,7 @@ import "../../css/forgotPass.css";
 
 export default function ChangePassw() {
   return (
-    <div className="bg">
+    <div className="bg-login">
       <div className="headtext">
         <h1>Forgot Password</h1>
       </div>

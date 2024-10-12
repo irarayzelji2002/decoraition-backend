@@ -3,7 +3,7 @@ import "../../css/registerModal.css";
 
 export default function Register() {
   return (
-    <div className="bg">
+    <div className="bg-login">
       <div className="headtext">
         <h1>Register Now!</h1>
       </div>

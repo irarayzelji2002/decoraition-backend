@@ -332,3 +332,43 @@ export const deleteTask = async (userId, projectId, taskId) => {
     });
   }
 };
+
+export const updateTask = async (userId, projectId, taskId, updatedData) => {
+  try {
+    const taskRef = doc(
+      db,
+      "users",
+      userId,
+      "projects",
+      projectId,
+      "timeline",
+      taskId
+    );
+    await updateDoc(taskRef, updatedData);
+    toast.success("Task updated successfully!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      style: {
+        color: "var(--color-white)",
+        backgroundColor: "var(--inputBg)",
+      },
+      progressStyle: {
+        backgroundColor: "var(--brightFont)",
+      },
+    });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    toast.error("Error updating task! Please try again.", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  }
+};

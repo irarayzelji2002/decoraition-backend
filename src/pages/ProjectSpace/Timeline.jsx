@@ -10,11 +10,13 @@ import Trash from "../DesignSpace/svg/Trash";
 import { fetchTasks, deleteTask } from "./backend/ProjectDetails";
 import { ToastContainer } from "react-toastify";
 import { auth } from "../../firebase";
+import { useNavigate } from "react-router-dom";
 
 function Timeline() {
   const [date, setDate] = useState(new Date());
   const { projectId } = useParams();
   const [tasks, setTasks] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAndSetTasks = async () => {
@@ -48,6 +50,15 @@ function Timeline() {
     }
   };
 
+  const handleEditClick = (task) => {
+    const taskDetails = encodeURIComponent(JSON.stringify(task));
+    navigate(`/editEvent/${projectId}?task=${taskDetails}`);
+  };
+
+  const handleAddEventClick = () => {
+    const formattedDate = date.toISOString().split("T")[0];
+    navigate(`/editEvent/${projectId}?date=${formattedDate}`);
+  };
   return (
     <>
       <ProjectHead />
@@ -63,10 +74,7 @@ function Timeline() {
             />
           </div>
           <div className="add-event-button">
-            <button
-              className="design-button"
-              onClick={() => (window.location.href = `/editEvent/${projectId}`)}
-            >
+            <button className="design-button" onClick={handleAddEventClick}>
               Add Event for {formatDate(date)}
             </button>
           </div>
@@ -83,7 +91,9 @@ function Timeline() {
                     <p>Until {new Date(task.endDate).toLocaleDateString()}</p>
                   </div>
                   <div className="task-actions">
-                    <EditPen />
+                    <div onClick={() => handleEditClick(task)}>
+                      <EditPen />
+                    </div>
                     <div onClick={() => handleDelete(task.id)}>
                       <Trash />
                     </div>

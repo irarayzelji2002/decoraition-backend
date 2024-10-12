@@ -134,6 +134,7 @@ function Project() {
           flexDirection: "column",
         }}
       >
+        {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
         <Paper
           component="form"
           sx={{

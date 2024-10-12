@@ -57,7 +57,7 @@
 		"server": "cd server && npm run dev",
 		"build": "npm run react:build && npm run move:build",
 		"react:build": "if [ \"$RENDER\" = \"true\" ]; then react-app-rewired build; else env-cmd -f ./.env react-app-rewired build; fi",
-		"move:build": "move build .\\server\\build",
+		"move:build": "mv build server/build",
 		"test": "concurrently \"npm run server:test\" \"npm run react:test\"",
 		"react:test": "env-cmd -f ./.env react-app-rewired test",
 		"server:test": "cd server && npm test",

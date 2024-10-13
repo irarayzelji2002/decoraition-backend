@@ -5,12 +5,17 @@ import { db, auth } from "../../../firebase"; // Adjust the import path as neces
 import { toast } from "react-toastify";
 import { collection, addDoc } from "firebase/firestore";
 
-import { query, where, setDoc, deleteDoc } from "firebase/firestore";
+import { query, where, setDoc, deleteDoc, getDocs } from "firebase/firestore";
 import { CheckCircle, Delete } from "@mui/icons-material";
 
 // Adjust the import path as necessary
 
-export const fetchDesigns = (userId, projectId, setDesigns) => {
+export const fetchDesigns = (
+  userId,
+  projectId,
+  setDesigns = () => {},
+  setDesignBudgetItems = () => {}
+) => {
   const designsRef = collection(
     db,
     "users",
@@ -21,12 +26,26 @@ export const fetchDesigns = (userId, projectId, setDesigns) => {
   );
   const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
 
-  const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+  const unsubscribeDesigns = onSnapshot(q, async (querySnapshot) => {
     const designList = [];
-    querySnapshot.forEach((doc) => {
-      designList.push({ id: doc.id, ...doc.data() });
-    });
+    const budgetItemsMap = {};
+
+    for (const doc of querySnapshot.docs) {
+      const design = { id: doc.id, ...doc.data() };
+      designList.push(design);
+
+      // Fetch budget items for each design
+      const budgetRef = collection(designsRef, doc.id, "budgets");
+      const budgetSnapshot = await getDocs(budgetRef);
+      const budgetList = budgetSnapshot.docs.map((budgetDoc) => ({
+        id: budgetDoc.id,
+        ...budgetDoc.data(),
+      }));
+      budgetItemsMap[doc.id] = budgetList;
+    }
+
     setDesigns(designList);
+    setDesignBudgetItems(budgetItemsMap);
   });
 
   return () => unsubscribeDesigns();

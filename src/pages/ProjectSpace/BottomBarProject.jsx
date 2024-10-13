@@ -19,7 +19,7 @@ function BottomBarDesign({
         sx={{
           mr: 2,
           ":hover": {
-            backgroundColor: "#2c2f33",
+            backgroundColor: "var(--iconBg)",
           },
         }}
       >
@@ -90,7 +90,7 @@ function BottomBarDesign({
         to={`/timeline/${projId}`}
         sx={{
           ":hover": {
-            backgroundColor: "#2c2f33",
+            backgroundColor: "var(--iconBg)",
           },
         }}
       >
@@ -157,7 +157,7 @@ function BottomBarDesign({
         color="#302f37"
         sx={{
           ":hover": {
-            backgroundColor: "#2c2f33",
+            backgroundColor: "var(--iconBg)",
           },
         }}
       >
@@ -268,7 +268,7 @@ function BottomBarDesign({
         to={`/projBudget/${projId}`}
         sx={{
           ":hover": {
-            backgroundColor: "#2c2f33",
+            backgroundColor: "var(--iconBg)",
           },
         }}
       >

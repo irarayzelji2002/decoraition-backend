@@ -45,29 +45,27 @@
   padding: 10px;
 }
 .custom-calendar .react-calendar__tile--active {
-  background-image: var(
-    --gradientButton
-  ); /* Change this to your preferred active color */
-  color: white; /* Text color for active date */
-  border-radius: 12px; /* Change this to your preferred border radius */
+  background-image: var(--gradientButton);
+  color: white;
 }
 /* Hover effect on calendar tiles */
 .custom-calendar .react-calendar__tile:hover {
-  background-color: var(
-    --color-white
-  ); /* Change this to your preferred hover color */
-  color: white; /* Text color on hover */
-}
-
-/* Default focus date (clicked but not active) */
-.custom-calendar .react-calendar__tile--now {
-  background-color: var(
-    --nav-card-modal
-  ); /* Change this to the color for today */
+  background-color: var(--iconBg);
   color: white;
 }
 
-/* To ensure other elements remain styled as you want */
+/* Remove blue focus outline and apply custom focus styles */
+.custom-calendar .react-calendar__tile:focus {
+  outline: none;
+  background-color: var(--iconBg);
+}
+
+/* Default focus date (clicked but not active) */
+
+.custom-calendar .react-calendar__tile--now {
+  background-color: var(--nav-card-modal);
+  color: white;
+}
 
 .custom-calendar .react-calendar__tile {
   color: var(--color-white);
@@ -114,31 +112,28 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--gradientButton); /* Use your CSS variable */
-  padding: 8px; /* Adjust the padding for spacing around the icon */
-  border-radius: 50%; /* Rounded background */
-  cursor: pointer; /* Add a pointer cursor for interactivity */
-  transition: background-color 0.3s ease; /* Smooth transition on hover */
+  background: var(--gradientButton);
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .icon-container:hover {
-  background: var(--gradientButtonHover); /* Optional: Add a hover effect */
+  background: var(--gradientButtonHover);
 }
 
 .icon-container svg {
-  color: white; /* Change icon color */
-  font-size: 16px; /* Adjust the icon size */
+  color: white;
+  font-size: 16px;
 }
 
-/* Apply color directly to the SVG icons */
 .svg-icon {
-  color: var(
-    --gradientButton
-  ); /* Use your custom CSS variable for the icon color */
-  font-size: 24px; /* Optional: Adjust the icon size */
-  transition: color 0.3s ease; /* Optional: Add a smooth transition for hover effects */
+  color: var(--gradientButton);
+  font-size: 24px;
+  transition: color 0.3s ease;
 }
 
 .svg-icon:hover {
-  color: var(--gradientButtonHover); /* Optional: Change color on hover */
+  color: var(--gradientButtonHover);
 }

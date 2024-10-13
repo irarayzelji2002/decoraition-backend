@@ -1,4 +1,3 @@
-// src/pages/Landing/Landing.jsx
 import React from "react";
 import "../../css/landing.css";
 
@@ -14,14 +13,12 @@ const Landing = () => {
           <br />
           See how AI can help you think up venue, stage, and interior designs.
         </p>
-        <button className="download-btn">Download for Android</button>
+        <button className="download-btn">Login Now!</button>
       </div>
 
-      <div className="image-grid">
-        <img src="image1.jpg" alt="Design 1" className="grid-image" />
-        <img src="image2.jpg" alt="Design 2" className="grid-image" />
-        <img src="image3.jpg" alt="Design 3" className="grid-image" />
-      </div>
+      {/* <div className="image-grid">
+        <img src="/img/landing-image.png" alt="Design 1" className="grid-image"/>
+      </div> */}
     </div>
   );
 };

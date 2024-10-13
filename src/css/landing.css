@@ -1,15 +1,14 @@
-/* src/pages/Landing/Landing.css */
-
 body {
   margin: 0;
   font-family: "Arial", sans-serif;
-  background-color: #181818; /* Dark theme */
+  background-color: #181818;
 }
 
 .landing-container {
+  display: flex;
   text-align: center;
   padding: 50px;
-  background-image: url("/public/img/landing-bg.png"); /* Add your background image path */
+  background-image: url("/public/img/landing-bg.png");
   background-size: cover;
   background-position: center;
   min-height: 100vh;
@@ -24,7 +23,7 @@ body {
   z-index: 2;
   position: relative;
   color: #fff;
-  text-align: center;
+  text-align: left;
   margin-bottom: 50px;
 }
 
@@ -35,7 +34,7 @@ h1 {
 }
 
 .highlight {
-  color: #f25c54; /* Highlight color */
+  font-weight:800;
 }
 
 .tagline {
@@ -45,7 +44,7 @@ h1 {
 }
 
 .download-btn {
-  background-color: #ff5722;
+  background: var(--gradientButton);
   color: white;
   padding: 15px 30px;
   border: none;
@@ -57,12 +56,12 @@ h1 {
 }
 
 .download-btn:hover {
-  background-color: #e64a19;
+  background-color: var(--gradientButtonHover);
 }
 
 .image-grid {
   display: flex;
-  justify-content: center;
+  justify-content: end;
   gap: 20px;
   margin-top: 30px;
   z-index: 2;
@@ -83,7 +82,7 @@ h1 {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1;
 }
 

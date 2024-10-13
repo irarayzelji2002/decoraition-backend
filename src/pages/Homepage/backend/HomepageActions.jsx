@@ -27,8 +27,12 @@ export const fetchUserData = (user, setUsername, setUser) => {
 };
 
 export const fetchDesigns = (userId, setDesigns) => {
-  const designsRef = collection(db, "users", userId, "designs");
-  const q = query(designsRef, where("createdAt", ">", new Date(0)));
+  const designsRef = collection(db, "designs");
+  const q = query(
+    designsRef,
+    where("createdBy", "==", userId),
+    where("createdAt", ">", new Date(0))
+  );
 
   const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
     const designList = [];
@@ -42,8 +46,8 @@ export const fetchDesigns = (userId, setDesigns) => {
 };
 
 export const fetchProjects = (userId, setProjects) => {
-  const projectsRef = collection(db, "users", userId, "projects");
-  const q = query(projectsRef, where("createdAt", ">", new Date(0)));
+  const projectsRef = collection(db, "projects");
+  const q = query(projectsRef, where("createdBy", "==", userId));
 
   const unsubscribeProjects = onSnapshot(q, (querySnapshot) => {
     const projectList = [];
@@ -83,14 +87,16 @@ export const toggleDarkMode = (darkMode, setDarkMode) => {
 
 export const handleCreateDesign = async (navigate) => {
   try {
-    const designId = new Date().getTime().toString();
     const currentUser = auth.currentUser;
+    const randomString = Math.random().toString(36).substring(2, 6);
+    const designId = new Date().getTime().toString() + randomString;
 
     if (currentUser) {
-      const designRef = doc(db, "users", currentUser.uid, "designs", designId);
+      const designRef = doc(db, "designs", designId);
       await setDoc(designRef, {
         name: "Untitled",
         createdAt: new Date(),
+        createdBy: currentUser.uid,
       });
 
       toast.success("Design created successfully!", {
@@ -127,20 +133,16 @@ export const handleCreateDesign = async (navigate) => {
 
 export const handleCreateProject = async (navigate) => {
   try {
-    const projectId = new Date().getTime().toString();
     const currentUser = auth.currentUser;
+    const randomString = Math.random().toString(36).substring(2, 6);
+    const projectId = new Date().getTime().toString() + randomString;
 
     if (currentUser) {
-      const projectRef = doc(
-        db,
-        "users",
-        currentUser.uid,
-        "projects",
-        projectId
-      );
+      const projectRef = doc(db, "projects", projectId);
       await setDoc(projectRef, {
         name: "Untitled",
         createdAt: new Date(),
+        createdBy: currentUser.uid,
       });
 
       toast.success("Project created successfully!", {
@@ -180,7 +182,7 @@ export const handleDeleteDesign = async (designId) => {
     const currentUser = auth.currentUser;
 
     if (currentUser) {
-      const designRef = doc(db, "users", currentUser.uid, "designs", designId);
+      const designRef = doc(db, "designs", designId);
       await deleteDoc(designRef);
 
       toast.success("Design deleted", {
@@ -201,4 +203,9 @@ export const handleDeleteDesign = async (designId) => {
 
 export const toggleMenu = (menuOpen, setMenuOpen) => {
   setMenuOpen(!menuOpen);
+};
+
+export const formatDate = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleString(); // This will format the date and time based on the user's locale
 };

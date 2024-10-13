@@ -19,7 +19,7 @@ CORS(app)
 
 # Constant variables
 SD_URL = "http://127.0.0.1:7860"
-SERVER_URL = "http://127.0.0.1:8080"
+SERVER_URL = "http://127.0.0.1:3500"
 IMAGES_FOLDER = 'static/images'
 if not os.path.exists(IMAGES_FOLDER):
     os.makedirs(IMAGES_FOLDER)
@@ -1213,5 +1213,5 @@ def show_next_generation_page():
     return render_template('next-generation.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=3500)
     # app.run(debug=True, port=8080)

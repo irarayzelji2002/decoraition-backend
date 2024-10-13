@@ -3,6 +3,14 @@ import "../css/homepage.css";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import CopyLinkModal from "./CopyLinkModal";
 import RenameModal from "./RenameModal";
+import {
+  OpenInNew as OpenInNewIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Info as InfoIcon,
+  Link as LinkIcon,
+} from "@mui/icons-material";
+import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 
 function DesignIcon({ name, designId, onOpen, onDelete }) {
   const [showOptions, setShowOptions] = useState(false);
@@ -36,11 +44,13 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
     setShowCopyLinkModal(true);
     setShowOptions(false); // Close options when modal opens
   };
+
   const handleClickOutside = (event) => {
     if (optionsRef.current && !optionsRef.current.contains(event.target)) {
       setShowOptions(false);
     }
   };
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -71,19 +81,27 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
         {showOptions && (
           <div ref={optionsRef} className="dropdown-menu">
             <div className="dropdown-item" onClick={onOpen}>
-              <span className="icon"></span> Open
+              <OpenInNewIcon style={{ fontSize: 20 }} className="icon" />
+              Open
             </div>
             <div className="dropdown-item" onClick={openDeleteModal}>
-              <span className="icon"></span> Delete
+              <DeleteIcon style={{ fontSize: 20 }} className="icon" />
+              Delete
             </div>
             <div className="dropdown-item" onClick={openCopyLinkModal}>
-              <span className="icon"></span> Copy Link
+              <LinkIcon style={{ fontSize: 20 }} className="icon" />
+              Copy Link
             </div>
             <div className="dropdown-item" onClick={openRenameModal}>
-              <span className="icon"></span> Rename
+              <DriveFileRenameOutlineRoundedIcon
+                style={{ fontSize: 20 }}
+                className="icon"
+              />
+              Rename
             </div>
             <div className="dropdown-item">
-              <span className="icon"></span> Details
+              <InfoIcon style={{ fontSize: 20 }} className="icon" />
+              Details
             </div>
           </div>
         )}

@@ -87,13 +87,7 @@ function ProjectHead({ designName, designId, setIsSidebarOpen }) {
 
   useEffect(() => {
     const fetchDesignTitle = () => {
-      const designRef = doc(
-        db,
-        "users",
-        auth.currentUser.uid,
-        "designs",
-        designId
-      );
+      const designRef = doc(db, "designs", designId);
 
       const unsubscribe = onSnapshot(designRef, (doc) => {
         if (doc.exists()) {

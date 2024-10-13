@@ -48,15 +48,7 @@ const EditItem = () => {
             itemId
           );
         } else {
-          itemRef = doc(
-            db,
-            "users",
-            userId,
-            "designs",
-            designId,
-            "budgets",
-            itemId
-          );
+          itemRef = doc(db, "budgets", itemId);
         }
 
         const itemSnap = await getDoc(itemRef);
@@ -105,15 +97,7 @@ const EditItem = () => {
           itemId
         );
       } else {
-        itemRef = doc(
-          db,
-          "users",
-          userId,
-          "designs",
-          designId,
-          "budgets",
-          itemId
-        );
+        itemRef = doc(db, "budgets", itemId);
       }
 
       await updateDoc(itemRef, {

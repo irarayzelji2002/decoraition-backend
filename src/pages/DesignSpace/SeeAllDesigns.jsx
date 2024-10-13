@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SearchAppBar from "../Homepage/SearchAppBar.jsx";
 import { onAuthStateChanged } from "firebase/auth";
-
 import "../../css/seeAll.css";
 import Dropdowns from "../../components/Dropdowns.jsx";
 import { auth, db } from "../../firebase.js";
@@ -15,22 +14,26 @@ import {
   onSnapshot,
   doc,
   deleteDoc,
+  limit,
+  startAfter,
 } from "firebase/firestore";
-
-// Define styled components
 
 export default function SeeAllDesigns() {
   const [user, setUser] = useState(null);
   const [designs, setDesigns] = useState([]);
   const [username, setUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [lastVisible, setLastVisible] = useState(null);
+  const [page, setPage] = useState(1);
+  const [isLastPage, setIsLastPage] = useState(false);
+  const [totalPages, setTotalPages] = useState(5); // Assume 5 pages for demonstration
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        fetchDesigns(user.uid);
+        fetchDesigns(user.uid, 1);
       } else {
         setUser(null);
         setDesigns([]);
@@ -40,9 +43,18 @@ export default function SeeAllDesigns() {
     return () => unsubscribeAuth();
   }, []);
 
-  const fetchDesigns = (userId) => {
-    const designsRef = collection(db, "users", userId, "designs");
-    const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
+  const fetchDesigns = (userId, page) => {
+    const designsRef = collection(db, "designs");
+    let q = query(designsRef, where("createdBy", "==", userId), limit(10)); // Fetch 10 designs per page
+
+    if (page > 1 && lastVisible) {
+      q = query(
+        designsRef,
+        where("createdAt", ">", new Date(0)),
+        startAfter(lastVisible),
+        limit(10)
+      );
+    }
 
     const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
       const designList = [];
@@ -50,6 +62,8 @@ export default function SeeAllDesigns() {
         designList.push({ id: doc.id, ...doc.data() });
       });
       setDesigns(designList);
+      setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      setIsLastPage(querySnapshot.size < 10);
     });
 
     return () => unsubscribeDesigns();
@@ -67,13 +81,29 @@ export default function SeeAllDesigns() {
           designId
         );
         await deleteDoc(designRef);
+        fetchDesigns(currentUser.uid, page); // Refresh designs after deletion
       }
     } catch (error) {
       console.error("Error deleting design: ", error);
     }
   };
 
-  // Add getModalContent function here
+  const handlePageClick = (pageNumber) => {
+    setPage(pageNumber);
+    fetchDesigns(user.uid, pageNumber);
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      handlePageClick(page - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (!isLastPage && page < totalPages) {
+      handlePageClick(page + 1);
+    }
+  };
 
   const filteredDesigns = designs.filter((design) =>
     design.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -118,6 +148,40 @@ export default function SeeAllDesigns() {
             </div>
           </div>
         </section>
+
+        {/* Pagination Section */}
+        <div className="pagination-controls">
+          {/* Previous Page Button */}
+          <button
+            onClick={handlePreviousPage}
+            className="pagination-arrow"
+            disabled={page === 1}
+          >
+            &lt;
+          </button>
+
+          {/* Map over an array to create pagination buttons */}
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              className={`pagination-button ${
+                page === index + 1 ? "active" : ""
+              }`}
+              onClick={() => handlePageClick(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
+
+          {/* Next Page Button */}
+          <button
+            onClick={handleNextPage}
+            className="pagination-arrow"
+            disabled={isLastPage}
+          >
+            &gt;
+          </button>
+        </div>
       </div>
     </>
   );

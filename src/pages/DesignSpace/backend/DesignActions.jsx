@@ -30,8 +30,8 @@ export const handleNameChange = async (
   try {
     const isProjectPath = window.location.pathname.includes("/project");
     const designRef = isProjectPath
-      ? doc(db, "users", userId, "projects", projectId, "designs", designId)
-      : doc(db, "users", userId, "designs", designId);
+      ? doc(db, "projects", projectId, "designs", designId)
+      : doc(db, "designs", designId);
 
     await updateDoc(designRef, { name: newName });
 

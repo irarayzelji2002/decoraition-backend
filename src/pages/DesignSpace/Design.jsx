@@ -31,7 +31,7 @@ function Design() {
   const [designData, setDesignData] = useState(null);
   const [newName, setNewName] = useState("");
   const [showComments, setShowComments] = useState(false);
-  const [showMenu, setShowMenu] = useState(true);
+
   const [showPromptBar, setShowPromptBar] = useState(true);
   const [numImageFrames, setNumImageFrames] = useState(2);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -65,7 +65,7 @@ function Design() {
           );
         } else {
           // Use the original design reference
-          designRef = doc(db, "users", user.uid, "designs", designId);
+          designRef = doc(db, "designs", designId);
         }
 
         const fetchDesignDetails = async () => {
@@ -78,6 +78,9 @@ function Design() {
             } else {
               console.error("Design not found");
             }
+            await updateDoc(designRef, {
+              lastAccessed: new Date(),
+            });
           } catch (error) {
             console.error("Error fetching design details:", error);
           }

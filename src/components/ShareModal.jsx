@@ -48,7 +48,7 @@ const ShareModal = ({
         }}
       >
         <ArrowBackIcon
-          sx={{ color: "whitesmoke", cursor: "pointer" }}
+          sx={{ color: "whitesmoke", cursor: "pointer", marginRight: "16px" }}
           onClick={onClose}
         />
         {isSecondPage ? "Set Roles and Notifications" : "Add Collaborators"}
@@ -58,7 +58,7 @@ const ShareModal = ({
         sx={{
           backgroundColor: "#1F1E22", // Content background color
           color: "whitesmoke", // Text color in the content
-          width: "400px",
+          width: "50vh",
           "& .MuiDialog-paper": {
             width: "100%",
           },

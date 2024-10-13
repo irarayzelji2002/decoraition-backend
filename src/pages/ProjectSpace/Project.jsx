@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  deleteDoc,
-  updateDoc,
-  getDoc,
-  setDoc,
-} from "firebase/firestore";
+import { onSnapshot, doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Paper, IconButton, InputBase } from "@mui/material";
 import {
@@ -19,8 +9,6 @@ import {
   Close as CloseIcon,
   Folder as FolderIcon,
   Image as ImageIcon,
-  CheckCircle,
-  Delete,
 } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
 import { auth, db } from "../../firebase";
@@ -32,6 +20,11 @@ import DesignIcon from "../../components/DesignIcon";
 import Dropdowns from "../../components/Dropdowns";
 import "../../css/seeAll.css";
 import "../../css/project.css";
+import {
+  fetchDesigns,
+  handleCreateDesign,
+  handleDeleteDesign,
+} from "./backend/ProjectDetails";
 
 function Project() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -50,12 +43,13 @@ function Project() {
   };
 
   useEffect(() => {
+    const currentUser = auth.currentUser;
     if (user) {
     }
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        fetchDesigns(user.uid);
+        fetchDesigns(currentUser.uid, projectId, setDesigns);
       } else {
         setUser(null);
         setDesigns([]);
@@ -64,119 +58,6 @@ function Project() {
 
     return () => unsubscribeAuth();
   }, [user]);
-
-  const fetchDesigns = (userId) => {
-    const designsRef = collection(
-      db,
-      "users",
-      userId,
-      "projects",
-      projectId,
-      "designs"
-    );
-    const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
-
-    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
-      const designList = [];
-      querySnapshot.forEach((doc) => {
-        designList.push({ id: doc.id, ...doc.data() });
-      });
-      setDesigns(designList);
-    });
-
-    return () => unsubscribeDesigns();
-  };
-  const handleCreateDesign = async () => {
-    try {
-      const designId = new Date().getTime().toString(); // Generate a unique ID
-      const currentUser = auth.currentUser;
-
-      if (currentUser) {
-        const projectRef = doc(
-          db,
-          "users",
-          currentUser.uid,
-          "projects",
-          projectId
-        );
-
-        // Design reference within the specific project
-        const designRef = doc(projectRef, "designs", designId);
-
-        await setDoc(designRef, {
-          name: "Untitled", // Default design name
-          createdAt: new Date(),
-          projectId: projectId, // Linking design to the project
-        });
-
-        // Show toast notification when the project is created
-        toast.success("Design created successfully!", {
-          icon: <CheckCircle />,
-          position: "top-right",
-          autoClose: 3000, // 3 seconds auto close
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          style: {
-            color: "var(--color-white)",
-            backgroundColor: "var(--inputBg)",
-          },
-          progressStyle: {
-            backgroundColor: "var(--brightFont)",
-          },
-        });
-
-        // Navigate to the newly created design
-        setTimeout(
-          () => navigate(`/design/${designId}/${projectId}/project`),
-          1500
-        );
-      }
-    } catch (error) {
-      console.error("Error creating design: ", error);
-      toast.error("Error creating design! Please try again.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-    }
-  };
-  const handleDeleteDesign = async (designId) => {
-    try {
-      const currentUser = auth.currentUser;
-
-      if (currentUser) {
-        const projectRef = doc(
-          db,
-          "users",
-          currentUser.uid,
-          "projects",
-          projectId,
-          "designs",
-          designId
-        );
-
-        await deleteDoc(projectRef);
-
-        toast.success("Design deleted", {
-          icon: <Delete />,
-          style: {
-            color: "var(--color-white)",
-            backgroundColor: "var(--inputBg)",
-          },
-          progressStyle: {
-            backgroundColor: "var(--brightFont)",
-          },
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting design: ", error);
-    }
-  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -187,13 +68,7 @@ function Project() {
 
         const fetchProjectDetails = async () => {
           try {
-            const projectRef = doc(
-              db,
-              "users",
-              user.uid,
-              "projects",
-              projectId
-            );
+            const projectRef = doc(db, "projects", projectId);
             const projectSnapshot = await getDoc(projectRef);
             if (projectSnapshot.exists()) {
               const project = projectSnapshot.data();
@@ -253,6 +128,7 @@ function Project() {
           flexDirection: "column",
         }}
       >
+        {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
         <Paper
           component="form"
           sx={{
@@ -333,9 +209,9 @@ function Project() {
               key={design.id}
               name={design.name}
               designId={design.id}
-              onDelete={handleDeleteDesign}
+              onDelete={() => handleDeleteDesign(projectId, design.id)}
               onOpen={() =>
-                navigate(`/design/${design.id}/${projectId}/project`, {
+                navigate(`/design/${design.id}`, {
                   state: { designId: design.id },
                 })
               }
@@ -360,7 +236,7 @@ function Project() {
             </div>
             <div
               className="small-button-container"
-              onClick={handleCreateDesign}
+              onClick={() => handleCreateDesign(projectId)}
             >
               <span className="small-button-text">Create a Design</span>
               <div className="small-circle-button">

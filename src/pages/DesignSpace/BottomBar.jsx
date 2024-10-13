@@ -27,7 +27,7 @@ function BottomBar({ design = true, designId, projectId }) {
         sx={{
           mr: 2,
           ":hover": {
-            backgroundColor: "#2c2f33",
+            backgroundColor: "var(--iconBg)",
           },
         }}
         onClick={handleClick}
@@ -121,7 +121,7 @@ function BottomBar({ design = true, designId, projectId }) {
         color="#302f37"
         sx={{
           ":hover": {
-            backgroundColor: "#2c2f33",
+            backgroundColor: "var(--iconBg)",
           },
         }}
         onClick={handleClick2}

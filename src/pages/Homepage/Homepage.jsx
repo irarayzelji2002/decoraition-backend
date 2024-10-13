@@ -23,6 +23,7 @@ import {
   handleCreateProject,
   handleDeleteDesign,
   toggleMenu,
+  formatDate,
 } from "./backend/HomepageActions.jsx";
 import Loading from "../../components/Loading.jsx";
 
@@ -96,31 +97,36 @@ function Homepage() {
       />
 
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>
-        <div className="header">
-          <img
-            style={{ height: "100px", paddingTop: "18px", marginRight: "14px" }}
-            src="/img/Logo-Colored.png"
-            alt="logo"
-          />
-          <div>
-            <h1 className="navName">DecorAItion</h1>
-            <p className="navTagline">Forming ideas with generative AI</p>
+        <div className="headerPlace">
+          <div className="header">
+            <img
+              style={{
+                height: "100px",
+                paddingTop: "18px",
+                marginRight: "14px",
+              }}
+              src="/img/Logo-Colored.png"
+              alt="logo"
+            />
+            <div>
+              <h1 className="navName">DecorAItion</h1>
+              <p className="navTagline">Forming ideas with generative AI</p>
+            </div>
+          </div>{" "}
+          <div className="action-buttons">
+            <button
+              className="design-button"
+              onClick={() => handleCreateDesign(navigate, setDesigns)}
+            >
+              Create a design
+            </button>
+            <button
+              className="project-button"
+              onClick={() => handleCreateProject(navigate, setProjects)}
+            >
+              Create a project
+            </button>
           </div>
-        </div>
-
-        <div className="action-buttons">
-          <button
-            className="design-button"
-            onClick={() => handleCreateDesign(navigate, setDesigns)}
-          >
-            Create a design
-          </button>
-          <button
-            className="project-button"
-            onClick={() => handleCreateProject(navigate, setProjects)}
-          >
-            Create a project
-          </button>
         </div>
 
         <div className="recent-designs">
@@ -141,6 +147,7 @@ function Homepage() {
                       key={design.id}
                       name={design.name}
                       designId={design.id}
+                      lastAccessed={design.lastAccessed}
                       onDelete={() => handleDeleteDesign(design.id, setDesigns)}
                       onOpen={() =>
                         navigate(`/design/${design.id}`, {
@@ -180,6 +187,7 @@ function Homepage() {
                     key={design.id}
                     name={design.name}
                     designId={design.id}
+                    lastAccessed={design.lastAccessed}
                     onDelete={() => handleDeleteDesign(design.id, setDesigns)}
                     onOpen={() =>
                       navigate(`/design/${design.id}`, {
@@ -219,6 +227,7 @@ function Homepage() {
                     key={project.id}
                     name={project.name}
                     designId={project.id}
+                    lastAccessed={project.lastAccessed}
                     onDelete={() => handleDeleteDesign(project.id, setProjects)}
                     onOpen={() =>
                       navigate(`/project/${project.id}`, {

@@ -12,6 +12,7 @@ import PushPinIcon from "@mui/icons-material/PushPin";
 import "../../css/project.css";
 import "../../css/seeAll.css";
 import "../../css/budget.css";
+import { ToastContainer } from "react-toastify";
 
 function PlanMap() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,7 +24,9 @@ function PlanMap() {
 
   return (
     <div className="app-container">
+      <ToastContainer />
       <ProjectHead />
+      {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div className="budgetSpace">
           <div className="image-frame">

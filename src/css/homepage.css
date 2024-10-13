@@ -8,6 +8,30 @@
   font-weight: 800;
   letter-spacing: -1px;
 }
+.headerPlace {
+  position: relative;
+  background-image: var(--bg-header);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  min-width: 100%;
+}
+
+.headerPlace::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(25, 25, 25, 0.2),
+    transparent
+  );
+  pointer-events: none; /* Ensure the overlay doesn't interfere with interactions */
+}
 
 .navTagline {
   font-family: "Open Sans", sans-serif !important;
@@ -195,11 +219,15 @@ h2 {
   opacity: 0.8;
   height: 34px;
   width: 34px;
-  background-color: #474747;
+  background-color: var(--bgMain);
   top: 40px;
   position: relative;
   cursor: pointer;
   border-radius: 30px;
+}
+
+.options:hover {
+  background-color: var(--nav-card-modal);
 }
 
 .selectOption {

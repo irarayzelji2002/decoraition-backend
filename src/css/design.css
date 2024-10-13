@@ -152,7 +152,7 @@ h6 {
   object-fit: contain;
   position: absolute;
 }
-.image-grid {
+.image-grid-design {
   justify-items: center;
   align-items: center;
   display: grid;

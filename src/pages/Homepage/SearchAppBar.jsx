@@ -133,7 +133,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
               }}
               badgeContent={2}
             >
-              <NotificationsIcon />
+              <NotificationsIcon sx={{ color: "var(--color-white)" }} />
             </Badge>
           </Box>
           <Box

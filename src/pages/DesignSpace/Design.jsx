@@ -48,26 +48,8 @@ function Design() {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserId(user.uid);
-
-        const isProjectPath = window.location.pathname.includes("/project");
-
-        let designRef;
-        if (isProjectPath) {
-          // Use a different reference when "/project" is in the URL
-          designRef = doc(
-            db,
-            "users",
-            user.uid,
-            "projects",
-            projectId,
-            "designs",
-            designId
-          );
-        } else {
-          // Use the original design reference
-          designRef = doc(db, "designs", designId);
-        }
-
+        // Use the original design reference
+        const designRef = doc(db, "designs", designId);
         const fetchDesignDetails = async () => {
           try {
             const designSnapshot = await getDoc(designRef);
@@ -141,6 +123,7 @@ function Design() {
           )
         }
         setIsEditingName={setIsEditingName}
+        setIsSidebarOpen={setIsSidebarOpen}
       />
 
       <>
@@ -189,7 +172,9 @@ function Design() {
                 </button>
               </div>
               <div
-                className={numImageFrames === 4 ? "image-grid" : "image-drop"}
+                className={
+                  numImageFrames === 4 ? "image-grid-design" : "image-drop"
+                }
               >
                 {Array.from({ length: numImageFrames }).map((_, index) => (
                   <div className="image-frame" key={index}>

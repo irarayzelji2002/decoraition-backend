@@ -60,7 +60,7 @@ select:-webkit-autofill {
 
 .light-mode {
   /* Light mode variables */
-  --bg-image: url("../public/img/bg-white.png");
+  --bg-header: url("../public/img/bg-white.png");
   --color-primary: #faa653;
   --color-secondary: #ff6347;
   --color-tertiary: #f0f0f0;

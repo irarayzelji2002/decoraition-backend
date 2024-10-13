@@ -65,7 +65,7 @@ function Design() {
           );
         } else {
           // Use the original design reference
-          designRef = doc(db, "users", user.uid, "designs", designId);
+          designRef = doc(db, "designs", designId);
         }
 
         const fetchDesignDetails = async () => {

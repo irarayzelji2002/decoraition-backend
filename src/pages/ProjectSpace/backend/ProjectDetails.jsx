@@ -16,15 +16,8 @@ export const fetchDesigns = (
   setDesigns = () => {},
   setDesignBudgetItems = () => {}
 ) => {
-  const designsRef = collection(
-    db,
-    "users",
-    userId,
-    "projects",
-    projectId,
-    "designs"
-  );
-  const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
+  const designsRef = collection(db, "designs");
+  const q = query(designsRef, where("projectId", "==", projectId));
 
   const unsubscribeDesigns = onSnapshot(q, async (querySnapshot) => {
     const designList = [];
@@ -34,9 +27,10 @@ export const fetchDesigns = (
       const design = { id: doc.id, ...doc.data() };
       designList.push(design);
 
-      // Fetch budget items for each design
-      const budgetRef = collection(designsRef, doc.id, "budgets");
-      const budgetSnapshot = await getDocs(budgetRef);
+      // Fetch budget items for each design within the same project
+      const budgetRef = collection(db, "budgets");
+      const budgetQuery = query(budgetRef, where("designId", "==", doc.id));
+      const budgetSnapshot = await getDocs(budgetQuery);
       const budgetList = budgetSnapshot.docs.map((budgetDoc) => ({
         id: budgetDoc.id,
         ...budgetDoc.data(),
@@ -48,30 +42,24 @@ export const fetchDesigns = (
     setDesignBudgetItems(budgetItemsMap);
   });
 
-  return () => unsubscribeDesigns();
+  return unsubscribeDesigns;
 };
 
 export const handleCreateDesign = async (projectId, navigate) => {
   try {
-    const designId = new Date().getTime().toString(); // Generate a unique ID
     const currentUser = auth.currentUser;
+    const randomString = Math.random().toString(36).substring(2, 6);
+    const designId = new Date().getTime().toString() + randomString;
 
     if (currentUser) {
-      const projectRef = doc(
-        db,
-        "users",
-        currentUser.uid,
-        "projects",
-        projectId
-      );
-
       // Design reference within the specific project
-      const designRef = doc(projectRef, "designs", designId);
+      const designRef = doc(db, "designs", designId);
 
       await setDoc(designRef, {
         name: "Untitled", // Default design name
         createdAt: new Date(),
         projectId: projectId, // Linking design to the project
+        createdBy: currentUser.uid,
       });
 
       // Show toast notification when the project is created
@@ -116,15 +104,7 @@ export const handleDeleteDesign = async (projectId, designId) => {
     const currentUser = auth.currentUser;
 
     if (currentUser) {
-      const projectRef = doc(
-        db,
-        "users",
-        currentUser.uid,
-        "projects",
-        projectId,
-        "designs",
-        designId
-      );
+      const projectRef = doc(db, "projects", projectId, "designs", designId);
 
       await deleteDoc(projectRef);
 
@@ -157,7 +137,7 @@ export const useHandleNameChange = (
     }
 
     try {
-      const projectRef = doc(db, "users", userId, "projects", projectId);
+      const projectRef = doc(db, "projects", projectId);
       await updateDoc(projectRef, { name: newName });
       setIsEditingName(false);
       toast.success("Design name updated successfully!", {
@@ -199,13 +179,7 @@ export const useProjectDetails = (
 
         const fetchProjectDetails = async () => {
           try {
-            const projectRef = doc(
-              db,
-              "users",
-              user.uid,
-              "projects",
-              projectId
-            );
+            const projectRef = doc(db, "projects", projectId);
             const projectSnapshot = await getDoc(projectRef);
             if (projectSnapshot.exists()) {
               const project = projectSnapshot.data();
@@ -248,18 +222,16 @@ const saveData = async (projectId, formData) => {
   }
   const userId = currentUser.uid;
   try {
-    await addDoc(
-      collection(db, "users", userId, "projects", projectId, "timeline"),
-      {
-        projectId,
-        taskName: formData.taskName,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        description: formData.description,
-        repeat: formData.repeat,
-        reminders: formData.reminders,
-      }
-    );
+    await addDoc(collection(db, "events"), {
+      userId: userId,
+      projectId,
+      taskName: formData.taskName,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      description: formData.description,
+      repeat: formData.repeat,
+      reminders: formData.reminders,
+    });
     toast.success("Document successfully written!", {
       position: "top-right",
       autoClose: 1500,
@@ -292,16 +264,10 @@ const saveData = async (projectId, formData) => {
 export { saveData };
 
 export const fetchTasks = (userId, projectId, setTasks) => {
-  const tasksRef = collection(
-    db,
-    "users",
-    userId,
-    "projects",
-    projectId,
-    "timeline"
-  );
+  const tasksRef = collection(db, "events");
+  const q = query(tasksRef, where("projectId", "==", projectId));
 
-  const unsubscribeTasks = onSnapshot(tasksRef, (querySnapshot) => {
+  const unsubscribeTasks = onSnapshot(q, (querySnapshot) => {
     const taskList = [];
     querySnapshot.forEach((doc) => {
       taskList.push({ id: doc.id, ...doc.data() });
@@ -312,17 +278,9 @@ export const fetchTasks = (userId, projectId, setTasks) => {
   return () => unsubscribeTasks();
 };
 
-export const deleteTask = async (userId, projectId, taskId) => {
+export const deleteTask = async (taskId) => {
   try {
-    const taskRef = doc(
-      db,
-      "users",
-      userId,
-      "projects",
-      projectId,
-      "timeline",
-      taskId
-    );
+    const taskRef = doc(db, "events", taskId);
     await deleteDoc(taskRef);
     toast.success("Task successfully deleted!", {
       position: "top-right",
@@ -354,15 +312,7 @@ export const deleteTask = async (userId, projectId, taskId) => {
 
 export const updateTask = async (userId, projectId, taskId, updatedData) => {
   try {
-    const taskRef = doc(
-      db,
-      "users",
-      userId,
-      "projects",
-      projectId,
-      "timeline",
-      taskId
-    );
+    const taskRef = doc(db, "events", taskId);
     await updateDoc(taskRef, updatedData);
     toast.success("Task updated successfully!", {
       position: "top-right",

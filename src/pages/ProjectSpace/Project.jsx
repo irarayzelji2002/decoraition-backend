@@ -68,13 +68,7 @@ function Project() {
 
         const fetchProjectDetails = async () => {
           try {
-            const projectRef = doc(
-              db,
-              "users",
-              user.uid,
-              "projects",
-              projectId
-            );
+            const projectRef = doc(db, "projects", projectId);
             const projectSnapshot = await getDoc(projectRef);
             if (projectSnapshot.exists()) {
               const project = projectSnapshot.data();
@@ -217,7 +211,7 @@ function Project() {
               designId={design.id}
               onDelete={() => handleDeleteDesign(projectId, design.id)}
               onOpen={() =>
-                navigate(`/design/${design.id}/${projectId}/project`, {
+                navigate(`/design/${design.id}`, {
                   state: { designId: design.id },
                 })
               }

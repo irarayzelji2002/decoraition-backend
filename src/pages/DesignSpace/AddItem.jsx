@@ -64,14 +64,7 @@ const AddItem = () => {
           "budgets"
         );
       } else {
-        pinRef = collection(
-          db,
-          "users",
-          userId,
-          "designs",
-          designId,
-          "budgets"
-        );
+        pinRef = collection(db, "budgets");
       }
 
       await addDoc(pinRef, {

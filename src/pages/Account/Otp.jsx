@@ -250,7 +250,7 @@ export default function OneTP() {
   return (
     <div className="bg">
       <div className="headtext">
-        <h1>One-Time-Password</h1>
+        <h1 className="h1-otp">One-Time-Password</h1>
       </div>
       <div className="modal-bg">
         <h2 style={{ marginLeft: "10px" }}>Verify your account</h2>
@@ -282,11 +282,13 @@ export default function OneTP() {
             sx={{
               mt: 3,
               mb: 2,
-              backgroundImage:
-                "linear-gradient(90deg, #f89a47, #f15f3e, #ec2073);",
+              backgroundImage: "var(--gradientButton)",
               borderRadius: "20px",
               textTransform: "none",
               fontWeight: "bold",
+              "&:hover": {
+                backgroundImage: "var(--gradientButtonHover)",
+              },
             }}
           >
             Verify

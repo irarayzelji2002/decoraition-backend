@@ -26,6 +26,7 @@ import EditEvent from "./pages/ProjectSpace/EditEvent.jsx";
 import ProjSetting from "./pages/Settings/ProjSetting.jsx";
 import Version from "./pages/DesignSpace/Version.jsx";
 import SeeAllProjects from "./pages/DesignSpace/SeeAllProjects.jsx";
+import Landing from "./pages/Landing/Landing";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 // import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 // import { Rotate90DegreesCcw } from "@mui/icons-material";
@@ -62,6 +63,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/landing" element={<Landing />} />
           <Route path="/login" element={<Login />} /> {/*Checked */}
           <Route path="/register" element={<Register />} /> {/*Checked */}
           <Route path="/" element={<Login />} /> {/*Checked */}

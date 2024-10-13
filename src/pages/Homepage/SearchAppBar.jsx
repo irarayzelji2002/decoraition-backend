@@ -78,7 +78,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             edge="start"
             color="var(--color-white)"
             aria-label="open drawer"
-            sx={{ mr: 2, backgroundColor: "transparent" }}
+            sx={{ mr: 0.2, backgroundColor: "transparent" }}
             onClick={handleMenuClick} // Open drawer on click
           >
             <MenuIcon sx={{ color: "var(--color-white)" }} />
@@ -94,10 +94,9 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
           <Paper
             component="form"
             sx={{
-              p: "2px 4px",
               display: "flex",
               alignItems: "center",
-              width: isFocused ? "60%" : "50%",
+              width: isFocused ? "50%" : "40%",
               borderRadius: "24px",
               backgroundColor: "var(--inputBg)",
               transition: "width 0.3s ease-in-out",
@@ -141,7 +140,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             sx={{
               color: "var(--color-white)",
               marginRight: 1,
-
+              fontSize: "1em",
               overflow: "hidden",
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",

@@ -22,6 +22,7 @@ import {
   handleCreateDesign,
   handleCreateProject,
   handleDeleteDesign,
+  handleDeleteProject,
   toggleMenu,
   formatDate,
 } from "./backend/HomepageActions.jsx";
@@ -228,7 +229,9 @@ function Homepage() {
                     name={project.name}
                     designId={project.id}
                     lastAccessed={project.lastAccessed}
-                    onDelete={() => handleDeleteDesign(project.id, setProjects)}
+                    onDelete={() =>
+                      handleDeleteProject(project.id, setProjects)
+                    }
                     onOpen={() =>
                       navigate(`/project/${project.id}`, {
                         state: { projectId: project.id },

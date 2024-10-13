@@ -89,15 +89,23 @@ const RenameModal = ({ isOpen, onClose }) => {
           variant="contained"
           onClick={onClose}
           sx={{
-            background: "var(--gradientButton)", // Gradient background
-            borderRadius: "20px", // Button border radius
-            color: "var(--color-white)", // Button text color
+            background: "transparent",
+            border: "2px solid transparent",
+            borderRadius: "20px",
+            backgroundImage: "var(--lightGradient), var(--gradientButton)",
+            backgroundOrigin: "border-box",
+            backgroundClip: "padding-box, border-box",
             fontWeight: "bold",
             textTransform: "none",
-            "&:hover": {
-              background: "var(--gradientButtonHover)", // Reverse gradient on hover
-            },
           }}
+          onMouseOver={(e) =>
+            (e.target.style.backgroundImage =
+              "var(--lightGradient), var(--gradientButtonHover)")
+          }
+          onMouseOut={(e) =>
+            (e.target.style.backgroundImage =
+              "var(--lightGradient), var(--gradientButton)")
+          }
         >
           Cancel
         </Button>

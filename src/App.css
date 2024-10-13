@@ -52,6 +52,7 @@ select:-webkit-autofill {
   --gradientButtonHover: linear-gradient(90deg, #ec2073, #f15f3e, #f89a47);
   --gradientFont: linear-gradient(20deg, #f89a47, #f15f3e, #ec2073);
   --darkGradient: linear-gradient(#1e1e1e, #1e1e1e);
+  --lightGradient: linear-gradient(#27262c, #27262c);
   --budgetCard: #32313a;
   --bgMain: #1f1e22;
   --slider: #707070;

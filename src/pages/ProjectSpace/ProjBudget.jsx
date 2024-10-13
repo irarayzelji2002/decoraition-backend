@@ -14,19 +14,13 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { db, auth } from "../../firebase";
-import {
-  fetchDesigns,
-  handleCreateDesign,
-  handleDeleteDesign,
-} from "./backend/ProjectDetails";
+import { fetchDesigns } from "./backend/ProjectDetails";
 import { onAuthStateChanged } from "firebase/auth";
 
 function ProjBudget() {
   const { projectId } = useParams();
   const navigate = useNavigate();
-  const [newName, setNewName] = useState("");
   const [userId, setUserId] = useState(null);
-  const [projectData, setProjectData] = useState(null);
   const [designs, setDesigns] = useState([]);
   const [user, setUser] = useState(null);
   const [designBudgetItems, setDesignBudgetItems] = useState({});
@@ -62,25 +56,13 @@ function ProjBudget() {
 
         const fetchProjectDetails = async () => {
           try {
-            const projectRef = doc(
-              db,
-              "users",
-              user.uid,
-              "projects",
-              projectId
-            );
+            const projectRef = doc(db, "projects", projectId);
             const projectSnapshot = await getDoc(projectRef);
             if (projectSnapshot.exists()) {
-              const project = projectSnapshot.data();
-              setProjectData(project);
-              setNewName(project.name);
-
               // Listen for real-time updates to the project document
               const unsubscribeProject = onSnapshot(projectRef, (doc) => {
                 if (doc.exists()) {
                   const updatedProject = doc.data();
-                  setProjectData(updatedProject);
-                  setNewName(updatedProject.name);
                 }
               });
 
@@ -188,7 +170,7 @@ function ProjBudget() {
                   <div style={{ height: "100%" }}>
                     <div
                       onClick={() =>
-                        navigate(`/budget/${design.id}/${projectId}/project`, {
+                        navigate(`/budget/${design.id}`, {
                           state: { designId: design.id },
                         })
                       }
@@ -201,7 +183,7 @@ function ProjBudget() {
               );
             })
           ) : (
-            <div className="no-content">
+            <div className="no-content" style={{ height: "80vh" }}>
               <img src="/img/design-placeholder.png" alt="No designs yet" />
               <p>No designs yet. Start creating.</p>
             </div>

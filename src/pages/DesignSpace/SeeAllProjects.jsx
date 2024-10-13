@@ -47,8 +47,8 @@ export default function SeeAllProjects() {
   }, []);
 
   const fetchDesigns = (userId, page) => {
-    const designsRef = collection(db, "users", userId, "projects");
-    let q = query(designsRef, where("createdAt", ">", new Date(0)), limit(10)); // Fetch 10 designs per page
+    const designsRef = collection(db, "projects");
+    let q = query(designsRef, where("createdBy", "==", userId), limit(10)); // Fetch 10 designs per page
 
     if (page > 1 && lastVisible) {
       q = query(

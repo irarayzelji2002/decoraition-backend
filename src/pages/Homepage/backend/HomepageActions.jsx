@@ -201,6 +201,30 @@ export const handleDeleteDesign = async (designId) => {
   }
 };
 
+export const handleDeleteProject = async (projectId) => {
+  try {
+    const currentUser = auth.currentUser;
+
+    if (currentUser) {
+      const designRef = doc(db, "projects", projectId);
+      await deleteDoc(designRef);
+
+      toast.success("Project deleted", {
+        icon: <Delete />,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Error deleting design: ", error);
+  }
+};
+
 export const toggleMenu = (menuOpen, setMenuOpen) => {
   setMenuOpen(!menuOpen);
 };

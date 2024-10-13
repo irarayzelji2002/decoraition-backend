@@ -1,0 +1,608 @@
+.designHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--color-tertiary);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.headTitle {
+  color: whitesmoke;
+  margin-left: 10px;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+}
+
+.right .MuiIconButton-root {
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  /* Responsive adjustments for medium screens */
+  .headTitle {
+    font-size: 1rem;
+  }
+  .right .MuiIconButton-root {
+    margin-right: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Responsive adjustments for small screens */
+  .designHead {
+    padding: 8px 10px;
+  }
+  .headTitle {
+    font-size: 0.9rem;
+  }
+  .right .MuiIconButton-root {
+    margin-right: 4px;
+  }
+}
+.seeAll {
+  color: var(--brightFont) !important;
+  text-align: right;
+  margin-left: auto;
+  margin-right: 12px;
+  display: block;
+
+  font-weight: bold !important;
+  text-decoration-color: var(--brightFont) !important;
+
+  transition: 0.3s ease;
+}
+
+.seeAll:hover {
+  opacity: 0.7;
+}
+
+.workspace {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.space {
+  display: flex;
+  flex-direction: row;
+}
+
+.headTitleInput {
+  background-color: transparent;
+  border: transparent;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: "Inter", sans-serif !important;
+  color: var(--color-white);
+}
+
+.promptBar {
+  min-height: 100vh;
+  width: 500px;
+  background-color: var(--nav-card-modal);
+  padding: 40px;
+  margin-bottom: 50px;
+  box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2);
+  position: relative; /* Make this relative for positioning the bump */
+}
+
+/* .bump {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  content: "";
+  position: absolute;
+  padding-left: 12px;
+  top: 50%;
+  right: -32px; 
+  width: 20px; z
+  height: 80px; 
+  background-color: var(--nav-card-modal); 
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  transform: translateY(-50%); 
+  box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2); 
+} */
+
+.create-design {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+.whole {
+  min-height: 100%;
+}
+
+h3 {
+  font-size: 14px;
+  color: var(--color-white);
+}
+h6 {
+  color: #5e5e5e;
+}
+
+.image-frame {
+  width: 80%;
+
+  max-width: 1200px;
+  max-height: 300px !important;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  position: relative;
+  border: var(--nav-card-modal) 3px solid;
+  border-radius: 12px;
+  margin: 2%;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: absolute;
+}
+.image-grid {
+  justify-items: center;
+  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(2, 2fr); /* 2 columns */
+  grid-template-rows: repeat(1, 5fr); /* 2 rows with equal height */
+  /* Adjust the gap between items as needed */
+  width: 100%;
+  height: max-content;
+}
+.arrow-button {
+  background-color: var(--nav-card-modal);
+  padding: 12px;
+  width: 16px;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+.arrow-button:hover {
+  background: var(--gradientButton);
+}
+.fixed-arrow-button {
+  display: flex;
+  height: 700px;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+@media (max-width: 600px) {
+  .workspace {
+    flex-direction: column-reverse;
+  }
+  .promptBar {
+    width: auto;
+  }
+  .fixed-arrow-button {
+    display: none;
+  }
+}
+.image-drop {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  flex-direction: column;
+  /* Adjust the gap between items as needed */
+  width: 100%;
+  height: 150%;
+}
+
+.working-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.stickyMenu {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: var(--nav-card-modal);
+  padding: 10px;
+}
+
+.working-area {
+  position: relative;
+  display: flex;
+}
+
+.toggle-comment-button {
+  margin-top: 20px;
+  background-color: #faa653;
+  color: var(--color-white);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.comment-section {
+  display: flex;
+  margin-left: 20px;
+  width: 400px;
+  background-color: var(--nav-card-modal);
+  padding: 10px;
+  border-radius: 8px;
+  align-items: center;
+  flex-direction: column;
+  padding: 24px;
+}
+
+textarea {
+  font-family: "Inter", sans-serif !important;
+  width: 90%;
+}
+.comment-section h4 {
+  color: var(--color-white);
+}
+
+.comment-section textarea {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #444;
+  color: var(--color-white);
+  border: none;
+  border-radius: 4px;
+}
+
+.add-comment-button {
+  margin-top: 10px;
+  background-image: var(--gradientButton);
+  border-radius: 20px;
+  font-weight: bold;
+  color: var(--color-white);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+.add-comment-button:hover {
+  background-image: var(--gradientButtonHover);
+}
+
+.frame-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.frame-buttons button {
+  background-color: var(--nav-card-modal); /* Primary color */
+  color: var(--color-white);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.frame-buttons button:hover {
+  background-color: var(--inputBg); /* Darker shade on hover */
+  transform: scale(1.05);
+}
+
+.frame-buttons button:active {
+  background-image: var(--gradientButton); /* Even darker shade on active */
+  transform: scale(0.98);
+}
+
+.frame-buttons button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--brightFont); /* Focus indicator */
+}
+/* For darkened background */
+.homepage.darkened {
+  position: relative; /* Position relative for overlay positioning */
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Darken the whole page */
+  z-index: 1; /* Overlay should be behind the buttons */
+}
+
+.circle-button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align everything to the right */
+  gap: 20px; /* Space between the buttons */
+  z-index: 2; /* Ensure buttons are above the overlay */
+}
+
+/* Main circular button (Add/Close) */
+.circle-button {
+  background-image: var(--gradientCircle);
+  color: var(--color-white);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.circle-button.rotate {
+  transform: rotate(45deg);
+}
+
+/* Container for the smaller buttons */
+.small-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Spacing between buttons */
+  align-items: flex-end; /* Align buttons to the right */
+}
+
+/* Small circular buttons for creating project/design */
+.small-circle-button {
+  background-image: var(--gradientCircle);
+  color: var(--color-white);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+/* Flex container to hold both text and button */
+.small-button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Spacing between text and button */
+}
+
+/* Icons inside small circular buttons */
+.icon {
+  font-size: 30px;
+}
+
+/* Text to the left of the circular buttons */
+.small-button-text {
+  color: var(--color-white);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Hover effect for small and main buttons */
+.small-circle-button:hover,
+.circle-button:hover {
+  background-image: var(--gradientCircleHover);
+}
+
+.itemHead {
+  background-color: var(--nav-card-modal);
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 18px;
+}
+
+.searchHead {
+  margin-left: 18px;
+  font-weight: bold;
+  font-size: 24px;
+
+  color: var(--color-white);
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 33.33%; /* One-third of the screen */
+  height: 100%;
+  background-color: var(--inputBg);
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+  overflow-y: auto; /* Enable scrolling inside the sidebar */
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 50%; /* Half of the screen for mobile */
+  }
+}
+
+/* Sidebar content */
+.sidebar-content {
+  padding: 20px;
+  color: var(--brightFont);
+  height: 100%; /* Ensure full height */
+  overflow-y: auto; /* Scroll content */
+}
+
+/* Close button */
+.close-sidebar {
+  background-color: transparent;
+  border: none;
+  color: var(--brightFont);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 10px;
+}
+
+/* Overlay (background blackout) */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Blackout effect */
+  z-index: 999;
+}
+
+/* Hide scroll bar in WebKit browsers (Chrome, Safari, Edge) */
+.sidebar-content {
+  -ms-overflow-style: none; /* Hide scrollbar in Internet Explorer */
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+}
+
+.sidebar-content::-webkit-scrollbar {
+  display: none; /* Hide scrollbar */
+}
+
+/* comment section */
+.split-button {
+  display: inline-flex;
+  border-radius: 25px;
+  overflow: hidden;
+  border: 2px solid #f68950;
+  margin: 10px 0;
+}
+
+.button-side {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  background-color: #27262c;
+  color: white;
+  transition: background-color 0.3s ease;
+  flex: 1;
+}
+
+.button-side.active {
+  background-color: #f68950;
+  color: white;
+}
+
+.button-side:not(.active) {
+  border-right: 2px solid #f68950;
+}
+
+.button-side:first-child {
+  border-right: 1px solid #f68950;
+}
+
+.button-side:hover {
+  opacity: 0.9;
+}
+
+/* sample reply */
+.comment-container {
+  background-color: #27262c;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.comment-container.clicked {
+  background-color: #3d3c44;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #49484f; /* Placeholder for profile image */
+  margin-right: 10px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.date {
+  color: #c1c1c1;
+  font-size: 12px;
+}
+
+.check-mark {
+  color: #f68950;
+  font-size: 16px;
+}
+
+.options-dots {
+  color: white;
+  font-size: 20px;
+}
+
+.comment-text {
+  color: white;
+  margin-bottom: 10px;
+}
+
+.reply-input {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid #49484f;
+  border-radius: 15px;
+  padding: 10px;
+  color: white;
+  margin-top: 10px;
+}
+
+.reply-input input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: white;
+  margin-left: 10px;
+}
+
+.reply-input .at-symbol {
+  color: #49484f;
+}

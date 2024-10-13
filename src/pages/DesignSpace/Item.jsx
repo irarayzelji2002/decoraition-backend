@@ -155,10 +155,18 @@ function Item({ item, onDelete, onEdit }) {
                   background: "transparent",
                   border: "2px solid transparent",
                   backgroundImage:
-                    " var(--darkGradient), var(--gradientButton)",
+                    " var(--lightGradient), var(--gradientButton)",
                   backgroundOrigin: "border-box",
                   backgroundClip: " padding-box, border-box",
                 }}
+                onMouseOver={(e) =>
+                  (e.target.style.backgroundImage =
+                    " var(--lightGradient), var(--gradientButtonHover)")
+                }
+                onMouseOut={(e) =>
+                  (e.target.style.backgroundImage =
+                    " var(--lightGradient), var(--gradientButton)")
+                }
                 onClick={handleCloseDelete}
               >
                 Cancel

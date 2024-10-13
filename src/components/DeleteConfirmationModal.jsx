@@ -77,15 +77,23 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
           variant="contained"
           onClick={onClose}
           sx={{
-            background: "var(--gradientButton)",
+            background: "transparent",
+            border: "2px solid transparent",
             borderRadius: "20px",
-            color: "var(--color-white)", // Button text color
+            backgroundImage: "var(--lightGradient), var(--gradientButton)",
+            backgroundOrigin: "border-box",
+            backgroundClip: "padding-box, border-box",
             fontWeight: "bold",
             textTransform: "none",
-            "&:hover": {
-              background: "var(--gradientButtonHover)",
-            },
           }}
+          onMouseOver={(e) =>
+            (e.target.style.backgroundImage =
+              "var(--lightGradient), var(--gradientButtonHover)")
+          }
+          onMouseOut={(e) =>
+            (e.target.style.backgroundImage =
+              "var(--lightGradient), var(--gradientButton)")
+          }
         >
           Cancel
         </Button>

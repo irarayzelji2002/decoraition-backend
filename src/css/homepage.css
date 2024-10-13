@@ -225,7 +225,7 @@ h2 {
 
 .selectOption {
   font-size: 24px;
-  color: aliceblue;
+  color: var(--color-white);
   margin-top: 0px;
 }
 

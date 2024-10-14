@@ -12,7 +12,7 @@ import Paper from "@mui/material/Paper";
 import SearchIcon from "@mui/icons-material/Search";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
-import { fetchUserData } from "./backend/HomepageActions";
+import { fetchUserData } from "./backend/HomepageFunctions";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
@@ -60,6 +60,10 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
 
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
+  };
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault(); // Prevent the default form submission
   };
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -111,7 +115,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             </IconButton>
             <InputBase
               placeholder="Search..."
-              onChange={handleSearch}
+              onChange={(e) => onSearchChange(e.target.value)}
               value={searchQuery}
               onFocus={handleFocus}
               onBlur={handleBlur}

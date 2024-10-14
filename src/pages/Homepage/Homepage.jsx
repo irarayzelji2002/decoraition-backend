@@ -25,7 +25,7 @@ import {
   handleDeleteProject,
   toggleMenu,
   formatDate,
-} from "./backend/HomepageActions.jsx";
+} from "./backend/HomepageFunctions.jsx";
 import Loading from "../../components/Loading.jsx";
 
 function Homepage() {

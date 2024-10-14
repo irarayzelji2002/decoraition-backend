@@ -25,16 +25,19 @@ export default function EditableInput({ onSave, value, onChange }) {
       sx={{
         marginTop: "10px",
         marginBottom: "10px",
-        backgroundColor: "var(--inputBg)",
-        input: { color: "var(--color-white)" },
+        backgroundColor: "transparent",
+        input: {
+          color: "var(--color-white)",
+          fontWeight: "bold", // Make the text bold
+        },
         "& .MuiOutlinedInput-root": {
           "& fieldset": {
             borderColor: "var(--borderInput)", // Border color when not focused
-            borderWidth: "2px", // Adjust the border thickness here
+            borderWidth: "0px", // Adjust the border thickness here
           },
           "&:hover fieldset": {
             borderColor: "var(--borderInput)", // Border color on hover
-            borderWidth: "2px", // Maintain the thickness on hover
+            borderWidth: "0px", // Maintain the thickness on hover
           },
           "&.Mui-focused fieldset": {
             borderColor: "var(--brightFont)", // Border color when focused

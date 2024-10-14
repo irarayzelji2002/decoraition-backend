@@ -39,6 +39,8 @@ function Settings() {
   const [userId, setUserId] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [imageUploaded, setImageUploaded] = useState(false);
+  const [uploadedPhoto, setUploadedPhoto] = useState(null);
 
   useEffect(() => {
     const auth = getAuth();
@@ -137,9 +139,27 @@ function Settings() {
     }
   };
 
+  const changePhoto = (event) => {
+    // Your change photo logic here
+    // Assuming you set the imageUploaded state to true when an image is uploaded
+    if (event.target.files && event.target.files[0]) {
+      setUploadedPhoto(URL.createObjectURL(event.target.files[0]));
+      setImageUploaded(true);
+    }
+  };
+  const handleCombinedChange = (event) => {
+    handleFileChange(event);
+    changePhoto(event);
+  };
+
   // Trigger file input click
   const handleChangePhotoClick = () => {
     fileInputRef.current.click();
+  };
+
+  const handleRemovePhoto = () => {
+    setUploadedPhoto(null);
+    setImageUploaded(false);
   };
 
   return (
@@ -160,7 +180,7 @@ function Settings() {
         }}
         sx={{
           "& .MuiTab-root": {
-            color: "var(color-white)", // Color for unselected tabs
+            color: "var(--color-white)", // Color for unselected tabs
           },
           "& .MuiTab-root.Mui-selected": {
             color: "transparent", // Hide the actual text color
@@ -187,7 +207,7 @@ function Settings() {
 
         {/* Account Tab Content */}
         {selectedTab === 0 && (
-          <Box mt={4} className="tab-content" sx={{ maxWidth: "1200px" }}>
+          <Box mt={4} className="tab-content" sx={{ minWidth: "100%" }}>
             <div
               className="avatar-container"
               style={{ display: "flex", alignItems: "center" }}
@@ -219,13 +239,14 @@ function Settings() {
                   accept="image/*"
                   ref={fileInputRef}
                   style={{ display: "none" }}
-                  onChange={handleFileChange}
+                  onChange={handleCombinedChange}
                 />
 
                 {/* Change Photo Button */}
                 <Button
                   variant="contained"
                   className="change-photo-btn"
+                  startIcon={<SaveIcon />}
                   onClick={handleChangePhotoClick}
                   sx={{
                     background: "linear-gradient(to right, #F54D70, #FF894D)",
@@ -234,30 +255,33 @@ function Settings() {
                 >
                   Change photo
                 </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<SaveIcon />}
-                  className="save-photo-btn"
-                  onClick={handleSavePhoto}
-                  sx={{
-                    background: "linear-gradient(to right, #4CAF50, #81C784)",
-                    marginBottom: "10px",
-                  }}
-                >
-                  Save photo
-                </Button>
+                {imageUploaded && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<SaveIcon />}
+                    className="save-photo-btn"
+                    onClick={handleSavePhoto}
+                    sx={{
+                      background: "linear-gradient(to right, #4CAF50, #81C784)",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Save photo
+                  </Button>
+                )}
 
                 {/* Remove Photo Button */}
                 <Button
                   variant="outlined"
+                  fullWidth
                   color="error"
                   startIcon={<DeleteIcon />}
+                  onClick={handleRemovePhoto}
                   className="remove-photo-btn"
                   sx={{
                     borderColor: "#FF894D",
                     color: "#FF894D",
-                    marginLeft: "10px",
                   }}
                 >
                   Remove photo
@@ -266,81 +290,33 @@ function Settings() {
             </div>
 
             {/* Additional Fields */}
-            <EditableInput
-              fieldName="Email"
-              value={userDetails.email}
-              onChange={handleInputChange("email")}
-              onSave={() => handleSave("email")}
-            />
-            <EditableInput
-              fieldName="First Name"
-              value={userDetails.firstName}
-              onChange={handleInputChange("firstName")}
-              onSave={() => handleSave("firstName")}
-            />
-            <EditableInput
-              fieldName="Last Name"
-              value={userDetails.lastName}
-              onChange={handleInputChange("lastName")}
-              onSave={() => handleSave("lastName")}
-            />
-            <EditableInput
-              fieldName="Username"
-              value={userDetails.username}
-              onChange={handleInputChange("username")}
-              onSave={() => handleSave("username")}
-            />
-            <TextField
-              label="Password"
-              value="*******"
-              fullWidth
-              margin="normal"
-              type="password"
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => console.log("Edit password")}>
-                      <EditIcon sx={{ color: "#FF894D" }} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              label="Linked account"
-              value="Google"
-              fullWidth
-              margin="normal"
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => console.log("Edit linked account")}
-                    >
-                      <EditIcon sx={{ color: "#FF894D" }} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              label="Theme"
-              value="Dark"
-              fullWidth
-              margin="normal"
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => console.log("Change theme")}>
-                      <BedtimeIcon sx={{ color: "#FF894D" }} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <div className="inputField">
+              <label className="inputLabel">First Name</label>
+              <EditableInput
+                fieldName="First Name"
+                value={userDetails.firstName}
+                onChange={handleInputChange("firstName")}
+                onSave={() => handleSave("firstName")}
+              />
+            </div>
+            <div className="inputField">
+              <label className="inputLabel">Last Name</label>
+              <EditableInput
+                fieldName="Last Name"
+                value={userDetails.lastName}
+                onChange={handleInputChange("lastName")}
+                onSave={() => handleSave("lastName")}
+              />
+            </div>
+            <div className="inputField">
+              <label className="inputLabel">Username</label>
+              <EditableInput
+                fieldName="Username"
+                value={userDetails.username}
+                onChange={handleInputChange("username")}
+                onSave={() => handleSave("username")}
+              />
+            </div>
           </Box>
         )}
 

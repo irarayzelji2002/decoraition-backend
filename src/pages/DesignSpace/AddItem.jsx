@@ -41,8 +41,6 @@ const AddItem = () => {
     setCost(e.target.value);
   };
 
-  const isProjectPath = window.location.pathname.includes("/project");
-
   const handleInputSubmit = async () => {
     if (budgetItem.trim() === "") {
       alert("Pin cannot be empty");
@@ -52,20 +50,7 @@ const AddItem = () => {
     try {
       let pinRef;
 
-      if (isProjectPath) {
-        pinRef = collection(
-          db,
-          "users",
-          userId,
-          "projects",
-          projectId,
-          "designs",
-          designId,
-          "budgets"
-        );
-      } else {
-        pinRef = collection(db, "budgets");
-      }
+      pinRef = collection(db, "budgets");
 
       await addDoc(pinRef, {
         itemName: budgetItem,
@@ -102,7 +87,7 @@ const AddItem = () => {
   };
 
   return (
-    <>
+    <div style={{ overflow: "hidden" }}>
       <TopBar state={"Add Item"} />
       <ToastContainer
         progressStyle={{ backgroundColor: "var(--brightFont)" }}
@@ -119,7 +104,7 @@ const AddItem = () => {
             ) : (
               <div className="image-placeholder">Add an image to the item</div>
             )}
-            <label htmlFor="upload-image" className="upload-btn">
+            <button htmlFor="upload-image" className="upload-btn">
               Upload image of item
               <input
                 type="file"
@@ -127,7 +112,7 @@ const AddItem = () => {
                 style={{ display: "none" }}
                 onChange={handleImageUpload}
               />
-            </label>
+            </button>
           </div>
         </div>
         <div className="right-column">
@@ -143,6 +128,8 @@ const AddItem = () => {
                 type="text"
                 placeholder="Enter item name"
                 onChange={handleInputChange}
+                style={{ outline: "none" }}
+                className="focus-border"
               />
             </div>
 
@@ -164,6 +151,9 @@ const AddItem = () => {
                 />
               </div>
             </div>
+            <label htmlFor="item-price" className="price-label">
+              Item Quantity
+            </label>
 
             <div className="quantity-section">
               <button
@@ -184,7 +174,7 @@ const AddItem = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

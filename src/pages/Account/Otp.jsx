@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-function OTP({ separator, length, value, onChange, ...beforeLoginSharedProps }) {
+function OTP({ separator, length, value, onChange }) {
   const inputRefs = React.useRef(new Array(length).fill(null));
 
   const focusInput = (targetIndex) => {

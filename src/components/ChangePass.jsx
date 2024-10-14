@@ -17,7 +17,7 @@ import { useState, useEffect } from "react";
 
 const defaultTheme = createTheme();
 
-export default function ChangePass({ email, ...beforeLoginSharedProps }) {
+export default function ChangePass({ email }) {
   const [searchParams] = useSearchParams();
   const actionCode = searchParams.get("oobCode");
   const [newPassword, setNewPassword] = useState("");
@@ -26,18 +26,18 @@ export default function ChangePass({ email, ...beforeLoginSharedProps }) {
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Verify the password reset code
-    verifyPasswordResetCode(auth, actionCode)
-      .then((email) => {
-        // Email verified, proceed to reset password
-        console.log("Email verified:", email);
-      })
-      .catch((error) => {
-        setError("Invalid or expired action code.");
-        console.error("Error verifying code:", error);
-      });
-  }, [actionCode]);
+  // useEffect(() => {
+  //   // Verify the password reset code
+  //   verifyPasswordResetCode(auth, actionCode)
+  //     .then((email) => {
+  //       // Email verified, proceed to reset password
+  //       console.log("Email verified:", email);
+  //     })
+  //     .catch((error) => {
+  //       setError("Invalid or expired action code.");
+  //       console.error("Error verifying code:", error);
+  //     });
+  // }, [actionCode]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();

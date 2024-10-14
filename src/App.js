@@ -139,12 +139,6 @@ function App() {
     setEvents,
   };
 
-  const beforeLoginSharedProps = {
-    user,
-    users,
-    setUsers,
-  };
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -164,12 +158,12 @@ function App() {
         <div className="App">
           <Routes>
             {/* BEFORE LOGIN */}
-            <Route path="/login" element={<Login {...beforeLoginSharedProps} />} />
-            <Route path="/register" element={<Register {...beforeLoginSharedProps} />} />
-            <Route path="/" element={<Login {...beforeLoginSharedProps} />} />
-            <Route path="/forgot" element={<ForgotPass {...beforeLoginSharedProps} />} />
-            <Route path="/change" element={<ChangePassw {...beforeLoginSharedProps} />} />
-            <Route path="/otp" element={<OneTP {...beforeLoginSharedProps} />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot" element={<ForgotPass />} />
+            <Route path="/change" element={<ChangePassw />} />
+            <Route path="/otp" element={<OneTP />} />
             {/* ACCOUNT/HOMEPAGE */}
             <Route
               path="/homepage"

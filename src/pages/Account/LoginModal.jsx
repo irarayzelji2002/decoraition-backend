@@ -82,13 +82,29 @@ export default function LoginModal() {
   };
 
   const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
+    let user = {};
+    let userData = {};
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+      const response = await fetch("/api/google-signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      user = await response.json();
+
+      // Check if user object contains all expected properties
+      if (!user || !user.uid || !user.displayName || !user.email || !user.photoURL) {
+        throw new Error("Incomplete user data received");
+      }
 
       // Extract user information from Google sign-in
-      const userData = {
+      userData = {
         firstName: user.displayName.split(" ")[0],
         lastName: user.displayName.split(" ").slice(1).join(" "),
         username: user.email.split("@")[0], // Using email as a base for username
@@ -97,7 +113,13 @@ export default function LoginModal() {
         profilePic: user.photoURL,
         userId: user.uid,
       };
+    } catch (error) {
+      console.error("Google login error:", error);
+      showToast("Failed to log in with Google", "error");
+      return;
+    }
 
+    try {
       // Call your API to create or update user in your database
       const response = await fetch("/api/register", {
         method: "POST",

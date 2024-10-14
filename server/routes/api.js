@@ -28,6 +28,7 @@ const authenticateUser = async (req, res, next) => {
 
 // User routes
 router.post("/register", userController.createUser);
+router.post("/google-signin", userController.handleGoogleSignIn);
 router.post("/login", userController.loginUser);
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/verify-otp", userController.verifyOTP);
@@ -37,6 +38,13 @@ router.post("/change-password", userController.changePassword);
 router.post("/logout", authenticateUser, userController.handleLogout);
 router.get("/user/:userId", authenticateUser, userController.fetchUserData);
 router.post("/settings", authenticateUser, userController.handleSettings);
+router.post("/user/profile-pic", authenticateUser, userController.updateProfilePic);
+router.post("/user/update-field", authenticateUser, userController.updateUserField);
+router.put(
+  "/user/connected-account/:userId",
+  authenticateUser,
+  userController.updateConnectedAccount
+);
 
 // Design routes
 router.get("/designs/:userId", authenticateUser, designController.fetchDesigns);

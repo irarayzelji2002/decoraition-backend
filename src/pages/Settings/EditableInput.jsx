@@ -3,23 +3,29 @@ import { TextField, InputAdornment, IconButton, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 
-export default function EditableInput({ onSave, value, onChange }) {
+export default function EditableInput({ label, value, onChange, onSave }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [inputValue, setInputValue] = useState(value);
 
-  const handleEditClick = () => {
+  const handleEdit = () => {
     setIsEditing(true);
   };
 
-  const handleSaveClick = () => {
+  const handleSave = () => {
     setIsEditing(false);
-    onSave();
-    // Save the new value to your state or backend here
+    onSave(inputValue);
+  };
+
+  const handleChange = (e) => {
+    setInputValue(e.target.value);
+    onChange(e.target.value);
   };
 
   return (
     <TextField
+      label={label}
       value={value}
-      onChange={onChange}
+      onChange={handleChange}
       fullWidth
       margin="normal"
       sx={{
@@ -46,18 +52,11 @@ export default function EditableInput({ onSave, value, onChange }) {
         },
       }}
       InputProps={{
-        readOnly: !isEditing,
         endAdornment: (
           <InputAdornment position="end">
-            {isEditing ? (
-              <IconButton onClick={handleSaveClick}>
-                <SaveIcon sx={{ color: "#FF894D" }} />
-              </IconButton>
-            ) : (
-              <IconButton onClick={handleEditClick}>
-                <EditIcon sx={{ color: "#FF894D" }} />
-              </IconButton>
-            )}
+            <IconButton onClick={isEditing ? handleSave : handleEdit}>
+              {isEditing ? <SaveIcon /> : <EditIcon />}
+            </IconButton>
           </InputAdornment>
         ),
       }}

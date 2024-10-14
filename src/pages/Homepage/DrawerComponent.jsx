@@ -11,7 +11,8 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
-import BedtimeIcon from "@mui/icons-material/Bedtime";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import HomeIcon from "@mui/icons-material/Home";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
@@ -139,7 +140,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
           }}
         >
           <IconButton sx={{ color: "white" }} onClick={toggleDarkMode}>
-            <BedtimeIcon sx={{ color: "var(--color-white)" }} />
+            <DarkModeIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
           <IconButton sx={{ color: "white", marginLeft: "16px" }}>
             <NotificationsIcon sx={{ color: "var(--color-white)" }} />

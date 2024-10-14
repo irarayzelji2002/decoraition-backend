@@ -1,4 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { showToast } from "../../functions/utils";
 import {
   Tabs,
   Tab,
@@ -9,36 +12,40 @@ import {
   Box,
   InputAdornment,
 } from "@mui/material";
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Bedtime as BedtimeIcon,
-  Save as SaveIcon,
-} from "@mui/icons-material";
+import { Edit as EditIcon, Save as SaveIcon, Delete as DeleteIcon } from "@mui/icons-material";
+
 import Notifications from "./Notifications";
 import TopBar from "../../components/TopBar";
 import "../../css/settings.css";
 import EditableInput from "./EditableInput";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import EditableInputThree from "./EditableInputThree";
+import EditablePassInput from "./EditablePassInput";
+import LongToggleInput from "./LongToggleInput";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { db } from "../../firebase";
 
 function Settings({ ...sharedProps }) {
+  const user = sharedProps.user;
+  const setUser = sharedProps.setUser;
+
   const [selectedTab, setSelectedTab] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null); // Reference for the file input\
-  const [userDetails, setUserDetails] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    username: "",
-  });
+
   const [userId, setUserId] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isLinkAccountModalOpen, setIsLinkAccountModalOpen] = useState(false);
+
+  const [firstName, setFirstName] = useState(user.firstName || "");
+  const [lastName, setLastName] = useState(user.lastName || "");
+  const [username, setUsername] = useState(user.username || "");
+  const [email, setEmail] = useState(user.email || "");
+  const [theme, setTheme] = useState(user.theme || 0);
+  const [connectedAccount, setConnectedAccount] = useState(user.connectedAccount || null);
+  const [profilePic, setProfilePic] = useState(user.profilePic || "");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   useEffect(() => {
     const auth = getAuth();
@@ -97,49 +104,181 @@ function Settings({ ...sharedProps }) {
       console.log("File uploaded:", file);
     }
   };
-  const handleInputChange = (field) => (event) => {
-    setUserDetails({
-      ...userDetails,
-      [field]: event.target.value,
-    });
-  };
 
-  const handleSave = async (field) => {
-    if (userId) {
-      try {
-        const userDocRef = doc(db, "users", userId);
-        await updateDoc(userDocRef, {
-          [field]: userDetails[field],
-        });
-        toast.success(`${field} updated successfully`);
-      } catch (error) {
-        toast.error(`Error updating ${field}: ${error.message}`);
-      }
+  const handleThreeInputsChange = (index, value) => {
+    switch (index) {
+      case 0:
+        setFirstName(value);
+        break;
+      case 1:
+        setLastName(value);
+        break;
+      case 2:
+        setUsername(value);
+        break;
+      default:
+        break;
     }
   };
 
-  const handleSavePhoto = async () => {
-    if (selectedFile && userId) {
-      try {
-        const storage = getStorage();
-        const storageRef = ref(storage, `avatars/${userId}`);
-        await uploadBytes(storageRef, selectedFile);
-        const photoURL = await getDownloadURL(storageRef);
+  const handleSaveThreeInputs = (values) => {
+    setFirstName(values[0]);
+    setLastName(values[1]);
+    setUsername(values[2]);
 
-        const userDocRef = doc(db, "users", userId);
-        await updateDoc(userDocRef, {
-          photoURL,
-        });
-        toast.success("Photo updated successfully");
-      } catch (error) {
-        console.error("Error updating photo:", error);
+    handleUpdateUserDetails({
+      firstName: values[0],
+      lastName: values[1],
+      username: values[2],
+    });
+  };
+
+  // Update firstName, lastName, and username
+  const handleUpdateUserDetails = async (updatedFields) => {
+    try {
+      const response = await axios.post("/api/update-user-profile", {
+        userId: user.uid,
+        ...updatedFields,
+      });
+
+      if (response.status === 200) {
+        showToast("Profile updated successfully", "success");
+        setUser({ ...user, ...updatedFields });
       }
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      showToast("Failed to update user profile", "error");
+    }
+  };
+
+  // Update theme/ email/ connectedAccount)
+  const handleSave = async (field, value) => {
+    try {
+      const response = await axios.post("/api/update-user-field", {
+        userId: user.uid,
+        field,
+        value,
+      });
+
+      if (response.ok) {
+        showToast(`${field} updated successfully`, "success");
+        setUser({ ...user, [field]: value });
+      } else {
+        throw new Error("Failed to update user field");
+      }
+    } catch (error) {
+      console.error(`Error updating ${field}:`, error);
+      showToast(`Failed to update ${field}`, "error");
+    }
+  };
+
+  const handleLinkAccount = async (provider) => {
+    // TO DO: logic to link the account with the chosen provider
+    const newConnectedAccount = provider === "google" ? 1 : 0;
+    setConnectedAccount(newConnectedAccount);
+    await handleSave("connectedAccount", newConnectedAccount);
+    setIsLinkAccountModalOpen(false);
+  };
+
+  // Update profilePic
+  const handleSavePhoto = async () => {
+    if (!selectedFile) {
+      showToast("Please select a file first", "error");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("selectedFile", selectedFile);
+      formData.append("userId", user.uid);
+
+      const response = await axios.post("/api/update-profile-pic", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.status === 200) {
+        showToast("Profile picture updated successfully", "success");
+        setUser({ ...user, photoURL: response.data.photoURL });
+      }
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+      showToast("Failed to update profile picture", "error");
+    }
+  };
+
+  const handleThemeToggle = () => {
+    const newTheme = theme === 0 ? 1 : 0;
+    setTheme(newTheme);
+    handleSave("theme", newTheme);
+  };
+
+  const handleConnectedAccountToggle = () => {
+    setIsLinkAccountModalOpen(true);
+  };
+
+  // Update connectedAccount
+  const handleConnectedAccountChange = async (value) => {
+    try {
+      const response = await axios.put(`/api/update-connected-account/${user.uid}`, {
+        connectedAccount: value,
+      });
+
+      if (response.status === 200) {
+        showToast("Connected account updated successfully", "success");
+        setUser({ ...user, connectedAccount: value });
+      }
+    } catch (error) {
+      console.error("Error updating connected account:", error);
+      showToast("Failed to update connected account", "error");
     }
   };
 
   // Trigger file input click
   const handleChangePhotoClick = () => {
     fileInputRef.current.click();
+  };
+
+  const handlePasswordChange = (index, value) => {
+    if (index === 0) {
+      setNewPassword(value);
+    } else {
+      setConfirmNewPassword(value);
+    }
+  };
+
+  const handlePasswordSave = (values) => {
+    setNewPassword(values[0]);
+    setConfirmNewPassword(values[1]);
+    // Here you would typically call an API to update the password
+    handleUpdatePassword({
+      newPassword: values[0],
+      confirmNewPassword: values[1],
+    });
+  };
+
+  const handleUpdatePassword = async (passwordData) => {
+    try {
+      // Call your API endpoint to update the password
+      // This is a placeholder and should be replaced with your actual API call
+      const response = await fetch("/api/update-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(passwordData),
+      });
+
+      if (response.ok) {
+        // Password updated successfully
+        showToast("Password updated successfully", "success");
+      } else {
+        // Handle error
+        showToast("Failed to update password", "error");
+      }
+    } catch (error) {
+      console.error("Error updating password:", error);
+      showToast("An error occurred while updating password", "error");
+    }
   };
 
   return (
@@ -255,78 +394,37 @@ function Settings({ ...sharedProps }) {
             </div>
 
             {/* Additional Fields */}
-            <EditableInput
-              fieldName="Email"
-              value={userDetails.email}
-              onChange={handleInputChange("email")}
-              onSave={() => handleSave("email")}
+            <EditableInputThree
+              labels={["First Name", "Last Name", "Username"]}
+              values={[firstName, lastName, username]}
+              onChange={handleThreeInputsChange}
+              onSave={handleSaveThreeInputs}
             />
             <EditableInput
-              fieldName="First Name"
-              value={userDetails.firstName}
-              onChange={handleInputChange("firstName")}
-              onSave={() => handleSave("firstName")}
+              label="Email"
+              value={email}
+              onChange={(value) => setEmail(value)}
+              onSave={(value) => handleSave("email", value)}
             />
-            <EditableInput
-              fieldName="Last Name"
-              value={userDetails.lastName}
-              onChange={handleInputChange("lastName")}
-              onSave={() => handleSave("lastName")}
+            {/* TO DO: OTP verification before enable isEditing */}
+            <EditablePassInput
+              labels={["New Password", "Confirm New Password", "Password"]}
+              values={[newPassword, confirmNewPassword]}
+              onChange={handlePasswordChange}
+              onSave={handlePasswordSave}
             />
-            <EditableInput
-              fieldName="Username"
-              value={userDetails.username}
-              onChange={handleInputChange("username")}
-              onSave={() => handleSave("username")}
+            {/* TO DO: if not linked, sign in and if success toggle icon*/}
+            <LongToggleInput
+              label="Connected Account"
+              value={connectedAccount}
+              onToggle={handleConnectedAccountToggle}
+              isConnectedAccount={true}
             />
-            <TextField
-              label="Password"
-              value="*******"
-              fullWidth
-              margin="normal"
-              type="password"
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => console.log("Edit password")}>
-                      <EditIcon sx={{ color: "#FF894D" }} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              label="Linked account"
-              value="Google"
-              fullWidth
-              margin="normal"
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => console.log("Edit linked account")}>
-                      <EditIcon sx={{ color: "#FF894D" }} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
+            <LongToggleInput
               label="Theme"
-              value="Dark"
-              fullWidth
-              margin="normal"
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => console.log("Change theme")}>
-                      <BedtimeIcon sx={{ color: "#FF894D" }} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              value={theme}
+              onToggle={handleThemeToggle}
+              isConnectedAccount={false}
             />
           </Box>
         )}

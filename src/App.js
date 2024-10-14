@@ -8,7 +8,6 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import { fetchUserData } from "./pages/Homepage/backend/HomepageActions";
 import { showToast } from "./functions/utils.js";
 
 import "./App.css";
@@ -164,19 +163,17 @@ function App() {
       <AuthProvider>
         <div className="App">
           <Routes>
-            <Route path="/login" element={<Login {...beforeLoginSharedProps} />} /> {/*Checked */}
-            <Route path="/register" element={<Register {...beforeLoginSharedProps} />} />{" "}
-            {/*Checked */}
-            <Route path="/" element={<Login {...beforeLoginSharedProps} />} /> {/*Checked */}
-            <Route path="/forgot" element={<ForgotPass {...beforeLoginSharedProps} />} />{" "}
-            {/*Checked */}
-            <Route path="/change" element={<ChangePassw {...beforeLoginSharedProps} />} />{" "}
-            {/*Checked */}
+            {/* BEFORE LOGIN */}
+            <Route path="/login" element={<Login {...beforeLoginSharedProps} />} />
+            <Route path="/register" element={<Register {...beforeLoginSharedProps} />} />
+            <Route path="/" element={<Login {...beforeLoginSharedProps} />} />
+            <Route path="/forgot" element={<ForgotPass {...beforeLoginSharedProps} />} />
+            <Route path="/change" element={<ChangePassw {...beforeLoginSharedProps} />} />
             <Route path="/otp" element={<OneTP {...beforeLoginSharedProps} />} />
-            <Route path="/homepage" element={<Homepage {...sharedProps} />} /> {/*Checked */}
-            <Route path="/details" element={<Details />} />
+            {/* ACCOUNT/HOMEPAGE */}
+            <Route path="/homepage" element={<Homepage {...sharedProps} />} />
+            <Route path="/details" element={<Details {...sharedProps} />} />
             <Route path="/settings" element={<Settings {...sharedProps} />} />
-            {/*Checked */}
             {/* DESIGN SPACE */}
             <Route path="/design/:designId" element={<Design {...sharedProps} />} />
             <Route path="/searchItem" element={<SearchItem {...sharedProps} />} />

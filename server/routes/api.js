@@ -5,8 +5,10 @@ const designController = require("../controllers/designController");
 const projectController = require("../controllers/projectController");
 
 // User routes
-router.get("/user/:userId", userController.fetchUserData);
+router.post("/register", userController.createUser);
+router.post("/login", userController.loginUser);
 router.post("/logout", userController.handleLogout);
+router.get("/user/:userId", userController.fetchUserData);
 router.post("/settings", userController.handleSettings);
 
 // Design routes

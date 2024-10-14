@@ -3,6 +3,6 @@
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "editor.rulers": [100],
-  "editor.renderIndentGuides": true,
-  "editor.indentSize": 2
+  "editor.indentSize": 2,
+  "editor.guides.indentation": true
 }

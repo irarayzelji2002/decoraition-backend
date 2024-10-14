@@ -1,5 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { showToast } from "../../functions/utils";
+
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -65,37 +67,35 @@ export default function LoginModal() {
     return () => unsubscribe();
   }, [auth, navigate]);
 
-  const onLogin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const formErrors = handleValidation();
-
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
 
     try {
-      await setPersistence(auth, browserLocalPersistence); // Set persistence here
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      toast.success("You have been logged in", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
+        body: JSON.stringify({ email, password }),
       });
-      setTimeout(() => navigate("/homepage"), 1500);
+
+      if (response.ok) {
+        const { userData } = await response.json();
+        // Handle successful login
+        showToast("success", "Login successful!");
+        setTimeout(() => navigate("/homepage", { state: { userData } }), 1000);
+      } else {
+        const errorData = await response.json();
+        showToast("error", errorData.message || "Login failed. Please try again.");
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Login failed. Please try again.");
+      console.error("Login error:", error);
+      showToast("error", "An error occurred. Please try again.");
       setErrors({ general: "Login failed. Please try again." });
     }
   };
@@ -103,45 +103,39 @@ export default function LoginModal() {
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await setPersistence(auth, browserLocalPersistence); // Set persistence for Google login
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Extract user information
-      const displayName = user.displayName ? user.displayName.split(" ") : [];
-      const firstName = displayName[0] || "";
-      const lastName = displayName.slice(1).join(" ") || "";
-      const email = user.email || "";
-      const username = `${firstName}_${lastName}`.toLowerCase();
+      // Extract user information from Google sign-in
+      const userData = {
+        firstName: user.displayName.split(" ")[0],
+        lastName: user.displayName.split(" ").slice(1).join(" "),
+        username: user.email.split("@")[0], // Using email as a base for username
+        email: user.email,
+        connectedAccount: "Google",
+        profilePic: user.photoURL,
+        userId: user.uid,
+      };
 
-      // Save user info to Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        firstName,
-        lastName,
-        email,
-        username,
+      // Call your API to create or update user in your database
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
       });
 
-      toast.success("You have been logged in", {
-        icon: <Person />,
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
-      setTimeout(() => navigate("/homepage"), 1500);
+      if (response.ok) {
+        // Handle successful user creation/login
+        showToast("success", "Successfully signed in with Google!");
+        setTimeout(() => navigate("/homepage"), 1000);
+      } else {
+        throw new Error("Failed to create user");
+      }
     } catch (error) {
       console.error("Google login error", error);
-      toast.error("Google login failed. Please try again.");
+      showToast("error", "Google login failed. Please try again.");
     }
   };
 
@@ -159,7 +153,7 @@ export default function LoginModal() {
             width: "100%",
           }}
         >
-          <Box component="form" onSubmit={onLogin} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
             <span className="formLabels">Email Address</span>
             <TextField
               required

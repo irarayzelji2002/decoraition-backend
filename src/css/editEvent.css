@@ -82,7 +82,7 @@ textarea {
 
 .gradient-button:hover,
 .edit-event-button:hover {
-  background-image: var(--gradientButton);
+  background-image: var(--gradientButtonHover);
 }
 
 /* Button for icons (Add, Delete, Edit) */

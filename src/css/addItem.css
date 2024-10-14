@@ -31,7 +31,7 @@
   border: 2px solid var(--borderInput);
   border-radius: 24px;
   background-color: transparent;
-  color: white;
+  color: var(--color-white);
   font-size: 1.125em;
   margin-bottom: 20px;
 }
@@ -63,10 +63,9 @@
   margin-bottom: 40px;
 }
 
-.upload-btn:hover {
-  background: var(--gradientButton) border-box;
-  border-radius: 20px !important;
-  color: var(--color-white);
+.upload-btn:hover,
+.upload-btn:focus {
+  background-image: var(--darkGradient), var(--gradientButtonHover);
 }
 
 .upload-btn:click {

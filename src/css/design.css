@@ -83,7 +83,7 @@
 .headTitleInput {
   background-color: transparent;
   border: transparent;
-  font-size: 24px;
+  font-size: 1.5em;
   font-weight: bold;
   font-family: "Inter", sans-serif !important;
   color: var(--color-white);
@@ -96,7 +96,7 @@
   padding: 40px;
   margin-bottom: 50px;
   box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.2);
-  position: relative; /* Make this relative for positioning the bump */
+  position: relative;
 }
 
 /* .bump {
@@ -127,7 +127,7 @@
 }
 
 h3 {
-  font-size: 14px;
+  font-size: 0.875em;
   color: var(--color-white);
 }
 h6 {
@@ -156,9 +156,9 @@ h6 {
   justify-items: center;
   align-items: center;
   display: grid;
-  grid-template-columns: repeat(2, 2fr); /* 2 columns */
-  grid-template-rows: repeat(1, 5fr); /* 2 rows with equal height */
-  /* Adjust the gap between items as needed */
+  grid-template-columns: repeat(2, 2fr);
+  grid-template-rows: repeat(1, 5fr);
+
   width: 100%;
   height: max-content;
 }
@@ -198,7 +198,6 @@ h6 {
   justify-items: center;
   align-items: center;
   flex-direction: column;
-  /* Adjust the gap between items as needed */
   width: 100%;
   height: 150%;
 }
@@ -287,33 +286,33 @@ textarea {
 }
 
 .frame-buttons button {
-  background-color: var(--nav-card-modal); /* Primary color */
+  background-color: var(--nav-card-modal);
   color: var(--color-white);
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 1em;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .frame-buttons button:hover {
-  background-color: var(--inputBg); /* Darker shade on hover */
+  background-color: var(--inputBg);
   transform: scale(1.05);
 }
 
 .frame-buttons button:active {
-  background-image: var(--gradientButton); /* Even darker shade on active */
+  background-image: var(--gradientButton);
   transform: scale(0.98);
 }
 
 .frame-buttons button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--brightFont); /* Focus indicator */
+  box-shadow: 0 0 0 2px var(--brightFont);
 }
 /* For darkened background */
 .homepage.darkened {
-  position: relative; /* Position relative for overlay positioning */
+  position: relative;
 }
 
 .overlay {
@@ -322,8 +321,8 @@ textarea {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Darken the whole page */
-  z-index: 1; /* Overlay should be behind the buttons */
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
 }
 
 .circle-button-container {
@@ -332,9 +331,9 @@ textarea {
   right: 20px;
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Align everything to the right */
-  gap: 20px; /* Space between the buttons */
-  z-index: 2; /* Ensure buttons are above the overlay */
+  align-items: flex-end;
+  gap: 20px;
+  z-index: 2;
 }
 
 /* Main circular button (Add/Close) */
@@ -359,8 +358,8 @@ textarea {
 .small-buttons {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Spacing between buttons */
-  align-items: flex-end; /* Align buttons to the right */
+  gap: 10px;
+  align-items: flex-end;
 }
 
 /* Small circular buttons for creating project/design */
@@ -386,13 +385,13 @@ textarea {
 
 /* Icons inside small circular buttons */
 .icon {
-  font-size: 30px;
+  font-size: 1.875em;
 }
 
 /* Text to the left of the circular buttons */
 .small-button-text {
   color: var(--color-white);
-  font-size: 14px;
+  font-size: 0.875em;
   font-weight: bold;
 }
 
@@ -414,7 +413,7 @@ textarea {
 .searchHead {
   margin-left: 18px;
   font-weight: bold;
-  font-size: 24px;
+  font-size: 1.5em;
 
   color: var(--color-white);
 }
@@ -456,7 +455,7 @@ textarea {
   border: none;
   color: var(--brightFont);
   cursor: pointer;
-  font-size: 18px;
+  font-size: 1.125em;
   padding: 10px;
 }
 
@@ -486,7 +485,7 @@ textarea {
   display: inline-flex;
   border-radius: 25px;
   overflow: hidden;
-  border: 2px solid #f68950;
+  border: 2px solid var(--brightFont);
   margin: 10px 0;
 }
 
@@ -501,16 +500,16 @@ textarea {
 }
 
 .button-side.active {
-  background-color: #f68950;
+  background-color: var(--brightFont);
   color: white;
 }
 
 .button-side:not(.active) {
-  border-right: 2px solid #f68950;
+  border-right: 2px solid var(--brightFont);
 }
 
 .button-side:first-child {
-  border-right: 1px solid #f68950;
+  border-right: 1px solid var(--brightFont);
 }
 
 .button-side:hover {
@@ -547,7 +546,7 @@ textarea {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #49484f; /* Placeholder for profile image */
+  background-image: var(--gradientCircle);
   margin-right: 10px;
 }
 
@@ -557,28 +556,28 @@ textarea {
 }
 
 .username {
-  color: white;
+  color: var(--color-white);
   font-weight: bold;
   margin-bottom: 2px;
 }
 
 .date {
-  color: #c1c1c1;
-  font-size: 12px;
+  color: var(--color-white);
+  font-size: 0.075em;
 }
 
 .check-mark {
-  color: #f68950;
-  font-size: 16px;
+  color: var(--brightFont);
+  font-size: 1em;
 }
 
 .options-dots {
-  color: white;
-  font-size: 20px;
+  color: var(--color-white);
+  font-size: 1.25em;
 }
 
 .comment-text {
-  color: white;
+  color: var(--color-white);
   margin-bottom: 10px;
 }
 
@@ -589,7 +588,7 @@ textarea {
   border: 1px solid #49484f;
   border-radius: 15px;
   padding: 10px;
-  color: white;
+  color: var(--color-white);
   margin-top: 10px;
 }
 
@@ -598,7 +597,7 @@ textarea {
   border: none;
   outline: none;
   background-color: transparent;
-  color: white;
+  color: var(--color-white);
   margin-left: 10px;
 }
 

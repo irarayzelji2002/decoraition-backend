@@ -1,5 +1,9 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { stringAvatar, stringToColor } from "../../functions/utils.js";
+import DelayedTooltip from "../components/DelayedTooltip";
+
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,36 +14,20 @@ import InputBase from "@mui/material/InputBase";
 import MenuIcon from "@mui/icons-material/Menu";
 import Paper from "@mui/material/Paper";
 import SearchIcon from "@mui/icons-material/Search";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase";
-import { fetchUserData } from "./backend/HomepageActions";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
-const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState("");
+const SearchAppBar = ({ user, onMenuClick, onSearchChange, searchQuery, ...sharedProps }) => {
+  const navigate = useNavigate();
+  const [isFocused, setIsFocused] = React.useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [accountTooltipOpen, setAccountTooltipOpen] = useState(false);
 
-  useEffect(() => {
-    const handleAuthChange = async (user) => {
-      if (user) {
-        setUser(user);
-        await fetchUserData(user, setUsername, setUser);
-      } else {
-        setUser(null);
-      }
-    };
-
-    const unsubscribeAuth = onAuthStateChanged(auth, handleAuthChange);
-
-    return () => unsubscribeAuth();
-  }, []);
   const handleSearch = (event) => {
     onSearchChange(event.target.value); // Pass the search value to the parent
   };
-  const [isFocused, setIsFocused] = React.useState(false);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -48,11 +36,6 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
   const handleBlur = () => {
     setIsFocused(false);
   };
-  const getInitial = (name) => {
-    return name ? name.charAt(0).toUpperCase() : "";
-  };
-
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleMenuClick = () => {
     setIsDrawerOpen(true);
@@ -85,7 +68,11 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
           </IconButton>
 
           <Drawer anchor="left" open={isDrawerOpen} onClose={handleDrawerClose}>
-            <DrawerComponent isDrawerOpen={isDrawerOpen} onClose={handleDrawerClose} />
+            <DrawerComponent
+              isDrawerOpen={isDrawerOpen}
+              onClose={handleDrawerClose}
+              {...sharedProps}
+            />
           </Drawer>
 
           <Paper
@@ -144,38 +131,31 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
               textOverflow: "ellipsis",
             }}
           >
-            {username || "Guest"}
+            {user.username || "Guest"}
           </Box>
-          {user?.profilePicture ? (
-            <Box
-              component="img"
-              sx={{
-                height: 40,
-                width: 40,
-                borderRadius: "50%",
-                marginLeft: "auto",
-                marginRight: "12px",
-                border: "2px solid var(--brightFont)",
-              }}
-              alt="User Profile Picture"
-              src={user.profilePicture}
-            />
-          ) : (
-            <Avatar
-              sx={{
-                height: 40,
-                width: 40,
-                borderRadius: "50%",
-                marginLeft: "auto",
-                marginRight: "12px",
-                background: "var(--gradientButton)",
-                border: "2px solid var(--brightFont)",
-                color: "white", // Optional: to set the text color inside the avatar
-              }}
+          <IconButton onClick={() => navigate("/settings")} sx={{ p: 0 }}>
+            <DelayedTooltip
+              title="Account"
+              delay={1000}
+              open={accountTooltipOpen}
+              setOpen={setAccountTooltipOpen}
             >
-              {username ? getInitial(username) : ""}
-            </Avatar>
-          )}
+              <Avatar
+                {...(user.username && stringAvatar(user.username))}
+                src={user?.profilePic ? user?.profilePic : ""}
+                sx={{
+                  height: 40,
+                  width: 40,
+                  borderRadius: "50%",
+                  marginLeft: "auto",
+                  marginRight: "12px",
+                  background: "var(--gradientButton)",
+                  border: "2px solid var(--brightFont)",
+                  color: "white", // Optional: to set the text color inside the avatar
+                }}
+              />
+            </DelayedTooltip>
+          </IconButton>
         </Toolbar>
       </AppBar>
     </Box>

@@ -1,27 +1,91 @@
-const { db } = require("../firebaseConfig");
+const { db, auth, adminAuth, adminDb } = require("../firebase");
 
-// Create
+// Create Design
 exports.handleCreateDesign = async (req, res) => {
+  const createdDocuments = [];
   try {
-    const { userId, designName, projectId } = req.body;
-    const designRef = db.collection("designs").doc();
+    const { userId, designName } = req.body;
+
+    // Create design document
     const designData = {
       designName,
-      userId,
-      projectId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      owner: userId,
+      editors: [],
+      commenters: [],
+      viewers: [],
+      history: [],
+      projectId: null,
+      createdAt: adminDb.FieldValue.serverTimestamp(),
+      modifiedAt: adminDb.FieldValue.serverTimestamp(),
+      designSettings: {
+        generalAccessSetting: 0, //0 for Restricted, 1 for Anyone with the link
+        generalAccessRole: 0, //0 for viewer, 1 for content manager, 2 for contributor)
+        allowDownload: true,
+        allowViewHistory: true,
+        allowCopy: true,
+        documentCopyByOwner: true,
+        documentCopyByEditor: true,
+      },
     };
-    await designRef.set(designData);
-    res.status(201).json({ id: designRef.id, ...designData });
+
+    const designRef = await db.collection("designs").add(designData);
+    const designId = designRef.id;
+    createdDocuments.push({ collection: "designs", id: designId });
+
+    // Update the design document with the link field
+    await designRef.update({
+      link: `/design/${designId}`,
+    });
+
+    // Create associated budget document
+    const budgetData = {
+      designId: designId,
+      budget: {
+        amount: 0,
+        currency: "USD",
+      },
+      items: [],
+    };
+
+    const budgetRef = await db.collection("budgets").add(budgetData);
+    const budgetId = budgetRef.id;
+    createdDocuments.push({ collection: "budgets", id: budgetId });
+
+    // Update design document with budgetId
+    await designRef.update({ budgetId });
+
+    // Update user's designs array
+    await db
+      .collection("users")
+      .doc(userId)
+      .update({
+        designs: adminDb.FieldValue.arrayUnion({ designId, role: 2 }), // 2 for owner role
+      });
+
+    res.status(200).json({
+      id: designId,
+      ...designData,
+      link: `/design/${designId}`,
+      budgetId,
+    });
   } catch (error) {
     console.error("Error creating design:", error);
-    res.status(500).json({ error: "Failed to create design" });
+
+    // Rollback: delete all created documents
+    for (const doc of createdDocuments) {
+      try {
+        await db.collection(doc.collection).doc(doc.id).delete();
+      } catch (deleteError) {
+        console.error(`Error deleting ${doc.collection} document ${doc.id}:`, deleteError);
+      }
+    }
+
+    res.status(500).json({ message: "Error creating design", error: error.message });
   }
 };
 
 // Read
-exports.fetchDesigns = async (req, res) => {
+exports.fetchUserDesigns = async (req, res) => {
   try {
     const { userId } = req.params;
     const designsSnapshot = await db
@@ -55,10 +119,36 @@ exports.updateDesign = async (req, res) => {
 exports.handleDeleteDesign = async (req, res) => {
   try {
     const { designId } = req.params;
+    const { userId } = req.body;
+
+    // Delete the design
     await db.collection("designs").doc(designId).delete();
-    res.json({ message: "Design deleted successfully" });
+
+    // Remove the design from the user's designs array
+    await db
+      .collection("users")
+      .doc(userId)
+      .update({
+        designs: adminDb.FieldValue.arrayRemove({ designId, role: 2 }),
+      });
+
+    // Remove the design from any projects it might be in
+    const projectsSnapshot = await db
+      .collection("projects")
+      .where("designs", "array-contains", { designId })
+      .get();
+
+    const batch = db.batch();
+    projectsSnapshot.docs.forEach((doc) => {
+      batch.update(doc.ref, {
+        designs: adminDb.FieldValue.arrayRemove({ designId }),
+      });
+    });
+    await batch.commit();
+
+    res.status(200).json({ message: "Design deleted successfully" });
   } catch (error) {
     console.error("Error deleting design:", error);
-    res.status(500).json({ error: "Failed to delete design" });
+    res.status(500).json({ message: "Error deleting design", error: error.message });
   }
 };

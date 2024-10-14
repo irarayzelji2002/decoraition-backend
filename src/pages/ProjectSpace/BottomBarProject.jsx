@@ -259,7 +259,7 @@ function BottomBarDesign({
         size="md"
         color="#302f37"
         component={Link}
-        to={`/projBudget/${projId}`}
+        to={`/projectBudget/${projId}`}
         sx={{
           ":hover": {
             backgroundColor: "var(--iconBg)",

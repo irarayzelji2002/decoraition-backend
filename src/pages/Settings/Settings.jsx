@@ -25,17 +25,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Settings({ ...sharedProps }) {
-  const user = sharedProps.user;
-  const setUser = sharedProps.setUser;
+  const { user, setUser } = sharedProps;
 
   const [selectedTab, setSelectedTab] = useState(0);
-  const [isEditing, setIsEditing] = useState(false);
-  const fileInputRef = useRef(null); // Reference for the file input\
-
-  const [userId, setUserId] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState("");
+  const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isLinkAccountModalOpen, setIsLinkAccountModalOpen] = useState(false);
+  const [isChangeProfileModalOpen, setIsChangeProfileModalOpen] = useState(false);
 
   const [firstName, setFirstName] = useState(user.firstName || "");
   const [lastName, setLastName] = useState(user.lastName || "");
@@ -47,48 +43,8 @@ function Settings({ ...sharedProps }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log(`User is signed in with UID: ${user.uid}`);
-        setUserId(user.uid);
-
-        const fetchUserDetails = async (userId) => {
-          try {
-            console.log(`Fetching document for user ID: ${userId}`);
-            const userDocRef = doc(db, "users", userId);
-            const userDoc = await getDoc(userDocRef);
-
-            if (userDoc.exists()) {
-              const userData = userDoc.data();
-              console.log("User data:", userData);
-              setUserDetails(userData);
-              setAvatarPreview(userData.photoURL || "");
-            } else {
-              console.error("User document not found");
-            }
-          } catch (error) {
-            console.error("Error fetching user details:", error);
-          }
-        };
-
-        fetchUserDetails(user.uid);
-      } else {
-        console.error("No user is signed in");
-        // Optionally, redirect to login page
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
-  };
-
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
   };
 
   // Handle file input change
@@ -98,7 +54,7 @@ function Settings({ ...sharedProps }) {
       setSelectedFile(file); // Set the selected file
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatarPreview(reader.result); // Set the avatar preview
+        setProfilePic(reader.result); // Set the avatar preview
       };
       reader.readAsDataURL(file);
       console.log("File uploaded:", file);
@@ -142,12 +98,12 @@ function Settings({ ...sharedProps }) {
       });
 
       if (response.status === 200) {
-        showToast("Profile updated successfully", "success");
+        showToast("success", "Profile updated successfully");
         setUser({ ...user, ...updatedFields });
       }
     } catch (error) {
       console.error("Error updating user profile:", error);
-      showToast("Failed to update user profile", "error");
+      showToast("error", "Failed to update user profile");
     }
   };
 
@@ -161,29 +117,21 @@ function Settings({ ...sharedProps }) {
       });
 
       if (response.status === 200) {
-        showToast(`${field} updated successfully`, "success");
+        showToast("success", `${field} updated successfully`);
         setUser({ ...user, [field]: value });
       } else {
         throw new Error("Failed to update user field");
       }
     } catch (error) {
       console.error(`Error updating ${field}:`, error);
-      showToast(`Failed to update ${field}`, "error");
+      showToast("error", `Failed to update ${field}`);
     }
-  };
-
-  const handleLinkAccount = async (provider) => {
-    // TO DO: logic to link the account with the chosen provider
-    const newConnectedAccount = provider === "google" ? 1 : 0;
-    setConnectedAccount(newConnectedAccount);
-    await handleSave("connectedAccount", newConnectedAccount);
-    setIsLinkAccountModalOpen(false);
   };
 
   // Update profilePic
   const handleSavePhoto = async () => {
     if (!selectedFile) {
-      showToast("Please select a file first", "error");
+      showToast("error", "Please select a file first");
       return;
     }
 
@@ -197,12 +145,12 @@ function Settings({ ...sharedProps }) {
       });
 
       if (response.status === 200) {
-        showToast("Profile picture updated successfully", "success");
+        showToast("success", "Profile picture updated successfully");
         setUser({ ...user, photoURL: response.data.photoURL });
       }
     } catch (error) {
       console.error("Error updating profile picture:", error);
-      showToast("Failed to update profile picture", "error");
+      showToast("error", "Failed to update profile picture");
     }
   };
 
@@ -212,11 +160,28 @@ function Settings({ ...sharedProps }) {
     handleSave("theme", newTheme);
   };
 
-  const handleConnectedAccountToggle = () => {
-    setIsLinkAccountModalOpen(true);
+  // Update connectedAccount
+  const openlinkAccountModal = () => {
+    if (!(connectedAccount === 0 || connectedAccount === 1)) {
+      setIsLinkAccountModalOpen(true);
+    } else {
+      handleConnectedAccountChange(null);
+    }
   };
 
-  // Update connectedAccount
+  const handleLinkAccount = async (provider) => {
+    // TO DO: logic to link the account with the chosen provider
+    const newConnectedAccount = provider === "google" ? 0 : 1;
+    setConnectedAccount(newConnectedAccount);
+    const response = await handleConnectedAccountChange(newConnectedAccount);
+
+    if (response.status === 200) {
+      showToast("success", "Connected account updated successfully");
+      setUser({ ...user, connectedAccount: newConnectedAccount });
+    }
+    setIsLinkAccountModalOpen(false);
+  };
+
   const handleConnectedAccountChange = async (value) => {
     try {
       const response = await axios.put(`/api/user/connected-account/${user.uid}`, {
@@ -224,12 +189,12 @@ function Settings({ ...sharedProps }) {
       });
 
       if (response.status === 200) {
-        showToast("Connected account updated successfully", "success");
+        showToast("success", "Connected account updated successfully");
         setUser({ ...user, connectedAccount: value });
       }
     } catch (error) {
       console.error("Error updating connected account:", error);
-      showToast("Failed to update connected account", "error");
+      showToast("error", "Failed to update connected account");
     }
   };
 
@@ -267,14 +232,14 @@ function Settings({ ...sharedProps }) {
 
       if (response.status === 200) {
         // Password updated successfully
-        showToast("Password updated successfully", "success");
+        showToast("success", "Password updated successfully");
       } else {
         // Handle error
-        showToast("Failed to update password", "error");
+        showToast("error", "Failed to update password");
       }
     } catch (error) {
       console.error("Error updating password:", error);
-      showToast("An error occurred while updating password", "error");
+      showToast("error", "An error occurred while updating password");
     }
   };
 
@@ -319,7 +284,7 @@ function Settings({ ...sharedProps }) {
             <div className="avatar-container" style={{ display: "flex", alignItems: "center" }}>
               <Avatar
                 alt="User Avatar"
-                src={avatarPreview || ""} // Use avatarPreview as the source
+                src={profilePic || ""}
                 sx={{
                   width: 150,
                   height: 150,
@@ -414,7 +379,7 @@ function Settings({ ...sharedProps }) {
             <LongToggleInput
               label="Connected Account"
               value={connectedAccount}
-              onToggle={handleConnectedAccountToggle}
+              onToggle={openlinkAccountModal}
               isConnectedAccount={true}
             />
             <LongToggleInput

@@ -1,7 +1,9 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { showToast } from "../../functions/utils";
+import { GoogleIcon, FacebookIcon } from "../../components/CustomIcons";
 
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,14 +16,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
-import { Person } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { doc, setDoc } from "firebase/firestore";
-import { GoogleIcon, FacebookIcon } from "../../components/CustomIcons";
-import { db } from "../../../server/firebase"; // Import Firestore instance
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -105,7 +100,7 @@ export default function LoginModal() {
       };
     } catch (error) {
       console.error("Google login error:", error);
-      showToast("Failed to log in with Google", "error");
+      showToast("error", "Failed to log in with Google");
       return;
     }
 

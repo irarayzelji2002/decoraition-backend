@@ -88,6 +88,7 @@ export default function SeeAllDesigns({ ...sharedProps }) {
         onSearchChange={(value) => setSearchQuery(value)}
         user={user}
         username={username}
+        {...sharedProps}
       />
       <div className="bg">
         <div className="dropdown-container">

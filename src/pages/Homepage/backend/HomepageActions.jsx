@@ -1,70 +1,57 @@
 import axios from "axios";
-import { auth, db } from "../../../firebase";
 import { showToast } from "../../../functions/utils";
-const API_BASE_URL = "http://localhost:5000/api";
 
-export const fetchUserData = async (setUser, setUsername) => {
+// Get user designs
+export const fetchUserDesigns = async (userId, setDesigns) => {
   try {
-    const user = auth.currentUser;
-    if (user) {
-      const response = await axios.get(`${API_BASE_URL}/user/${user.uid}`);
-      const userData = response.data;
-      setUser(userData);
-      setUsername(userData.username || "");
+    const response = await axios.get(`/api/design/${userId}`);
+
+    if (response.status === 200) {
+      setDesigns(response.data);
+    } else {
+      // showToast("error", "Failed to fetch user designs.");
     }
   } catch (error) {
-    console.error("Error fetching user data:", error);
-    showToast("error", "Failed to fetch user data");
+    console.error("Error fetching designs:", error);
+
+    showToast("error", "Failed to fetch designs");
   }
 };
 
-export const fetchDesigns = (userId, setDesigns) => {
-  const designsRef = collection(db, "designs");
-  const q = query(
-    designsRef,
-    where("createdBy", "==", userId),
-    where("createdAt", ">", new Date(0))
-  );
+// Get user projects
+export const fetchUserProjects = async (userId, setProjects) => {
+  try {
+    const response = await axios.get(`/api/project/${userId}`);
 
-  const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
-    const designList = [];
-    querySnapshot.forEach((doc) => {
-      designList.push({ id: doc.id, ...doc.data() });
-    });
-    setDesigns(designList);
-  });
+    if (response.status === 200) {
+      setProjects(response.data);
+    } else {
+      // showToast("error", "Failed to fetch user designs.");
+    }
+  } catch (error) {
+    console.error("Error fetching projects:", error);
 
-  return () => unsubscribeDesigns();
+    showToast("error", "Failed to fetch projects");
+  }
 };
 
-export const fetchProjects = (userId, setProjects) => {
-  const projectsRef = collection(db, "projects");
-  const q = query(projectsRef, where("createdBy", "==", userId));
-
-  const unsubscribeProjects = onSnapshot(q, (querySnapshot) => {
-    const projectList = [];
-    querySnapshot.forEach((doc) => {
-      projectList.push({ id: doc.id, ...doc.data() });
-    });
-    setProjects(projectList);
-  });
-
-  return () => unsubscribeProjects();
-};
-
+// Logout
 export const handleLogout = async (navigate) => {
   try {
-    await axios.post(`${API_BASE_URL}/logout`);
-    navigate("/");
+    const response = await axios.post(`/api/logout`);
+    if (response.data.success) {
+      navigate("/");
+    }
   } catch (error) {
     console.error("Error logging out:", error);
-    showToast("error", "Failed to log out");
+    showToast("error", "Failed to log out.");
   }
 };
 
+// not sure
 export const handleSettings = async (navigate) => {
   try {
-    await axios.post(`${API_BASE_URL}/settings`);
+    await axios.post(`/api/settings`);
     navigate("/settings");
   } catch (error) {
     console.error("Error navigating to settings:", error);
@@ -72,114 +59,120 @@ export const handleSettings = async (navigate) => {
   }
 };
 
-export const handleCreateDesign = async (userId, navigate) => {
+// Create design
+export const handleCreateDesign = async (userId, navigate, setDesigns) => {
   try {
-    const currentUser = auth.currentUser;
-    const randomString = Math.random().toString(36).substring(2, 6);
-    const designId = new Date().getTime().toString() + randomString;
+    const response = await axios.post("/api/design/create", {
+      userId: userId,
+      designName: "Untitled Design",
+    });
 
-    if (currentUser) {
-      const designRef = doc(db, "designs", designId);
-      await setDoc(designRef, {
-        name: "Untitled",
-        createdAt: new Date(),
-        createdBy: currentUser.uid,
-      });
+    if (response.status === 200) {
+      showToast("success", "Design created successfully");
+      fetchUserDesigns(userId, setDesigns);
+      setTimeout(() => navigate(`/design/${response.data.id}`), 1500);
+    } else {
+      showToast("error", "Failed to create design.");
+    }
+  } catch (error) {
+    console.error("Error creating design:", error);
 
-      toast.success("Design created successfully!", {
-        icon: <CheckCircle />,
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
+    showToast("error", "Failed to create design");
+  }
+};
 
-      setTimeout(() => navigate(`/design/${designId}`), 1500);
+// Create project
+export const handleCreateProject = async (userId, navigate, setProjects) => {
+  try {
+    const response = await axios.post("/api/project/create", {
+      userId: userId,
+      projectName: "Untitled Project",
+    });
+
+    if (response.status === 200) {
+      showToast("success", "Project created successfully");
+      fetchUserDesigns(userId, setProjects);
+      setTimeout(() => navigate(`/project/${response.data.id}`), 1500);
+    } else {
+      showToast("error", "Failed to create project.");
     }
   } catch (error) {
     console.error("Error creating project:", error);
+
     showToast("error", "Failed to create project");
   }
 };
 
-export const handleDeleteDesign = async (designId, setDesigns) => {
+// Delete design
+export const handleDeleteDesign = async (userId, designId, navigate, setDesigns) => {
   try {
-    const currentUser = auth.currentUser;
-    const randomString = Math.random().toString(36).substring(2, 6);
-    const projectId = new Date().getTime().toString() + randomString;
+    const response = await axios.delete(`/api/design/delete/${designId}`);
 
-    if (currentUser) {
-      const projectRef = doc(db, "projects", projectId);
-      await setDoc(projectRef, {
-        name: "Untitled",
-        createdAt: new Date(),
-        createdBy: currentUser.uid,
-      });
-
-      toast.success("Project created successfully!", {
-        icon: <CheckCircle />,
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
-
-      setTimeout(() => navigate(`/project/${projectId}`), 1500);
+    if (response.status === 200) {
+      showToast("success", "Design deleted successfully");
+      fetchUserDesigns(userId, setDesigns);
+      setTimeout(() => navigate("/homepage"), 1500);
+    } else {
+      showToast("error", "Failed to delete design.");
     }
   } catch (error) {
     console.error("Error deleting design:", error);
+
     showToast("error", "Failed to delete design");
   }
 };
 
-export const handleDeleteProject = async (projectId, setProjects) => {
+// Delete project
+export const handleDeleteProject = async (userId, projectId, navigate, setProjects) => {
   try {
-    const currentUser = auth.currentUser;
+    const response = await axios.delete(`/api/project/delete/${projectId}`);
 
-    if (currentUser) {
-      const designRef = doc(db, "designs", designId);
-      await deleteDoc(designRef);
-
-      toast.success("Design deleted", {
-        icon: <Delete />,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
+    if (response.status === 200) {
+      showToast("success", "Project deleted successfully");
+      fetchUserProjects(userId, setProjects);
+      setTimeout(() => navigate("/homepage"), 1500);
+    } else {
+      showToast("error", "Failed to delete project.");
     }
   } catch (error) {
     console.error("Error deleting project:", error);
+
     showToast("error", "Failed to delete project");
   }
 };
 
+// Tiled and list view change
+export const handleViewChange = async (userId, layoutSettings, field) => {
+  const value = layoutSettings[field] === 0 ? 1 : 0;
+  try {
+    await axios.patch("/api/users/layout-settings", { userId: userId, [field]: value });
+    showToast("success", "Layout setting updated");
+  } catch (error) {
+    console.error("Error updating layout setting:", error);
+    showToast("error", "Failed to update layout setting");
+  }
+};
+
 // Client-side functions
-export const toggleDarkMode = (isDarkMode, setIsDarkMode) => {
+export const toggleDarkMode = async (userId, isDarkMode, setIsDarkMode) => {
   const newMode = !isDarkMode;
-  setIsDarkMode(newMode);
-  document.body.classList.toggle("dark-mode", newMode);
+  const theme = newMode === true ? 0 : 1;
+
+  try {
+    const response = await axios.post("/user/theme", {
+      userId: userId,
+      theme: theme,
+    });
+
+    if (response.status === 200) {
+      setIsDarkMode(newMode);
+      document.body.classList.toggle("dark-mode", newMode);
+    } else {
+      console.error("Failed to update theme");
+    }
+  } catch (error) {
+    console.error("Error updating theme:", error);
+  }
 };
 
 export const toggleMenu = (isMenuOpen, setIsMenuOpen) => {

@@ -34,13 +34,21 @@ exports.handleGoogleSignIn = async (req, res) => {
 
 // Create User
 exports.createUser = async (req, res) => {
+  let createdUserDoc = null;
+  let firebaseUserId = null;
   try {
     const { firstName, lastName, username, email, password, connectedAccount, profilePic, userId } =
       req.body;
 
+    // Check if email already exists
+    const existingUser = await db.collection("users").where("email", "==", email).get();
+    if (!existingUser.empty) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
     // Create user in Firebase Authentication
-    let firebaseUserId;
-    if (connectedAccount === "Google") {
+    // 0 for Google, 1 for Facebook
+    if (connectedAccount === 0) {
       // For Google OAuth
       firebaseUserId = userId;
     } else {
@@ -50,8 +58,7 @@ exports.createUser = async (req, res) => {
     }
 
     // Create user document in Firestore
-    const userRef = db.collection("users").doc(firebaseUserId);
-    await userRef.set({
+    const userData = {
       firstName,
       lastName,
       username,
@@ -96,11 +103,30 @@ exports.createUser = async (req, res) => {
       designs: [],
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
-
+    };
+    createdUserDoc = await db.collection("users").doc(firebaseUserId).set(userData);
     res.status(200).json({ message: "User created successfully", userId });
   } catch (error) {
     console.error("Error creating user:", error);
+
+    // Rollback: Delete user from Authentication if it was created
+    if (firebaseUserId) {
+      try {
+        await adminAuth.deleteUser(firebaseUserId);
+      } catch (deleteAuthError) {
+        console.error("Error deleting user from Authentication:", deleteAuthError);
+      }
+    }
+
+    // Rollback: Delete user document from Firestore if it was created
+    if (createdUserDoc) {
+      try {
+        await db.collection("users").doc(firebaseUserId).delete();
+      } catch (deleteFirestoreError) {
+        console.error("Error deleting user document from Firestore:", deleteFirestoreError);
+      }
+    }
+
     res.status(500).json({ error: "Failed to create user", message: error.message });
   }
 };
@@ -178,7 +204,7 @@ exports.loginUser = async (req, res) => {
 exports.handleLogout = async (req, res) => {
   try {
     await auth.signOut();
-    res.json({ message: "Logged out successfully" });
+    res.json({ success: true, message: "Logged out successfully" });
   } catch (error) {
     console.error("Error logging out:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -524,5 +550,38 @@ exports.updateNotificationSettings = async (req, res) => {
   } catch (error) {
     console.error("Error updating notification settings:", error);
     res.status(500).json({ error: "Failed to update notification settings" });
+  }
+};
+
+exports.updateLayoutSettings = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const settingToUpdate = Object.keys(req.body)[1];
+    const newValue = req.body[settingToUpdate];
+
+    await db
+      .collection("users")
+      .doc(userId)
+      .update({
+        [`layoutSettings.${settingToUpdate}`]: newValue,
+      });
+
+    res.status(200).json({ message: "Layout setting updated successfully" });
+  } catch (error) {
+    console.error("Error updating layout setting:", error);
+    res.status(500).json({ message: "Error updating layout setting", error: error.message });
+  }
+};
+
+exports.updateTheme = async (req, res) => {
+  try {
+    const { userId, theme } = req.body;
+
+    await db.collection("users").doc(userId).update({ theme });
+
+    res.status(200).json({ message: "Theme updated successfully" });
+  } catch (error) {
+    console.error("Error updating theme:", error);
+    res.status(500).json({ message: "Error updating theme", error: error.message });
   }
 };

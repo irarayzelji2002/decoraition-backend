@@ -1,4 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  fetchUserDesigns,
+  fetchUserProjects,
+  handleLogout,
+  handleSettings,
+  handleCreateDesign,
+  handleCreateProject,
+  handleDeleteDesign,
+  handleDeleteProject,
+  handleViewChange,
+  toggleDarkMode,
+  toggleMenu,
+  formatDate,
+} from "./backend/HomepageActions";
+
 import {
   Drawer,
   IconButton,
@@ -20,83 +36,19 @@ import FolderIcon from "@mui/icons-material/Folder";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useNavigate } from "react-router-dom";
-import { auth, db } from "../../firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, query, where, onSnapshot, doc, deleteDoc, setDoc } from "firebase/firestore";
 
-const DrawerComponent = ({ isDrawerOpen, onClose }) => {
+const DrawerComponent = ({ isDrawerOpen, onClose, ...sharedProps }) => {
+  const { user, setUser, designs, setDesigns } = sharedProps;
   // State to handle dark mode
-  const [darkMode, setDarkMode] = useState(true);
+  const initDarkMode = user.theme === 0 ? true : false;
+  const [darkMode, setDarkMode] = useState(initDarkMode);
   const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
-  const [username, setUsername] = useState("");
-  const [user, setUser] = useState(null);
-  const [designs, setDesigns] = useState([]);
-  const [profileURL, setProfileURL] = useState("");
   const [activeItem, setActiveItem] = useState(null);
   const optionsRef = useRef(null);
 
-  useEffect(() => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      onSnapshot(userRef, (doc) => {
-        const userData = doc.data();
-        setUsername(userData.username);
-        setProfileURL(userData.photoURL);
-      });
-    }
-  }, [user]);
-
-  const fetchDesigns = (userId) => {
-    const designsRef = collection(db, "users", userId, "designs");
-    const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
-
-    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
-      const designList = [];
-      querySnapshot.forEach((doc) => {
-        designList.push({ id: doc.id, ...doc.data() });
-      });
-      setDesigns(designList);
-    });
-
-    return () => unsubscribeDesigns();
-  };
-
   const toggleOptions = () => {
     setShowOptions(!showOptions);
-  };
-  // Load dark mode preference from localStorage on component mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-      setDarkMode(false);
-      document.documentElement.classList.add("light-mode");
-    } else {
-      setDarkMode(true);
-      document.documentElement.classList.remove("light-mode");
-    }
-  }, []);
-
-  // Toggle dark mode and save preference in localStorage
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    if (darkMode) {
-      document.documentElement.classList.add("light-mode");
-      localStorage.setItem("theme", "light");
-    } else {
-      document.documentElement.classList.remove("light-mode");
-      localStorage.setItem("theme", "dark");
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/");
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
   };
 
   const handleClickOutside = (event) => {
@@ -139,7 +91,10 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
             marginBottom: "20px",
           }}
         >
-          <IconButton sx={{ color: "white" }} onClick={toggleDarkMode}>
+          <IconButton
+            sx={{ color: "white" }}
+            onClick={() => toggleDarkMode(user.uid, darkMode, setDarkMode)}
+          >
             <DarkModeIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
           <IconButton sx={{ color: "white", marginLeft: "16px" }}>
@@ -157,11 +112,11 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
             marginLeft: "auto",
             marginRight: "auto",
           }}
-          src={profileURL || ""}
+          src={user.profilePic || ""}
         >
-          {username ? username.charAt(0).toUpperCase() : ""}
+          {user.username ? user.username.charAt(0).toUpperCase() : ""}
         </Avatar>
-        <Typography variant="body1">{username || "Guest"}</Typography>
+        <Typography variant="body1">{user.username || "Guest"}</Typography>
         <Typography variant="caption">{user?.email || "No email"}</Typography>
       </div>
       <Divider sx={{ backgroundColor: "gray", my: 2 }} />
@@ -252,7 +207,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
           </ListItemIcon>
           <ListItemText primary="Settings" />
         </ListItem>
-        <ListItem button onClick={handleLogout}>
+        <ListItem button onClick={() => handleLogout(navigate)}>
           <ListItemIcon>
             <LogoutIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>

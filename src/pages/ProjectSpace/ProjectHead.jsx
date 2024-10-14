@@ -25,8 +25,9 @@ import DrawerComponent from "../Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
 import { useHandleNameChange, useProjectDetails } from "./backend/ProjectDetails";
 import { useParams } from "react-router-dom";
+import { toggleDarkMode, handleSettings, handleLogout } from "../Homepage/backend/HomepageActions";
 
-function ProjectHead({ designName, designId, setIsSidebarOpen }) {
+function ProjectHead({ designName, designId, setIsSidebarOpen, ...sharedProps }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isChangeModeMenuOpen, setIsChangeModeMenuOpen] = useState(false);
@@ -229,41 +230,19 @@ function ProjectHead({ designName, designId, setIsSidebarOpen }) {
     }
   };
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle("dark-mode", !darkMode);
-  };
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Sign-out error:", error);
-      });
-  };
-  const handleSettings = () => {
-    signOut(auth)
-      .then(() => {
-        navigate("/settings");
-      })
-      .catch((error) => {
-        console.error("Settings error:", error);
-      });
-  };
-
   return (
     <div className={`designHead stickyMenu ${menuOpen ? "darkened" : ""}`}>
       <DrawerComponent
         isDrawerOpen={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
-        toggleDarkMode={toggleDarkMode}
-        handleLogout={handleLogout}
-        handleSettings={handleSettings}
+        toggleDarkMode={() => toggleDarkMode(user.uid, darkMode, setDarkMode)}
+        handleLogout={() => handleLogout(navigate)}
+        handleSettings={() => handleSettings(navigate)}
         darkMode={darkMode}
         username={username}
         userEmail={user ? user.email : ""}
         designs={designs}
+        {...sharedProps}
       />
       <div className="left">
         <IconButton

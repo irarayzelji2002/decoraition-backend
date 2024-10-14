@@ -23,6 +23,7 @@ import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase.js";
 import DrawerComponent from "../pages/Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
+import { toggleDarkMode, handleSettings, handleLogout } from "../Homepage/backend/HomepageActions";
 
 function DesignHead({
   designName,
@@ -35,6 +36,7 @@ function DesignHead({
   isEditingName,
   setIsEditingName,
   handleNameChange,
+  ...sharedProps
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
@@ -231,41 +233,20 @@ function DesignHead({
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle("dark-mode", !darkMode);
-  };
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Sign-out error:", error);
-      });
-  };
-  const handleSettings = () => {
-    signOut(auth)
-      .then(() => {
-        navigate("/settings");
-      })
-      .catch((error) => {
-        console.error("Settings error:", error);
-      });
-  };
 
   return (
     <div className={`designHead stickyMenu ${menuOpen ? "darkened" : ""}`}>
       <DrawerComponent
         isDrawerOpen={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
-        toggleDarkMode={toggleDarkMode}
-        handleLogout={handleLogout}
-        handleSettings={handleSettings}
+        toggleDarkMode={() => toggleDarkMode(user.uid, darkMode, setDarkMode)}
+        handleLogout={() => handleLogout(navigate)}
+        handleSettings={() => handleSettings(navigate)}
         darkMode={darkMode}
         username={username}
         userEmail={user ? user.email : ""}
         designs={designs}
+        {...sharedProps}
       />
       <div className="left">
         <IconButton

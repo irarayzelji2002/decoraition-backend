@@ -1,43 +1,26 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import Password from "./PassInput";
 
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { verifyPasswordResetCode, confirmPasswordReset } from "firebase/auth";
-import { auth } from "../firebase";
-import Password from "./PassInput";
-import { useState, useEffect } from "react";
 
 const defaultTheme = createTheme();
 
 export default function ChangePass({ email }) {
-  const [searchParams] = useSearchParams();
-  const actionCode = searchParams.get("oobCode");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   // Verify the password reset code
-  //   verifyPasswordResetCode(auth, actionCode)
-  //     .then((email) => {
-  //       // Email verified, proceed to reset password
-  //       console.log("Email verified:", email);
-  //     })
-  //     .catch((error) => {
-  //       setError("Invalid or expired action code.");
-  //       console.error("Error verifying code:", error);
-  //     });
-  // }, [actionCode]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();

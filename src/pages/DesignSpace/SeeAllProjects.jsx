@@ -1,33 +1,20 @@
 import React, { useState, useEffect } from "react";
-import SearchAppBar from "../Homepage/SearchAppBar.jsx";
-import { onAuthStateChanged } from "firebase/auth";
-
-import "../../css/seeAll.css";
-
-import { auth, db } from "../../firebase.js";
-import Dropdowns from "../../components/Dropdowns.jsx";
-
 import { useNavigate } from "react-router-dom";
+import SearchAppBar from "../Homepage/SearchAppBar.jsx";
+import {
+  handleDeleteDesign,
+  handleDeleteProject,
+  handleCreateProject,
+} from "../Homepage/backend/HomepageActions";
+
+import Dropdowns from "../../components/Dropdowns.jsx";
 import DesignIcon from "../../components/DesignIcon.jsx";
 import "../../css/homepage.css";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  deleteDoc,
-  limit,
-  startAfter,
-} from "firebase/firestore";
-import { handleDeleteProject, handleCreateProject } from "../Homepage/backend/HomepageActions";
+import "../../css/seeAll.css";
 
 export default function SeeAllProjects({ ...sharedProps }) {
   const navigate = useNavigate();
-
-  const user = sharedProps.user;
-  const projects = sharedProps.projects;
-  const setProjects = sharedProps.setProjects;
+  const { user, setUser, projects, setProjects, designs, setDesigns } = sharedProps;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [lastVisible, setLastVisible] = useState(null);
@@ -61,19 +48,6 @@ export default function SeeAllProjects({ ...sharedProps }) {
     return () => unsubscribeDesigns();
   };
 
-  const handleDeleteDesign = async (designId) => {
-    try {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        const designRef = doc(db, "users", currentUser.uid, "projects", designId);
-        await deleteDoc(designRef);
-        fetchDesigns(currentUser.uid, page);
-      }
-    } catch (error) {
-      console.error("Error deleting design: ", error);
-    }
-  };
-
   const handlePageClick = (pageNumber) => {
     setPage(pageNumber);
     // fetchDesigns(user.uid, pageNumber);
@@ -97,7 +71,11 @@ export default function SeeAllProjects({ ...sharedProps }) {
 
   return (
     <>
-      <SearchAppBar onSearchChange={(value) => setSearchQuery(value)} user={user} />
+      <SearchAppBar
+        onSearchChange={(value) => setSearchQuery(value)}
+        user={user}
+        {...sharedProps}
+      />
       <div className="bg">
         <div className="dropdown-container">
           <Dropdowns />
@@ -113,7 +91,7 @@ export default function SeeAllProjects({ ...sharedProps }) {
                     key={design.id}
                     name={design.name}
                     designId={design.id}
-                    onDelete={handleDeleteProjectClick}
+                    onDelete={() => handleDeleteProject(user.uid, design.id, navigate, setProjects)}
                     onOpen={() =>
                       navigate(`/design/${design.id}`, {
                         state: { designId: design.id },

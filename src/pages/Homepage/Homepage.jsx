@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  fetchUserData,
-  fetchDesigns,
-  fetchProjects,
+  fetchUserDesigns,
+  fetchUserProjects,
+  handleLogout,
+  handleSettings,
   handleCreateDesign,
   handleCreateProject,
   handleDeleteDesign,
   handleDeleteProject,
+  handleViewChange,
+  toggleDarkMode,
   toggleMenu,
   formatDate,
 } from "./backend/HomepageActions";
-import { useAuth } from "../../AuthContext";
 
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -29,12 +31,7 @@ import Loading from "../../components/Loading.jsx";
 
 function Homepage({ ...sharedProps }) {
   const navigate = useNavigate();
-
-  const user = sharedProps.user;
-  const designs = sharedProps.designs;
-  const setDesigns = sharedProps.setDesigns;
-  const projects = sharedProps.projects;
-  const setProjects = sharedProps.setProjects;
+  const { user, designs, setDesigns, projects, setProjects } = sharedProps;
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -68,6 +65,8 @@ function Homepage({ ...sharedProps }) {
         user={user}
         onMenuClick={() => setDrawerOpen(true)}
         onSearchChange={setSearchQuery}
+        searchQuery={searchQuery}
+        {...sharedProps}
       />
 
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>

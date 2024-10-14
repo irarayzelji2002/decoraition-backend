@@ -320,7 +320,7 @@ function App() {
               }
             />
             <Route
-              path="/projBudget/:projectId"
+              path="/projectBudget/:projectId"
               element={
                 <ProtectedRoute>
                   <ProjBudget {...sharedProps} />

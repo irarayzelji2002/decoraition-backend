@@ -37,7 +37,7 @@ router.post("/expire-otp", userController.expireOTP);
 router.post("/change-password", userController.changePassword);
 router.post("/logout", authenticateUser, userController.handleLogout);
 router.get("/user/:userId", authenticateUser, userController.fetchUserData);
-router.post("/settings", authenticateUser, userController.handleSettings);
+router.post("/settings", authenticateUser, userController.handleSettings); // not yet implemented
 router.post("/user/profile-pic", authenticateUser, userController.updateProfilePic);
 router.post("/user/update-field", authenticateUser, userController.updateUserField);
 router.post("/user/user-details", authenticateUser, userController.updateUserDetails);
@@ -51,15 +51,21 @@ router.post(
   authenticateUser,
   userController.updateNotificationSettings
 );
+router.post("/user/layout-settings", authenticateUser, userController.updateLayoutSettings);
+router.post("/user/theme", authenticateUser, userController.updateTheme);
 
 // Design routes
-router.get("/designs/:userId", authenticateUser, designController.fetchDesigns);
-router.post("/designs", authenticateUser, designController.handleCreateDesign);
-router.delete("/designs/:designId", authenticateUser, designController.handleDeleteDesign);
+router.get("/design/:userId", authenticateUser, designController.fetchUserDesigns);
+router.post("/design/create", authenticateUser, designController.handleCreateDesign);
+router.delete("/design/delete/:designId", authenticateUser, designController.handleDeleteDesign);
 
 // Project routes
-router.get("/projects/:userId", authenticateUser, projectController.fetchProjects);
-router.post("/projects", authenticateUser, projectController.handleCreateProject);
-router.delete("/projects/:projectId", authenticateUser, projectController.handleDeleteProject);
+router.get("/project/:userId", authenticateUser, projectController.fetchUserProjects);
+router.post("/project/create", authenticateUser, projectController.handleCreateProject);
+router.delete(
+  "/project/delete/:projectId",
+  authenticateUser,
+  projectController.handleDeleteProject
+);
 
 module.exports = router;

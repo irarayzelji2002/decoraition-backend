@@ -101,7 +101,7 @@ function App() {
           <Route path="/project" element={<Project />} />
           <Route path="/planMap" element={<PlanMap />} />
           <Route path="/timeline" element={<Timeline />} />
-          <Route path="/projBudget" element={<ProjBudget />} />
+          <Route path="/projectBudget" element={<ProjBudget />} />
           <Route path="/addPin" element={<AddPin />} />
           <Route path="/editEvent" element={<EditEvent />} />
           <Route path="/projSetting" element={<ProjSetting />} />

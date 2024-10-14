@@ -23,7 +23,7 @@ function PlanMap() {
   };
 
   return (
-    <div className="app-container">
+    <>
       <ToastContainer />
       <ProjectHead />
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
@@ -42,7 +42,6 @@ function PlanMap() {
           <MapPin />
         </div>
       </div>
-      <BottomBarDesign PlanMap={true} projId={projectId} />
 
       {/* Floating Action Button */}
       <div className="circle-button-container">
@@ -81,7 +80,8 @@ function PlanMap() {
           {menuOpen ? <CloseIcon /> : <AddIcon />}
         </div>
       </div>
-    </div>
+      <BottomBarDesign PlanMap={true} projId={projectId} />
+    </>
   );
 }
 

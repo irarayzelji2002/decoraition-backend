@@ -13,6 +13,30 @@ import { CheckCircle } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete.js";
 import { db, auth } from "../../../firebase"; // Adjust the import path as needed
 
+// HomepageFunctions.jsx
+export const searchProjects = (searchQuery, designs, setFilteredDesigns) => {
+  if (searchQuery.trim()) {
+    const results = designs.filter((design) =>
+      design.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredDesigns(results);
+  } else {
+    setFilteredDesigns([]); // Clear search results when no query
+  }
+};
+
+export const handleKeyPress = (
+  event,
+  searchProjects,
+  searchQuery,
+  designs,
+  setFilteredDesigns
+) => {
+  if (event.key === "Enter") {
+    searchProjects(searchQuery, designs, setFilteredDesigns);
+  }
+};
+
 export const fetchUserData = (user, setUsername, setUser) => {
   const userRef = doc(db, "users", user.uid);
   onSnapshot(userRef, (doc) => {

@@ -116,7 +116,7 @@ function Project() {
     );
   }
   return (
-    <div className="app-container">
+    <>
       <ToastContainer
         progressStyle={{ backgroundColor: "var(--brightFont)" }}
       />
@@ -256,7 +256,7 @@ function Project() {
       {modalOpen && <Modal onClose={closeModal} />}
 
       <BottomBarDesign Design={true} projId={projectId} />
-    </div>
+    </>
   );
 }
 

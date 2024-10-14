@@ -1,5 +1,7 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase";
 import {
   Button,
   FormControlLabel,
@@ -9,6 +11,11 @@ import {
   Typography,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {
+  saveNotificationSettings,
+  fetchNotificationSettings,
+} from "./backend/SettingsFunction";
+import Loading from "../../components/Loading";
 
 const theme = createTheme({
   components: {
@@ -34,30 +41,84 @@ const theme = createTheme({
 });
 
 export default function Notifications() {
-  const [allowPushNotifications, setAllowPushNotifications] = useState(true);
-  const [deleteNotifications, setDeleteNotifications] = useState(true);
-  const [deleteReadNotifications, setDeleteReadNotifications] = useState(15);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [allowNotif, setAllowNotif] = useState(true);
+  const [deleteNotif, setDeleteNotif] = useState(true);
+  const [deleteNotifAfter, setDeleteNotifAfter] = useState(15);
 
   const [commentNotifications, setCommentNotifications] = useState({
-    mentioned: true,
-    newCommentOwner: true,
-    newCommentEditor: true,
-    resolvedOwner: true,
-    resolvedEditor: true,
+    mentionedInComment: true,
+    newCommentReplyAsOwner: true,
+    newCommentReplyAsCollab: true,
+    commentStatusChangeAsOwner: true,
+    commentStatusChangeAsCollab: true,
   });
-  const [timelineNotifications, setTimelineNotifications] = useState(false);
+  const [timelineNotifications, setTimelineNotifications] = useState(true);
   const [designNotifications, setDesignNotifications] = useState({
-    renamed: true,
-    inactive: true,
-    deleted: true,
-    roleChanged: true,
+    renamedDesign: true,
+    inactiveDesign: true,
+    deletedDesign: true,
+    changeRoleInDesign: true,
   });
   const [projectNotifications, setProjectNotifications] = useState({
-    renamed: true,
-    inactive: true,
-    deleted: true,
-    roleChanged: true,
+    renamedProject: true,
+    inactiveProject: true,
+    deletedProject: true,
+    changeRoleInProject: true,
   });
+
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUser(user);
+        setLoading(true); // Set loading to true before fetching data
+        const settings = await fetchNotificationSettings(user.uid);
+        if (settings) {
+          setAllowNotif(settings.allowNotif);
+          setDeleteNotif(settings.deleteNotif);
+          setDeleteNotifAfter(settings.deleteNotifAfter);
+          setCommentNotifications(settings.commentNotifications);
+          setTimelineNotifications(settings.timelineNotifications);
+          setDesignNotifications(settings.designNotifications);
+          setProjectNotifications(settings.projectNotifications);
+        }
+        setLoading(false); // Set loading to false after fetching data
+      } else {
+        setUser(null);
+        setLoading(false); // Set loading to false if no user
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
+
+  const handleSaveSettings = () => {
+    if (user) {
+      const settings = {
+        allowNotif,
+        deleteNotif,
+        deleteNotifAfter,
+        commentNotifications,
+        timelineNotifications,
+        designNotifications,
+        projectNotifications,
+      };
+      saveNotificationSettings(user.uid, settings);
+    }
+  };
+
+  useEffect(() => {
+    handleSaveSettings();
+  }, [
+    allowNotif,
+    deleteNotif,
+    deleteNotifAfter,
+    commentNotifications,
+    timelineNotifications,
+    designNotifications,
+    projectNotifications,
+  ]);
 
   const handleCommentNotificationChange = (name, value) => {
     setCommentNotifications({
@@ -65,18 +126,35 @@ export default function Notifications() {
       [name]: value,
     });
   };
+
   const handleDesignNotificationChange = (name, value) => {
     setDesignNotifications({
       ...designNotifications,
       [name]: value,
     });
   };
+
   const handleProjectNotificationChange = (name, value) => {
     setProjectNotifications({
       ...projectNotifications,
       [name]: value,
     });
   };
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -93,10 +171,8 @@ export default function Notifications() {
             label="Allow push notifications"
             control={
               <Switch
-                checked={allowPushNotifications}
-                onChange={(event) =>
-                  setAllowPushNotifications(event.target.checked)
-                }
+                checked={allowNotif}
+                onChange={(event) => setAllowNotif(event.target.checked)}
                 aria-label="Allow push notifications"
               />
             }
@@ -105,10 +181,8 @@ export default function Notifications() {
             label="Enable deletion of notifications"
             control={
               <Switch
-                checked={deleteNotifications}
-                onChange={(event) =>
-                  setDeleteNotifications(event.target.checked)
-                }
+                checked={deleteNotif}
+                onChange={(event) => setDeleteNotif(event.target.checked)}
                 aria-label="Enable deletion of notifications"
               />
             }
@@ -121,13 +195,14 @@ export default function Notifications() {
             Delete read notifications after how many days?
           </Typography>
           <Slider
-            value={deleteReadNotifications}
-            onChange={(event, newValue) => setDeleteReadNotifications(newValue)}
+            value={deleteNotifAfter}
+            onChange={(event, newValue) => setDeleteNotifAfter(newValue)}
             aria-labelledby="delete-read-notifications-slider"
-            valueLabelDisplay="auto"
+            valueLabelDisplay="on"
             min={1}
             max={30}
             sx={{
+              marginTop: "24px",
               color: "var(--slider)", // Slider color
               "& .MuiSlider-thumb": {
                 background: "var(--gradientCircle)", // Gradient thumb
@@ -154,10 +229,10 @@ export default function Notifications() {
             label="Mentioned in a comment or reply"
             control={
               <Switch
-                checked={commentNotifications.mentioned}
+                checked={commentNotifications.mentionedInComment}
                 onChange={(event) =>
                   handleCommentNotificationChange(
-                    "mentioned",
+                    "mentionedInComment",
                     event.target.checked
                   )
                 }
@@ -169,10 +244,10 @@ export default function Notifications() {
             label="A new comment or reply if I'm the owner"
             control={
               <Switch
-                checked={commentNotifications.newCommentOwner}
+                checked={commentNotifications.newCommentReplyAsOwner}
                 onChange={(event) =>
                   handleCommentNotificationChange(
-                    "newCommentOwner",
+                    "newCommentReplyAsOwner",
                     event.target.checked
                   )
                 }
@@ -184,10 +259,10 @@ export default function Notifications() {
             label="A new comment or reply if I'm an editor or commenter"
             control={
               <Switch
-                checked={commentNotifications.newCommentEditor}
+                checked={commentNotifications.newCommentReplyAsCollab}
                 onChange={(event) =>
                   handleCommentNotificationChange(
-                    "newCommentEditor",
+                    "newCommentReplyAsCollab",
                     event.target.checked
                   )
                 }
@@ -199,10 +274,10 @@ export default function Notifications() {
             label="Comment is resolved or reopened if I'm the owner"
             control={
               <Switch
-                checked={commentNotifications.resolvedOwner}
+                checked={commentNotifications.commentStatusChangeAsOwner}
                 onChange={(event) =>
                   handleCommentNotificationChange(
-                    "resolvedOwner",
+                    "commentStatusChangeAsOwner",
                     event.target.checked
                   )
                 }
@@ -214,10 +289,10 @@ export default function Notifications() {
             label="Comment is resolved or reopened if I'm an editor or commenter"
             control={
               <Switch
-                checked={commentNotifications.resolvedEditor}
+                checked={commentNotifications.commentStatusChangeAsCollab}
                 onChange={(event) =>
                   handleCommentNotificationChange(
-                    "resolvedEditor",
+                    "commentStatusChangeAsCollab",
                     event.target.checked
                   )
                 }
@@ -258,17 +333,17 @@ export default function Notifications() {
         </Typography>
         <FormGroup>
           <FormControlLabel
-            label="Design is renamed by a manager"
+            label="Design is renamedProject by a manager"
             control={
               <Switch
-                checked={designNotifications.renamed}
+                checked={designNotifications.renamedDesign}
                 onChange={(event) =>
                   handleDesignNotificationChange(
-                    "renamed",
+                    "renamedDesign",
                     event.target.checked
                   )
                 }
-                aria-label="Design is renamed by a manager"
+                aria-label="Design is renamedProject by a manager"
               />
             }
           />
@@ -276,10 +351,10 @@ export default function Notifications() {
             label="Design will be or is in inactive mode"
             control={
               <Switch
-                checked={designNotifications.inactive}
+                checked={designNotifications.inactiveDesign}
                 onChange={(event) =>
                   handleDesignNotificationChange(
-                    "inactive",
+                    "inactiveDesign",
                     event.target.checked
                   )
                 }
@@ -288,17 +363,17 @@ export default function Notifications() {
             }
           />
           <FormControlLabel
-            label="Design will be or is deleted"
+            label="Design will be or is deletedProject"
             control={
               <Switch
-                checked={designNotifications.deleted}
+                checked={designNotifications.deletedDesign}
                 onChange={(event) =>
                   handleDesignNotificationChange(
-                    "deleted",
+                    "deletedDesign",
                     event.target.checked
                   )
                 }
-                aria-label="Design will be or is deleted"
+                aria-label="Design will be or is deletedProject"
               />
             }
           />
@@ -306,10 +381,10 @@ export default function Notifications() {
             label="Your role in the design is changed by an owner or editor"
             control={
               <Switch
-                checked={designNotifications.roleChanged}
+                checked={designNotifications.changeRoleInDesign}
                 onChange={(event) =>
                   handleDesignNotificationChange(
-                    "roleChanged",
+                    "changeRoleInDesign",
                     event.target.checked
                   )
                 }
@@ -328,17 +403,17 @@ export default function Notifications() {
         </Typography>
         <FormGroup>
           <FormControlLabel
-            label="Project is renamed by a manager"
+            label="Project is renamedProject by a manager"
             control={
               <Switch
-                checked={projectNotifications.renamed}
+                checked={projectNotifications.renamedProject}
                 onChange={(event) =>
                   handleProjectNotificationChange(
-                    "renamed",
+                    "renamedProject",
                     event.target.checked
                   )
                 }
-                aria-label="Project is renamed by a manager"
+                aria-label="Project is renamedProject by a manager"
               />
             }
           />
@@ -346,10 +421,10 @@ export default function Notifications() {
             label="Project will be or is in inactive mode"
             control={
               <Switch
-                checked={projectNotifications.inactive}
+                checked={projectNotifications.inactiveProject}
                 onChange={(event) =>
                   handleProjectNotificationChange(
-                    "inactive",
+                    "inactiveProject",
                     event.target.checked
                   )
                 }
@@ -358,17 +433,17 @@ export default function Notifications() {
             }
           />
           <FormControlLabel
-            label="Project will be or is deleted"
+            label="Project will be or is deletedProject"
             control={
               <Switch
-                checked={projectNotifications.deleted}
+                checked={projectNotifications.deletedProject}
                 onChange={(event) =>
                   handleProjectNotificationChange(
-                    "deleted",
+                    "deletedProject",
                     event.target.checked
                   )
                 }
-                aria-label="Project will be or is deleted"
+                aria-label="Project will be or is deletedProject"
               />
             }
           />
@@ -376,10 +451,10 @@ export default function Notifications() {
             label="Your role in the project is changed by an manager"
             control={
               <Switch
-                checked={projectNotifications.roleChanged}
+                checked={projectNotifications.changeRoleInProject}
                 onChange={(event) =>
                   handleProjectNotificationChange(
-                    "roleChanged",
+                    "changeRoleInProject",
                     event.target.checked
                   )
                 }

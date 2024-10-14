@@ -125,12 +125,12 @@
 
 .icon-container svg {
   color: white;
-  font-size: 16px;
+  font-size: 1em;
 }
 
 .svg-icon {
   color: var(--gradientButton);
-  font-size: 24px;
+  font-size: 1.5em;
   transition: color 0.3s ease;
 }
 

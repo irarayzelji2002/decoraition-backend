@@ -22,41 +22,42 @@ body {
 .content-section {
   z-index: 2;
   position: relative;
-  color: #fff;
+  color: var(--color-white);
   text-align: left;
   margin-bottom: 50px;
 }
 
 h1 {
-  font-size: 48px;
+  font-size: 3em;
   font-weight: bold;
   margin: 0;
 }
 
 .highlight {
-  font-weight:800;
+  font-weight: 800;
 }
 
 .tagline {
-  font-size: 18px;
+  font-size: 1.125em;
   margin-top: 10px;
   line-height: 1.5;
 }
 
 .download-btn {
   background: var(--gradientButton);
-  color: white;
+  color: var(--color-white);
   padding: 15px 30px;
   border: none;
   border-radius: 30px;
-  font-size: 16px;
+  font-size: 1em;
   margin-top: 20px;
   cursor: pointer;
+  font-weight: bold;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .download-btn:hover {
-  background-color: var(--gradientButtonHover);
+  background-image: var(--gradientButtonHover);
 }
 
 .image-grid {
@@ -88,16 +89,16 @@ h1 {
 
 @media (max-width: 768px) {
   h1 {
-    font-size: 32px;
+    font-size: 2em;
   }
 
   .tagline {
-    font-size: 16px;
+    font-size: 1em;
   }
 
   .download-btn {
     padding: 10px 20px;
-    font-size: 14px;
+    font-size: 0.875em;
   }
 
   .image-grid {

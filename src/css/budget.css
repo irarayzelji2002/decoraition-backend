@@ -1,6 +1,6 @@
 .titleBudget {
-  font-size: 24px;
-  color: aliceblue;
+  font-size: 1.5em;
+  color: var(--color-white);
   margin-bottom: -12px;
 }
 
@@ -12,8 +12,8 @@
 }
 
 .priceSum {
-  font-size: 18px;
-  color: #fafafa;
+  font-size: 1.125em;
+  color: var(--color-white);
   margin-top: 24px;
   background-color: var(--inputBg);
   width: fit-content;
@@ -26,7 +26,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 18px;
+  margin: 1.125em;
   width: 80%;
   height: 100vh;
 }
@@ -45,7 +45,7 @@
   margin: 12px;
 }
 .itemName {
-  font-size: 18px;
+  font-size: 1.125em;
   color: var(--corlor-white);
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -56,7 +56,7 @@
 }
 .itemPrice {
   margin-top: 12px;
-  font-size: 12px;
+  font-size: 1.125em;
   opacity: 0.6;
   color: var(--corlor-white);
 }
@@ -127,7 +127,7 @@
 
 .small-button-text {
   color: var(--corlor-white);
-  font-size: 14px;
+  font-size: 0.875em;
   font-weight: bold;
 }
 .overlay {
@@ -141,7 +141,7 @@
 }
 
 .SubtitleBudget {
-  font-size: 20px;
+  font-size: 1.25em;
   margin-bottom: 12px;
   font-weight: bold;
 }

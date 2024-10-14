@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { showToast } from "../../functions/utils";
 
 import Button from "@mui/material/Button";
@@ -57,15 +58,9 @@ export default function LoginModal() {
     }
 
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post("/api/login", { email, password });
 
-      if (response.ok) {
+      if (response.status === 200) {
         const { userData } = await response.json();
         // Handle successful login
         showToast("success", "Login successful!");
@@ -85,14 +80,9 @@ export default function LoginModal() {
     let user = {};
     let userData = {};
     try {
-      const response = await fetch("/api/google-signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post("/api/google-signin");
 
-      if (!response.ok) {
+      if (!response.status === 200) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -121,15 +111,9 @@ export default function LoginModal() {
 
     try {
       // Call your API to create or update user in your database
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
+      const response = await axios.post("/api/register", userData);
 
-      if (response.ok) {
+      if (response.status === 200) {
         // Handle successful user creation/login
         showToast("success", "Successfully signed in with Google!");
         setTimeout(() => navigate("/homepage"), 1000);

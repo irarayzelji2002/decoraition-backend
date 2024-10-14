@@ -136,7 +136,7 @@ function Settings({ ...sharedProps }) {
   // Update firstName, lastName, and username
   const handleUpdateUserDetails = async (updatedFields) => {
     try {
-      const response = await axios.post("/api/update-user-profile", {
+      const response = await axios.post("/api/user/user-details", {
         userId: user.uid,
         ...updatedFields,
       });
@@ -154,13 +154,13 @@ function Settings({ ...sharedProps }) {
   // Update theme/ email/ connectedAccount)
   const handleSave = async (field, value) => {
     try {
-      const response = await axios.post("/api/update-user-field", {
+      const response = await axios.post("/api/user/update-field", {
         userId: user.uid,
         field,
         value,
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         showToast(`${field} updated successfully`, "success");
         setUser({ ...user, [field]: value });
       } else {
@@ -192,7 +192,7 @@ function Settings({ ...sharedProps }) {
       formData.append("selectedFile", selectedFile);
       formData.append("userId", user.uid);
 
-      const response = await axios.post("/api/update-profile-pic", formData, {
+      const response = await axios.post("/api/user/profile-pic", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -219,7 +219,7 @@ function Settings({ ...sharedProps }) {
   // Update connectedAccount
   const handleConnectedAccountChange = async (value) => {
     try {
-      const response = await axios.put(`/api/update-connected-account/${user.uid}`, {
+      const response = await axios.put(`/api/user/connected-account/${user.uid}`, {
         connectedAccount: value,
       });
 
@@ -260,15 +260,12 @@ function Settings({ ...sharedProps }) {
     try {
       // Call your API endpoint to update the password
       // This is a placeholder and should be replaced with your actual API call
-      const response = await fetch("/api/update-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(passwordData),
+      const response = await axios.post("/api/user/update-password", {
+        userId: user.uid,
+        ...passwordData,
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         // Password updated successfully
         showToast("Password updated successfully", "success");
       } else {

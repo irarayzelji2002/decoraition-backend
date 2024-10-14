@@ -98,7 +98,7 @@ exports.createUser = async (req, res) => {
       updatedAt: new Date(),
     });
 
-    res.status(201).json({ message: "User created successfully", userId });
+    res.status(200).json({ message: "User created successfully", userId });
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ error: "Failed to create user", message: error.message });
@@ -300,6 +300,7 @@ exports.changePassword = async (req, res) => {
 // Update Profile Picture
 export const updateProfilePic = async (req, res) => {
   const { selectedFile, userId } = req.body;
+  const updatedAt = new Date();
 
   if (!selectedFile || !userId) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -312,9 +313,13 @@ export const updateProfilePic = async (req, res) => {
     const photoURL = await getDownloadURL(storageRef);
 
     const userDocRef = adminDb.collection("users").doc(userId);
-    await userDocRef.update({ photoURL });
+    await userDocRef.update({ photoURL: photoURL, updatedAt: updatedAt });
 
-    res.status(200).json({ message: "Profile picture updated successfully", photoURL });
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      photoURL: photoURL,
+      updatedAt: updatedAt,
+    });
   } catch (error) {
     console.error("Error updating profile picture:", error);
     res.status(500).json({ error: "Failed to update profile picture" });
@@ -338,6 +343,8 @@ export const updateUserField = async (req, res) => {
     }
 
     const updateData = {};
+    const updatedAt = new Date();
+    updateData.updatedAt = updatedAt;
 
     switch (field) {
       case "theme":
@@ -397,7 +404,9 @@ export const updateUserField = async (req, res) => {
     }
 
     await userDocRef.update(updateData);
-    res.status(200).json({ message: `${field} updated successfully`, [field]: value });
+    res
+      .status(200)
+      .json({ message: `${field} updated successfully`, [field]: value, updatedAt: updatedAt });
   } catch (error) {
     console.error(`Error updating ${field}:`, error);
     res.status(500).json({ error: `Failed to update ${field}` });
@@ -405,7 +414,7 @@ export const updateUserField = async (req, res) => {
 };
 
 // Update User Field (firstName, lastName, and username)
-export const updateUserProfile = async (req, res) => {
+export const updateUserDetails = async (req, res) => {
   const { userId, firstName, lastName, username } = req.body;
 
   if (!userId) {
@@ -421,6 +430,7 @@ export const updateUserProfile = async (req, res) => {
     }
 
     const updateData = {};
+    updateData.updatedAt = new Date();
 
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
@@ -454,8 +464,12 @@ exports.updateConnectedAccount = async (req, res) => {
   try {
     const { userId } = req.params;
     const { connectedAccount } = req.body;
+    const updatedAt = new Date();
 
-    await db.collection("users").doc(userId).update({ connectedAccount });
+    await db
+      .collection("users")
+      .doc(userId)
+      .update({ connectedAccount: connectedAccount, updatedAt: updatedAt });
 
     const user = auth.currentUser;
 
@@ -473,9 +487,42 @@ exports.updateConnectedAccount = async (req, res) => {
       await user.linkWithPopup(provider);
     }
 
-    res.status(200).json({ message: "Connected account updated successfully" });
+    res.status(200).json({
+      message: "Connected account updated successfully",
+      connectedAccount: connectedAccount,
+      updatedAt: updatedAt,
+    });
   } catch (error) {
     console.error("Error updating connected account:", error);
     res.status(500).json({ error: "Failed to update connected account" });
+  }
+};
+
+// Update User Notification Settings
+exports.updateNotificationSettings = async (req, res) => {
+  try {
+    const { userId, notifSettings } = req.body;
+
+    const userRef = db.collection("users").doc(userId);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const updatedAt = new Date();
+    await userRef.update({
+      notifSettings: notifSettings,
+      updatedAt: updatedAt,
+    });
+
+    res.status(200).json({
+      message: "Notification settings updated successfully",
+      notifSettings: notifSettings,
+      updatedAt: updatedAt,
+    });
+  } catch (error) {
+    console.error("Error updating notification settings:", error);
+    res.status(500).json({ error: "Failed to update notification settings" });
   }
 };

@@ -108,7 +108,7 @@ const Signup = () => {
         email,
         password,
       });
-      if (response.ok) {
+      if (response.status === 200) {
         showToast("success", "Registration successful!");
         navigate("/login");
       } else {

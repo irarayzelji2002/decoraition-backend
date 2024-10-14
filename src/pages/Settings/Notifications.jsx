@@ -1,5 +1,7 @@
-import * as React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { showToast } from "../../functions/utils";
+
 import { Button, FormControlLabel, FormGroup, Slider, Switch, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -26,30 +28,37 @@ const theme = createTheme({
   },
 });
 
-export default function Notifications() {
-  const [allowNotif, setAllowNotif] = useState(true);
-  const [deleteNotif, setDeleteNotif] = useState(true);
-  const [deleteNotifAfter, setDeleteNotifAfter] = useState(15);
-
+export default function Notifications({ ...sharedProps }) {
+  const { user, setUser } = sharedProps;
+  const [allowNotif, setAllowNotif] = useState(user?.notifSettings?.allowNotif || true);
+  const [deleteNotif, setDeleteNotif] = useState(user?.notifSettings?.deleteNotif || true);
+  const [deleteNotifAfter, setDeleteNotifAfter] = useState(
+    user?.notifSettings?.deleteNotifAfter || 15
+  );
+  const [timeForCalEventReminder, setTimeForCalEventReminder] = useState(
+    user?.notifSettings?.timeForCalEventReminder || "0800"
+  );
   const [commentNotifications, setCommentNotifications] = useState({
-    mentionedInComment: true,
-    newCommentReplyAsOwner: true,
-    newCommentReplyAsCollab: true,
-    commentStatusChangeAsOwner: true,
-    commentStatusChangeAsCollab: true,
+    mentionedInComment: user?.notifSettings?.mentionedInComment || true,
+    newCommentReplyAsOwner: user?.notifSettings?.newCommentReplyAsOwner || true,
+    newCommentReplyAsCollab: user?.notifSettings?.newCommentReplyAsCollab || false,
+    commentStatusChangeAsOwner: user?.notifSettings?.commentStatusChangeAsOwner || true,
+    commentStatusChangeAsCollab: user?.notifSettings?.commentStatusChangeAsCollab || false,
   });
-  const [calEventReminder, setCalEventReminder] = useState(false);
+  const [calEventReminder, setCalEventReminder] = useState(
+    user?.notifSettings?.calEventReminder || true
+  );
   const [designNotifications, setDesignNotifications] = useState({
-    renamedDesign: true,
-    inactiveDesign: true,
-    deletedDesign: true,
-    changeRoleInDesign: true,
+    renamedDesign: user?.notifSettings?.renamedDesign || true,
+    inactiveDesign: user?.notifSettings?.inactiveDesign || false,
+    deletedDesign: user?.notifSettings?.deletedDesign || false,
+    changeRoleInDesign: user?.notifSettings?.changeRoleInDesign || false,
   });
   const [projectNotifications, setProjectNotifications] = useState({
-    renamedProject: true,
-    inactiveProject: true,
-    deletedProject: true,
-    changeRoleInProject: true,
+    renamedProject: user?.notifSettings?.renamedProject || true,
+    inactiveProject: user?.notifSettings?.inactiveProject || false,
+    deletedProject: user?.notifSettings?.deletedProject || false,
+    changeRoleInProject: user?.notifSettings?.changeRoleInProject || false,
   });
 
   const handleCommentNotificationChange = (name, value) => {
@@ -69,6 +78,55 @@ export default function Notifications() {
       ...projectNotifications,
       [name]: value,
     });
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const {
+        mentionedInComment,
+        newCommentReplyAsOwner,
+        newCommentReplyAsCollab,
+        commentStatusChangeAsOwner,
+        commentStatusChangeAsCollab,
+      } = commentNotifications;
+      const { renamedDesign, inactiveDesign, deletedDesign, changeRoleInDesign } =
+        designNotifications;
+      const { renamedProject, inactiveProject, deletedProject, changeRoleInProject } =
+        projectNotifications;
+
+      const updatedSettings = {
+        allowNotif,
+        deleteNotif,
+        deleteNotifAfter,
+        timeForCalEventReminder,
+        mentionedInComment,
+        newCommentReplyAsOwner,
+        newCommentReplyAsCollab,
+        commentStatusChangeAsOwner,
+        commentStatusChangeAsCollab,
+        calEventReminder,
+        renamedDesign,
+        inactiveDesign,
+        deletedDesign,
+        changeRoleInDesign,
+        renamedProject,
+        inactiveProject,
+        deletedProject,
+        changeRoleInProject,
+      };
+      const response = await axios.post("/api/user/update-notifications", {
+        userId: user.id,
+        notifSettings: updatedSettings,
+      });
+      if (response.status === 200) {
+        setUser({ ...user, notifSettings: response.data.notifSettings });
+        console.log("Notification settings updated successfully");
+        showToast("success", "Notification settings updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error updating notification settings:", error);
+      showToast("error", "Error updating notification settings. Please try again.");
+    }
   };
 
   return (
@@ -355,6 +413,7 @@ export default function Notifications() {
                 backgroundImage: "var(--gradientButtonHover)",
               },
             }}
+            onClick={handleSaveChanges}
           >
             Save Settings
           </Button>

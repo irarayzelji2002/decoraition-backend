@@ -40,10 +40,16 @@ router.get("/user/:userId", authenticateUser, userController.fetchUserData);
 router.post("/settings", authenticateUser, userController.handleSettings);
 router.post("/user/profile-pic", authenticateUser, userController.updateProfilePic);
 router.post("/user/update-field", authenticateUser, userController.updateUserField);
+router.post("/user/user-details", authenticateUser, userController.updateUserDetails);
 router.put(
   "/user/connected-account/:userId",
   authenticateUser,
   userController.updateConnectedAccount
+);
+router.post(
+  "/user/update-notifications",
+  authenticateUser,
+  userController.updateNotificationSettings
 );
 
 // Design routes

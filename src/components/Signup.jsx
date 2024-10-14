@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { showToast } from "../../functions/utils";
 
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -90,36 +92,36 @@ const Signup = () => {
     return formErrors;
   };
 
-  const onSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     const formErrors = handleValidation();
-
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      await setDoc(doc(db, "users", user.uid), {
+      const response = await axios.post("/api/register", {
         firstName,
         lastName,
         username,
         email,
+        password,
       });
-
-      console.log(user);
-      navigate("/login");
+      if (response.ok) {
+        showToast("success", "Registration successful!");
+        navigate("/login");
+      } else {
+        showToast("error", "Registration failed. Please try again.");
+      }
     } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
+      console.error("Registration error:", error);
+      const errMessage = error.response?.data?.message;
+      showToast("error", errMessage || "An error occurred during registration");
 
       setErrors({
-        email: errorCode === "auth/email-already-in-use" ? "Email already in use" : "",
-        password: errorCode === "auth/weak-password" ? "Password is too weak" : "",
+        email: errMessage === "auth/email-already-in-use" ? "Email already in use" : "",
+        password: errMessage === "auth/weak-password" ? "Password is too weak" : "",
       });
     }
   };
@@ -136,7 +138,7 @@ const Signup = () => {
             alignItems: "center",
           }}
         >
-          <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleRegister} noValidate sx={{ mt: 1 }}>
             <span className="formLabels">
               First Name
               <span style={{ color: "var(--color-quaternary)" }}> *</span>

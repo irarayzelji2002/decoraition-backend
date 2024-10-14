@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./AuthContext";
+import ProtectedRoute from "./ProtectedRoute";
 import useFirestoreSnapshots from "./hooks/useFirestoreSnapshots";
 import {
   getAuth,
@@ -35,7 +36,6 @@ import EditEvent from "./pages/ProjectSpace/EditEvent.jsx";
 import ProjSetting from "./pages/Settings/ProjSetting.jsx";
 import Version from "./pages/DesignSpace/Version.jsx";
 import SeeAllProjects from "./pages/DesignSpace/SeeAllProjects.jsx";
-// import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 // import { Rotate90DegreesCcw } from "@mui/icons-material";
 
 function App() {
@@ -159,8 +159,8 @@ function App() {
   }
 
   return (
-    <Router>
-      <AuthProvider>
+    <AuthProvider>
+      <Router>
         <div className="App">
           <Routes>
             {/* BEFORE LOGIN */}
@@ -171,47 +171,196 @@ function App() {
             <Route path="/change" element={<ChangePassw {...beforeLoginSharedProps} />} />
             <Route path="/otp" element={<OneTP {...beforeLoginSharedProps} />} />
             {/* ACCOUNT/HOMEPAGE */}
-            <Route path="/homepage" element={<Homepage {...sharedProps} />} />
-            <Route path="/details" element={<Details {...sharedProps} />} />
-            <Route path="/settings" element={<Settings {...sharedProps} />} />
+            <Route
+              path="/homepage"
+              element={
+                <ProtectedRoute>
+                  <Homepage {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/details"
+              element={
+                <ProtectedRoute>
+                  <Details {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
             {/* DESIGN SPACE */}
-            <Route path="/design/:designId" element={<Design {...sharedProps} />} />
-            <Route path="/searchItem" element={<SearchItem {...sharedProps} />} />
-            <Route path="/addItem/:designId" element={<AddItem {...sharedProps} />} />
-            <Route path="/editItem/:designId/:itemId" element={<EditItem {...sharedProps} />} />
-            <Route path="/users" element={<Users {...sharedProps} />} />
-            <Route path="/budget/:designId" element={<Budget {...sharedProps} />} />
-            <Route path="/seeAllProjects" element={<SeeAllProjects {...sharedProps} />} />
-            <Route path="/seeAllDesigns" element={<SeeAllDesigns {...sharedProps} />} />
-            <Route path="/version" element={<Version {...sharedProps} />} />
+            <Route
+              path="/design/:designId"
+              element={
+                <ProtectedRoute>
+                  <Design {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/searchItem"
+              element={
+                <ProtectedRoute>
+                  <SearchItem {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/addItem/:designId"
+              element={
+                <ProtectedRoute>
+                  <AddItem {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editItem/:designId/:itemId"
+              element={
+                <ProtectedRoute>
+                  <EditItem {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute>
+                  <Users {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/budget/:designId"
+              element={
+                <ProtectedRoute>
+                  <Budget {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/seeAllProjects"
+              element={
+                <ProtectedRoute>
+                  <SeeAllProjects {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/seeAllDesigns"
+              element={
+                <ProtectedRoute>
+                  <SeeAllDesigns {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/version"
+              element={
+                <ProtectedRoute>
+                  <Version {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
             {/* PROJECT SPACE */}
-            <Route path="/project/:projectId" element={<Project {...sharedProps} />} />
+            <Route
+              path="/project/:projectId"
+              element={
+                <ProtectedRoute>
+                  <Project {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/design/:designId/:projectId/project"
-              element={<Design {...sharedProps} />}
+              element={
+                <ProtectedRoute>
+                  <Design {...sharedProps} />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/budget/:designId/:projectId/project"
-              element={<Budget {...sharedProps} />}
+              element={
+                <ProtectedRoute>
+                  <Budget {...sharedProps} />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/addItem/:designId/:projectId/project"
-              element={<AddItem {...sharedProps} />}
+              element={
+                <ProtectedRoute>
+                  <AddItem {...sharedProps} />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/editItem/:designId/:itemId/:projectId/project"
-              element={<EditItem {...sharedProps} />}
+              element={
+                <ProtectedRoute>
+                  <EditItem {...sharedProps} />
+                </ProtectedRoute>
+              }
             />
-            <Route path="/planMap/:projectId" element={<PlanMap {...sharedProps} />} />
-            <Route path="/timeline/:projectId" element={<Timeline {...sharedProps} />} />
-            <Route path="/projBudget/:projectId" element={<ProjBudget {...sharedProps} />} />
-            <Route path="/addPin/" element={<AddPin {...sharedProps} />} />
-            <Route path="/editEvent/:projectId" element={<EditEvent {...sharedProps} />} />
-            <Route path="/projSetting/" element={<ProjSetting {...sharedProps} />} />
+            <Route
+              path="/planMap/:projectId"
+              element={
+                <ProtectedRoute>
+                  <PlanMap {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/timeline/:projectId"
+              element={
+                <ProtectedRoute>
+                  <Timeline {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/projBudget/:projectId"
+              element={
+                <ProtectedRoute>
+                  <ProjBudget {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/addPin/"
+              element={
+                <ProtectedRoute>
+                  <AddPin {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editEvent/:projectId"
+              element={
+                <ProtectedRoute>
+                  <EditEvent {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/projSetting/"
+              element={
+                <ProtectedRoute>
+                  <ProjSetting {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
-      </AuthProvider>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 

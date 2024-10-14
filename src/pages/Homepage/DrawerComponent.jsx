@@ -46,19 +46,6 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
       });
     }
   }, [user]);
-  useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        fetchDesigns(user.uid);
-      } else {
-        setUser(null);
-        setDesigns([]);
-      }
-    });
-
-    return () => unsubscribeAuth();
-  }, []);
 
   const fetchDesigns = (userId) => {
     const designsRef = collection(db, "users", userId, "designs");

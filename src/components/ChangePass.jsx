@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useSearchParams } from "react-router-dom";
+import axios from "axios";
 
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
@@ -16,7 +17,7 @@ import { useState, useEffect } from "react";
 
 const defaultTheme = createTheme();
 
-export default function ChangePass() {
+export default function ChangePass({ email, ...beforeLoginSharedProps }) {
   const [searchParams] = useSearchParams();
   const actionCode = searchParams.get("oobCode");
   const [newPassword, setNewPassword] = useState("");
@@ -38,7 +39,7 @@ export default function ChangePass() {
       });
   }, [actionCode]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (newPassword !== confirmPassword) {
@@ -46,15 +47,14 @@ export default function ChangePass() {
       return;
     }
 
-    confirmPasswordReset(auth, actionCode, newPassword)
-      .then(() => {
-        setSuccess("Password has been reset successfully.");
-        navigate("/"); // Redirect to home page on success
-      })
-      .catch((error) => {
-        setError("Failed to reset password.");
-        console.error("Error resetting password:", error);
-      });
+    try {
+      const response = await axios.post("/api/change-password", { email, newPassword });
+      if (response.data.success) {
+        navigate("/login");
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || "Failed to change password");
+    }
   };
 
   return (

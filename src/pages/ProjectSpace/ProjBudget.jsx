@@ -20,23 +20,6 @@ function ProjBudget() {
   const [designBudgetItems, setDesignBudgetItems] = useState({});
 
   useEffect(() => {
-    const currentUser = auth.currentUser;
-    if (user) {
-    }
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        fetchDesigns(currentUser.uid, projectId, setDesigns, setDesignBudgetItems);
-      } else {
-        setUser(null);
-        setDesigns([]);
-      }
-    });
-
-    return () => unsubscribeAuth();
-  }, [user]);
-
-  useEffect(() => {
     const auth = getAuth();
 
     const unsubscribe = auth.onAuthStateChanged((user) => {

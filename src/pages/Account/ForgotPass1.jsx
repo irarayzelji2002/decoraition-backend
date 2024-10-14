@@ -8,7 +8,7 @@ export default function ForgotPass({ ...beforeLoginSharedProps }) {
         <h1>Forgot Password</h1>
       </div>
       <div className="modal-bg">
-        <ForgotPass1 />
+        <ForgotPass1 {...beforeLoginSharedProps} />
       </div>
     </div>
   );

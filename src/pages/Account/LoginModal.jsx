@@ -14,15 +14,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  getAuth,
-  onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence,
-} from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { Person } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -55,17 +47,6 @@ export default function LoginModal() {
     }
     return formErrors;
   };
-
-  const auth = getAuth();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate("/homepage");
-      }
-    });
-    return () => unsubscribe();
-  }, [auth, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

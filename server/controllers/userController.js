@@ -1,5 +1,12 @@
 const { db, auth } = require("../firebase");
 const { createUserWithEmailAndPassword, signInWithEmailAndPassword } = require("firebase/auth");
+const emailjs = require("emailjs/browser");
+
+const {
+  REACT_APP_EMAILJS_SERVICE_ID,
+  REACT_APP_EMAILJS_TEMPLATE_ID,
+  REACT_APP_EMAILJS_PUBLIC_KEY,
+} = process.env;
 
 // Create
 exports.createUser = async (req, res) => {
@@ -148,5 +155,112 @@ exports.handleLogout = async (req, res) => {
   } catch (error) {
     console.error("Error logging out:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const userDoc = await db.collection("users").where("email", "==", email).get();
+    if (userDoc.empty) {
+      return res.status(404).json({ message: "Email not found" });
+    }
+    const username = userDoc.docs[0].username;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    await db.collection("users").doc(userDoc.docs[0].id).update({ otp });
+
+    // Send email with OTP using emailjs
+    const templateParams = {
+      from_email: "decoraition@gmail.com",
+      to_email: email,
+      to_name: username,
+      otp: otp,
+    };
+    await emailjs.send(
+      REACT_APP_EMAILJS_SERVICE_ID,
+      REACT_APP_EMAILJS_TEMPLATE_ID,
+      templateParams,
+      REACT_APP_EMAILJS_PUBLIC_KEY
+    );
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error in forgotPassword:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    const userDoc = await db.collection("users").where("email", "==", email).get();
+    if (userDoc.empty) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const userData = userDoc.docs[0].data();
+    if (userData.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+    // Remove OTP from user document
+    await db.collection("users").doc(userDoc.docs[0].id).update({ otp: null });
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error in verifyOTP:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.resendOTP = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const userDoc = await db.collection("users").where("email", "==", email).get();
+    if (userDoc.empty) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const username = userDoc.docs[0].username;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    await db.collection("users").doc(userDoc.docs[0].id).update({ otp });
+
+    // Send email with new OTP using emailjs
+    const templateParams = {
+      from_email: "decoraition@gmail.com",
+      to_email: email,
+      to_name: username,
+      otp: otp,
+    };
+    await emailjs.send(
+      REACT_APP_EMAILJS_SERVICE_ID,
+      REACT_APP_EMAILJS_TEMPLATE_ID,
+      templateParams,
+      REACT_APP_EMAILJS_PUBLIC_KEY
+    );
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error in resendOTP:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.expireOTP = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const userDoc = await db.collection("users").where("email", "==", email).get();
+    if (!userDoc.empty) {
+      await db.collection("users").doc(userDoc.docs[0].id).update({ otp: null });
+    }
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error in expireOTP:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await auth.getUserByEmail(email);
+    await auth.updateUser(user.uid, { password });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to change password" });
   }
 };

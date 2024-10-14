@@ -1,9 +1,11 @@
 import "../../css/registerModal.css";
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Input as BaseInput } from "@mui/base/Input";
 import { Box, styled } from "@mui/system";
 import Button from "@mui/material/Button";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
 function OTP({ separator, length, value, onChange, ...beforeLoginSharedProps }) {
   const inputRefs = React.useRef(new Array(length).fill(null));
@@ -231,7 +233,58 @@ const InputElement = styled("input")(
 );
 
 export default function OneTP() {
-  const [otp, setOtp] = React.useState("");
+  const [otp, setOtp] = useState("");
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 0) {
+          clearInterval(timer);
+          handleExpiredOTP();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleExpiredOTP = async () => {
+    try {
+      await axios.post("/api/expire-otp", { email });
+    } catch (error) {
+      console.error("Failed to expire OTP:", error);
+    }
+  };
+
+  const handleVerify = async () => {
+    try {
+      const response = await axios.post("/api/verify-otp", { email, otp });
+      if (response.data.success) {
+        navigate("/change", { state: { email } });
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || "Invalid OTP");
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      await axios.post("/api/resend-otp", { email });
+
+      setTimeLeft(300);
+    } catch (error) {
+      setError("Failed to resend OTP");
+    }
+  };
+
   return (
     <div className="bg">
       <div className="headtext">
@@ -242,6 +295,7 @@ export default function OneTP() {
 
         <center>
           <h5>Enter the OTP code sent to mam**03**@gmail.com</h5>
+          {error && <p>{error}</p>}
           <Box
             sx={{
               display: "flex",
@@ -253,7 +307,22 @@ export default function OneTP() {
             <OTP separator={<span>-</span>} value={otp} onChange={setOtp} length={5} />
             <span>{otp}</span>
           </Box>
-          <h5>Didn’t receive the OTP code? Resend code in</h5>
+          <h5>
+            Didn’t receive the OTP code?
+            {timeLeft > 0 && <span> Resend code in</span>}
+          </h5>
+          {timeLeft > 0 ? (
+            <div>
+              {Math.floor(timeLeft / 60)} minutes {(timeLeft % 60).toString().padStart(2, "0")}{" "}
+              seconds
+            </div>
+          ) : (
+            <div>
+              <button className="cancel-link" onClick={handleResend}>
+                Resend Code
+              </button>
+            </div>
+          )}
           <Button
             type="submit"
             className="signIn"
@@ -267,6 +336,7 @@ export default function OneTP() {
               textTransform: "none",
               fontWeight: "bold",
             }}
+            onClick={handleVerify}
           >
             Verify
           </Button>

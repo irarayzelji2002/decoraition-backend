@@ -10,27 +10,35 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "../../css/forgotPass.css";
 import { handleForgotPassword } from "../../firebase";
 import { useState } from "react"; // Import your forgot password function
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // TODO: remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function ForgotPass1() {
+export default function ForgotPass1({ ...beforeLoginSharedProps }) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setEmailError("");
 
-    // Basic email validation
+    //email validation
     if (!email) {
       setEmailError("Email is required.");
       return;
     }
 
-    setEmailError(""); // Clear previous error if any
-
-    // Call the forgot password function
-    handleForgotPassword(email);
+    try {
+      const response = await axios.post("/api/forgot-password", { email });
+      if (response.data.success) {
+        navigate("/otp", { state: { email } });
+      }
+    } catch (error) {
+      setEmailError(error.response.data.message || "An error occurred");
+    }
   };
 
   return (

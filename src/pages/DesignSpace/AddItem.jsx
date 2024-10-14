@@ -20,19 +20,6 @@ const AddItem = ({ ...sharedProps }) => {
     setImage(URL.createObjectURL(e.target.files[0]));
   };
 
-  useEffect(() => {
-    const auth = getAuth();
-
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        console.error("User is not authenticated");
-      }
-    });
-    return () => unsubscribe();
-  }, [designId]);
-
   const handleInputChange = (e) => {
     setBudgetItem(e.target.value);
   };

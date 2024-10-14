@@ -34,21 +34,6 @@ export default function SeeAllProjects({ ...sharedProps }) {
   const [page, setPage] = useState(1);
   const [isLastPage, setIsLastPage] = useState(false);
   const [totalPages, setTotalPages] = useState(5);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        fetchDesigns(user.uid, 1);
-      } else {
-        setUser(null);
-        setDesigns([]);
-      }
-    });
-
-    return () => unsubscribeAuth();
-  }, []);
 
   const fetchDesigns = (userId, page) => {
     const designsRef = collection(db, "projects");

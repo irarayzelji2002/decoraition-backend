@@ -1,8 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-const designController = require("../controllers/designController");
 const projectController = require("../controllers/projectController");
+const designController = require("../controllers/designController");
+
+const commentController = require("../controllers/commentController");
+const notificationController = require("../controllers/notificationController");
+const projectBudgetController = require("../controllers/projectBudgetController");
+const budgetController = require("../controllers/budgetController");
+const planMapController = require("../controllers/planMapController");
+const timelineController = require("../controllers/timelineController");
 const { auth } = require("../firebase");
 
 const authenticateUser = async (req, res, next) => {
@@ -22,6 +29,11 @@ const authenticateUser = async (req, res, next) => {
 // User routes
 router.post("/register", userController.createUser);
 router.post("/login", userController.loginUser);
+router.post("/forgot-password", userController.forgotPassword);
+router.post("/verify-otp", userController.verifyOTP);
+router.post("/resend-otp", userController.resendOTP);
+router.post("/expire-otp", userController.expireOTP);
+router.post("/change-password", userController.changePassword);
 router.post("/logout", authenticateUser, userController.handleLogout);
 router.get("/user/:userId", authenticateUser, userController.fetchUserData);
 router.post("/settings", authenticateUser, userController.handleSettings);

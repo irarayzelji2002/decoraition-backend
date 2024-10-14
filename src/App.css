@@ -5,10 +5,10 @@ body {
   overflow-x: hidden;
 }
 html {
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden;
 }
 .headTitle {
-  font-size: 18px;
+  font-size: 1.125em;
   font-weight: bold;
   margin-top: 16px;
   color: azure;

@@ -45,8 +45,8 @@ textarea {
 
 .reminders-header {
   display: flex;
-  justify-content: space-between; /* Space between label and button */
-  align-items: center; /* Vertically center items */
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
 }
 

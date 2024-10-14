@@ -139,7 +139,7 @@ h6 {
 
   max-width: 1200px;
   max-height: 300px !important;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  padding-bottom: 56.25%;
   position: relative;
   border: var(--nav-card-modal) 3px solid;
   border-radius: 12px;
@@ -380,7 +380,7 @@ textarea {
 .small-button-container {
   display: flex;
   align-items: center;
-  gap: 10px; /* Spacing between text and button */
+  gap: 10px;
 }
 
 /* Icons inside small circular buttons */
@@ -423,12 +423,12 @@ textarea {
   position: fixed;
   top: 0;
   left: -100%;
-  width: 33.33%; /* One-third of the screen */
+  width: 33.33%;
   height: 100%;
   background-color: var(--inputBg);
   transition: left 0.3s ease-in-out;
   z-index: 1000;
-  overflow-y: auto; /* Enable scrolling inside the sidebar */
+  overflow-y: auto;
 }
 
 .sidebar.open {
@@ -445,8 +445,8 @@ textarea {
 .sidebar-content {
   padding: 20px;
   color: var(--brightFont);
-  height: 100%; /* Ensure full height */
-  overflow-y: auto; /* Scroll content */
+  height: 100%;
+  overflow-y: auto;
 }
 
 /* Close button */
@@ -466,18 +466,18 @@ textarea {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Blackout effect */
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
 }
 
 /* Hide scroll bar in WebKit browsers (Chrome, Safari, Edge) */
 .sidebar-content {
-  -ms-overflow-style: none; /* Hide scrollbar in Internet Explorer */
-  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .sidebar-content::-webkit-scrollbar {
-  display: none; /* Hide scrollbar */
+  display: none;
 }
 
 /* comment section */

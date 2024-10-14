@@ -54,7 +54,6 @@
   color: white;
 }
 
-/* Remove blue focus outline and apply custom focus styles */
 .custom-calendar .react-calendar__tile:focus {
   outline: none;
   background-color: var(--iconBg);

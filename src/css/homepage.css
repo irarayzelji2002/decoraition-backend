@@ -30,7 +30,7 @@
     rgba(25, 25, 25, 0.2),
     transparent
   );
-  pointer-events: none; /* Ensure the overlay doesn't interfere with interactions */
+  pointer-events: none;
 }
 
 .navTagline {

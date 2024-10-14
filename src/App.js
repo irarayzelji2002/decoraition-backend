@@ -20,9 +20,10 @@ import OneTP from "./pages/Account/Otp.jsx";
 import ForgotPass from "./pages/Account/ForgotPass1.jsx";
 import Homepage from "./pages/Homepage/Homepage.jsx";
 import Details from "./pages/Homepage/Details.jsx";
+import SeeAllDesigns from "./pages/Homepage/SeeAllDesigns.jsx";
+import SeeAllProjects from "./pages/Homepage/SeeAllProjects.jsx";
 import Settings from "./pages/Settings/Settings.jsx";
 import Design from "./pages/DesignSpace/Design.jsx";
-import SeeAllDesigns from "./pages/DesignSpace/SeeAllDesigns.jsx";
 import Budget from "./pages/DesignSpace/Budget.jsx";
 import AddItem from "./pages/DesignSpace/AddItem.jsx";
 import EditItem from "./pages/DesignSpace/EditItem.jsx";
@@ -35,7 +36,6 @@ import AddPin from "./pages/ProjectSpace/AddPin.jsx";
 import EditEvent from "./pages/ProjectSpace/EditEvent.jsx";
 import ProjSetting from "./pages/Settings/ProjSetting.jsx";
 import Version from "./pages/DesignSpace/Version.jsx";
-import SeeAllProjects from "./pages/DesignSpace/SeeAllProjects.jsx";
 // import { Rotate90DegreesCcw } from "@mui/icons-material";
 
 function App() {

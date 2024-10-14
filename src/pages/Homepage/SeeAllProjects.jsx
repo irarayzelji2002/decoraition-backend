@@ -1,40 +1,29 @@
 import React, { useState, useEffect } from "react";
-import SearchAppBar from "../Homepage/SearchAppBar.jsx";
-import { onAuthStateChanged } from "firebase/auth";
-import "../../css/seeAll.css";
-import Dropdowns from "../../components/Dropdowns.jsx";
-import { auth, db } from "../../firebase.js";
 import { useNavigate } from "react-router-dom";
+import SearchAppBar from "./SearchAppBar.jsx";
+import {
+  handleDeleteDesign,
+  handleDeleteProject,
+  handleCreateProject,
+} from "./backend/HomepageActions.jsx";
+
+import Dropdowns from "../../components/Dropdowns.jsx";
 import DesignIcon from "../../components/DesignIcon.jsx";
 import "../../css/homepage.css";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  deleteDoc,
-  limit,
-  startAfter,
-} from "firebase/firestore";
-import { handleDeleteDesign, handleCreateDesign } from "../Homepage/backend/HomepageActions";
+import "../../css/seeAll.css";
 
-export default function SeeAllDesigns({ ...sharedProps }) {
+export default function SeeAllProjects({ ...sharedProps }) {
   const navigate = useNavigate();
+  const { user, setUser, projects, setProjects, designs, setDesigns } = sharedProps;
 
-  const user = sharedProps.user;
-  const designs = sharedProps.designs;
-  const setDesigns = sharedProps.setDesigns;
-
-  const [username, setUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [lastVisible, setLastVisible] = useState(null);
   const [page, setPage] = useState(1);
   const [isLastPage, setIsLastPage] = useState(false);
-  const [totalPages, setTotalPages] = useState(5); // Assume 5 pages for demonstration
+  const [totalPages, setTotalPages] = useState(5);
 
   const fetchDesigns = (userId, page) => {
-    const designsRef = collection(db, "designs");
+    const designsRef = collection(db, "projects");
     let q = query(designsRef, where("createdBy", "==", userId), limit(10)); // Fetch 10 designs per page
 
     if (page > 1 && lastVisible) {
@@ -53,13 +42,11 @@ export default function SeeAllDesigns({ ...sharedProps }) {
       });
       setDesigns(designList);
       setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      setIsLastPage(querySnapshot.size < 10);
+      setIsLastPage(querySnapshot.size < 10); // If fewer than 10 results, it's the last page
     });
 
     return () => unsubscribeDesigns();
   };
-
-  const handleDeleteDesignClick = (designId) => handleDeleteDesign(designId, setDesigns);
 
   const handlePageClick = (pageNumber) => {
     setPage(pageNumber);
@@ -73,13 +60,13 @@ export default function SeeAllDesigns({ ...sharedProps }) {
   };
 
   const handleNextPage = () => {
-    if (!isLastPage && page < totalPages) {
+    if (!isLastPage) {
       handlePageClick(page + 1);
     }
   };
 
-  const filteredDesigns = designs.filter((design) =>
-    design.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredDesigns = projects.filter((projects) =>
+    projects.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -87,7 +74,6 @@ export default function SeeAllDesigns({ ...sharedProps }) {
       <SearchAppBar
         onSearchChange={(value) => setSearchQuery(value)}
         user={user}
-        username={username}
         {...sharedProps}
       />
       <div className="bg">
@@ -95,7 +81,7 @@ export default function SeeAllDesigns({ ...sharedProps }) {
           <Dropdowns />
         </div>
 
-        <div className="title">Designs</div>
+        <div className="title">Projects</div>
         <section className="recent-section">
           <div className="recent-designs">
             <div className="layout">
@@ -105,7 +91,7 @@ export default function SeeAllDesigns({ ...sharedProps }) {
                     key={design.id}
                     name={design.name}
                     designId={design.id}
-                    onDelete={handleDeleteDesignClick}
+                    onDelete={() => handleDeleteProject(user.uid, design.id, navigate, setProjects)}
                     onOpen={() =>
                       navigate(`/design/${design.id}`, {
                         state: { designId: design.id },

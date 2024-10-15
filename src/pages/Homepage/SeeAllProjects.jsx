@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchAppBar from "./SearchAppBar.jsx";
-import {
-  handleDeleteDesign,
-  handleDeleteProject,
-  handleCreateProject,
-} from "./backend/HomepageActions.jsx";
+import { handleDeleteProject } from "./backend/HomepageActions.jsx";
 
 import Dropdowns from "../../components/Dropdowns.jsx";
-import DesignIcon from "../../components/DesignIcon.jsx";
+import ProjectOptionsHome from "../../components/ProjectOptionsHome.jsx";
 import "../../css/homepage.css";
 import "../../css/seeAll.css";
 
@@ -22,31 +18,31 @@ export default function SeeAllProjects({ ...sharedProps }) {
   const [isLastPage, setIsLastPage] = useState(false);
   const [totalPages, setTotalPages] = useState(5);
 
-  const fetchDesigns = (userId, page) => {
-    const designsRef = collection(db, "projects");
-    let q = query(designsRef, where("createdBy", "==", userId), limit(10)); // Fetch 10 designs per page
+  // const fetchDesigns = (userId, page) => {
+  //   const designsRef = collection(db, "projects");
+  //   let q = query(designsRef, where("createdBy", "==", userId), limit(10)); // Fetch 10 designs per page
 
-    if (page > 1 && lastVisible) {
-      q = query(
-        designsRef,
-        where("createdAt", ">", new Date(0)),
-        startAfter(lastVisible),
-        limit(10)
-      );
-    }
+  //   if (page > 1 && lastVisible) {
+  //     q = query(
+  //       designsRef,
+  //       where("createdAt", ">", new Date(0)),
+  //       startAfter(lastVisible),
+  //       limit(10)
+  //     );
+  //   }
 
-    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
-      const designList = [];
-      querySnapshot.forEach((doc) => {
-        designList.push({ id: doc.id, ...doc.data() });
-      });
-      setDesigns(designList);
-      setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-      setIsLastPage(querySnapshot.size < 10); // If fewer than 10 results, it's the last page
-    });
+  //   const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
+  //     const designList = [];
+  //     querySnapshot.forEach((doc) => {
+  //       designList.push({ id: doc.id, ...doc.data() });
+  //     });
+  //     setDesigns(designList);
+  //     setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+  //     setIsLastPage(querySnapshot.size < 10); // If fewer than 10 results, it's the last page
+  //   });
 
-    return () => unsubscribeDesigns();
-  };
+  //   return () => unsubscribeDesigns();
+  // };
 
   const handlePageClick = (pageNumber) => {
     setPage(pageNumber);
@@ -86,15 +82,17 @@ export default function SeeAllProjects({ ...sharedProps }) {
           <div className="recent-designs">
             <div className="layout">
               {filteredDesigns.length > 0 ? (
-                filteredDesigns.map((design) => (
-                  <DesignIcon
-                    key={design.id}
-                    name={design.name}
-                    designId={design.id}
-                    onDelete={() => handleDeleteProject(user.uid, design.id, navigate, setProjects)}
+                filteredDesigns.map((project) => (
+                  <ProjectOptionsHome
+                    key={project.id}
+                    name={project.projectName}
+                    projectId={project.id}
+                    onDelete={() =>
+                      handleDeleteProject(user.uid, project.id, navigate, setProjects)
+                    }
                     onOpen={() =>
-                      navigate(`/design/${design.id}`, {
-                        state: { designId: design.id },
+                      navigate(`/project/${project.id}`, {
+                        state: { projectId: project.id },
                       })
                     }
                   />

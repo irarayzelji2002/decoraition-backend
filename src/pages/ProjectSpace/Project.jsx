@@ -21,11 +21,12 @@ import Dropdowns from "../../components/Dropdowns";
 import "../../css/seeAll.css";
 import "../../css/project.css";
 import { fetchDesigns, handleCreateDesign, handleDeleteDesign } from "./backend/ProjectDetails";
-import { handleDeleteProject } from "../Homepage/backend/HomepageActions";
+import { handleDeleteProject } from "../Homepage/backend/HomepageActions.jsx";
 
 function Project({ ...sharedProps }) {
   const navigate = useNavigate();
   const { projectId } = useParams();
+  const { userDesigns, userProjects } = sharedProps;
 
   const user = sharedProps.user;
   const userId = user.uid;
@@ -51,49 +52,49 @@ function Project({ ...sharedProps }) {
     setMenuOpen(!menuOpen);
   };
 
-  useEffect(() => {
-    const auth = getAuth();
+  // useEffect(() => {
+  //   const auth = getAuth();
 
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserId(user.uid);
+  //   const unsubscribe = auth.onAuthStateChanged((user) => {
+  //     if (user) {
+  //       setUserId(user.uid);
 
-        const fetchProjectDetails = async () => {
-          try {
-            const projectRef = doc(db, "projects", projectId);
-            const projectSnapshot = await getDoc(projectRef);
-            if (projectSnapshot.exists()) {
-              const project = projectSnapshot.data();
-              setProjectData(project);
-              setNewName(project.name);
+  //       const fetchProjectDetails = async () => {
+  //         try {
+  //           const projectRef = doc(db, "projects", projectId);
+  //           const projectSnapshot = await getDoc(projectRef);
+  //           if (projectSnapshot.exists()) {
+  //             const project = projectSnapshot.data();
+  //             setProjectData(project);
+  //             setNewName(project.name);
 
-              // Listen for real-time updates to the project document
-              const unsubscribeProject = onSnapshot(projectRef, (doc) => {
-                if (doc.exists()) {
-                  const updatedProject = doc.data();
-                  setProjectData(updatedProject);
-                  setNewName(updatedProject.name);
-                }
-              });
+  //             // Listen for real-time updates to the project document
+  //             const unsubscribeProject = onSnapshot(projectRef, (doc) => {
+  //               if (doc.exists()) {
+  //                 const updatedProject = doc.data();
+  //                 setProjectData(updatedProject);
+  //                 setNewName(updatedProject.name);
+  //               }
+  //             });
 
-              // Cleanup listener on component unmount
-              return () => unsubscribeProject();
-            } else {
-              console.error("Project not found");
-            }
-          } catch (error) {
-            console.error("Error fetching project details:", error);
-          }
-        };
+  //             // Cleanup listener on component unmount
+  //             return () => unsubscribeProject();
+  //           } else {
+  //             console.error("Project not found");
+  //           }
+  //         } catch (error) {
+  //           console.error("Error fetching project details:", error);
+  //         }
+  //       };
 
-        fetchProjectDetails();
-      } else {
-        console.error("User is not authenticated");
-      }
-    });
+  //       fetchProjectDetails();
+  //     } else {
+  //       console.error("User is not authenticated");
+  //     }
+  //   });
 
-    return () => unsubscribe(); // Cleanup listener on component unmount
-  }, [projectId]);
+  //   return () => unsubscribe(); // Cleanup listener on component unmount
+  // }, [projectId]);
 
   const closeModal = () => {
     setModalOpen(false);
@@ -190,8 +191,8 @@ function Project({ ...sharedProps }) {
         </span>
       </div>
       <div className="layout" style={{ marginBottom: "20%" }}>
-        {designs.length > 0 ? (
-          designs.slice(0, 6).map((design) => (
+        {userDesigns.length > 0 ? (
+          userDesigns.slice(0, 6).map((design) => (
             <DesignIcon
               key={design.id}
               name={design.name}

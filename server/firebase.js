@@ -1,27 +1,35 @@
 // Client-side Firebase
-import { initializeApp as initializeClientApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
-import firebaseConfig from "./firebaseConfig";
-
-// Admin-side Firebase
-import admin from "firebase-admin";
-import serviceAccount from "./decoraition-firebase-adminsdk-g54wj-536e1e1fae.json";
+const { initializeApp: initializeClientApp } = require("firebase/app");
+const { getAuth } = require("firebase/auth");
+const { getFirestore } = require("firebase/firestore");
+const { getAnalytics, isSupported } = require("firebase/analytics");
+const firebaseConfig = require("./firebaseConfig");
+const { adminApp, adminAuth, adminDb } = require("./admin");
 
 // Initialize client-side Firebase
 const clientApp = initializeClientApp(firebaseConfig);
-export const auth = getAuth(clientApp);
-export const db = getFirestore(clientApp);
-export const analytics = getAnalytics(clientApp);
+const auth = getAuth(clientApp);
+const db = getFirestore(clientApp);
+// Initialize analytics only if supported
+let analytics = null;
+isSupported()
+  .then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(clientApp);
+    }
+  })
+  .catch(console.error);
 
-// Initialize admin-side Firebase
-const adminApp = admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-export const adminAuth = adminApp.auth();
-export const adminDb = adminApp.firestore();
+// Export both apps and services
+module.exports = {
+  clientApp,
+  adminApp,
+  auth,
+  db,
+  analytics,
+  adminAuth,
+  adminDb,
+};
 
-// Export both apps
-export { clientApp, adminApp };
-export default clientApp;
+// Default export
+module.exports.default = clientApp;

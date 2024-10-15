@@ -150,7 +150,7 @@ export const showToast = (
     progressStyle = {
       backgroundColor: "var(--brightFont)",
     },
-    position = toast.POSITION.TOP_RIGHT,
+    position = "top-right",
     autoClose = 3000,
     hideProgressBar = false,
     closeOnClick = true,

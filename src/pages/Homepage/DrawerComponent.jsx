@@ -4,7 +4,6 @@ import {
   fetchUserDesigns,
   fetchUserProjects,
   handleLogout,
-  handleSettings,
   handleCreateDesign,
   handleCreateProject,
   handleDeleteDesign,

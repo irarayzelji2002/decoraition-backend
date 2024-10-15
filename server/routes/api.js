@@ -37,7 +37,6 @@ router.post("/expire-otp", userController.expireOTP);
 router.post("/change-password", userController.changePassword);
 router.post("/logout", authenticateUser, userController.handleLogout);
 router.get("/user/:userId", authenticateUser, userController.fetchUserData);
-router.post("/settings", authenticateUser, userController.handleSettings); // not yet implemented
 router.post("/user/profile-pic", authenticateUser, userController.updateProfilePic);
 router.post("/user/update-field", authenticateUser, userController.updateUserField);
 router.post("/user/user-details", authenticateUser, userController.updateUserDetails);

@@ -23,7 +23,7 @@ import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase.js";
 import DrawerComponent from "../pages/Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
-import { toggleDarkMode, handleSettings, handleLogout } from "../Homepage/backend/HomepageActions";
+import { toggleDarkMode, handleLogout } from "../pages/Homepage/backend/HomepageActions.jsx";
 
 function DesignHead({
   designName,
@@ -241,7 +241,7 @@ function DesignHead({
         onClose={() => setDrawerOpen(false)}
         toggleDarkMode={() => toggleDarkMode(user.uid, darkMode, setDarkMode)}
         handleLogout={() => handleLogout(navigate)}
-        handleSettings={() => handleSettings(navigate)}
+        handleSettings={() => navigate("/settings")}
         darkMode={darkMode}
         username={username}
         userEmail={user ? user.email : ""}

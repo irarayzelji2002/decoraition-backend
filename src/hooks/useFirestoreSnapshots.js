@@ -86,10 +86,11 @@ const useFirestoreSnapshots = (collections, stateSetterFunctions) => {
     return () => {
       unsubscribeCallbacks.forEach((unsubscribe) => unsubscribe());
     };
-  }, [collections, stateSetterFunctions]);
+  }, []);
 
   // Effect for user-related data
   useEffect(() => {
+    console.log("inside 2nd useEffect");
     const userRelatedCollections = [
       "userProjects",
       "userDesigns",
@@ -121,6 +122,7 @@ const useFirestoreSnapshots = (collections, stateSetterFunctions) => {
       const unsubscribe = onSnapshot(query, (snapshot) => {
         const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         stateSetterFunctions[collectionName](data);
+        console.log(`State updated for collection: ${collectionName}`);
       });
       unsubscribers.push(unsubscribe);
     };
@@ -318,7 +320,7 @@ const useFirestoreSnapshots = (collections, stateSetterFunctions) => {
     return () => {
       unsubscribers.forEach((unsubscribe) => unsubscribe());
     };
-  }, [collections, stateSetterFunctions]);
+  }, []);
 
   // Effect to update isLoaded state
   useEffect(() => {

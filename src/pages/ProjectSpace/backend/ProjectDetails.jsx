@@ -171,7 +171,7 @@ export const useProjectDetails = (projectId, setUserId, setProjectData, setNewNa
 
         const fetchProjectDetails = async () => {
           try {
-            const projectRef = doc(db, "users", user.uid, "projects", projectId);
+            // const projectRef = doc(db, "users", user.uid, "projects", projectId);
             const projectRef = doc(db, "projects", projectId);
             const projectSnapshot = await getDoc(projectRef);
             if (projectSnapshot.exists()) {
@@ -266,7 +266,7 @@ const saveData = async (projectId, formData) => {
 export { saveData };
 
 export const fetchTasks = (userId, projectId, setTasks) => {
-  const tasksRef = collection(db, "users", userId, "projects", projectId, "timeline");
+  // const tasksRef = collection(db, "users", userId, "projects", projectId, "timeline");
   const tasksRef = collection(db, "events");
   const q = query(tasksRef, where("projectId", "==", projectId));
 
@@ -283,7 +283,7 @@ export const fetchTasks = (userId, projectId, setTasks) => {
 
 export const deleteTask = async (taskId) => {
   try {
-    const taskRef = doc(db, "users", userId, "projects", projectId, "timeline", taskId);
+    // const taskRef = doc(db, "users", userId, "projects", projectId, "timeline", taskId);
     const taskRef = doc(db, "events", taskId);
     await deleteDoc(taskRef);
     toast.success("Task successfully deleted!", {
@@ -316,7 +316,7 @@ export const deleteTask = async (taskId) => {
 
 export const updateTask = async (userId, projectId, taskId, updatedData) => {
   try {
-    const taskRef = doc(db, "users", userId, "projects", projectId, "timeline", taskId);
+    // const taskRef = doc(db, "users", userId, "projects", projectId, "timeline", taskId);
     const taskRef = doc(db, "events", taskId);
     await updateDoc(taskRef, updatedData);
     toast.success("Task updated successfully!", {

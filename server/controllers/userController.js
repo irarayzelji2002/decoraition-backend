@@ -7,7 +7,7 @@ const {
 } = require("firebase/auth");
 const { getStorage, ref, uploadBytes, getDownloadURL } = require("firebase/storage");
 
-const emailjs = require("emailjs/browser");
+const emailjs = require("@emailjs/browser");
 const {
   REACT_APP_EMAILJS_SERVICE_ID,
   REACT_APP_EMAILJS_TEMPLATE_ID,
@@ -324,7 +324,7 @@ exports.changePassword = async (req, res) => {
 };
 
 // Update Profile Picture
-export const updateProfilePic = async (req, res) => {
+exports.updateProfilePic = async (req, res) => {
   const { selectedFile, userId } = req.body;
   const updatedAt = new Date();
 
@@ -353,7 +353,7 @@ export const updateProfilePic = async (req, res) => {
 };
 
 // Update User Field (theme, email, connectedAccount)
-export const updateUserField = async (req, res) => {
+exports.updateUserField = async (req, res) => {
   const { userId, field, value } = req.body;
 
   if (!userId || !field || value === undefined) {
@@ -440,7 +440,7 @@ export const updateUserField = async (req, res) => {
 };
 
 // Update User Field (firstName, lastName, and username)
-export const updateUserDetails = async (req, res) => {
+exports.updateUserDetails = async (req, res) => {
   const { userId, firstName, lastName, username } = req.body;
 
   if (!userId) {

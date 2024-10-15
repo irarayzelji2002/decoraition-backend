@@ -4,7 +4,6 @@ import {
   fetchUserDesigns,
   fetchUserProjects,
   handleLogout,
-  handleSettings,
   handleCreateDesign,
   handleCreateProject,
   handleDeleteDesign,
@@ -21,6 +20,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 import ImageIcon from "@mui/icons-material/Image";
 import SearchAppBar from "./SearchAppBar.jsx";
 import DesignIcon from "../../components/DesignIcon.jsx";
+import ProjectOptionsHome from "../../components/ProjectOptionsHome.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
@@ -31,28 +31,33 @@ import Loading from "../../components/Loading.jsx";
 
 function Homepage({ ...sharedProps }) {
   const navigate = useNavigate();
-  const { user, designs, setDesigns, projects, setProjects } = sharedProps;
+  const {
+    user,
+    designs,
+    setDesigns,
+    projects,
+    setProjects,
+    userDesigns,
+    setUserDesigns,
+    userProjects,
+    setUserProjects,
+  } = sharedProps;
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDesigns, setFilteredDesigns] = useState([]);
 
-  const handleCreateDesignClick = () => handleCreateDesign(user.uid, navigate);
-  const handleCreateProjectClick = () => handleCreateProject(user.uid, navigate);
-  const handleDeleteDesignClick = (designId) => handleDeleteDesign(designId, setDesigns);
-  const handleDeleteProjectClick = (projectId) => handleDeleteProject(projectId, setProjects);
-
   useEffect(() => {
     if (searchQuery.trim()) {
-      const results = designs.filter((design) =>
-        design.name.toLowerCase().includes(searchQuery.toLowerCase())
+      const results = userDesigns.filter((design) =>
+        design.designName.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredDesigns(results);
     } else {
       setFilteredDesigns([]); // Clear search results when no query
     }
-  }, [searchQuery, designs]);
+  }, [searchQuery, userDesigns]);
 
   return (
     <div className={`homepage ${menuOpen ? "darkened" : ""}`}>
@@ -89,13 +94,13 @@ function Homepage({ ...sharedProps }) {
           <div className="action-buttons">
             <button
               className="design-button"
-              onClick={() => handleCreateDesign(navigate, setDesigns)}
+              onClick={() => handleCreateDesign(user.uid, navigate, setDesigns)}
             >
               Create a design
             </button>
             <button
               className="project-button"
-              onClick={() => handleCreateProject(navigate, setProjects)}
+              onClick={() => handleCreateProject(user.uid, navigate, setProjects)}
             >
               Create a project
             </button>
@@ -118,10 +123,10 @@ function Homepage({ ...sharedProps }) {
                   filteredDesigns.slice(0, 3).map((design) => (
                     <DesignIcon
                       key={design.id}
-                      name={design.name}
+                      name={design.designName}
                       designId={design.id}
                       lastAccessed={design.lastAccessed}
-                      onDelete={() => handleDeleteDesign(design.id, setDesigns)}
+                      onDelete={() => handleDeleteDesign(user.uid, design.id, navigate, setDesigns)}
                       onOpen={() =>
                         navigate(`/design/${design.id}`, {
                           state: {
@@ -152,14 +157,14 @@ function Homepage({ ...sharedProps }) {
             </div>
 
             <div className="layout">
-              {designs.length > 0 ? (
-                designs.slice(0, 6).map((design) => (
+              {userDesigns.length > 0 ? (
+                userDesigns.slice(0, 6).map((design) => (
                   <DesignIcon
                     key={design.id}
-                    name={design.name}
+                    name={design.designName}
                     designId={design.id}
                     lastAccessed={design.lastAccessed}
-                    onDelete={() => handleDeleteDesign(design.id, setDesigns)}
+                    onDelete={() => handleDeleteDesign(user.uid, design.id, navigate, setDesigns)}
                     onOpen={() =>
                       navigate(`/design/${design.id}`, {
                         state: { designId: design.id },
@@ -188,14 +193,16 @@ function Homepage({ ...sharedProps }) {
             </div>
 
             <div className="layout">
-              {projects.length > 0 ? (
-                projects.slice(0, 6).map((project) => (
-                  <DesignIcon
+              {userProjects.length > 0 ? (
+                userProjects.slice(0, 6).map((project) => (
+                  <ProjectOptionsHome
                     key={project.id}
-                    name={project.name}
+                    name={project.projectName}
                     designId={project.id}
                     lastAccessed={project.lastAccessed}
-                    onDelete={() => handleDeleteDesign(project.id, setProjects)}
+                    onDelete={() =>
+                      handleDeleteProject(user.uid, project.id, setProjects, navigate, setProjects)
+                    }
                     onOpen={() =>
                       navigate(`/project/${project.id}`, {
                         state: {
@@ -222,7 +229,7 @@ function Homepage({ ...sharedProps }) {
                 <span className="small-button-text">Create a Project</span>
                 <div
                   className="small-circle-button"
-                  onClick={() => handleCreateProject(navigate, setProjects)}
+                  onClick={() => handleCreateProject(user.uid, navigate, setProjects)}
                 >
                   <FolderIcon className="icon" />
                 </div>
@@ -231,7 +238,7 @@ function Homepage({ ...sharedProps }) {
                 <span className="small-button-text">Create a Design</span>
                 <div
                   className="small-circle-button"
-                  onClick={() => handleCreateDesign(navigate, setDesigns)}
+                  onClick={() => handleCreateDesign(user.uid, navigate, setDesigns)}
                 >
                   <ImageIcon className="icon" />
                 </div>

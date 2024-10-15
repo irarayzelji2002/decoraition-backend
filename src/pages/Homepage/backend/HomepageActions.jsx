@@ -48,17 +48,6 @@ export const handleLogout = async (navigate) => {
   }
 };
 
-// not sure
-export const handleSettings = async (navigate) => {
-  try {
-    await axios.post(`/api/settings`);
-    navigate("/settings");
-  } catch (error) {
-    console.error("Error navigating to settings:", error);
-    showToast("error", "Failed to navigate to settings");
-  }
-};
-
 // Create design
 export const handleCreateDesign = async (userId, navigate, setDesigns) => {
   try {
@@ -69,7 +58,7 @@ export const handleCreateDesign = async (userId, navigate, setDesigns) => {
 
     if (response.status === 200) {
       showToast("success", "Design created successfully");
-      fetchUserDesigns(userId, setDesigns);
+      // fetchUserDesigns(userId, setDesigns);
       setTimeout(() => navigate(`/design/${response.data.id}`), 1500);
     } else {
       showToast("error", "Failed to create design.");

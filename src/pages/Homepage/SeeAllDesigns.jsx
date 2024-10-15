@@ -17,16 +17,12 @@ import {
   limit,
   startAfter,
 } from "firebase/firestore";
-import { handleDeleteDesign, handleCreateDesign } from "./backend/HomepageActions.jsx";
+import { handleDeleteDesign } from "./backend/HomepageActions";
 
 export default function SeeAllDesigns({ ...sharedProps }) {
   const navigate = useNavigate();
+  const { user, userDesigns, setUserDesigns } = sharedProps;
 
-  const user = sharedProps.user;
-  const designs = sharedProps.designs;
-  const setDesigns = sharedProps.setDesigns;
-
-  const [username, setUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [lastVisible, setLastVisible] = useState(null);
   const [page, setPage] = useState(1);
@@ -51,7 +47,7 @@ export default function SeeAllDesigns({ ...sharedProps }) {
       querySnapshot.forEach((doc) => {
         designList.push({ id: doc.id, ...doc.data() });
       });
-      setDesigns(designList);
+      setUserDesigns(designList);
       setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
       setIsLastPage(querySnapshot.size < 10);
     });
@@ -59,7 +55,7 @@ export default function SeeAllDesigns({ ...sharedProps }) {
     return () => unsubscribeDesigns();
   };
 
-  const handleDeleteDesignClick = (designId) => handleDeleteDesign(designId, setDesigns);
+  const handleDeleteDesignClick = (designId) => handleDeleteDesign(designId, setUserDesigns);
 
   const handlePageClick = (pageNumber) => {
     setPage(pageNumber);
@@ -78,8 +74,8 @@ export default function SeeAllDesigns({ ...sharedProps }) {
     }
   };
 
-  const filteredDesigns = designs.filter((design) =>
-    design.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredDesigns = userDesigns.filter((design) =>
+    design.designName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -87,7 +83,7 @@ export default function SeeAllDesigns({ ...sharedProps }) {
       <SearchAppBar
         onSearchChange={(value) => setSearchQuery(value)}
         user={user}
-        username={username}
+        username={user.username}
         {...sharedProps}
       />
       <div className="bg">
@@ -103,7 +99,7 @@ export default function SeeAllDesigns({ ...sharedProps }) {
                 filteredDesigns.map((design) => (
                   <DesignIcon
                     key={design.id}
-                    name={design.name}
+                    name={design.designName}
                     designId={design.id}
                     onDelete={handleDeleteDesignClick}
                     onOpen={() =>

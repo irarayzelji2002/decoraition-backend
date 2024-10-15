@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { stringAvatar, stringToColor } from "../../functions/utils.js";
-import DelayedTooltip from "../components/DelayedTooltip";
+import DelayedTooltip from "../../components/DelayedTooltip.jsx";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";

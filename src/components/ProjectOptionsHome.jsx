@@ -14,7 +14,7 @@ import {
 } from "@mui/icons-material";
 import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 
-function DesignIcon({ name, designId, onOpen, onDelete }) {
+function ProjectOptionsHome({ name, projectId, onOpen, onDelete }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showCopyModal, setShowCopyModal] = useState(false);
@@ -48,13 +48,13 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
   };
 
   const handleDelete = () => {
-    onDelete(designId);
+    onDelete(projectId);
     closeDeleteModal();
   };
 
   const openCopyLinkModal = () => {
     // Simulate copying the link (may implement actual copy logic here)
-    navigator.clipboard.writeText(`https://yourapp.com/designs/${designId}`);
+    navigator.clipboard.writeText(`https://yourapp.com/project/${projectId}`);
     setShowCopyLinkModal(true);
     setShowOptions(false); // Close options when modal opens
   };
@@ -105,10 +105,6 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
             <div className="dropdown-item" onClick={openCopyLinkModal}>
               <LinkIcon style={{ fontSize: 20 }} className="icon" />
               Copy Link
-            </div>
-            <div className="dropdown-item" onClick={openCopyModal}>
-              <FileCopyIcon style={{ fontSize: 20 }} className="icon" />
-              Make a Copy
             </div>
             <div className="dropdown-item" onClick={openRenameModal}>
               <DriveFileRenameOutlineRoundedIcon style={{ fontSize: 20 }} className="icon" />
@@ -161,4 +157,4 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
   );
 }
 
-export default DesignIcon;
+export default ProjectOptionsHome;

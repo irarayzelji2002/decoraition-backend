@@ -5,12 +5,10 @@ const multer = require("multer");
 const path = require("path");
 const apiRoutes = require("./routes/api");
 const admin = require("firebase-admin");
-const WebSocket = require("ws");
 
-const { initializeApp } = require("firebase/app");
-const { getAuth, signInWithPopup, GoogleAuthProvider } = require("firebase/auth");
-const { getFirestore, doc, setDoc } = require("firebase/firestore");
-const firebaseConfig = require("./firebaseConfig");
+const { signInWithPopup, GoogleAuthProvider } = require("firebase/auth");
+const { doc, setDoc } = require("firebase/firestore");
+const { auth, db, adminAuth, adminDb } = require("./firebase");
 
 // Middleware
 const app = express();
@@ -19,15 +17,6 @@ app.use(express.json());
 
 // API routes
 app.use("/api", apiRoutes);
-
-// Initialize Firebase app
-// const firebaseApp = initializeApp(firebaseConfig);
-// const auth = getAuth(firebaseApp);
-// const db = getFirestore(firebaseApp);
-// Initialize Firebase Admin SDK
-admin.initializeApp(firebaseConfig);
-const auth = admin.auth();
-const db = admin.firestore();
 
 // Middleware to handle CORS
 app.use((req, res, next) => {
@@ -44,53 +33,6 @@ app.get("/manifest", (req, res) => {
 app.get("/service-worker.js", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "service-worker.js"));
 });
-
-// WebSocket server for real-time updates
-const wss = new WebSocket.Server({ server: app.listen(5000) });
-
-wss.on("connection", (ws) => {
-  ws.on("message", (message) => {
-    const { collections, userId } = JSON.parse(message);
-    if (userId) {
-      // Verify the user's authentication status
-      admin
-        .auth()
-        .getUser(userId)
-        .then((userRecord) => {
-          console.log("User is authenticated:", userRecord.uid);
-          setupCollectionListeners(ws, collections);
-        })
-        .catch((error) => {
-          console.error("Error verifying user:", error);
-          ws.send(JSON.stringify({ error: "Authentication failed" }));
-        });
-    } else {
-      console.log("No user ID provided");
-      ws.send(JSON.stringify({ error: "No user ID provided" }));
-    }
-  });
-});
-
-function setupCollectionListeners(ws, collections) {
-  collections.forEach((collectionName) => {
-    const unsubscribe = db.collection(collectionName).onSnapshot(
-      (snapshot) => {
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        ws.send(JSON.stringify({ collection: collectionName, data }));
-      },
-      (error) => {
-        console.error(`Snapshot listener error for ${collectionName}:`, error);
-      }
-    );
-
-    ws.on("close", () => {
-      unsubscribe();
-    });
-  });
-}
 
 // Multer storage configuration
 const storage = multer.diskStorage({

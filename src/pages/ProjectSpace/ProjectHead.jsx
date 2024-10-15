@@ -20,12 +20,11 @@ import ShareConfirmationModal from "../../components/ShareConfirmationModal.jsx"
 import "../../css/design.css";
 import { useEffect } from "react";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
-import { db, auth } from "../../../server/firebase.js";
 import DrawerComponent from "../Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
 import { useHandleNameChange, useProjectDetails } from "./backend/ProjectDetails";
 import { useParams } from "react-router-dom";
-import { toggleDarkMode, handleSettings, handleLogout } from "../Homepage/backend/HomepageActions";
+import { toggleDarkMode, handleLogout } from "../Homepage/backend/HomepageActions.jsx";
 
 function ProjectHead({ designName, designId, setIsSidebarOpen, ...sharedProps }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -68,33 +67,33 @@ function ProjectHead({ designName, designId, setIsSidebarOpen, ...sharedProps })
     setIsEditingName((prev) => !prev);
   };
 
-  useEffect(() => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      onSnapshot(userRef, (doc) => {
-        setUsername(doc.data().username);
-      });
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     const userRef = doc(db, "users", user.uid);
+  //     onSnapshot(userRef, (doc) => {
+  //       setUsername(doc.data().username);
+  //     });
+  //   }
+  // }, [user]);
 
-  useEffect(() => {
-    const fetchDesignTitle = () => {
-      const designRef = doc(db, "designs", designId);
+  // useEffect(() => {
+  //   const fetchDesignTitle = () => {
+  //     const designRef = doc(db, "designs", designId);
 
-      const unsubscribe = onSnapshot(designRef, (doc) => {
-        if (doc.exists()) {
-          const projectData = doc.data();
-          setTempName("Untitled");
-        }
-      });
+  //     const unsubscribe = onSnapshot(designRef, (doc) => {
+  //       if (doc.exists()) {
+  //         const projectData = doc.data();
+  //         setTempName("Untitled");
+  //       }
+  //     });
 
-      return () => unsubscribe();
-    };
+  //     return () => unsubscribe();
+  //   };
 
-    if (designId) {
-      fetchDesignTitle();
-    }
-  }, [designId]);
+  //   if (designId) {
+  //     fetchDesignTitle();
+  //   }
+  // }, [designId]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -237,7 +236,7 @@ function ProjectHead({ designName, designId, setIsSidebarOpen, ...sharedProps })
         onClose={() => setDrawerOpen(false)}
         toggleDarkMode={() => toggleDarkMode(user.uid, darkMode, setDarkMode)}
         handleLogout={() => handleLogout(navigate)}
-        handleSettings={() => handleSettings(navigate)}
+        handleSettings={() => navigate("/settings")}
         darkMode={darkMode}
         username={username}
         userEmail={user ? user.email : ""}

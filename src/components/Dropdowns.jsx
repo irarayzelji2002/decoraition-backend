@@ -4,6 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { Menu, styled } from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 export default function SelectSmall() {
   const [owner, setOwner] = React.useState("");
@@ -16,11 +17,10 @@ export default function SelectSmall() {
   const StyledMenu = styled(Menu)(({ theme }) => ({
     "& .MuiPaper-root": {
       backgroundColor: "#2c2c2e",
-      color: "#f1f1f1",
+      color: "var(--color-white)",
       borderRadius: "12px",
       padding: 0,
       margin: 0,
-
       border: "none",
       overflow: "hidden",
     },
@@ -33,30 +33,33 @@ export default function SelectSmall() {
     m: 1,
     minWidth: 200,
     backgroundColor: "#2c2c2e",
-    color: "#f1f1f1",
+    color: "var(--color-white)",
     borderRadius: "8px",
     "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#4a4a4d",
+      borderColor: "var(--borderInput)",
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#f1f1f1",
+      borderColor: "var(--bright-grey)",
+    },
+    "& .MuiSvgIcon-root": {
+      color: "var(--color-white)", // Set the arrow color to white
     },
   };
 
   const menuItemStyles = {
-    color: "#f1f1f1",
-    backgroundColor: "#3a3a3c",
+    color: "var(--color-white)",
+    backgroundColor: "var(--dropdown)",
     transition: "all 0.3s ease",
     "&:hover": {
-      backgroundColor: "#5a5a5c",
+      backgroundColor: "var(--dropdownHover)",
     },
     "&.Mui-selected": {
-      backgroundColor: "#4a4a4d",
+      backgroundColor: "var(--dropdownSelected)",
       color: "#d1d1d1",
       fontWeight: "bold",
     },
     "&.Mui-selected:hover": {
-      backgroundColor: "#5a5a5c",
+      backgroundColor: "var(--dropdownHover)",
     },
   };
 
@@ -72,7 +75,10 @@ export default function SelectSmall() {
     >
       {/* Owner Select */}
       <FormControl sx={formControlStyles}>
-        <InputLabel id="owner-select-label" sx={{ color: "#f1f1f1" }}>
+        <InputLabel
+          id="owner-select-label"
+          sx={{ color: "var(--color-white)" }}
+        >
           Owner
         </InputLabel>
         <Select
@@ -91,15 +97,13 @@ export default function SelectSmall() {
               },
             },
           }}
+          IconComponent={ArrowDropDownIcon}
           sx={{
-            color: "#f1f1f1",
-            backgroundColor: "#2c2c2e",
+            color: "var(--color-white)",
+            backgroundColor: "var(--bgMain)",
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
-            "&:hover": {
-              backgroundColor: "#3a3a3c",
-            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>
@@ -119,7 +123,10 @@ export default function SelectSmall() {
 
       {/* Date Modified Select */}
       <FormControl sx={formControlStyles}>
-        <InputLabel id="date-modified-select-label" sx={{ color: "#f1f1f1" }}>
+        <InputLabel
+          id="date-modified-select-label"
+          sx={{ color: "var(--color-white)" }}
+        >
           Date Modified
         </InputLabel>
         <Select
@@ -138,15 +145,13 @@ export default function SelectSmall() {
               },
             },
           }}
+          IconComponent={ArrowDropDownIcon}
           sx={{
-            color: "#f1f1f1",
-            backgroundColor: "#2c2c2e",
+            color: "var(--color-white)",
+            backgroundColor: "var(--bgMain)",
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
-            "&:hover": {
-              backgroundColor: "#3a3a3c",
-            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>
@@ -166,7 +171,10 @@ export default function SelectSmall() {
 
       {/* Date Created Select */}
       <FormControl sx={formControlStyles}>
-        <InputLabel id="date-created-select-label" sx={{ color: "#f1f1f1" }}>
+        <InputLabel
+          id="date-created-select-label"
+          sx={{ color: "var(--color-white)" }}
+        >
           Date Created
         </InputLabel>
         <Select
@@ -185,15 +193,13 @@ export default function SelectSmall() {
             },
           }}
           MenuComponent={StyledMenu}
+          IconComponent={ArrowDropDownIcon}
           sx={{
-            color: "#f1f1f1",
-            backgroundColor: "#2c2c2e",
+            color: "var(--color-white)",
+            backgroundColor: "var(--bgMain)",
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
-            "&:hover": {
-              backgroundColor: "#3a3a3c",
-            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>
@@ -213,7 +219,10 @@ export default function SelectSmall() {
 
       {/* Sort By Select */}
       <FormControl sx={formControlStyles}>
-        <InputLabel id="sort-by-select-label" sx={{ color: "#f1f1f1" }}>
+        <InputLabel
+          id="sort-by-select-label"
+          sx={{ color: "var(--color-white)" }}
+        >
           Sort By
         </InputLabel>
         <Select
@@ -232,15 +241,13 @@ export default function SelectSmall() {
               },
             },
           }}
+          IconComponent={ArrowDropDownIcon}
           sx={{
-            color: "#f1f1f1",
-            backgroundColor: "#2c2c2e",
+            color: "var(--color-white)",
+            backgroundColor: "var(--bgMain)",
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
-            "&:hover": {
-              backgroundColor: "#3a3a3c",
-            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>
@@ -257,7 +264,10 @@ export default function SelectSmall() {
 
       {/* Order Select */}
       <FormControl sx={formControlStyles}>
-        <InputLabel id="order-select-label" sx={{ color: "#f1f1f1" }}>
+        <InputLabel
+          id="order-select-label"
+          sx={{ color: "var(--color-white)" }}
+        >
           Order
         </InputLabel>
         <Select
@@ -276,15 +286,13 @@ export default function SelectSmall() {
               },
             },
           }}
+          IconComponent={ArrowDropDownIcon}
           sx={{
-            color: "#f1f1f1",
-            backgroundColor: "#2c2c2e",
+            color: "var(--color-white)",
+            backgroundColor: "var(--bgMain)",
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
-            "&:hover": {
-              backgroundColor: "#3a3a3c",
-            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>

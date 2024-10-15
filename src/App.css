@@ -56,6 +56,9 @@ select:-webkit-autofill {
   --budgetCard: #32313a;
   --bgMain: #1f1e22;
   --slider: #707070;
+  --dropdown: #25232a;
+  --dropdownHover: #3e3c47;
+  --dropdownSelected: #32313a;
 }
 
 .light-mode {

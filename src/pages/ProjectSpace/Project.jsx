@@ -137,9 +137,12 @@ function Project() {
             alignItems: "center",
             width: "90%",
             marginTop: "40px",
-            backgroundColor: "var(--inputBg)",
+            backgroundColor: "var(--bgMain)",
+            border: "2px solid var(--borderInput)",
             borderRadius: "20px",
-            border: "1px solid #4B4A4B",
+            "&:focus-within": {
+              borderColor: "var(--brightFont)",
+            },
           }}
         >
           <IconButton
@@ -151,7 +154,7 @@ function Project() {
           </IconButton>
           <InputBase
             sx={{ ml: 1, flex: 1, color: "var(--color-white)" }}
-            placeholder="Search Item"
+            placeholder="Search designs on this project"
             inputProps={{ "aria-label": "search google maps" }}
           />
         </Paper>

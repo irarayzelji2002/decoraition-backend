@@ -21,7 +21,6 @@ import {
 export default function SeeAllDesigns() {
   const [user, setUser] = useState(null);
   const [designs, setDesigns] = useState([]);
-  const [username, setUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [lastVisible, setLastVisible] = useState(null);
   const [page, setPage] = useState(1);
@@ -114,7 +113,6 @@ export default function SeeAllDesigns() {
       <SearchAppBar
         onSearchChange={(value) => setSearchQuery(value)}
         user={user}
-        username={username}
       />
       <div className="bg">
         <div className="dropdown-container">

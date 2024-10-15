@@ -182,17 +182,6 @@ h6 {
   align-content: center;
 }
 
-@media (max-width: 600px) {
-  .workspace {
-    flex-direction: column-reverse;
-  }
-  .promptBar {
-    width: auto;
-  }
-  .fixed-arrow-button {
-    display: none;
-  }
-}
 .image-drop {
   display: flex;
   justify-items: center;
@@ -235,8 +224,8 @@ h6 {
 
 .comment-section {
   display: flex;
-  margin-left: 20px;
-  width: 400px;
+
+  width: 30%;
   background-color: var(--nav-card-modal);
   padding: 10px;
   border-radius: 8px;
@@ -435,7 +424,7 @@ textarea {
   left: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 680px) {
   .sidebar {
     width: 50%; /* Half of the screen for mobile */
   }
@@ -518,16 +507,18 @@ textarea {
 
 /* sample reply */
 .comment-container {
-  background-color: #27262c;
+  background-color: var(--inputBg);
   border-radius: 15px;
+  width: 90%;
   padding: 20px;
   margin-bottom: 20px;
+  margin-top: 16px;
   transition: background-color 0.3s ease;
   cursor: pointer;
 }
 
 .comment-container.clicked {
-  background-color: #3d3c44;
+  background-color: var(--inputBg);
 }
 
 .profile-section {
@@ -541,11 +532,11 @@ textarea {
   display: flex;
   align-items: center;
 }
-
 .profile-pic {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  object-fit: cover;
   background-image: var(--gradientCircle);
   margin-right: 10px;
 }
@@ -603,4 +594,32 @@ textarea {
 
 .reply-input .at-symbol {
   color: #49484f;
+}
+
+@media (max-width: 600px) {
+  .workspace {
+    flex-direction: column-reverse;
+  }
+  .promptBar {
+    width: auto;
+  }
+  .fixed-arrow-button {
+    display: none;
+  }
+
+  .comment-section {
+    position: fixed; /* Make the div fixed */
+    top: 50%; /* Center vertically */
+    right: 16px; /* Align to the right with some space for the scrollbar */
+    transform: translateY(-50%); /* Adjust for vertical centering */
+    width: calc(80% - 16px); /* Adjust width to account for the right margin */
+    background-color: var(--nav-card-modal);
+    padding: 24px; /* Ensure padding is consistent */
+    border-radius: 8px;
+    height: 71vh; /* Set a fixed height */
+    align-items: center;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
+    z-index: 99; /* Ensure it is above other elements */
+  }
 }

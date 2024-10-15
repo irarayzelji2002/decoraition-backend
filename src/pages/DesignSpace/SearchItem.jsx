@@ -25,9 +25,9 @@ function SearchItem() {
           alignItems: "center",
           width: "69%",
           marginTop: "40px",
-          backgroundColor: "var(--color-tertiary)",
+          backgroundColor: "var(--bgMain)",
           border: "2px solid var(--borderInput)",
-          borderRadius: "8px",
+          borderRadius: "20px",
           "&:focus-within": {
             borderColor: "var(--brightFont)",
           },

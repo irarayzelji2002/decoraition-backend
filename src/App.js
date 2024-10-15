@@ -56,6 +56,21 @@ function App() {
   const [timelines, setTimelines] = useState([]);
   const [events, setEvents] = useState([]);
 
+  // State for each user-related data
+  const [userProjects, setUserProjects] = useState([]);
+  const [userDesigns, setUserDesigns] = useState([]);
+  const [userDesignVersions, setUserDesignVersions] = useState([]);
+  const [userDesignsComments, setUserDesignsComments] = useState([]);
+  const [userComments, setUserComments] = useState([]);
+  const [userNotifications, setUserNotifications] = useState([]);
+  const [userProjectBudgets, setUserProjectBudgets] = useState([]);
+  const [userBudgets, setUserBudgets] = useState([]);
+  const [userItems, setUserItems] = useState([]);
+  const [userPlanMaps, setUserPlanMaps] = useState([]);
+  const [userPins, setUserPins] = useState([]);
+  const [userTimelines, setUserTimelines] = useState([]);
+  const [userEvents, setUserEvents] = useState([]);
+
   useEffect(() => {
     const auth = getAuth();
     setPersistence(auth, browserLocalPersistence)
@@ -74,36 +89,72 @@ function App() {
   }, [setUser, setLoading]);
 
   // Use useFirestoreSnapshots hook to set up real-time listeners
+  const generalCollections = [
+    "users",
+    "projects",
+    "designs",
+    "designVersions",
+    "comments",
+    "notifications",
+    "projectBudgets",
+    "budgets",
+    "items",
+    "planMaps",
+    "pins",
+    "timelines",
+    "events",
+  ];
+  const userRelatedCollections = [
+    "userProjects",
+    "userDesigns",
+    "userDesignVersions",
+    "userDesignsComments",
+    "userComments",
+    "userNotifications",
+    "userProjectBudgets",
+    "userBudgets",
+    "userItems",
+    "userPlanMaps",
+    "userPins",
+    "userTimelines",
+    "userEvents",
+  ];
+  const generalCollectionsStateSetterFunctions = {
+    users: setUsers,
+    projects: setProjects,
+    designs: setDesigns,
+    designVersions: setDesignVersions,
+    comments: setComments,
+    notifications: setNotifications,
+    projectBudgets: setProjectBudgets,
+    budgets: setBudgets,
+    items: setItems,
+    planMaps: setPlanMaps,
+    pins: setPins,
+    timelines: setTimelines,
+    events: setEvents,
+  };
+  const userRelatedCollectionsStateSetterFunctions = {
+    userProjects: setUserProjects,
+    userDesigns: setUserDesigns,
+    userDesignVersions: setUserDesignVersions,
+    userDesignsComments: setUserDesignsComments,
+    userComments: setUserComments,
+    userNotifications: setUserNotifications,
+    userProjectBudgets: setUserProjectBudgets,
+    userBudgets: setUserBudgets,
+    userItems: setUserItems,
+    userPlanMaps: setUserPlanMaps,
+    userPins: setUserPins,
+    userTimelines: setUserTimelines,
+    userEvents: setUserEvents,
+  };
+
   const isConnected = useFirestoreSnapshots(
-    [
-      "users",
-      "projects",
-      "designs",
-      "designVersions",
-      "comments",
-      "notifications",
-      "projectBudgets",
-      "budgets",
-      "items",
-      "planMaps",
-      "pins",
-      "timelines",
-      "events",
-    ],
+    [...generalCollections, ...userRelatedCollections],
     {
-      users: setUsers,
-      projects: setProjects,
-      designs: setDesigns,
-      designVersions: setDesignVersions,
-      comments: setComments,
-      notifications: setNotifications,
-      projectBudgets: setProjectBudgets,
-      budgets: setBudgets,
-      items: setItems,
-      planMaps: setPlanMaps,
-      pins: setPins,
-      timelines: setTimelines,
-      events: setEvents,
+      ...generalCollectionsStateSetterFunctions,
+      ...userRelatedCollectionsStateSetterFunctions,
     },
 
     user ? user.uid : null
@@ -137,6 +188,32 @@ function App() {
     setTimelines,
     events,
     setEvents,
+    userProjects,
+    setUserProjects,
+    userDesigns,
+    setUserDesigns,
+    userDesignVersions,
+    setUserDesignVersions,
+    userDesignsComments,
+    setUserDesignsComments,
+    userComments,
+    setUserComments,
+    userNotifications,
+    setUserNotifications,
+    userProjectBudgets,
+    setUserProjectBudgets,
+    userBudgets,
+    setUserBudgets,
+    userItems,
+    setUserItems,
+    userPlanMaps,
+    setUserPlanMaps,
+    userPins,
+    setUserPins,
+    userTimelines,
+    setUserTimelines,
+    userEvents,
+    setUserEvents,
   };
 
   if (loading) {

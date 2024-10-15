@@ -214,27 +214,55 @@ function Design() {
                   onChange={handleTabChange}
                   TabIndicatorProps={{
                     style: {
-                      backgroundColor: "var(--brightFont)", // Customize the indicator color
+                      backgroundImage: "var(--gradientCircle)", // Customize the indicator color
                     },
                   }}
                 >
                   <Tab
                     sx={{
+                      fontWeight: "bold",
+                      textTransform: "none",
                       color:
                         activeTab === 0
                           ? "var(--brightFont)"
-                          : "var(--color-grey)",
+                          : "var(--color-white)",
+
+                      "&.Mui-selected": {
+                        color: "transparent", // Hide the actual text color
+                        backgroundImage: "var(--gradientCircle)", // Apply background image
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        fontWeight: "bold", // Optional: make text bold to stand out
+                      },
                     }}
                     label="All Comments"
                   />
                   <Tab
                     sx={{
+                      fontWeight: "bold",
+                      textTransform: "none",
                       color:
                         activeTab === 1
                           ? "var(--brightFont)"
-                          : "var(--color-grey)",
+                          : "var(--color-white)",
+                      "&:focus": {
+                        outline: "none",
+                        backgroundColor: "transparent",
+                      },
+                      "&:active": {
+                        outline: "none",
+                        backgroundColor: "transparent",
+                      },
+
+                      "&.Mui-selected": {
+                        color: "transparent", // Hide the actual text color
+                        backgroundImage: "var(--gradientCircle)", // Apply background image
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        fontWeight: "bold",
+                      },
                     }}
-                    label="For you"
+                    label="For You"
                   />
                 </Tabs>
 
@@ -258,7 +286,7 @@ function Design() {
 
                 {activeTab === 0 && (
                   <>
-                    <CommentContainer />{" "}
+                    <CommentContainer />
                     <button className="add-comment-button">
                       Add a comment
                     </button>
@@ -266,7 +294,7 @@ function Design() {
                 )}
                 {activeTab === 1 && (
                   <>
-                    <CommentContainer />{" "}
+                    <CommentContainer />
                     <button className="add-comment-button">
                       Add a comment
                     </button>

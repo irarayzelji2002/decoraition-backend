@@ -20,7 +20,9 @@ const CommentContainer = () => {
           ></Avatar>
           <div className="user-details">
             <span className="username">Juan Dela Cruz</span>
-            <span className="date">June 17, 2024</span>
+            <span style={{ fontSize: "0.7rem" }} className="date">
+              June 17, 2024
+            </span>
           </div>
         </div>
         <div className="profile-status">

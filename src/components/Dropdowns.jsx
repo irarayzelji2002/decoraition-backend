@@ -14,6 +14,7 @@ export default function SelectSmall() {
   const [order, setOrder] = React.useState("");
 
   // Custom styles for Menu
+
   const StyledMenu = styled(Menu)(({ theme }) => ({
     "& .MuiPaper-root": {
       backgroundColor: "#2c2c2e",
@@ -27,6 +28,18 @@ export default function SelectSmall() {
     "& .MuiList-root": {
       padding: 0,
     },
+    "& .MuiMenuItem-root": {
+      "&.Mui-selected": {
+        backgroundColor: "transparent", // Custom background color for selected item
+        "&:hover": {
+          backgroundColor: "transparent", // Custom hover color for selected item
+        },
+      },
+      "&:focus": {
+        outline: "none",
+        boxShadow: "none", // Remove blue outline effect
+      },
+    },
   }));
 
   const formControlStyles = {
@@ -36,10 +49,10 @@ export default function SelectSmall() {
     color: "var(--color-white)",
     borderRadius: "8px",
     "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "var(--borderInput)",
+      borderColor: "var(--color-grey)",
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: "var(--bright-grey)",
+      borderColor: "var(--color-white)",
     },
     "& .MuiSvgIcon-root": {
       color: "var(--color-white)", // Set the arrow color to white
@@ -68,24 +81,36 @@ export default function SelectSmall() {
       style={{
         display: "flex",
         flexWrap: "wrap",
-        gap: "16px",
+
         justifyContent: "center",
         margin: "16px",
       }}
     >
       {/* Owner Select */}
+
       <FormControl sx={formControlStyles}>
         <InputLabel
           id="owner-select-label"
-          sx={{ color: "var(--color-white)" }}
+          sx={{
+            color: "var(--color-white)",
+            "&.Mui-focused": {
+              color: "var(--color-white)", // Ensure label color remains white when focused
+            },
+            "&.MuiInputLabel-shrink": {
+              color: "var(--color-white)", // Ensure label color remains white when shrunk
+            },
+            "&.Mui-focused.MuiInputLabel-shrink": {
+              color: "var(--color-white)", // Ensure label color remains white when focused and shrunk
+            },
+          }}
         >
           Owner
         </InputLabel>
         <Select
           labelId="owner-select-label"
           id="owner-select"
-          value={owner}
           label="Owner"
+          value={owner}
           onChange={(e) => setOwner(e.target.value)}
           MenuComponent={StyledMenu}
           MenuProps={{
@@ -104,6 +129,16 @@ export default function SelectSmall() {
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
+            "&.Mui-focused": {
+              borderBottom: "1px solid var(--focusBorderColor)", // Change border color when focused
+              outline: "none",
+              boxShadow: "none", // Remove blue outline effect
+              color: "var(--color-grey)", // Ensure text color remains white
+            },
+
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "var(--color-white)",
+            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>

@@ -606,6 +606,11 @@ textarea {
   .fixed-arrow-button {
     display: none;
   }
+  .promptBar {
+    padding-bottom: 20px;
+    margin-bottom: 0;
+    min-height: 0;
+  }
 
   .comment-section {
     position: fixed; /* Make the div fixed */

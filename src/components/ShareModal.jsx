@@ -36,6 +36,7 @@ const ShareModal = ({
         "& .MuiDialog-paper": {
           backgroundColor: "#2E2E32", // Custom background color for the dialog
           borderRadius: "20px", // Custom border radius for the dialog
+          width: "90%", // Custom width for the dialog
         },
       }}
     >
@@ -58,14 +59,16 @@ const ShareModal = ({
         sx={{
           backgroundColor: "#1F1E22", // Content background color
           color: "whitesmoke", // Text color in the content
-          width: "50vh",
+          width: "auto",
+          padding: "0px",
+
           "& .MuiDialog-paper": {
             width: "100%",
           },
         }}
       >
         {!isSecondPage ? (
-          <div w>
+          <div style={{ width: "auto", padding: "12px" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <EmailInput />
             </div>
@@ -129,10 +132,31 @@ const ShareModal = ({
                 },
               }}
             />
+            <Button
+              variant="contained"
+              onClick={onNext}
+              sx={{
+                width: "95%", // Button width
+                background: "var(--gradientButton)", // Gradient background
+                borderRadius: "20px", // Button border radius
+                color: "whitesmoke", // Button text color
+                margin: "10px",
+                fontWeight: "bold",
+                textTransform: "none",
+                "&:hover": {
+                  background: "var(--gradientButtonHover)", // Reverse gradient on hover
+                },
+              }}
+            >
+              Next
+            </Button>
           </div>
         ) : (
           <div>
-            <Typography variant="body1" sx={{ marginBottom: "16px" }}>
+            <Typography
+              variant="body1"
+              sx={{ marginBottom: "16px", padding: "12px" }}
+            >
               Assign roles and choose notification settings for the added
               collaborators.
             </Typography>
@@ -175,9 +199,11 @@ const ShareModal = ({
               variant="contained"
               onClick={onShareProject}
               sx={{
+                width: "92%", // Button width
                 background: "var(--gradientButton)", // Gradient background
                 borderRadius: "20px", // Button border radius
                 color: "whitesmoke", // Button text color
+                margin: "16px",
                 fontWeight: "bold",
                 textTransform: "none",
                 "&:hover": {
@@ -190,26 +216,6 @@ const ShareModal = ({
           </div>
         )}
       </DialogContent>
-
-      <DialogActions sx={{ backgroundColor: "#1F1E22" }}>
-        <Button
-          fullWidth
-          variant="contained"
-          onClick={onNext}
-          sx={{
-            background: "var(--gradientButton)", // Gradient background
-            borderRadius: "20px", // Button border radius
-            color: "whitesmoke", // Button text color
-            fontWeight: "bold",
-            textTransform: "none",
-            "&:hover": {
-              background: "var(--gradientButtonHover)", // Reverse gradient on hover
-            },
-          }}
-        >
-          Next
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

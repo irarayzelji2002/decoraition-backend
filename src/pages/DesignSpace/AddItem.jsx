@@ -7,6 +7,9 @@ import { db } from "../../firebase"; // Assuming you have firebase setup
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
+import { InputAdornment } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import SearchIcon from "@mui/icons-material/Search";
 
 const AddItem = () => {
   const [itemQuantity, setItemQuantity] = useState(1);
@@ -15,9 +18,21 @@ const AddItem = () => {
   const [userId, setUserId] = useState(null);
   const [budgetItem, setBudgetItem] = useState("");
   const [cost, setCost] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleImageUpload = (e) => {
-    setImage(URL.createObjectURL(e.target.files[0]));
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    document.getElementById("upload-image").click();
   };
 
   useEffect(() => {
@@ -94,15 +109,54 @@ const AddItem = () => {
       />
       <div className="add-item-container">
         <div className="left-column">
-          <div className="search-section">
-            <input type="text" placeholder="Search for an item" />
-          </div>
+          <TextField
+            placeholder="Search for an item"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment
+                  position="start"
+                  sx={{ color: "var(--color-white)" }}
+                >
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              width: "100%",
+              marginBottom: "20px",
+
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  border: "var(--borderInput) 2px solid",
+                  borderRadius: "20px",
+                },
+                "&:hover fieldset": {
+                  border: "var(--borderInput) 2px solid",
+                },
+                "&.Mui-focused fieldset": {
+                  border: "var(--brightFont) 2px solid",
+                },
+                "& input": {
+                  color: "var(--color-white)", // Change the text color
+                },
+              },
+            }}
+            fullWidth
+          />
 
           <div className="upload-section">
-            {image ? (
-              <img src={image} alt="Item" className="uploaded-image" />
+            {selectedImage ? (
+              <img
+                src={selectedImage}
+                alt="Selected"
+                style={{ width: "100px", height: "100px" }}
+              />
             ) : (
-              <div className="image-placeholder">Add an image to the item</div>
+              <div className="image-placeholder-container">
+                <div className="image-placeholder">
+                  Add an image to the item
+                </div>
+              </div>
             )}
             <button htmlFor="upload-image" className="upload-btn">
               Upload image of item

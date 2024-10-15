@@ -82,6 +82,15 @@ export default function SelectSmall() {
           label="Owner"
           onChange={(e) => setOwner(e.target.value)}
           MenuComponent={StyledMenu}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                "& .MuiMenu-list": {
+                  padding: 0, // Remove padding from the ul element
+                },
+              },
+            },
+          }}
           sx={{
             color: "#f1f1f1",
             backgroundColor: "#2c2c2e",
@@ -120,6 +129,15 @@ export default function SelectSmall() {
           label="Date Modified"
           onChange={(e) => setDateModified(e.target.value)}
           MenuComponent={StyledMenu}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                "& .MuiMenu-list": {
+                  padding: 0, // Remove padding from the ul element
+                },
+              },
+            },
+          }}
           sx={{
             color: "#f1f1f1",
             backgroundColor: "#2c2c2e",
@@ -157,6 +175,15 @@ export default function SelectSmall() {
           value={dateCreated}
           label="Date Created"
           onChange={(e) => setDateCreated(e.target.value)}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                "& .MuiMenu-list": {
+                  padding: 0, // Remove padding from the ul element
+                },
+              },
+            },
+          }}
           MenuComponent={StyledMenu}
           sx={{
             color: "#f1f1f1",
@@ -196,6 +223,15 @@ export default function SelectSmall() {
           label="Sort By"
           onChange={(e) => setSortBy(e.target.value)}
           MenuComponent={StyledMenu}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                "& .MuiMenu-list": {
+                  padding: 0, // Remove padding from the ul element
+                },
+              },
+            },
+          }}
           sx={{
             color: "#f1f1f1",
             backgroundColor: "#2c2c2e",
@@ -231,6 +267,15 @@ export default function SelectSmall() {
           label="Order"
           onChange={(e) => setOrder(e.target.value)}
           MenuComponent={StyledMenu}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                "& .MuiMenu-list": {
+                  padding: 0, // Remove padding from the ul element
+                },
+              },
+            },
+          }}
           sx={{
             color: "#f1f1f1",
             backgroundColor: "#2c2c2e",

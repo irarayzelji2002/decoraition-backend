@@ -317,6 +317,28 @@ function Settings() {
                 onSave={() => handleSave("username")}
               />
             </div>
+
+            <div className="inputFieldImportant">
+              <label className="inputLabel">Email</label>
+              <EditableInput
+                fieldName="Email"
+                value={userDetails.email}
+                onChange={handleInputChange("email")}
+                onSave={() => handleSave("email")}
+              />
+            </div>
+            <div className="inputFieldImportant">
+              <label className="inputLabel">Password</label>
+              <EditableInput fieldName="Password" value="*************" />
+            </div>
+            <div className="inputFieldImportant">
+              <label className="inputLabel">Linked Account</label>
+              <EditableInput fieldName="Password" value="None" linked />
+            </div>
+            <div className="inputFieldImportant">
+              <label className="inputLabel">Theme</label>
+              <EditableInput fieldName="Password" value="Light Mode" theme />
+            </div>
           </Box>
         )}
 

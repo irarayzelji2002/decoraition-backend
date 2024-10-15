@@ -13,11 +13,9 @@ import SearchIcon from "@mui/icons-material/Search";
 
 const AddItem = () => {
   const [itemQuantity, setItemQuantity] = useState(1);
-  const [image, setImage] = useState(null);
   const { designId, projectId } = useParams();
-  const [userId, setUserId] = useState(null);
   const [budgetItem, setBudgetItem] = useState("");
-  const [cost, setCost] = useState(0);
+  const [cost, setCost] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleImageUpload = (event) => {
@@ -34,19 +32,6 @@ const AddItem = () => {
   const triggerFileInput = () => {
     document.getElementById("upload-image").click();
   };
-
-  useEffect(() => {
-    const auth = getAuth();
-
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        console.error("User is not authenticated");
-      }
-    });
-    return () => unsubscribe();
-  }, [designId]);
 
   const handleInputChange = (e) => {
     setBudgetItem(e.target.value);
@@ -149,7 +134,13 @@ const AddItem = () => {
               <img
                 src={selectedImage}
                 alt="Selected"
-                style={{ width: "100px", height: "100px" }}
+                style={{
+                  objectFit: "cover",
+                  width: "100%",
+                  height: "350px",
+                  marginBottom: "40px",
+                  borderRadius: "20px",
+                }}
               />
             ) : (
               <div className="image-placeholder-container">
@@ -158,7 +149,7 @@ const AddItem = () => {
                 </div>
               </div>
             )}
-            <button htmlFor="upload-image" className="upload-btn">
+            <button onClick={triggerFileInput} className="upload-btn">
               Upload image of item
               <input
                 type="file"
@@ -202,6 +193,7 @@ const AddItem = () => {
                   type="number"
                   placeholder="Enter item price"
                   onChange={handleCost}
+                  style={{ outline: "none" }}
                 />
               </div>
             </div>
@@ -215,7 +207,9 @@ const AddItem = () => {
               >
                 &lt;
               </button>
-              <span>{itemQuantity}</span>
+              <span style={{ color: "var(--color-white)" }}>
+                {itemQuantity}
+              </span>
               <button onClick={() => setItemQuantity(itemQuantity + 1)}>
                 &gt;
               </button>

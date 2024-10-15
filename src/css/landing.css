@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: "Arial", sans-serif;
+  font-family: "Inter", sans-serif !important;
   background-color: #181818;
 }
 
@@ -35,9 +35,9 @@ h1 {
 
 .highlight {
   font-weight: bolder;
-  background: linear-gradient(20deg, #f89a47, #f15f3e, #ec2073);
-  -webkit-background-clip: text; 
-  -webkit-text-fill-color: transparent; 
+  background: var(--gradientFont);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .tagline {
@@ -116,7 +116,7 @@ h1 {
 
 .features-section {
   padding: 50px;
-  color: white;
+  color: var(--color-white);
   text-align: center;
 }
 
@@ -124,13 +124,13 @@ h1 {
   font-size: 2.5em;
   margin-bottom: 40px;
   font-weight: bold;
-  color: #fff;
+  color: var(--color-white);
   text-align: center;
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: 1fr; 
+  grid-template-columns: 1fr;
   gap: 30px;
   justify-items: center;
 }
@@ -145,48 +145,38 @@ h1 {
 }
 
 .feature-odd {
-  background: linear-gradient(
-    90deg,
-    rgba(248, 154, 71, 0.8),
-    rgba(241, 95, 62, 0.7),
-    rgba(236, 32, 115, 0)
-  ); 
-  flex-direction: row; 
+  background-image: var(--landingGradientOdd);
+  flex-direction: row;
 }
 
 .feature-even {
-  background: linear-gradient(
-    270deg,
-    rgba(248, 154, 71, 0.8),
-    rgba(241, 95, 62, 0.7),
-    rgba(236, 32, 115, 0)
-  ); 
-  flex-direction: row-reverse; 
+  background-image: var(--landingGradientEven);
+  flex-direction: row-reverse;
 }
 
 .feature img {
   width: 60px;
-  margin-right: 20px; 
+  margin-right: 20px;
 }
 
 .feature h3 {
   font-size: 1.5em;
   margin-bottom: 10px;
-  background: white;
-  -webkit-background-clip: text; 
-  -webkit-text-fill-color: transparent; 
+  color: var(--color-white);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .feature-odd > div {
-  text-align: left; 
+  text-align: left;
 }
 
 .feature-even > div {
-  text-align: right; 
+  text-align: right;
 }
 
 .feature p {
   font-size: 1em;
-  color: #fff;
+  color: var(--color-white);
 }
 
 @media (max-width: 768px) {
@@ -197,7 +187,7 @@ h1 {
 
   .feature img {
     margin-bottom: 10px;
-    margin-right: 0; 
+    margin-right: 0;
   }
 }
 .feature-icon {
@@ -207,10 +197,10 @@ h1 {
 .makeover-section {
   margin-top: 50px;
   padding: 20px;
-  background: #1f1e22;
+  background: var(--bgMain);
   border-radius: 25px;
-  border: 5px solid #f15f3e; 
-  color: white;
+  border: 5px solid var(--borderLanding);
+  color: var(--color-white);
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;

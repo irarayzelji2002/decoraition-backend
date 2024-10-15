@@ -49,10 +49,10 @@ export default function SelectSmall() {
     color: "var(--color-white)",
     borderRadius: "8px",
     "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "var(--color-grey)",
+      borderColor: "var( --borderInput)",
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: "var(--color-white)",
+      borderColor: "var(--bright-grey) !important",
     },
     "& .MuiSvgIcon-root": {
       color: "var(--color-white)", // Set the arrow color to white
@@ -160,7 +160,18 @@ export default function SelectSmall() {
       <FormControl sx={formControlStyles}>
         <InputLabel
           id="date-modified-select-label"
-          sx={{ color: "var(--color-white)" }}
+          sx={{
+            color: "var(--color-white)",
+            "&.Mui-focused": {
+              color: "var(--color-white)", // Ensure label color remains white when focused
+            },
+            "&.MuiInputLabel-shrink": {
+              color: "var(--color-white)", // Ensure label color remains white when shrunk
+            },
+            "&.Mui-focused.MuiInputLabel-shrink": {
+              color: "var(--color-white)", // Ensure label color remains white when focused and shrunk
+            },
+          }}
         >
           Date Modified
         </InputLabel>
@@ -187,6 +198,16 @@ export default function SelectSmall() {
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
+            "&.Mui-focused": {
+              borderBottom: "1px solid var(--focusBorderColor)",
+              outline: "none",
+              boxShadow: "none",
+              color: "var(--color-grey)",
+            },
+
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "var(--color-white)",
+            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>
@@ -208,7 +229,18 @@ export default function SelectSmall() {
       <FormControl sx={formControlStyles}>
         <InputLabel
           id="date-created-select-label"
-          sx={{ color: "var(--color-white)" }}
+          sx={{
+            color: "var(--color-white)",
+            "&.Mui-focused": {
+              color: "var(--color-white)",
+            },
+            "&.MuiInputLabel-shrink": {
+              color: "var(--color-white)",
+            },
+            "&.Mui-focused.MuiInputLabel-shrink": {
+              color: "var(--color-white)",
+            },
+          }}
         >
           Date Created
         </InputLabel>
@@ -222,7 +254,7 @@ export default function SelectSmall() {
             PaperProps: {
               sx: {
                 "& .MuiMenu-list": {
-                  padding: 0, // Remove padding from the ul element
+                  padding: 0,
                 },
               },
             },
@@ -235,6 +267,16 @@ export default function SelectSmall() {
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
+            "&.Mui-focused": {
+              borderBottom: "1px solid var(--focusBorderColor)",
+              outline: "none",
+              boxShadow: "none",
+              color: "var(--color-grey)",
+            },
+
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "var(--color-white)",
+            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>
@@ -256,7 +298,18 @@ export default function SelectSmall() {
       <FormControl sx={formControlStyles}>
         <InputLabel
           id="sort-by-select-label"
-          sx={{ color: "var(--color-white)" }}
+          sx={{
+            color: "var(--color-white)",
+            "&.Mui-focused": {
+              color: "var(--color-white)",
+            },
+            "&.MuiInputLabel-shrink": {
+              color: "var(--color-white)",
+            },
+            "&.Mui-focused.MuiInputLabel-shrink": {
+              color: "var(--color-white)",
+            },
+          }}
         >
           Sort By
         </InputLabel>
@@ -271,7 +324,7 @@ export default function SelectSmall() {
             PaperProps: {
               sx: {
                 "& .MuiMenu-list": {
-                  padding: 0, // Remove padding from the ul element
+                  padding: 0,
                 },
               },
             },
@@ -283,6 +336,16 @@ export default function SelectSmall() {
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
+            "&.Mui-focused": {
+              borderBottom: "1px solid var(--focusBorderColor)",
+              outline: "none",
+              boxShadow: "none",
+              color: "var(--color-grey)",
+            },
+
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "var(--color-white)",
+            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>
@@ -301,7 +364,18 @@ export default function SelectSmall() {
       <FormControl sx={formControlStyles}>
         <InputLabel
           id="order-select-label"
-          sx={{ color: "var(--color-white)" }}
+          sx={{
+            color: "var(--color-white)",
+            "&.Mui-focused": {
+              color: "var(--color-white)",
+            },
+            "&.MuiInputLabel-shrink": {
+              color: "var(--color-white)",
+            },
+            "&.Mui-focused.MuiInputLabel-shrink": {
+              color: "var(--color-white)",
+            },
+          }}
         >
           Order
         </InputLabel>
@@ -316,7 +390,7 @@ export default function SelectSmall() {
             PaperProps: {
               sx: {
                 "& .MuiMenu-list": {
-                  padding: 0, // Remove padding from the ul element
+                  padding: 0,
                 },
               },
             },
@@ -328,6 +402,15 @@ export default function SelectSmall() {
             borderBottom: "1px solid #4a4a4d",
             borderRadius: "8px",
             transition: "background-color 0.3s ease",
+            "&.Mui-focused": {
+              borderBottom: "1px solid var(--focusBorderColor)",
+              outline: "none",
+              color: "var(--color-grey)",
+            },
+
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "var(--color-white)",
+            },
           }}
         >
           <MenuItem value="" sx={menuItemStyles}>

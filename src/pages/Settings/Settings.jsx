@@ -172,7 +172,7 @@ function Settings() {
         TabIndicatorProps={{
           style: {
             fontWeight: "bold",
-            backgroundImage: "var(--gradientCircle)",
+            backgroundImage: "var(--gradientFont)",
 
             // Tab indicator color
           },
@@ -183,7 +183,7 @@ function Settings() {
           },
           "& .MuiTab-root.Mui-selected": {
             color: "transparent", // Hide the actual text color
-            backgroundImage: "var(--gradientCircle)", // Apply background image
+            backgroundImage: "var(--gradientFont)", // Apply background image
             backgroundClip: "text",
             WebkitBackgroundClip: "text",
             fontWeight: "bold", // Optional: make text bold to stand out

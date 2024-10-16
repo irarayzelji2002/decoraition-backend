@@ -214,7 +214,7 @@ function Design() {
                   onChange={handleTabChange}
                   TabIndicatorProps={{
                     style: {
-                      backgroundImage: "var(--gradientCircle)", // Customize the indicator color
+                      backgroundImage: "var(--gradientFont)", // Customize the indicator color
                     },
                   }}
                 >
@@ -229,7 +229,7 @@ function Design() {
 
                       "&.Mui-selected": {
                         color: "transparent", // Hide the actual text color
-                        backgroundImage: "var(--gradientCircle)", // Apply background image
+                        backgroundImage: "var(--gradientFont)", // Apply background image
                         backgroundClip: "text",
                         WebkitBackgroundClip: "text",
                         fontWeight: "bold", // Optional: make text bold to stand out
@@ -256,7 +256,7 @@ function Design() {
 
                       "&.Mui-selected": {
                         color: "transparent", // Hide the actual text color
-                        backgroundImage: "var(--gradientCircle)", // Apply background image
+                        backgroundImage: "var(--gradientFont)", // Apply background image
                         backgroundClip: "text",
                         WebkitBackgroundClip: "text",
                         fontWeight: "bold",

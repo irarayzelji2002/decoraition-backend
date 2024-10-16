@@ -19,7 +19,8 @@ import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
-const SearchAppBar = ({ user, onMenuClick, onSearchChange, searchQuery, ...sharedProps }) => {
+const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery, ...sharedProps }) => {
+  const { userDoc } = sharedProps;
   const navigate = useNavigate();
   const [isFocused, setIsFocused] = React.useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -131,7 +132,7 @@ const SearchAppBar = ({ user, onMenuClick, onSearchChange, searchQuery, ...share
               textOverflow: "ellipsis",
             }}
           >
-            {user.username || "Guest"}
+            {userDoc.username || "Guest"}
           </Box>
           <IconButton onClick={() => navigate("/settings")} sx={{ p: 0 }}>
             <DelayedTooltip
@@ -141,8 +142,8 @@ const SearchAppBar = ({ user, onMenuClick, onSearchChange, searchQuery, ...share
               setOpen={setAccountTooltipOpen}
             >
               <Avatar
-                {...(user.username && stringAvatar(user.username))}
-                src={user?.profilePic ? user?.profilePic : ""}
+                {...(userDoc.username && stringAvatar(userDoc.username))}
+                src={userDoc?.profilePic ? userDoc?.profilePic : ""}
                 sx={{
                   height: 40,
                   width: 40,

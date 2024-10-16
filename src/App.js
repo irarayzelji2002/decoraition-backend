@@ -13,6 +13,7 @@ import {
 import { showToast } from "./functions/utils.js";
 
 import "./App.css";
+import Loading from "./components/Loading.jsx";
 import Login from "./pages/Account/Login.jsx";
 import Register from "./pages/Account/Register.jsx";
 import Users from "./users.js";
@@ -40,7 +41,7 @@ import Version from "./pages/DesignSpace/Version.jsx";
 // import { Rotate90DegreesCcw } from "@mui/icons-material";
 
 function App() {
-  const { user, setUser, loading, setLoading } = useAuth() || {};
+  const { user, setUser, userDoc, setUserDoc, handleLogout, loading, setLoading } = useAuth() || {};
   const { setSharedProps } = useSharedProps();
 
   // State for each collection
@@ -107,6 +108,7 @@ function App() {
     "events",
   ];
   const userRelatedCollections = [
+    "userDoc",
     "userProjects",
     "userDesigns",
     "userDesignVersions",
@@ -137,6 +139,7 @@ function App() {
     events: setEvents,
   };
   const userRelatedCollectionsStateSetterFunctions = {
+    userDoc: setUserDoc,
     userProjects: setUserProjects,
     userDesigns: setUserDesigns,
     userDesignVersions: setUserDesignVersions,
@@ -152,18 +155,23 @@ function App() {
     userEvents: setUserEvents,
   };
 
-  const isConnected = useFirestoreSnapshots(
+  const { isUserDataLoaded, isCollectionLoaded } = useFirestoreSnapshots(
     [...generalCollections, ...userRelatedCollections],
     {
       ...generalCollectionsStateSetterFunctions,
       ...userRelatedCollectionsStateSetterFunctions,
     },
-
-    user ? user.uid : null
+    user ? user : null
   );
 
   const sharedProps = {
     user,
+    setUser,
+    userDoc,
+    setUserDoc,
+    handleLogout,
+    loading,
+    setLoading,
     users,
     setUsers,
     projects,
@@ -222,17 +230,8 @@ function App() {
     setSharedProps(sharedProps);
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    showToast("error", "Please log in");
-    return <div>Please log in</div>;
-  }
-
-  if (!isConnected) {
-    return <div>Connecting to Firestore...</div>;
+  if (!isCollectionLoaded || loading) {
+    return <Loading />;
   }
 
   return (

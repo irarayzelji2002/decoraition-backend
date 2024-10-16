@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import { handleSetError, getHasError, getErrMessage, toCamelCase } from "../../functions/utils";
 
-const EditableInputThree = ({ labels, values, onChange, onSave }) => {
+const EditableInputThree = ({
+  labels,
+  values,
+  onChange,
+  onSave,
+  errors,
+  setErrors,
+  origValues,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValues, setInputValues] = useState(values);
 
@@ -11,9 +21,11 @@ const EditableInputThree = ({ labels, values, onChange, onSave }) => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    onSave(inputValues);
+  const handleSave = async () => {
+    const success = await onSave(inputValues);
+    if (success) {
+      setIsEditing(false);
+    }
   };
 
   const handleChange = (index, value) => {
@@ -21,6 +33,25 @@ const EditableInputThree = ({ labels, values, onChange, onSave }) => {
     newValues[index] = value;
     setInputValues(newValues);
     onChange(index, value);
+  };
+
+  const handleReset = (index) => {
+    const newValues = [...inputValues];
+    newValues[index] = origValues[index];
+    setInputValues(newValues);
+  };
+
+  const handleClose = () => {
+    setIsEditing(false);
+    setInputValues(origValues);
+    if (setErrors) {
+      labels.forEach((label) => {
+        handleSetError(toCamelCase(label), "", errors, setErrors);
+      });
+      if (labels.length > 1) {
+        handleSetError("all", "", errors, setErrors);
+      }
+    }
   };
 
   return (
@@ -34,6 +65,7 @@ const EditableInputThree = ({ labels, values, onChange, onSave }) => {
           disabled={!isEditing}
           fullWidth
           margin="normal"
+          helperText={getErrMessage(toCamelCase(label), errors)}
           sx={{
             marginTop: "10px",
             marginBottom: "10px",
@@ -58,16 +90,29 @@ const EditableInputThree = ({ labels, values, onChange, onSave }) => {
             },
           }}
           InputProps={{
-            endAdornment: index === labels.length - 1 && (
+            endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={isEditing ? handleSave : handleEdit}>
-                  {isEditing ? <SaveIcon /> : <EditIcon />}
-                </IconButton>
+                {isEditing && (
+                  <IconButton onClick={() => handleReset(index)}>
+                    <CloseRoundedIcon />
+                  </IconButton>
+                )}
               </InputAdornment>
             ),
           }}
         />
       ))}
+
+      {isEditing && (
+        <IconButton onClick={handleClose}>
+          <CloseRoundedIcon />
+        </IconButton>
+      )}
+      <IconButton onClick={isEditing ? handleSave : handleEdit}>
+        {isEditing ? <SaveIcon /> : <EditIcon />}
+      </IconButton>
+
+      {getHasError("all", errors) && <span className="">{getErrMessage("all", errors)}</span>}
     </div>
   );
 };

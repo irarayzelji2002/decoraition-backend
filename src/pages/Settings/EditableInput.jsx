@@ -1,19 +1,31 @@
 import React, { useState } from "react";
 import { TextField, InputAdornment, IconButton, Button } from "@mui/material";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import { getHasError, getErrMessage, toCamelCase } from "../../functions/utils";
 
-export default function EditableInput({ label, value, onChange, onSave }) {
+export default function EditableInput({
+  label,
+  value,
+  onChange,
+  onSave,
+  onReset,
+  errors,
+  isEditable = true,
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value);
 
   const handleEdit = () => {
-    setIsEditing(true);
+    if (isEditable) setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    onSave(inputValue);
+  const handleSave = async () => {
+    const success = await onSave(inputValue);
+    if (success) {
+      setIsEditing(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -21,13 +33,23 @@ export default function EditableInput({ label, value, onChange, onSave }) {
     onChange(e.target.value);
   };
 
+  const handleReset = (field) => {
+    if (onReset) {
+      onReset(field);
+      setIsEditing(false);
+    }
+  };
+
   return (
     <TextField
       label={label}
+      type="text"
       value={value}
       onChange={handleChange}
+      disabled={!isEditing}
       fullWidth
       margin="normal"
+      helperText={getErrMessage(toCamelCase(label), errors)}
       sx={{
         marginTop: "10px",
         marginBottom: "10px",
@@ -54,9 +76,18 @@ export default function EditableInput({ label, value, onChange, onSave }) {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <IconButton onClick={isEditing ? handleSave : handleEdit}>
-              {isEditing ? <SaveIcon /> : <EditIcon />}
-            </IconButton>
+            {isEditable && (
+              <>
+                {isEditing && (
+                  <IconButton onClick={() => handleReset(toCamelCase(label))}>
+                    <CloseRoundedIcon />
+                  </IconButton>
+                )}
+                <IconButton onClick={isEditing ? handleSave : handleEdit}>
+                  {isEditing ? <SaveIcon /> : <EditIcon />}
+                </IconButton>
+              </>
+            )}
           </InputAdornment>
         ),
       }}

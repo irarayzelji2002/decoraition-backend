@@ -29,36 +29,36 @@ const theme = createTheme({
 });
 
 export default function Notifications({ ...sharedProps }) {
-  const { user, setUser } = sharedProps;
-  const [allowNotif, setAllowNotif] = useState(user?.notifSettings?.allowNotif || true);
-  const [deleteNotif, setDeleteNotif] = useState(user?.notifSettings?.deleteNotif || true);
+  const { user, userDoc } = sharedProps;
+  const [allowNotif, setAllowNotif] = useState(userDoc?.notifSettings?.allowNotif ?? true);
+  const [deleteNotif, setDeleteNotif] = useState(userDoc?.notifSettings?.deleteNotif ?? true);
   const [deleteNotifAfter, setDeleteNotifAfter] = useState(
-    user?.notifSettings?.deleteNotifAfter || 15
+    userDoc?.notifSettings?.deleteNotifAfter ?? 15
   );
   const [timeForCalEventReminder, setTimeForCalEventReminder] = useState(
-    user?.notifSettings?.timeForCalEventReminder || "0800"
+    userDoc?.notifSettings?.timeForCalEventReminder ?? "0800"
   );
   const [commentNotifications, setCommentNotifications] = useState({
-    mentionedInComment: user?.notifSettings?.mentionedInComment || true,
-    newCommentReplyAsOwner: user?.notifSettings?.newCommentReplyAsOwner || true,
-    newCommentReplyAsCollab: user?.notifSettings?.newCommentReplyAsCollab || false,
-    commentStatusChangeAsOwner: user?.notifSettings?.commentStatusChangeAsOwner || true,
-    commentStatusChangeAsCollab: user?.notifSettings?.commentStatusChangeAsCollab || false,
+    mentionedInComment: userDoc?.notifSettings?.mentionedInComment ?? true,
+    newCommentReplyAsOwner: userDoc?.notifSettings?.newCommentReplyAsOwner ?? true,
+    newCommentReplyAsCollab: userDoc?.notifSettings?.newCommentReplyAsCollab ?? false,
+    commentStatusChangeAsOwner: userDoc?.notifSettings?.commentStatusChangeAsOwner ?? true,
+    commentStatusChangeAsCollab: userDoc?.notifSettings?.commentStatusChangeAsCollab ?? false,
   });
   const [calEventReminder, setCalEventReminder] = useState(
-    user?.notifSettings?.calEventReminder || true
+    userDoc?.notifSettings?.calEventReminder ?? true
   );
   const [designNotifications, setDesignNotifications] = useState({
-    renamedDesign: user?.notifSettings?.renamedDesign || true,
-    inactiveDesign: user?.notifSettings?.inactiveDesign || false,
-    deletedDesign: user?.notifSettings?.deletedDesign || false,
-    changeRoleInDesign: user?.notifSettings?.changeRoleInDesign || false,
+    renamedDesign: userDoc?.notifSettings?.renamedDesign ?? true,
+    inactiveDesign: userDoc?.notifSettings?.inactiveDesign ?? false,
+    deletedDesign: userDoc?.notifSettings?.deletedDesign ?? false,
+    changeRoleInDesign: userDoc?.notifSettings?.changeRoleInDesign ?? false,
   });
   const [projectNotifications, setProjectNotifications] = useState({
-    renamedProject: user?.notifSettings?.renamedProject || true,
-    inactiveProject: user?.notifSettings?.inactiveProject || false,
-    deletedProject: user?.notifSettings?.deletedProject || false,
-    changeRoleInProject: user?.notifSettings?.changeRoleInProject || false,
+    renamedProject: userDoc?.notifSettings?.renamedProject ?? true,
+    inactiveProject: userDoc?.notifSettings?.inactiveProject ?? false,
+    deletedProject: userDoc?.notifSettings?.deletedProject ?? false,
+    changeRoleInProject: userDoc?.notifSettings?.changeRoleInProject ?? false,
   });
 
   const handleCommentNotificationChange = (name, value) => {
@@ -114,17 +114,26 @@ export default function Notifications({ ...sharedProps }) {
         deletedProject,
         changeRoleInProject,
       };
-      const response = await axios.post("/api/user/update-notifications", {
-        userId: user.id,
-        notifSettings: updatedSettings,
-      });
+      const idToken = await user.getIdToken();
+      const response = await axios.post(
+        "/api/user/update-notifications",
+        {
+          userId: userDoc.id,
+          notifSettings: updatedSettings,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
       if (response.status === 200) {
-        setUser({ ...user, notifSettings: response.data.notifSettings });
+        // setUser({ ...user, notifSettings: response.data.notifSettings });
         console.log("Notification settings updated successfully");
         showToast("success", "Notification settings updated successfully!");
       }
     } catch (error) {
-      console.error("Error updating notification settings:", error);
+      console.error("Error updating notification settings:", error.response?.data || error.message);
       showToast("error", "Error updating notification settings. Please try again.");
     }
   };

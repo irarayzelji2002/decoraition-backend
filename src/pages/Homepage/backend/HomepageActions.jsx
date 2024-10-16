@@ -143,15 +143,24 @@ export const handleViewChange = async (userId, layoutSettings, field) => {
 };
 
 // Client-side functions
-export const toggleDarkMode = async (userId, isDarkMode, setIsDarkMode) => {
+export const toggleDarkMode = async (user, userId, isDarkMode, setIsDarkMode) => {
+  const idToken = await user.getIdToken();
   const newMode = !isDarkMode;
   const theme = newMode === true ? 0 : 1;
 
   try {
-    const response = await axios.post("/user/theme", {
-      userId: userId,
-      theme: theme,
-    });
+    const response = await axios.post(
+      "/api/user/theme",
+      {
+        userId: userId,
+        theme: theme,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      }
+    );
 
     if (response.status === 200) {
       setIsDarkMode(newMode);

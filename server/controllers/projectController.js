@@ -1,4 +1,4 @@
-const { db, auth, adminAuth, adminDb } = require("../firebase");
+const { db, auth, clientAuth, clientDb } = require("../firebase");
 
 // Create Project
 exports.handleCreateProject = async (req, res) => {
@@ -13,8 +13,8 @@ exports.handleCreateProject = async (req, res) => {
       contentManagers: [],
       contributors: [],
       viewers: [],
-      createdAt: adminDb.FieldValue.serverTimestamp(),
-      modifiedAt: adminDb.FieldValue.serverTimestamp(),
+      createdAt: db.FieldValue.serverTimestamp(),
+      modifiedAt: db.FieldValue.serverTimestamp(),
       projectSettings: {
         generalAccessSetting: 0, //0 for Restricted, 1 for Anyone with the link
         generalAccessRole: 0, //0 for viewer, 1 for content manager, 2 for contributor)
@@ -36,8 +36,8 @@ exports.handleCreateProject = async (req, res) => {
     const planMapData = {
       projectId,
       link: `/planMap/${projectId}`,
-      createdAt: adminDb.FieldValue.serverTimestamp(),
-      modifiedAt: adminDb.FieldValue.serverTimestamp(),
+      createdAt: db.FieldValue.serverTimestamp(),
+      modifiedAt: db.FieldValue.serverTimestamp(),
       planMapSettings: {
         generalAccessSetting: 0,
         generalAccessRole: 0,
@@ -55,8 +55,8 @@ exports.handleCreateProject = async (req, res) => {
     const timelineData = {
       projectId,
       link: `/timeline/${projectId}`,
-      createdAt: adminDb.FieldValue.serverTimestamp(),
-      modifiedAt: adminDb.FieldValue.serverTimestamp(),
+      createdAt: db.FieldValue.serverTimestamp(),
+      modifiedAt: db.FieldValue.serverTimestamp(),
       timelineSettings: {
         generalAccessSetting: 0,
         generalAccessRole: 0,
@@ -73,8 +73,8 @@ exports.handleCreateProject = async (req, res) => {
     const projectBudgetData = {
       projectId,
       link: `/projectBudget/${projectId}`,
-      createdAt: adminDb.FieldValue.serverTimestamp(),
-      modifiedAt: adminDb.FieldValue.serverTimestamp(),
+      createdAt: db.FieldValue.serverTimestamp(),
+      modifiedAt: db.FieldValue.serverTimestamp(),
       budgetSettings: {
         generalAccessSetting: 0,
         generalAccessRole: 0,
@@ -103,7 +103,7 @@ exports.handleCreateProject = async (req, res) => {
       .collection("users")
       .doc(userId)
       .update({
-        projects: adminDb.FieldValue.arrayUnion({ projectId, role: 2 }), // 2 for manager role
+        projects: db.FieldValue.arrayUnion({ projectId, role: 2 }), // 2 for manager role
       });
 
     res.status(200).json({
@@ -176,7 +176,7 @@ exports.handleDeleteProject = async (req, res) => {
       .collection("users")
       .doc(userId)
       .update({
-        projects: adminDb.FieldValue.arrayRemove({ projectId, role: 2 }),
+        projects: db.FieldValue.arrayRemove({ projectId, role: 2 }),
       });
 
     res.status(200).json({ message: "Project deleted successfully" });

@@ -2,8 +2,11 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { parseFullName } from "parse-full-name";
 import { showToast } from "../../functions/utils";
 import { GoogleIcon, FacebookIcon } from "../../components/CustomIcons";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../../firebase";
 
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -56,68 +59,93 @@ export default function LoginModal() {
       const response = await axios.post("/api/login", { email, password });
 
       if (response.status === 200) {
-        const { userData } = await response.json();
+        const { userData } = await response.data;
+        console.log("Response from login:", response.data);
         // Handle successful login
         showToast("success", "Login successful!");
         setTimeout(() => navigate("/homepage", { state: { userData } }), 1000);
       } else {
-        const errorData = await response.json();
+        const errorData = await response?.data;
         showToast("error", errorData.message || "Login failed. Please try again.");
       }
     } catch (error) {
-      console.error("Login error:", error);
-      showToast("error", "An error occurred. Please try again.");
+      console.error("Login error:");
+      console.log(error);
       setErrors({ general: "Login failed. Please try again." });
     }
   };
 
   const handleGoogleLogin = async () => {
-    let user = {};
-    let userData = {};
     try {
-      const response = await axios.post("/api/google-signin");
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
-      if (!response.status === 200) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      // Check if user exists
+      try {
+        const response = await axios.post("/api/loginWithGoogle", { user });
+
+        if (response.status === 200) {
+          const { userData } = response.data;
+          if (userData) {
+            // User exists, complete login
+            showToast("success", "Successfully logged in with Google!");
+            setTimeout(() => navigate("/homepage", { state: { userData } }), 1000);
+            return;
+          }
+          // If userData is null, continue to create a new account
+        } else {
+          console.error(response.data.message);
+          return;
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        showToast("error", "An error occurred.");
+        return;
       }
 
-      user = await response.json();
-
-      // Check if user object contains all expected properties
+      // If we reach here, the user doesn't exist, so we create a new account
       if (!user || !user.uid || !user.displayName || !user.email || !user.photoURL) {
         throw new Error("Incomplete user data received");
       }
 
-      // Extract user information from Google sign-in
-      userData = {
-        firstName: user.displayName.split(" ")[0],
-        lastName: user.displayName.split(" ").slice(1).join(" "),
-        username: user.email.split("@")[0], // Using email as a base for username
+      // const nameParts = user.displayName.split(" ");
+      // let firstName, lastName;
+      // if (nameParts.length === 1) {
+      //   // If there's only one part, use it as the first name
+      //   firstName = nameParts[0];
+      //   lastName = "";
+      // } else if (nameParts.length === 2) {
+      //   // If there are two parts, use the first as firstName and second as lastName
+      //   [firstName, lastName] = nameParts;
+      // } else {
+      //   // For three or more parts, assume the last part is the lastName
+      //   lastName = nameParts.pop();
+      //   firstName = nameParts.join(" ");
+      // }
+      const { first: firstName, last: lastName } = parseFullName(user.displayName);
+      const userData = {
+        firstName: firstName,
+        lastName: lastName,
+        username: user.email.split("@")[0],
         email: user.email,
-        connectedAccount: "Google",
+        connectedAccount: 0, // Google
         profilePic: user.photoURL,
         userId: user.uid,
       };
-    } catch (error) {
-      console.error("Google login error:", error);
-      showToast("error", "Failed to log in with Google");
-      return;
-    }
 
-    try {
-      // Call your API to create or update user in your database
-      const response = await axios.post("/api/register", userData);
+      // Call API to create new user
+      const createResponse = await axios.post("/api/register", userData);
 
-      if (response.status === 200) {
-        // Handle successful user creation/login
-        showToast("success", "Successfully signed in with Google!");
+      if (createResponse.status === 200) {
+        showToast("success", "Successfully signed up with Google!");
         setTimeout(() => navigate("/homepage"), 1000);
       } else {
         throw new Error("Failed to create user");
       }
     } catch (error) {
-      console.error("Google login error", error);
-      showToast("error", "Google login failed. Please try again.");
+      console.error("Google login/signup error:", error);
+      showToast("error", "Google login/signup failed. Please try again.");
     }
   };
 

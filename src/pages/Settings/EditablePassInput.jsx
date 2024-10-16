@@ -1,22 +1,34 @@
 import React, { useState } from "react";
-import { TextField, InputAdornment, IconButton } from "@mui/material";
+import { TextField, InputAdornment, IconButton, Box } from "@mui/material";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { handleSetError, getHasError, getErrMessage, toCamelCase } from "../../functions/utils";
 
-const EditablePassInput = ({ labels, values, onChange, onSave }) => {
+const EditablePassInput = ({
+  labels,
+  values,
+  onChange,
+  onSave,
+  errors,
+  setErrors,
+  isEditable = true,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [inputValues, setInputValues] = useState(values);
 
   const handleEdit = () => {
-    setIsEditing(true);
+    if (isEditable) setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    onSave(inputValues);
+  const handleSave = async () => {
+    const success = await onSave(inputValues);
+    if (success) {
+      setIsEditing(false);
+    }
   };
 
   const handleChange = (index, value) => {
@@ -30,6 +42,26 @@ const EditablePassInput = ({ labels, values, onChange, onSave }) => {
     setShowPassword(!showPassword);
   };
 
+  const handleReset = (index) => {
+    const newValues = [...inputValues];
+    newValues[index] = "";
+    setInputValues(newValues);
+  };
+
+  const handleClose = () => {
+    setIsEditing(false);
+    const newValues = Array(values.length).fill("");
+    setInputValues(newValues);
+    if (setErrors) {
+      labels.forEach((label) => {
+        handleSetError(toCamelCase(label), "", errors, setErrors);
+      });
+      if (labels.length > 1) {
+        handleSetError("all", "", errors, setErrors);
+      }
+    }
+  };
+
   const renderPasswordField = (index, value, label) => (
     <TextField
       key={index}
@@ -40,6 +72,7 @@ const EditablePassInput = ({ labels, values, onChange, onSave }) => {
       disabled={!isEditing}
       fullWidth
       margin="normal"
+      helperText={getErrMessage(toCamelCase(label), errors)}
       sx={{
         marginTop: "10px",
         marginBottom: "10px",
@@ -66,6 +99,11 @@ const EditablePassInput = ({ labels, values, onChange, onSave }) => {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
+            {isEditing && (
+              <IconButton onClick={() => handleReset(index)}>
+                <CloseRoundedIcon />
+              </IconButton>
+            )}
             <IconButton onClick={handleClickShowPassword} edge="end" disabled={!isEditing}>
               {showPassword ? <VisibilityOff /> : <Visibility />}
             </IconButton>
@@ -120,9 +158,19 @@ const EditablePassInput = ({ labels, values, onChange, onSave }) => {
         <>{renderPasswordView("********", labels[2])}</>
       )}
 
-      <IconButton onClick={isEditing ? handleSave : handleEdit}>
-        {isEditing ? <SaveIcon /> : <EditIcon />}
-      </IconButton>
+      {isEditable && (
+        <>
+          {isEditing && (
+            <IconButton onClick={handleClose}>
+              <CloseRoundedIcon />
+            </IconButton>
+          )}
+          <IconButton onClick={isEditing ? handleSave : handleEdit}>
+            {isEditing ? <SaveIcon /> : <EditIcon />}
+          </IconButton>
+        </>
+      )}
+      {getHasError("all", errors) && <span className="">{getErrMessage("all", errors)}</span>}
     </Box>
   );
 };

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {
   fetchUserDesigns,
   fetchUserProjects,
-  handleLogout,
   handleCreateDesign,
   handleCreateProject,
   handleDeleteDesign,
@@ -37,9 +36,11 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 const DrawerComponent = ({ isDrawerOpen, onClose, ...sharedProps }) => {
-  const { user, setUser, designs, setDesigns } = sharedProps;
+  const { user, userDoc, handleLogout, designs, setDesigns } = sharedProps;
+  console.log("sharedProps: ", sharedProps);
+
   // State to handle dark mode
-  const initDarkMode = user.theme === 0 ? true : false;
+  const initDarkMode = userDoc?.theme === 0 ? true : false;
   const [darkMode, setDarkMode] = useState(initDarkMode);
   const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
@@ -92,12 +93,18 @@ const DrawerComponent = ({ isDrawerOpen, onClose, ...sharedProps }) => {
         >
           <IconButton
             sx={{ color: "white" }}
-            onClick={() => toggleDarkMode(user.uid, darkMode, setDarkMode)}
+            onClick={() => toggleDarkMode(user, userDoc?.id, darkMode, setDarkMode)}
           >
-            <DarkModeIcon sx={{ color: "var(--color-white)" }} />
+            {darkMode ? (
+              <DarkModeIcon sx={{ color: "var(--color-white)" }} />
+            ) : (
+              <LightModeIcon sx={{ color: "var(--color-black)" }} />
+            )}
           </IconButton>
           <IconButton sx={{ color: "white", marginLeft: "16px" }}>
-            <NotificationsIcon sx={{ color: "var(--color-white)" }} />
+            <NotificationsIcon
+              sx={{ color: darkMode ? "var(--color-white)" : "var(--color-black)" }}
+            />
           </IconButton>
         </div>
       </div>
@@ -111,12 +118,12 @@ const DrawerComponent = ({ isDrawerOpen, onClose, ...sharedProps }) => {
             marginLeft: "auto",
             marginRight: "auto",
           }}
-          src={user.profilePic || ""}
+          src={userDoc?.profilePic || ""}
         >
-          {user.username ? user.username.charAt(0).toUpperCase() : ""}
+          {userDoc?.username ? userDoc?.username.charAt(0).toUpperCase() : ""}
         </Avatar>
-        <Typography variant="body1">{user.username || "Guest"}</Typography>
-        <Typography variant="caption">{user?.email || "No email"}</Typography>
+        <Typography variant="body1">{userDoc?.username || "Guest"}</Typography>
+        <Typography variant="caption">{userDoc?.email || "No email"}</Typography>
       </div>
       <Divider sx={{ backgroundColor: "gray", my: 2 }} />
       <List>

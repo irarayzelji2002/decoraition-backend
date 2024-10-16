@@ -1,7 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../../firebase";
 import axios from "axios";
-import { showToast } from "../../functions/utils";
+import {
+  handleSetError,
+  getHasError,
+  getErrMessage,
+  showToast,
+  capitalizeFieldName,
+} from "../../functions/utils";
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  getAuth,
+} from "firebase/auth";
 import {
   Tabs,
   Tab,
@@ -25,26 +42,83 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Settings({ ...sharedProps }) {
-  const { user, setUser } = sharedProps;
+  const { user, userDoc } = sharedProps;
+  console.log("sharedProps:", sharedProps);
 
   const [selectedTab, setSelectedTab] = useState(0);
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isLinkAccountModalOpen, setIsLinkAccountModalOpen] = useState(false);
+  const [isUnlinkAccountModalOpen, setIsUnlinkAccountModalOpen] = useState(false);
   const [isChangeProfileModalOpen, setIsChangeProfileModalOpen] = useState(false);
 
-  const [firstName, setFirstName] = useState(user.firstName || "");
-  const [lastName, setLastName] = useState(user.lastName || "");
-  const [username, setUsername] = useState(user.username || "");
-  const [email, setEmail] = useState(user.email || "");
-  const [theme, setTheme] = useState(user.theme || 0);
-  const [connectedAccount, setConnectedAccount] = useState(user.connectedAccount || null);
-  const [profilePic, setProfilePic] = useState(user.profilePic || "");
+  const [firstName, setFirstName] = useState(userDoc.firstName ?? "");
+  const [lastName, setLastName] = useState(userDoc.lastName ?? "");
+  const [username, setUsername] = useState(userDoc.username ?? "");
+  const [email, setEmail] = useState(userDoc.email ?? "");
+  const [theme, setTheme] = useState(userDoc.theme ?? 0);
+  const [connectedAccount, setConnectedAccount] = useState(userDoc.connectedAccount ?? null);
+  const [profilePic, setProfilePic] = useState(userDoc.profilePic ?? "");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [otp, setOtp] = useState(0);
+  const [unlinkPassword, setUnlinkPassword] = useState("");
+  const [unlinkConfirmPassword, setUnlinkConfirmPassword] = useState("");
+
+  const initUserDetailsErr = [
+    { field: "firstName", hasError: false, errMessage: "" },
+    { field: "lastName", hasError: false, errMessage: "" },
+    { field: "username", hasError: false, errMessage: "" },
+    { field: "all", hasError: false, errMessage: "" },
+  ];
+
+  const initEmailErr = [{ field: "email", hasError: false, errMessage: "" }];
+
+  const initPassErr = [
+    { field: "otp", hasError: false, errMessage: "" },
+    { field: "oldPassword", hasError: false, errMessage: "" },
+    { field: "newPassword", hasError: false, errMessage: "" },
+    { field: "confirmNewPassword", hasError: false, errMessage: "" },
+    { field: "all", hasError: false, errMessage: "" },
+  ];
+
+  const initUnlinkErr = [
+    { field: "password", hasError: false, errMessage: "" },
+    { field: "confirmPassword", hasError: false, errMessage: "" },
+    { field: "all", hasError: false, errMessage: "" },
+  ];
+
+  const [userDetailsErr, setUserDetailsErr] = useState(initUserDetailsErr);
+  const [emailErr, setEmailErr] = useState(initEmailErr);
+  const [passErr, setPassErr] = useState(initPassErr);
+  const [unlinkErr, setUnlinkErr] = useState(initUnlinkErr);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
+  };
+
+  const handleReset = (field) => {
+    if (field === "email") {
+      setEmail(userDoc.email);
+    } else if (field === "firstName") {
+      setFirstName(userDoc.firstName);
+    } else if (field === "lastName") {
+      setLastName(userDoc.lastName);
+    } else if (field === "username") {
+      setUsername(userDoc.username);
+    } else if (field === "theme") {
+      setTheme(userDoc.theme);
+    } else if (field === "connectedAccount") {
+      setConnectedAccount(userDoc.connectedAccount);
+    } else if (field === "profilePic") {
+      setProfilePic(userDoc.profilePic);
+    } else if (field === "newPassword") {
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setOtp(0);
+    } else if (field === "otp") {
+      setOtp(0);
+    }
   };
 
   // Handle file input change
@@ -77,54 +151,145 @@ function Settings({ ...sharedProps }) {
     }
   };
 
-  const handleSaveThreeInputs = (values) => {
-    setFirstName(values[0]);
-    setLastName(values[1]);
-    setUsername(values[2]);
+  const handleSaveThreeInputs = async (values) => {
+    const trimmedFirstName = values[0].trim();
+    const trimmedLastName = values[1].trim();
+    const trimmedUsername = values[2].trim();
+    setFirstName(trimmedFirstName);
+    setLastName(trimmedLastName);
+    setUsername(trimmedUsername);
 
-    handleUpdateUserDetails({
-      firstName: values[0],
-      lastName: values[1],
-      username: values[2],
-    });
+    setUserDetailsErr(initUserDetailsErr);
+    const tempErrors = initUserDetailsErr;
+    if (trimmedFirstName === "") {
+      tempErrors.find((field) => field.field === "firstName").hasError = true;
+      tempErrors.find((field) => field.field === "firstName").errMessage = "This field is required";
+    }
+    if (trimmedLastName === "") {
+      tempErrors.find((field) => field.field === "lastName").hasError = true;
+      tempErrors.find((field) => field.field === "lastName").errMessage = "This field is required";
+    }
+    if (trimmedUsername === "") {
+      tempErrors.find((field) => field.field === "username").hasError = true;
+      tempErrors.find((field) => field.field === "username").errMessage = "This field is required";
+    }
+    if (
+      trimmedFirstName === userDoc.firstName &&
+      trimmedLastName === userDoc.lastName &&
+      trimmedUsername === userDoc.username
+    ) {
+      tempErrors.find((field) => field.field === "all").hasError = true;
+      tempErrors.find((field) => field.field === "all").errMessage = "Nothing has changed";
+    }
+
+    setUserDetailsErr(tempErrors);
+    const hasError = tempErrors.some((field) => field.hasError);
+    if (!hasError) {
+      const success = await handleUpdateUserDetails({
+        firstName: trimmedFirstName,
+        lastName: trimmedLastName,
+        username: trimmedUsername,
+      });
+      return success;
+    }
+    return false;
   };
 
   // Update firstName, lastName, and username
   const handleUpdateUserDetails = async (updatedFields) => {
     try {
-      const response = await axios.post("/api/user/user-details", {
-        userId: user.uid,
-        ...updatedFields,
-      });
+      console.log("updatedFields passed: ", updatedFields);
+      const response = await axios.post(
+        "/api/user/user-details",
+        {
+          userId: userDoc.id,
+          ...updatedFields,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${await user.getIdToken()}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         showToast("success", "Profile updated successfully");
-        setUser({ ...user, ...updatedFields });
+        return true;
+        // setUser({ ...user, ...updatedFields });
       }
     } catch (error) {
       console.error("Error updating user profile:", error);
       showToast("error", "Failed to update user profile");
+      return false;
     }
   };
 
-  // Update theme/ email/ connectedAccount)
+  // Update theme or email
   const handleSave = async (field, value) => {
+    if (field === "email") {
+      const trimmedEmail = value.trim();
+      setEmail(trimmedEmail);
+
+      setEmailErr(initEmailErr);
+      const tempErrors = initEmailErr;
+      if (trimmedEmail === "") {
+        tempErrors.find((field) => field.field === "email").hasError = true;
+        tempErrors.find((field) => field.field === "email").errMessage = "This field is required";
+      } else if (trimmedEmail === userDoc.email) {
+        tempErrors.find((field) => field.field === "email").hasError = true;
+        tempErrors.find((field) => field.field === "email").errMessage = "Email did not change.";
+      }
+
+      setEmailErr(tempErrors);
+      const hasError = tempErrors.some((field) => field.hasError);
+      if (!hasError) {
+        const success = await handleUpdateField("email", trimmedEmail);
+        return success;
+      }
+      return false;
+    } else if (field === "theme") {
+      const success = await handleUpdateField("theme", value);
+      return success;
+    }
+  };
+
+  const handleUpdateField = async (field, value) => {
     try {
-      const response = await axios.post("/api/user/update-field", {
-        userId: user.uid,
-        field,
-        value,
-      });
+      const response = await axios.post(
+        "/api/user/update-field",
+        {
+          userId: userDoc.id,
+          field,
+          value,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${await user.getIdToken()}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
-        showToast("success", `${field} updated successfully`);
-        setUser({ ...user, [field]: value });
+        const fieldName = capitalizeFieldName(field);
+        if (field === "theme") {
+          setTheme(value);
+        }
+        showToast("success", `${fieldName} updated successfully`);
+        return true;
+        // setUser({ ...user, [field]: value });
       } else {
         throw new Error("Failed to update user field");
       }
     } catch (error) {
       console.error(`Error updating ${field}:`, error);
-      showToast("error", `Failed to update ${field}`);
+      showToast("error", `${error.response?.data?.error || `Failed to update ${field}`}`);
+      if (error.response?.data?.error === "Email already exists") {
+        const tempErrors = emailErr;
+        tempErrors.find((field) => field.field === "email").hasError = true;
+        tempErrors.find((field) => field.field === "email").errMessage = "Email already exists";
+        setEmailErr(tempErrors);
+      }
+      return false;
     }
   };
 
@@ -138,15 +303,18 @@ function Settings({ ...sharedProps }) {
     try {
       const formData = new FormData();
       formData.append("selectedFile", selectedFile);
-      formData.append("userId", user.uid);
+      formData.append("userId", userDoc.id);
 
       const response = await axios.post("/api/user/profile-pic", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${await user.getIdToken()}`,
+        },
       });
 
       if (response.status === 200) {
         showToast("success", "Profile picture updated successfully");
-        setUser({ ...user, photoURL: response.data.photoURL });
+        // setUser({ ...user, photoURL: response.data.photoURL });
       }
     } catch (error) {
       console.error("Error updating profile picture:", error);
@@ -156,7 +324,7 @@ function Settings({ ...sharedProps }) {
 
   const handleThemeToggle = () => {
     const newTheme = theme === 0 ? 1 : 0;
-    setTheme(newTheme);
+    // setTheme(newTheme);
     handleSave("theme", newTheme);
   };
 
@@ -165,36 +333,140 @@ function Settings({ ...sharedProps }) {
     if (!(connectedAccount === 0 || connectedAccount === 1)) {
       setIsLinkAccountModalOpen(true);
     } else {
-      handleConnectedAccountChange(null);
+      reAuthenticateUser();
+    }
+  };
+
+  const reAuthenticateUser = async () => {
+    try {
+      if (!user) {
+        showToast("error", "User not authenticated");
+        return;
+      }
+
+      // Reauthenticate the user
+      // let reAuthUser;
+      // if (connectedAccount === 0) {
+      //   const provider = new GoogleAuthProvider();
+      //   const result = await reauthenticateWithPopup(user, provider);
+      //   reAuthUser = result.user;
+      // } else if (connectedAccount === 1) {
+      //   const provider = new FacebookAuthProvider();
+      //   const result = await reauthenticateWithPopup(user, provider);
+      //   reAuthUser = result.user;
+      // }
+      // if (!reAuthUser) {
+      //   showToast("error", "Reauthentication failed");
+      //   return;
+      // }
+
+      setIsUnlinkAccountModalOpen(true);
+    } catch (error) {
+      showToast("error", "Failed to reauthenticate user.");
+      console.error("Failed to reauthenticate user.", error.code);
+    }
+  };
+
+  const handleUnlink = async () => {
+    try {
+      // Password validation
+      setUnlinkErr(initUnlinkErr);
+      const tempErrors = initUnlinkErr;
+      if (!unlinkPassword) {
+        tempErrors.find((field) => field.field === "password").hasError = true;
+        tempErrors.find((field) => field.field === "password").errMessage =
+          "This field is required";
+      }
+      if (!unlinkConfirmPassword) {
+        tempErrors.find((field) => field.field === "confirmPassword").hasError = true;
+        tempErrors.find((field) => field.field === "confirmPassword").errMessage =
+          "This field is required";
+      } else if (unlinkPassword !== unlinkConfirmPassword) {
+        tempErrors.find((field) => field.field === "confirmPassword").hasError = true;
+        tempErrors.find((field) => field.field === "confirmPassword").errMessage =
+          "Password and confirm password does not match";
+      }
+      setUnlinkErr(tempErrors);
+      const hasError = tempErrors.some((field) => field.hasError);
+      console.log("tempErrors", tempErrors);
+      console.log("hasError", hasError);
+      if (hasError) {
+        return;
+      }
+
+      // After linking email/password, proceed with unlinking Google/Facebook account
+      const success = await handleConnectedAccountChange(null);
+      if (success) {
+        await user.reload();
+        setUnlinkPassword("");
+        setUnlinkConfirmPassword("");
+        setIsUnlinkAccountModalOpen(false);
+        setUnlinkErr(initEmailErr);
+      }
+    } catch (error) {
+      setUnlinkPassword("");
+      setUnlinkConfirmPassword("");
+      setUnlinkErr(initEmailErr);
+      console.error("Error unlinking account:", error);
+      // Check if the error is related to invalid credentials
+      const tempErrors = unlinkErr;
+      if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
+        tempErrors.find((field) => field.field === "password").hasError = true;
+        tempErrors.find((field) => field.field === "password").errMessage = "Incorrect password";
+        console.log("Password incorrect, unlink unsuccessful.");
+      } else {
+        showToast("error", "Failed to unlink account. Please check your password and try again.");
+        console.error("Unlink unsuccessful.", error.code);
+      }
+      setUnlinkErr(tempErrors);
     }
   };
 
   const handleLinkAccount = async (provider) => {
-    // TO DO: logic to link the account with the chosen provider
-    const newConnectedAccount = provider === "google" ? 0 : 1;
-    setConnectedAccount(newConnectedAccount);
-    const response = await handleConnectedAccountChange(newConnectedAccount);
-
-    if (response.status === 200) {
-      showToast("success", "Connected account updated successfully");
-      setUser({ ...user, connectedAccount: newConnectedAccount });
+    try {
+      let newConnectedAccount = null;
+      if (provider === "google") {
+        const acctProvider = new GoogleAuthProvider();
+        await user.linkWithPopup(acctProvider);
+        newConnectedAccount = 0;
+      } else if (provider === "facebook") {
+        const acctProvider = new FacebookAuthProvider();
+        await user.linkWithPopup(acctProvider);
+        newConnectedAccount = 1;
+      }
+      handleConnectedAccountChange(newConnectedAccount);
+    } catch (error) {
+      console.error("Error unlinking account:", error);
+      showToast("error", "Failed to link account.");
     }
-    setIsLinkAccountModalOpen(false);
   };
 
   const handleConnectedAccountChange = async (value) => {
+    const previousValue = connectedAccount;
     try {
-      const response = await axios.put(`/api/user/connected-account/${user.uid}`, {
-        connectedAccount: value,
-      });
+      const response = await axios.put(
+        `/api/user/connected-account/${userDoc.id}`,
+        { connectedAccount: value, oldConnectedAccount: userDoc.connectedAccount },
+        {
+          headers: {
+            Authorization: `Bearer ${await user.getIdToken()}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
-        showToast("success", "Connected account updated successfully");
-        setUser({ ...user, connectedAccount: value });
+        showToast("success", response?.data?.message || "Account updated successfully");
+        setIsLinkAccountModalOpen(false);
+        setIsUnlinkAccountModalOpen(false);
+        setConnectedAccount(value);
+        return true;
+        // setUser({ ...user, connectedAccount: value });
       }
     } catch (error) {
       console.error("Error updating connected account:", error);
-      showToast("error", "Failed to update connected account");
+      showToast("error", error.response?.data?.error || "Failed to update account");
+      setConnectedAccount(previousValue);
+      return false;
     }
   };
 
@@ -225,10 +497,14 @@ function Settings({ ...sharedProps }) {
     try {
       // Call your API endpoint to update the password
       // This is a placeholder and should be replaced with your actual API call
-      const response = await axios.post("/api/user/update-password", {
-        userId: user.uid,
-        ...passwordData,
-      });
+      const response = await axios.post(
+        "/api/user/update-password",
+        {
+          userId: userDoc.id,
+          ...passwordData,
+        },
+        { headers: { Authorization: `Bearer ${await user.getIdToken()}` } }
+      );
 
       if (response.status === 200) {
         // Password updated successfully
@@ -359,14 +635,20 @@ function Settings({ ...sharedProps }) {
             <EditableInputThree
               labels={["First Name", "Last Name", "Username"]}
               values={[firstName, lastName, username]}
+              origValues={[userDoc.firstName, userDoc.lastName, userDoc.username]}
               onChange={handleThreeInputsChange}
               onSave={handleSaveThreeInputs}
+              errors={userDetailsErr}
+              setErrors={setUserDetailsErr}
             />
             <EditableInput
               label="Email"
               value={email}
               onChange={(value) => setEmail(value)}
               onSave={(value) => handleSave("email", value)}
+              onReset={handleReset}
+              errors={emailErr}
+              isEditable={connectedAccount == null ? true : false}
             />
             {/* TO DO: OTP verification before enable isEditing */}
             <EditablePassInput
@@ -374,6 +656,9 @@ function Settings({ ...sharedProps }) {
               values={[newPassword, confirmNewPassword]}
               onChange={handlePasswordChange}
               onSave={handlePasswordSave}
+              errors={passErr}
+              setErrors={setPassErr}
+              isEditable={connectedAccount == null ? true : false}
             />
             {/* TO DO: if not linked, sign in and if success toggle icon*/}
             <LongToggleInput
@@ -394,10 +679,48 @@ function Settings({ ...sharedProps }) {
         {/* Notification Tab Content */}
         {selectedTab === 1 && (
           <Box mt={4} className="notification-settings">
-            <Notifications />
+            <Notifications {...sharedProps} />
           </Box>
         )}
       </div>{" "}
+      {isLinkAccountModalOpen && (
+        <div style={{ position: "absolute", top: 0, left: 0 }}>
+          <button onClick={() => handleLinkAccount("google")}>Google</button>
+          <button onClick={() => handleLinkAccount("facebook")}>Facebook</button>
+          <br />
+          <button onClick={() => setIsLinkAccountModalOpen(false)}>Cancel</button>
+        </div>
+      )}
+      {isUnlinkAccountModalOpen && (
+        <div style={{ position: "absolute", top: 0, left: 0 }}>
+          <div>Enter new password</div>
+          <label htmlFor="unlinkPassword">Password:</label>
+          <br />
+          <input
+            type="password"
+            id="unlinkPassword"
+            value={unlinkPassword}
+            onChange={(e) => setUnlinkPassword(e.target.value)}
+          />
+          <span style={{ color: "#ff0000" }}>{getErrMessage("password", unlinkErr)}</span>
+          <br />
+          <label htmlFor="unlinkConfirmPassword">Confirm Password:</label>
+          <br />
+          <input
+            type="password"
+            id="unlinkConfirmPassword"
+            value={unlinkConfirmPassword}
+            onChange={(e) => setUnlinkConfirmPassword(e.target.value)}
+          />
+          <span style={{ color: "#ff0000" }}>{getErrMessage("confirmPassword", unlinkErr)}</span>
+          <br />
+          <button onClick={handleUnlink}>
+            Unlink {connectedAccount === 0 ? "Google" : "Facebook"} Account
+          </button>
+          <br />
+          <button onClick={() => setIsUnlinkAccountModalOpen(false)}>Cancel</button>
+        </div>
+      )}
     </>
   );
 }

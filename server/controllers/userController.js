@@ -1,10 +1,5 @@
-const { db, auth, adminAuth, adminDb } = require("../firebase");
-const {
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-} = require("firebase/auth");
+const { db, auth, clientAuth, clientDb } = require("../firebase");
+const { createUserWithEmailAndPassword, signInWithEmailAndPassword } = require("firebase/auth");
 const { getStorage, ref, uploadBytes, getDownloadURL } = require("firebase/storage");
 
 const emailjs = require("@emailjs/browser");
@@ -14,36 +9,24 @@ const {
   REACT_APP_EMAILJS_PUBLIC_KEY,
 } = process.env;
 
-// Signin with Google and return user
-exports.handleGoogleSignIn = async (req, res) => {
-  const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    res.status(200).json({
-      uid: user.uid,
-      displayName: user.displayName,
-      email: user.email,
-      photoURL: user.photoURL,
-    });
-  } catch (error) {
-    console.error("Error in Google sign-in:", error);
-    res.status(500).json({ error: "Failed to sign in with Google" });
-  }
-};
-
 // Create User
 exports.createUser = async (req, res) => {
   let createdUserDoc = null;
   let firebaseUserId = null;
   try {
-    const { firstName, lastName, username, email, password, connectedAccount, profilePic, userId } =
-      req.body;
+    const { firstName, lastName, username, email, password, userId } = req.body;
+    let { profilePic, connectedAccount } = req.body;
 
     // Check if email already exists
     const existingUser = await db.collection("users").where("email", "==", email).get();
     if (!existingUser.empty) {
       return res.status(400).json({ message: "Email already in use" });
+    }
+
+    // Check if email already exists
+    const existingUsername = await db.collection("users").where("username", "==", username).get();
+    if (!existingUsername.empty) {
+      return res.status(400).json({ message: "Username already in use" });
     }
 
     // Create user in Firebase Authentication
@@ -53,8 +36,10 @@ exports.createUser = async (req, res) => {
       firebaseUserId = userId;
     } else {
       // For email/password registration
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(clientAuth, email, password);
       firebaseUserId = userCredential.user.uid;
+      connectedAccount = null;
+      profilePic = null;
     }
 
     // Create user document in Firestore
@@ -112,7 +97,7 @@ exports.createUser = async (req, res) => {
     // Rollback: Delete user from Authentication if it was created
     if (firebaseUserId) {
       try {
-        await adminAuth.deleteUser(firebaseUserId);
+        await auth.deleteUser(firebaseUserId);
       } catch (deleteAuthError) {
         console.error("Error deleting user from Authentication:", deleteAuthError);
       }
@@ -135,13 +120,19 @@ exports.createUser = async (req, res) => {
 exports.fetchUserData = async (req, res) => {
   try {
     const { userId } = req.params;
+
+    // Check if the requesting user matches the userId
+    if (req.user.uid !== userId) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
     const userDoc = await db.collection("users").doc(userId).get();
     if (!userDoc.exists) {
       return res.status(404).json({ error: "User not found" });
     }
-    res.json(userDoc.data());
+    res.json({ id: userDoc.id, ...userDoc.data() });
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error fetching user data: ", error);
     res.status(500).json({ error: "Failed to fetch user data" });
   }
 };
@@ -177,7 +168,7 @@ exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     // Sign in user with Firebase Authentication
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
     const user = userCredential.user;
 
     // Fetch additional user data from Firestore
@@ -200,14 +191,38 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// Logout
-exports.handleLogout = async (req, res) => {
+// Login with Google
+exports.loginUserGoogle = async (req, res) => {
   try {
-    await auth.signOut();
-    res.json({ success: true, message: "Logged out successfully" });
+    const { user } = req.body;
+
+    // Check if the user exists in the 'users' collection
+    const userDoc = await db.collection("users").doc(user.uid).get();
+
+    if (userDoc.exists) {
+      // User exists, fetch their data
+      const userData = userDoc.data();
+
+      // Add the document ID (user.uid) to userData
+      const userDataWithId = {
+        ...userData,
+        id: user.uid,
+      };
+
+      res.status(200).json({
+        message: "Login successful",
+        userData: userDataWithId,
+      });
+    } else {
+      // User doesn't exist in Firestore yet
+      res.status(200).json({
+        message: "No account yet",
+        userData: null,
+      });
+    }
   } catch (error) {
-    console.error("Error logging out:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error logging in user:", error);
+    res.status(401).json({ error: "Login failed", message: error.message });
   }
 };
 
@@ -315,8 +330,8 @@ exports.expireOTP = async (req, res) => {
 exports.changePassword = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await adminAuth.getUserByEmail(email);
-    await adminAuth.updateUser(user.uid, { password });
+    const user = await auth.getUserByEmail(email);
+    await auth.updateUser(user.uid, { password });
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ message: "Failed to change password" });
@@ -338,7 +353,7 @@ exports.updateProfilePic = async (req, res) => {
     await uploadBytes(storageRef, selectedFile);
     const photoURL = await getDownloadURL(storageRef);
 
-    const userDocRef = adminDb.collection("users").doc(userId);
+    const userDocRef = db.collection("users").doc(userId);
     await userDocRef.update({ photoURL: photoURL, updatedAt: updatedAt });
 
     res.status(200).json({
@@ -352,7 +367,7 @@ exports.updateProfilePic = async (req, res) => {
   }
 };
 
-// Update User Field (theme, email, connectedAccount)
+// Update User Field (theme, email)
 exports.updateUserField = async (req, res) => {
   const { userId, field, value } = req.body;
 
@@ -361,7 +376,7 @@ exports.updateUserField = async (req, res) => {
   }
 
   try {
-    const userDocRef = adminDb.collection("users").doc(userId);
+    const userDocRef = db.collection("users").doc(userId);
     const userDoc = await userDocRef.get();
 
     if (!userDoc.exists) {
@@ -379,7 +394,7 @@ exports.updateUserField = async (req, res) => {
 
       case "email":
         if (userDoc.data().email !== value) {
-          const emailExists = await adminDb
+          const emailExists = await db
             .collection("users")
             .where("email", "==", value)
             .where("userId", "!=", userId)
@@ -388,40 +403,12 @@ exports.updateUserField = async (req, res) => {
             return res.status(400).json({ error: "Email already exists" });
           }
           try {
-            await adminAuth.updateUser(userId, { email: value });
+            await auth.updateUser(userId, { email: value });
             updateData.email = value;
           } catch (error) {
             console.error("Error updating auth user email:", error);
             return res.status(500).json({ error: "Failed to update email" });
           }
-        }
-        break;
-
-      case "connectedAccount":
-        if (value === null || value === 0 || value === 1) {
-          updateData.connectedAccount = value;
-          if (value === null) {
-            try {
-              await adminAuth.updateUser(userId, {
-                providerToLink: null,
-                providerId: "password",
-              });
-            } catch (error) {
-              console.error("Error unlinking account:", error);
-              return res.status(500).json({ error: "Failed to unlink account" });
-            }
-          } else if (value === 0) {
-            try {
-              await adminAuth.updateUser(userId, {
-                providerToLink: { providerId: "google.com" },
-              });
-            } catch (error) {
-              console.error("Error linking Google account:", error);
-              return res.status(500).json({ error: "Failed to link Google account" });
-            }
-          }
-        } else {
-          return res.status(400).json({ error: "Invalid connectedAccount value" });
         }
         break;
 
@@ -448,7 +435,7 @@ exports.updateUserDetails = async (req, res) => {
   }
 
   try {
-    const userDocRef = adminDb.collection("users").doc(userId);
+    const userDocRef = db.collection("users").doc(userId);
     const userDoc = await userDocRef.get();
 
     if (!userDoc.exists) {
@@ -462,7 +449,7 @@ exports.updateUserDetails = async (req, res) => {
     if (lastName !== undefined) updateData.lastName = lastName;
 
     if (username !== undefined) {
-      const usernameExists = await adminDb
+      const usernameExists = await db
         .collection("users")
         .where("username", "==", username)
         .where("userId", "!=", userId)
@@ -489,32 +476,42 @@ exports.updateUserDetails = async (req, res) => {
 exports.updateConnectedAccount = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { connectedAccount } = req.body;
+    const { connectedAccount, oldConnectedAccount } = req.body;
     const updatedAt = new Date();
 
+    // Ensure the authenticated user matches the userId
+    if (req.user.uid !== userId) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    let message = "";
+    const userRecord = await auth.getUser(userId);
+    if (connectedAccount === null) {
+      // Unlink all providers except password
+      const providers = userRecord.providerData;
+      for (const provider of providers) {
+        if (provider.providerId !== "password") {
+          await auth.updateUser(userId, {
+            providerToUnlink: provider.providerId,
+          });
+        }
+      }
+      if (oldConnectedAccount === 0) message = "Google account unlinked successfully.";
+      else if (oldConnectedAccount === 1) message = "Facebook account unlinked successfully.";
+    } else if (!(connectedAccount === 0 || connectedAccount === 1)) {
+      console.error("Error: connected account is not 0, 1, null");
+      res.status(400).json({ error: "Failed to update connected account" });
+    } else {
+      if (connectedAccount === 0) message = "Google account linked successfully.";
+      else if (connectedAccount === 1) message = "Facebook account linked successfully.";
+    }
     await db
       .collection("users")
       .doc(userId)
       .update({ connectedAccount: connectedAccount, updatedAt: updatedAt });
 
-    const user = auth.currentUser;
-
-    if (connectedAccount === null) {
-      // Unlink all providers and set to email/password
-      const providers = user.providerData;
-      for (const provider of providers) {
-        if (provider.providerId !== "password") {
-          await user.unlink(provider.providerId);
-        }
-      }
-    } else if (connectedAccount === 0) {
-      // Link to Google
-      const provider = new GoogleAuthProvider();
-      await user.linkWithPopup(provider);
-    }
-
     res.status(200).json({
-      message: "Connected account updated successfully",
+      message: message,
       connectedAccount: connectedAccount,
       updatedAt: updatedAt,
     });
@@ -549,7 +546,9 @@ exports.updateNotificationSettings = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating notification settings:", error);
-    res.status(500).json({ error: "Failed to update notification settings" });
+    res
+      .status(500)
+      .json({ error: "Failed to update notification settings", details: error.message });
   }
 };
 
@@ -576,12 +575,18 @@ exports.updateLayoutSettings = async (req, res) => {
 exports.updateTheme = async (req, res) => {
   try {
     const { userId, theme } = req.body;
-
-    await db.collection("users").doc(userId).update({ theme });
-
+    if (!userId || theme === undefined) {
+      return res.status(400).json({ message: "Missing userId or theme" });
+    }
+    const userRef = db.collection("users").doc(userId);
+    const userDoc = await userRef.get();
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    await userRef.update({ theme });
     res.status(200).json({ message: "Theme updated successfully" });
   } catch (error) {
     console.error("Error updating theme:", error);
-    res.status(500).json({ message: "Error updating theme", error: error.message });
+    res.status(500).json({ message: "Error updating theme", error: error.toString() });
   }
 };

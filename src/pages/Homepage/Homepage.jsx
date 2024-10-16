@@ -33,6 +33,7 @@ function Homepage({ ...sharedProps }) {
   const navigate = useNavigate();
   const {
     user,
+    userDoc,
     designs,
     setDesigns,
     projects,
@@ -67,7 +68,6 @@ function Homepage({ ...sharedProps }) {
       )}
 
       <SearchAppBar
-        user={user}
         onMenuClick={() => setDrawerOpen(true)}
         onSearchChange={setSearchQuery}
         searchQuery={searchQuery}
@@ -94,13 +94,13 @@ function Homepage({ ...sharedProps }) {
           <div className="action-buttons">
             <button
               className="design-button"
-              onClick={() => handleCreateDesign(user.uid, navigate, setDesigns)}
+              onClick={() => handleCreateDesign(userDoc.id, navigate, setDesigns)}
             >
               Create a design
             </button>
             <button
               className="project-button"
-              onClick={() => handleCreateProject(user.uid, navigate, setProjects)}
+              onClick={() => handleCreateProject(userDoc.id, navigate, setProjects)}
             >
               Create a project
             </button>
@@ -126,7 +126,9 @@ function Homepage({ ...sharedProps }) {
                       name={design.designName}
                       designId={design.id}
                       lastAccessed={design.lastAccessed}
-                      onDelete={() => handleDeleteDesign(user.uid, design.id, navigate, setDesigns)}
+                      onDelete={() =>
+                        handleDeleteDesign(userDoc.id, design.id, navigate, setDesigns)
+                      }
                       onOpen={() =>
                         navigate(`/design/${design.id}`, {
                           state: {
@@ -164,7 +166,7 @@ function Homepage({ ...sharedProps }) {
                     name={design.designName}
                     designId={design.id}
                     lastAccessed={design.lastAccessed}
-                    onDelete={() => handleDeleteDesign(user.uid, design.id, navigate, setDesigns)}
+                    onDelete={() => handleDeleteDesign(userDoc.id, design.id, navigate, setDesigns)}
                     onOpen={() =>
                       navigate(`/design/${design.id}`, {
                         state: { designId: design.id },
@@ -201,7 +203,13 @@ function Homepage({ ...sharedProps }) {
                     designId={project.id}
                     lastAccessed={project.lastAccessed}
                     onDelete={() =>
-                      handleDeleteProject(user.uid, project.id, setProjects, navigate, setProjects)
+                      handleDeleteProject(
+                        userDoc.id,
+                        project.id,
+                        setProjects,
+                        navigate,
+                        setProjects
+                      )
                     }
                     onOpen={() =>
                       navigate(`/project/${project.id}`, {
@@ -229,7 +237,7 @@ function Homepage({ ...sharedProps }) {
                 <span className="small-button-text">Create a Project</span>
                 <div
                   className="small-circle-button"
-                  onClick={() => handleCreateProject(user.uid, navigate, setProjects)}
+                  onClick={() => handleCreateProject(userDoc.id, navigate, setProjects)}
                 >
                   <FolderIcon className="icon" />
                 </div>
@@ -238,7 +246,7 @@ function Homepage({ ...sharedProps }) {
                 <span className="small-button-text">Create a Design</span>
                 <div
                   className="small-circle-button"
-                  onClick={() => handleCreateDesign(user.uid, navigate, setDesigns)}
+                  onClick={() => handleCreateDesign(userDoc.id, navigate, setDesigns)}
                 >
                   <ImageIcon className="icon" />
                 </div>

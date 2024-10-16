@@ -117,12 +117,15 @@ const Signup = () => {
     } catch (error) {
       console.error("Registration error:", error);
       const errMessage = error.response?.data?.message;
-      showToast("error", errMessage || "An error occurred during registration");
-
-      setErrors({
-        email: errMessage === "auth/email-already-in-use" ? "Email already in use" : "",
-        password: errMessage === "auth/weak-password" ? "Password is too weak" : "",
-      });
+      if (errMessage === "Username already in use") {
+        formErrors.username = "Username already in use";
+        setErrors(formErrors);
+      } else if (errMessage === "Email already in use") {
+        formErrors.email = "Email already in use";
+        setErrors(formErrors);
+      } else {
+        showToast("error", errMessage || "An error occurred during registration");
+      }
     }
   };
 

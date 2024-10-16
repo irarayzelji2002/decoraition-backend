@@ -5,11 +5,13 @@ const { getFirestore } = require("firebase/firestore");
 const { getAnalytics, isSupported } = require("firebase/analytics");
 const firebaseConfig = require("./firebaseConfig");
 const { adminApp, adminAuth, adminDb } = require("./admin");
+const db = adminDb;
+const auth = adminAuth;
 
 // Initialize client-side Firebase
 const clientApp = initializeClientApp(firebaseConfig);
-const auth = getAuth(clientApp);
-const db = getFirestore(clientApp);
+const clientAuth = getAuth(clientApp);
+const clientDb = getFirestore(clientApp);
 // Initialize analytics only if supported
 let analytics = null;
 isSupported()
@@ -24,11 +26,11 @@ isSupported()
 module.exports = {
   clientApp,
   adminApp,
+  clientAuth,
+  clientDb,
+  analytics,
   auth,
   db,
-  analytics,
-  adminAuth,
-  adminDb,
 };
 
 // Default export

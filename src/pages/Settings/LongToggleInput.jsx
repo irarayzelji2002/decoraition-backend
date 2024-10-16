@@ -21,9 +21,16 @@ const LongToggleInput = ({ label, value, onToggle, isConnectedAccount }) => {
   return (
     <TextField
       label={label}
-      value={
-        isConnectedAccount ? (value === null ? "None" : value) : value === 0 ? "Dark" : "Light"
-      }
+      value={(() => {
+        if (isConnectedAccount) {
+          if (value === null) return "None";
+          if (value === 0) return "Google";
+          if (value === 1) return "Facebook";
+          return "Unknown";
+        } else {
+          return value === 0 ? "Dark" : "Light";
+        }
+      })()}
       disabled
       fullWidth
       margin="normal"

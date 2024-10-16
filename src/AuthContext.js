@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from "firebase/app";
+import axios from "axios";
+import { showToast } from "./functions/utils";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -20,32 +22,82 @@ const auth = getAuth(app);
 // AuthContext
 export const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+export function useAuthProvider() {
   const [user, setUser] = useState(null);
+  const [userDoc, setUserDoc] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("Auth state changed");
       setUser(user);
-      setLoading(false);
+      if (user) {
+        console.log("user", user);
+        const fetchUserDoc = async (retryCount = 0) => {
+          try {
+            const idToken = await user.getIdToken();
+            const response = await axios.get(`/api/user/${user.uid}`, {
+              headers: {
+                Authorization: `Bearer ${idToken}`,
+              },
+            });
+            if (response.data) {
+              setUserDoc(response.data);
+              console.log("User updated: ", response.data);
+            } else if (retryCount < 3) {
+              // If user document doesn't exist, wait and retry
+              setTimeout(() => fetchUserDoc(retryCount + 1), 1000);
+              return;
+            } else {
+              console.error("Failed to fetch user document after multiple attempts");
+            }
+          } catch (error) {
+            console.error(`Error fetching user document, retried ${retryCount}: ${error}`);
+            if (retryCount < 3) {
+              setTimeout(() => fetchUserDoc(retryCount + 1), 1000);
+              return;
+            }
+          }
+          setLoading(false);
+        };
+        fetchUserDoc();
+      } else {
+        console.log("no user", user);
+        setUser(null);
+        setUserDoc(null);
+        setLoading(false);
+      }
     });
 
     return () => unsubscribe();
   }, []);
 
-  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
-  const logout = () => signOut(auth);
+  const handleLogout = async (navigate) => {
+    try {
+      await auth.signOut();
+      setUser(null);
+      setUserDoc(null);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      showToast("error", "Failed to log out.");
+    }
+  };
 
-  const value = {
+  return {
     user,
     setUser,
-    login,
-    logout,
+    userDoc,
+    setUserDoc,
+    handleLogout,
     loading,
     setLoading,
   };
+}
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+export function AuthProvider({ children }) {
+  const auth = useAuthProvider();
+  return <AuthContext.Provider value={auth}>{!auth.loading && children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

@@ -8,7 +8,7 @@ const admin = require("firebase-admin");
 
 const { signInWithPopup, GoogleAuthProvider } = require("firebase/auth");
 const { doc, setDoc } = require("firebase/firestore");
-const { auth, db, adminAuth, adminDb } = require("./firebase");
+const { auth, db, clientAuth, clientDb } = require("./firebase");
 
 // Middleware
 const app = express();

@@ -1,4 +1,4 @@
-const { db, auth, adminAuth, adminDb } = require("../firebase");
+const { db, auth, clientAuth, clientDb } = require("../firebase");
 
 // Create Design
 exports.handleCreateDesign = async (req, res) => {
@@ -15,8 +15,8 @@ exports.handleCreateDesign = async (req, res) => {
       viewers: [],
       history: [],
       projectId: null,
-      createdAt: adminDb.FieldValue.serverTimestamp(),
-      modifiedAt: adminDb.FieldValue.serverTimestamp(),
+      createdAt: db.FieldValue.serverTimestamp(),
+      modifiedAt: db.FieldValue.serverTimestamp(),
       designSettings: {
         generalAccessSetting: 0, //0 for Restricted, 1 for Anyone with the link
         generalAccessRole: 0, //0 for viewer, 1 for content manager, 2 for contributor)
@@ -59,7 +59,7 @@ exports.handleCreateDesign = async (req, res) => {
       .collection("users")
       .doc(userId)
       .update({
-        designs: adminDb.FieldValue.arrayUnion({ designId, role: 2 }), // 2 for owner role
+        designs: db.FieldValue.arrayUnion({ designId, role: 2 }), // 2 for owner role
       });
 
     res.status(200).json({
@@ -129,7 +129,7 @@ exports.handleDeleteDesign = async (req, res) => {
       .collection("users")
       .doc(userId)
       .update({
-        designs: adminDb.FieldValue.arrayRemove({ designId, role: 2 }),
+        designs: db.FieldValue.arrayRemove({ designId, role: 2 }),
       });
 
     // Remove the design from any projects it might be in
@@ -141,7 +141,7 @@ exports.handleDeleteDesign = async (req, res) => {
     const batch = db.batch();
     projectsSnapshot.docs.forEach((doc) => {
       batch.update(doc.ref, {
-        designs: adminDb.FieldValue.arrayRemove({ designId }),
+        designs: db.FieldValue.arrayRemove({ designId }),
       });
     });
     await batch.commit();

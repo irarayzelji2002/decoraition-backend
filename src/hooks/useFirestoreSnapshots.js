@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { isEqual } from "lodash";
 import { initializeApp as initializeClientApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
@@ -23,13 +24,11 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 const clientApp = initializeClientApp(firebaseConfig);
-const auth = getAuth(clientApp);
 const db = getFirestore(clientApp);
 
-const useFirestoreSnapshots = (collections, stateSetterFunctions) => {
+const useFirestoreSnapshots = (collections, stateSetterFunctions, user) => {
   const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
   const [isCollectionLoaded, setIsCollectionLoaded] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   // Effect for general collections
   useEffect(() => {
@@ -52,7 +51,7 @@ const useFirestoreSnapshots = (collections, stateSetterFunctions) => {
 
     collections.forEach((collectionName) => {
       if (!generalCollections.includes(collectionName)) {
-        console.warn(`Warning: ${collectionName} is not a general collection.`);
+        // console.warn(`Warning: ${collectionName} is not a general collection.`);
         return;
       }
 
@@ -68,7 +67,9 @@ const useFirestoreSnapshots = (collections, stateSetterFunctions) => {
               ...doc.data(),
             }));
             stateSetter(updatedData);
-            console.log(`State updated for collection: ${collectionName}`);
+            console.log(
+              `State updated for collection: ${collectionName} with ${updatedData.length} items`
+            );
           } else {
             console.error(`No state setter found for collection: ${collectionName}`);
           }
@@ -90,8 +91,8 @@ const useFirestoreSnapshots = (collections, stateSetterFunctions) => {
 
   // Effect for user-related data
   useEffect(() => {
-    console.log("inside 2nd useEffect");
     const userRelatedCollections = [
+      "userDoc",
       "userProjects",
       "userDesigns",
       "userDesignVersions",
@@ -106,211 +107,133 @@ const useFirestoreSnapshots = (collections, stateSetterFunctions) => {
       "userTimelines",
       "userEvents",
     ];
-    const user = auth.currentUser;
+    const collectionMapping = {
+      userDoc: "users",
+      userProjects: "projects",
+      userDesigns: "designs",
+      userDesignVersions: "designVersions",
+      userDesignsComments: "comments",
+      userComments: "comments",
+      userNotifications: "notifications",
+      userProjectBudgets: "projectBudgets",
+      userBudgets: "budgets",
+      userItems: "items",
+      userPlanMaps: "planMaps",
+      userPins: "pins",
+      userTimelines: "timelines",
+      userEvents: "events",
+    };
     if (!user) {
       setIsUserDataLoaded(false);
+      console.log("User is null, not setting up listeners");
       return;
     }
 
     const unsubscribers = [];
 
-    const setupListener = (collectionName, query) => {
-      if (!userRelatedCollections.includes(collectionName)) {
-        console.warn(`Warning: ${collectionName} is not a user-related collection`);
+    const setupListener = (userDataName, fetchFunction) => {
+      if (!userRelatedCollections.includes(userDataName)) {
+        // console.warn(`Warning: ${collectionName} is not a user-related collection`);
         return;
       }
-      const unsubscribe = onSnapshot(query, (snapshot) => {
-        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        stateSetterFunctions[collectionName](data);
-        console.log(`State updated for collection: ${collectionName}`);
+      const collectionName = collectionMapping[userDataName];
+      if (!collectionName) {
+        console.warn(`Warning: No collection mapping found for ${userDataName}`);
+        return;
+      }
+      const unsubscribe = onSnapshot(collection(db, collectionName), async () => {
+        try {
+          const { data: newData } = await fetchFunction();
+          const currentData = stateSetterFunctions[userDataName]();
+          if (!isEqual(newData, currentData)) {
+            stateSetterFunctions[userDataName](newData);
+            console.log(
+              `State updated for user data: ${userDataName} with ${newData.length} items`
+            );
+          }
+        } catch (error) {
+          console.error(`Error updating ${userDataName}:`, error);
+        }
       });
       unsubscribers.push(unsubscribe);
     };
 
     const fetchData = async () => {
       try {
+        const { data: userDocData } = await fetchUserDoc(user);
+        stateSetterFunctions.userDoc(userDocData);
+        setupListener("userDoc", () => fetchUserDoc(user));
+
         const { projectsSnapshot, data: projectsData } = await fetchUserProjects(user);
         stateSetterFunctions.userProjects(projectsData);
-        setupListener(
-          "userProjects",
-          query(
-            collection(db, "projects"),
-            where(
-              documentId(),
-              "in",
-              projectsData.map((p) => p.id)
-            )
-          )
-        );
+        setupListener("userProjects", () => fetchUserProjects(user));
 
         const { designsSnapshot, data: designsData } = await fetchUserDesigns(user);
         stateSetterFunctions.userDesigns(designsData);
-        setupListener(
-          "userDesigns",
-          query(
-            collection(db, "designs"),
-            where(
-              documentId(),
-              "in",
-              designsData.map((d) => d.id)
-            )
-          )
-        );
+        setupListener("userDesigns", () => fetchUserDesigns(user));
 
         const { designVersionsSnapshot, data: designVersionsData } = await fetchUserDesignVersions(
           designsSnapshot
         );
         stateSetterFunctions.userDesignVersions(designVersionsData);
-        setupListener(
-          "userDesignVersions",
-          query(
-            collection(db, "designVersions"),
-            where(
-              documentId(),
-              "in",
-              designVersionsData.map((dv) => dv.id)
-            )
-          )
-        );
+        setupListener("userDesignVersions", () => fetchUserDesignVersions(designsSnapshot));
 
         const { data: designsCommentsData } = await fetchUserDesignsComments(
           designVersionsSnapshot
         );
         stateSetterFunctions.userDesignsComments(designsCommentsData);
-        setupListener(
-          "userDesignsComments",
-          query(
-            collection(db, "comments"),
-            where(
-              "designVersionImageId",
-              "in",
-              designVersionsData.flatMap((dv) => dv.images.map((img) => img.imageId))
-            )
-          )
+        setupListener("userDesignsComments", () =>
+          fetchUserDesignsComments(designVersionsSnapshot)
         );
 
         const { data: userCommentsData } = await fetchUserComments(user);
         stateSetterFunctions.userComments(userCommentsData);
-        setupListener(
-          "userComments",
-          query(collection(db, "comments"), where("userId", "==", user.uid))
-        );
+        setupListener("userComments", () => fetchUserComments(user));
 
         const { data: notificationsData } = await fetchUserNotifications(user);
         stateSetterFunctions.userNotifications(notificationsData);
-        setupListener(
-          "userNotifications",
-          query(collection(db, "notifications"), where("userId", "==", user.uid))
-        );
+        setupListener("userNotifications", () => fetchUserNotifications(user));
 
         const { projectBudgetsSnapshot, data: projectBudgetsData } = await fetchUserProjectBudgets(
           projectsSnapshot
         );
         stateSetterFunctions.userProjectBudgets(projectBudgetsData);
-        setupListener(
-          "userProjectBudgets",
-          query(
-            collection(db, "projectBudgets"),
-            where(
-              documentId(),
-              "in",
-              projectBudgetsData.map((pb) => pb.id)
-            )
-          )
-        );
+        setupListener("userProjectBudgets", () => fetchUserProjectBudgets(projectsSnapshot));
 
         const { budgetsSnapshot, data: budgetsData } = await fetchUserBudgets(
           projectBudgetsSnapshot,
           designsSnapshot
         );
         stateSetterFunctions.userBudgets(budgetsData);
-        setupListener(
-          "userBudgets",
-          query(
-            collection(db, "budgets"),
-            where(
-              documentId(),
-              "in",
-              budgetsData.map((b) => b.id)
-            )
-          )
+        setupListener("userBudgets", () =>
+          fetchUserBudgets(projectBudgetsSnapshot, designsSnapshot)
         );
 
         const { data: itemsData } = await fetchUserItems(budgetsSnapshot);
         stateSetterFunctions.userItems(itemsData);
-        setupListener(
-          "userItems",
-          query(
-            collection(db, "items"),
-            where(
-              documentId(),
-              "in",
-              itemsData.map((i) => i.id)
-            )
-          )
-        );
+        setupListener("userItems", () => fetchUserItems(budgetsSnapshot));
 
         const { planMapsSnapshot, data: planMapsData } = await fetchUserPlanMaps(projectsSnapshot);
         stateSetterFunctions.userPlanMaps(planMapsData);
-        setupListener(
-          "userPlanMaps",
-          query(
-            collection(db, "planMaps"),
-            where(
-              documentId(),
-              "in",
-              planMapsData.map((pm) => pm.id)
-            )
-          )
-        );
+        setupListener("userPlanMaps", () => fetchUserPlanMaps(projectsSnapshot));
 
         const { data: pinsData } = await fetchUserPins(planMapsSnapshot);
         stateSetterFunctions.userPins(pinsData);
-        setupListener(
-          "userPins",
-          query(
-            collection(db, "pins"),
-            where(
-              documentId(),
-              "in",
-              pinsData.map((p) => p.id)
-            )
-          )
-        );
+        setupListener("userPins", () => fetchUserPins(planMapsSnapshot));
 
         const { timelinesSnapshot, data: timelinesData } = await fetchUserTimelines(
           projectsSnapshot
         );
         stateSetterFunctions.userTimelines(timelinesData);
-        setupListener(
-          "userTimelines",
-          query(
-            collection(db, "timelines"),
-            where(
-              documentId(),
-              "in",
-              timelinesData.map((t) => t.id)
-            )
-          )
-        );
+        setupListener("userTimelines", () => fetchUserTimelines(projectsSnapshot));
 
         const { data: eventsData } = await fetchUserEvents(timelinesSnapshot);
         stateSetterFunctions.userEvents(eventsData);
-        setupListener(
-          "userEvents",
-          query(
-            collection(db, "events"),
-            where(
-              documentId(),
-              "in",
-              eventsData.map((e) => e.id)
-            )
-          )
-        );
+        setupListener("userEvents", () => fetchUserEvents(timelinesSnapshot));
 
         setIsUserDataLoaded(true);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching user data (snapshots):", error);
         setIsUserDataLoaded(false);
       }
     };
@@ -320,20 +243,30 @@ const useFirestoreSnapshots = (collections, stateSetterFunctions) => {
     return () => {
       unsubscribers.forEach((unsubscribe) => unsubscribe());
     };
-  }, []);
+  }, [user]);
 
-  // Effect to update isLoaded state
-  useEffect(() => {
-    setIsLoaded(isUserDataLoaded && isCollectionLoaded);
-  }, [isUserDataLoaded, isCollectionLoaded]);
-
-  return isLoaded;
+  return {
+    isUserDataLoaded,
+    isCollectionLoaded,
+  };
 };
 
+//get user's document
+const fetchUserDoc = async (user) => {
+  const userDocRef = doc(db, "users", user.uid);
+  const userDocSnapshot = await getDoc(userDocRef);
+  const data = { id: userDocSnapshot.id, ...userDocSnapshot.data() };
+  return { userDocSnapshot, data };
+};
+
+//get all projects with user's document in users collection projects field projects: [{projectId: string, role: int}]
 const fetchUserProjects = async (user) => {
-  //get all projects with user's document in users collection projects field projects: [{projectId: string, role: int}]
   const userDoc = await getDoc(doc(db, "users", user.uid));
-  const projectIds = userDoc.data().projects.map((p) => p.projectId);
+  const userData = userDoc.data();
+  const projectIds = userData?.projects?.map((p) => p.projectId) || [];
+  if (projectIds.length === 0) {
+    return { projectsSnapshot: null, data: [] };
+  }
   const projectsSnapshot = await getDocs(
     query(collection(db, "projects"), where(documentId(), "in", projectIds))
   );
@@ -341,10 +274,14 @@ const fetchUserProjects = async (user) => {
   return { projectsSnapshot, data };
 };
 
+//get all designs with user's document in users collection designs field designs: [{designId: string, role: int}]
 const fetchUserDesigns = async (user) => {
-  //get all designs with user's document in users collection designs field designs: [{designId: string, role: int}]
   const userDocDesigns = await getDoc(doc(db, "users", user.uid));
-  const designIds = userDocDesigns.data().designs.map((d) => d.designId);
+  const userData = userDocDesigns.data();
+  const designIds = userData?.designs?.map((d) => d.designId) || [];
+  if (designIds.length === 0) {
+    return { designsSnapshot: null, data: [] };
+  }
   const designsSnapshot = await getDocs(
     query(collection(db, "designs"), where(documentId(), "in", designIds))
   );
@@ -352,9 +289,15 @@ const fetchUserDesigns = async (user) => {
   return { designsSnapshot, data };
 };
 
+//get all designVersions of userDesigns through the history field history: array of designVersionIds in designs collection
 const fetchUserDesignVersions = async (designsSnapshot) => {
-  //get all designVersions of userDesigns through the history field history: array of designVersionIds in designs collection
-  const designVersionIds = designsSnapshot.docs.flatMap((doc) => doc.data().history);
+  if (!designsSnapshot || designsSnapshot.empty) {
+    return { designVersionsSnapshot: null, data: [] };
+  }
+  const designVersionIds = designsSnapshot.docs.flatMap((doc) => doc.data().history || []);
+  if (designVersionIds.length === 0) {
+    return { designVersionsSnapshot: null, data: [] };
+  }
   const designVersionsSnapshot = await getDocs(
     query(collection(db, "designVersions"), where(documentId(), "in", designVersionIds))
   );
@@ -362,11 +305,17 @@ const fetchUserDesignVersions = async (designsSnapshot) => {
   return { designVersionsSnapshot, data };
 };
 
+//get all comments in userDesigns, meaning designVersionImageId of comments collection is in userDesignVersions
 const fetchUserDesignsComments = async (designVersionsSnapshot) => {
-  //get all comments in userDesigns, meaning designVersionImageId of comments collection is in userDesignVersions
+  if (!designVersionsSnapshot || designVersionsSnapshot.empty) {
+    return { commentsSnapshot: null, data: [] };
+  }
   const imageIds = designVersionsSnapshot.docs.flatMap((doc) =>
-    doc.data().images.map((img) => img.imageId)
+    (doc.data().images || []).map((img) => img.imageId)
   );
+  if (imageIds.length === 0) {
+    return { commentsSnapshot: null, data: [] };
+  }
   const commentsSnapshot = await getDocs(
     query(collection(db, "comments"), where("designVersionImageId", "in", imageIds))
   );
@@ -374,8 +323,8 @@ const fetchUserDesignsComments = async (designVersionsSnapshot) => {
   return { commentsSnapshot, data };
 };
 
+//get all user's comments in comments collection where userId = user's id
 const fetchUserComments = async (user) => {
-  //get all user's comments in comments collection where userId = user's id
   const userCommentsSnapshot = await getDocs(
     query(collection(db, "comments"), where("userId", "==", user.uid))
   );
@@ -383,8 +332,8 @@ const fetchUserComments = async (user) => {
   return { userCommentsSnapshot, data };
 };
 
+//get all notifications where userId = user's id
 const fetchUserNotifications = async (user) => {
-  //get all notifications where userId = user's id
   const userNotificationsSnapshot = await getDocs(
     query(collection(db, "notifications"), where("userId", "==", user.uid))
   );
@@ -392,9 +341,17 @@ const fetchUserNotifications = async (user) => {
   return { userNotificationsSnapshot, data };
 };
 
+//get all user-related project budget by matching userProjects's project's projectBudgetId field in the projectBudget collection
 const fetchUserProjectBudgets = async (projectsSnapshot) => {
-  //get all user-related project budget by matching userProjects's project's projectBudgetId field in the projectBudget collection
-  const projectBudgetIds = projectsSnapshot.docs.map((doc) => doc.data().projectBudgetId);
+  if (!projectsSnapshot || projectsSnapshot.empty) {
+    return { projectBudgetsSnapshot: null, data: [] };
+  }
+  const projectBudgetIds = projectsSnapshot.docs
+    .map((doc) => doc.data().projectBudgetId)
+    .filter(Boolean);
+  if (projectBudgetIds.length === 0) {
+    return { projectBudgetsSnapshot: null, data: [] };
+  }
   const projectBudgetsSnapshot = await getDocs(
     query(collection(db, "projectBudgets"), where(documentId(), "in", projectBudgetIds))
   );
@@ -402,14 +359,16 @@ const fetchUserProjectBudgets = async (projectsSnapshot) => {
   return { projectBudgetsSnapshot, data };
 };
 
+//get all user-related budgets from the budgets array field of userProjectBudgets's documents AND also from the budgetId field of userDesigns's documents in the budgets collection
 const fetchUserBudgets = async (projectBudgetsSnapshot, designsSnapshot) => {
-  //get all user-related budgets from the budgets array field of userProjectBudgets's documents AND also from the budgetId field of userDesigns's documents in the budgets collection
-  // From project budgets
-  const budgetIdsFromProjects = projectBudgetsSnapshot.docs.flatMap((doc) => doc.data().budgets);
-  // From designs
-  const budgetIdsFromDesigns = designsSnapshot.docs.map((doc) => doc.data().budgetId);
-  // Combine
+  const budgetIdsFromProjects =
+    projectBudgetsSnapshot?.docs.flatMap((doc) => doc.data().budgets || []) || [];
+  const budgetIdsFromDesigns =
+    designsSnapshot?.docs.map((doc) => doc.data().budgetId).filter(Boolean) || [];
   const allBudgetIds = [...new Set([...budgetIdsFromProjects, ...budgetIdsFromDesigns])];
+  if (allBudgetIds.length === 0) {
+    return { budgetsSnapshot: null, data: [] };
+  }
   const budgetsSnapshot = await getDocs(
     query(collection(db, "budgets"), where(documentId(), "in", allBudgetIds))
   );
@@ -417,9 +376,15 @@ const fetchUserBudgets = async (projectBudgetsSnapshot, designsSnapshot) => {
   return { budgetsSnapshot, data };
 };
 
+//get all user-related items from the items array field of userBudgets's documents in the items collection
 const fetchUserItems = async (budgetsSnapshot) => {
-  //get all user-related items from the items array field of userBudgets's documents in the items collection
-  const itemIds = budgetsSnapshot.docs.flatMap((doc) => doc.data().items);
+  if (!budgetsSnapshot || budgetsSnapshot.empty) {
+    return { itemsSnapshot: null, data: [] };
+  }
+  const itemIds = budgetsSnapshot.docs.flatMap((doc) => doc.data().items || []);
+  if (itemIds.length === 0) {
+    return { itemsSnapshot: null, data: [] };
+  }
   const itemsSnapshot = await getDocs(
     query(collection(db, "items"), where(documentId(), "in", itemIds))
   );
@@ -427,9 +392,15 @@ const fetchUserItems = async (budgetsSnapshot) => {
   return { itemsSnapshot, data };
 };
 
+//get all user-related plan maps by matching userProjects's project's planMapId field in the planMaps collection
 const fetchUserPlanMaps = async (projectsSnapshot) => {
-  //get all user-related plan maps by matching userProjects's project's planMapId field in the planMaps collection
-  const planMapIds = projectsSnapshot.docs.map((doc) => doc.data().planMapId);
+  if (!projectsSnapshot || projectsSnapshot.empty) {
+    return { planMapsSnapshot: null, data: [] };
+  }
+  const planMapIds = projectsSnapshot.docs.map((doc) => doc.data().planMapId).filter(Boolean);
+  if (planMapIds.length === 0) {
+    return { planMapsSnapshot: null, data: [] };
+  }
   const planMapsSnapshot = await getDocs(
     query(collection(db, "planMaps"), where(documentId(), "in", planMapIds))
   );
@@ -437,9 +408,15 @@ const fetchUserPlanMaps = async (projectsSnapshot) => {
   return { planMapsSnapshot, data };
 };
 
+//get all pins from the pins array field of userPlanMaps's documents in the pins collection
 const fetchUserPins = async (planMapsSnapshot) => {
-  //get all pins from the pins array field of userPlanMaps's documents in the pins collection
-  const pinIds = planMapsSnapshot.docs.flatMap((doc) => doc.data().pins);
+  if (!planMapsSnapshot || planMapsSnapshot.empty) {
+    return { pinsSnapshot: null, data: [] };
+  }
+  const pinIds = planMapsSnapshot.docs.flatMap((doc) => doc.data().pins || []);
+  if (pinIds.length === 0) {
+    return { pinsSnapshot: null, data: [] };
+  }
   const pinsSnapshot = await getDocs(
     query(collection(db, "pins"), where(documentId(), "in", pinIds))
   );
@@ -447,9 +424,15 @@ const fetchUserPins = async (planMapsSnapshot) => {
   return { pinsSnapshot, data };
 };
 
+//get all user-related timeline by matching userProjects's project's timelineId field in timelines collection
 const fetchUserTimelines = async (projectsSnapshot) => {
-  //get all user-related timeline by matching userProjects's project's timelineId field in timelines collection
-  const timelineIds = projectsSnapshot.docs.map((doc) => doc.data().timelineId);
+  if (!projectsSnapshot || projectsSnapshot.empty) {
+    return { timelinesSnapshot: null, data: [] };
+  }
+  const timelineIds = projectsSnapshot.docs.map((doc) => doc.data().timelineId).filter(Boolean);
+  if (timelineIds.length === 0) {
+    return { timelinesSnapshot: null, data: [] };
+  }
   const timelinesSnapshot = await getDocs(
     query(collection(db, "timelines"), where(documentId(), "in", timelineIds))
   );
@@ -457,9 +440,15 @@ const fetchUserTimelines = async (projectsSnapshot) => {
   return { timelinesSnapshot, data };
 };
 
+//get all user-related events from the events array field of userTimelines's documents in the events collection
 const fetchUserEvents = async (timelinesSnapshot) => {
-  //get all user-related events from the events array field of userTimelines's documents in the events collection
-  const eventIds = timelinesSnapshot.docs.flatMap((doc) => doc.data().events);
+  if (!timelinesSnapshot || timelinesSnapshot.empty) {
+    return { eventsSnapshot: null, data: [] };
+  }
+  const eventIds = timelinesSnapshot.docs.flatMap((doc) => doc.data().events || []);
+  if (eventIds.length === 0) {
+    return { eventsSnapshot: null, data: [] };
+  }
   const eventsSnapshot = await getDocs(
     query(collection(db, "events"), where(documentId(), "in", eventIds))
   );

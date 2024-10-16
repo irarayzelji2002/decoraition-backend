@@ -13,7 +13,8 @@ const timelineController = require("../controllers/timelineController");
 const { auth } = require("../firebase");
 
 const authenticateUser = async (req, res, next) => {
-  const token = req.headers.authorization;
+  const token = req.headers.authorization.split(" ")[1];
+
   if (!token) {
     return res.status(401).json({ error: "No token provided" });
   }
@@ -22,20 +23,19 @@ const authenticateUser = async (req, res, next) => {
     req.user = decodedToken;
     next();
   } catch (error) {
-    res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({ error: "Unauthorized" });
   }
 };
 
 // User routes
 router.post("/register", userController.createUser);
-router.post("/google-signin", userController.handleGoogleSignIn);
 router.post("/login", userController.loginUser);
+router.post("/loginWithGoogle", userController.loginUserGoogle);
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/verify-otp", userController.verifyOTP);
 router.post("/resend-otp", userController.resendOTP);
 router.post("/expire-otp", userController.expireOTP);
 router.post("/change-password", userController.changePassword);
-router.post("/logout", authenticateUser, userController.handleLogout);
 router.get("/user/:userId", authenticateUser, userController.fetchUserData);
 router.post("/user/profile-pic", authenticateUser, userController.updateProfilePic);
 router.post("/user/update-field", authenticateUser, userController.updateUserField);

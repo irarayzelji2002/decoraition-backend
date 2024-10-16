@@ -75,8 +75,8 @@ export const stringToColor = (string) => {
     color += `00${value.toString(16)}`.slice(-2);
   }
   /* eslint-enable no-bitwise */
-  console.log("color");
-  console.log(color);
+  // console.log("color");
+  // console.log(color);
   if (string === "Deleted User") {
     color = "#ff6262";
   }
@@ -186,4 +186,24 @@ export const showToast = (
     default:
       toast(message, toastOptions);
   }
+};
+
+export const capitalizeFieldName = (field) => {
+  // Split by uppercase letters to separate camelCase (e.g., "emailAddress" -> ["email", "Address"])
+  const splitField = field.replace(/([A-Z])/g, " $1");
+  // Capitalize the first letter of each word and join
+  return splitField.charAt(0).toUpperCase() + splitField.slice(1).toLowerCase();
+};
+
+export const toCamelCase = (fieldName) => {
+  return fieldName
+    .split(" ") // Split by spaces
+    .map((word, index) => {
+      if (index === 0) {
+        return word.toLowerCase();
+      } else {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      }
+    })
+    .join("");
 };

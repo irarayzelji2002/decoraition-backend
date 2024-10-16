@@ -21,9 +21,9 @@ function ProjectIcon() {
           y2="441.479"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#F9A754" />
-          <stop offset="0.505" stop-color="#F26B27" />
-          <stop offset="1" stop-color="#EF4E59" />
+          <stop stopColor="#F9A754" />
+          <stop offset="0.505" stopColor="#F26B27" />
+          <stop offset="1" stopColor="#EF4E59" />
         </linearGradient>
       </defs>
     </svg>

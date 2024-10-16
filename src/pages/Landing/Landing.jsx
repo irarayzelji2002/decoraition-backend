@@ -36,28 +36,33 @@ const features = [
 ];
 
 const Landing = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleLoginClick = () => {
-    navigate("/login"); // Redirect to the login page
+    navigate("/login"); 
   };
 
   return (
     <div className="landing-container">
-      <div className="content-section">
-        <h1>
-          Hello from <span className="highlight">DecorAltion!</span>
-        </h1>
-        <p className="tagline">
-          Let AI spark ideas for your spaces.
-          <br />
-          See how AI can help you think up venue, stage, and interior designs.
-        </p>
-        <button className="download-btn" onClick={handleLoginClick}>
-          Login Now!
-        </button>
-      </div>
+      <div className="header-section">
+        <div className="content-section">
+          <h1>
+            Hello from <span className="highlight">DecorAltion!</span>
+          </h1>
+          <p className="tagline">
+            Let AI spark ideas for your spaces.
+            <br />
+            See how AI can help you think up venue, stage, and interior designs.
+          </p>
+          <button className="download-btn" onClick={handleLoginClick}>
+            Login Now!
+          </button>
+        </div>
 
+        <div className="image-section">
+          <img src="/img/landing-top.png" alt="Landing Top" />
+        </div>
+      </div>
       <div className="features-section">
         <h2>Why pick our app?</h2>
         <div className="features-grid">

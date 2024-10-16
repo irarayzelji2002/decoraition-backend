@@ -78,34 +78,34 @@ function DesignIcon({ name, designId, onOpen, onDelete }) {
         <h3 className="selectOption">
           <center>&#8942;</center>
         </h3>
-        {showOptions && (
-          <div ref={optionsRef} className="dropdown-menu">
-            <div className="dropdown-item" onClick={onOpen}>
-              <OpenInNewIcon style={{ fontSize: 20 }} className="icon" />
-              Open
-            </div>
-            <div className="dropdown-item" onClick={openDeleteModal}>
-              <DeleteIcon style={{ fontSize: 20 }} className="icon" />
-              Delete
-            </div>
-            <div className="dropdown-item" onClick={openCopyLinkModal}>
-              <LinkIcon style={{ fontSize: 20 }} className="icon" />
-              Copy Link
-            </div>
-            <div className="dropdown-item" onClick={openRenameModal}>
-              <DriveFileRenameOutlineRoundedIcon
-                style={{ fontSize: 20 }}
-                className="icon"
-              />
-              Rename
-            </div>
-            <div className="dropdown-item">
-              <InfoIcon style={{ fontSize: 20 }} className="icon" />
-              Details
-            </div>
-          </div>
-        )}
       </div>
+      {showOptions && (
+        <div ref={optionsRef} className="dropdown-menu">
+          <div className="dropdown-item" onClick={onOpen}>
+            <OpenInNewIcon style={{ fontSize: 20 }} className="icon" />
+            Open
+          </div>
+          <div className="dropdown-item" onClick={openDeleteModal}>
+            <DeleteIcon style={{ fontSize: 20 }} className="icon" />
+            Delete
+          </div>
+          <div className="dropdown-item" onClick={openCopyLinkModal}>
+            <LinkIcon style={{ fontSize: 20 }} className="icon" />
+            Copy Link
+          </div>
+          <div className="dropdown-item" onClick={openRenameModal}>
+            <DriveFileRenameOutlineRoundedIcon
+              style={{ fontSize: 20 }}
+              className="icon"
+            />
+            Rename
+          </div>
+          <div className="dropdown-item">
+            <InfoIcon style={{ fontSize: 20 }} className="icon" />
+            Details
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal

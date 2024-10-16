@@ -233,6 +233,7 @@ h2 {
 }
 
 .options {
+  opacity: 0.8;
   position: absolute;
   top: 24px;
   right: 10px;
@@ -241,7 +242,7 @@ h2 {
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: 30%;
   right: 0;
   background-color: var(--nav-card-modal);
   border-radius: 10px;

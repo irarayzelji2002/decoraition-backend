@@ -108,7 +108,7 @@ function ProjBudget() {
           Total Project Budget: ₱{" "}
           <strong>{totalProjectBudget.toFixed(2)}</strong>
         </span>
-        <div>
+        <div style={{ marginBottom: "10%" }}>
           {designs.length > 0 ? (
             designs.slice(0, 6).map((design) => {
               const totalCost = designBudgetItems[design.id]?.reduce(

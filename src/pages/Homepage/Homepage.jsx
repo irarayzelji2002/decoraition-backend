@@ -97,7 +97,7 @@ function Homepage() {
         onSearchChange={setSearchQuery}
       />
 
-      <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>
+      <div className={` ${isDrawerOpen ? "dimmed" : ""}`}>
         <div className="headerPlace">
           <div className="header">
             <img

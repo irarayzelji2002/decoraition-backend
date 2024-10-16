@@ -69,7 +69,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
   }, []);
 
   const fetchDesigns = (userId) => {
-    const designsRef = collection(db, "users", userId, "designs");
+    const designsRef = collection(db, "designs");
     const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
 
     const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {

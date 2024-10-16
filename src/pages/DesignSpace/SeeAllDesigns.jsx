@@ -18,15 +18,20 @@ import {
   startAfter,
 } from "firebase/firestore";
 
-export default function SeeAllDesigns() {
+import ImageIcon from "@mui/icons-material/Image";
+
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+
+export default function SeeAllDesigns({ designId, projectId }) {
   const [user, setUser] = useState(null);
   const [designs, setDesigns] = useState([]);
-  const [username, setUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [lastVisible, setLastVisible] = useState(null);
   const [page, setPage] = useState(1);
   const [isLastPage, setIsLastPage] = useState(false);
   const [totalPages, setTotalPages] = useState(5); // Assume 5 pages for demonstration
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,6 +47,14 @@ export default function SeeAllDesigns() {
 
     return () => unsubscribeAuth();
   }, []);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const toggleModal = () => {
+    // Your modal toggle logic here
+  };
 
   const fetchDesigns = (userId, page) => {
     const designsRef = collection(db, "designs");
@@ -114,13 +127,12 @@ export default function SeeAllDesigns() {
       <SearchAppBar
         onSearchChange={(value) => setSearchQuery(value)}
         user={user}
-        username={username}
       />
       <div className="bg">
         <div className="dropdown-container">
           <Dropdowns />
         </div>
-
+        {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
         <div className="title">Designs</div>
         <section className="recent-section">
           <div className="recent-designs">
@@ -181,6 +193,33 @@ export default function SeeAllDesigns() {
           >
             &gt;
           </button>
+        </div>
+      </div>
+
+      <div className="circle-button-container">
+        {menuOpen && (
+          <div className="small-buttons">
+            <div className="small-button-container" onClick={toggleModal}>
+              <span className="small-button-text">Create a Design</span>
+              <div className="small-circle-button">
+                <ImageIcon className="icon" />
+              </div>
+            </div>
+            <div
+              className="small-button-container"
+              // onClick={() =>
+              //   projectId
+              //     ? navigate(`/addItem/${designId}/${projectId}/project`)
+              //     : navigate(`/addItem/${designId}`)
+              // }
+            ></div>
+          </div>
+        )}
+        <div
+          className={`circle-button ${menuOpen ? "rotate" : ""}`}
+          onClick={toggleMenu}
+        >
+          {menuOpen ? <CloseIcon /> : <AddIcon />}
         </div>
       </div>
     </>

@@ -140,8 +140,6 @@ function Settings() {
   };
 
   const changePhoto = (event) => {
-    // Your change photo logic here
-    // Assuming you set the imageUploaded state to true when an image is uploaded
     if (event.target.files && event.target.files[0]) {
       setUploadedPhoto(URL.createObjectURL(event.target.files[0]));
       setImageUploaded(true);
@@ -173,6 +171,7 @@ function Settings() {
         className="tabs"
         TabIndicatorProps={{
           style: {
+            fontWeight: "bold",
             backgroundImage: "var(--gradientCircle)",
 
             // Tab indicator color
@@ -194,12 +193,12 @@ function Settings() {
         <Tab
           label="Account"
           className="tab-label"
-          style={{ textTransform: "none" }}
+          style={{ textTransform: "none", fontWeight: "bold" }}
         />
         <Tab
           label="Notification"
           className="tab-label"
-          style={{ textTransform: "none" }}
+          style={{ textTransform: "none", fontWeight: "bold" }}
         />
       </Tabs>
       <div className="settings-container">
@@ -246,11 +245,16 @@ function Settings() {
                 <Button
                   variant="contained"
                   className="change-photo-btn"
-                  startIcon={<SaveIcon />}
                   onClick={handleChangePhotoClick}
                   sx={{
-                    background: "linear-gradient(to right, #F54D70, #FF894D)",
                     marginBottom: "10px",
+                    borderRadius: "20px",
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    width: "150px",
+                    "&:hover": {
+                      background: "var(--gradientButtonHover)",
+                    },
                   }}
                 >
                   Change photo
@@ -273,16 +277,26 @@ function Settings() {
 
                 {/* Remove Photo Button */}
                 <Button
-                  variant="outlined"
-                  fullWidth
-                  color="error"
-                  startIcon={<DeleteIcon />}
-                  onClick={handleRemovePhoto}
-                  className="remove-photo-btn"
                   sx={{
-                    borderColor: "#FF894D",
-                    color: "#FF894D",
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    borderRadius: "20px",
+                    backgroundImage:
+                      "var(--lightGradient), var(--gradientButton)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "padding-box, border-box",
+                    fontWeight: "bold",
+                    textTransform: "none",
+                    width: "150px",
                   }}
+                  onMouseOver={(e) =>
+                    (e.target.style.backgroundImage =
+                      "var(--lightGradient), var(--gradientButtonHover)")
+                  }
+                  onMouseOut={(e) =>
+                    (e.target.style.backgroundImage =
+                      "var(--lightGradient), var(--gradientButton)")
+                  }
                 >
                   Remove photo
                 </Button>
@@ -316,6 +330,28 @@ function Settings() {
                 onChange={handleInputChange("username")}
                 onSave={() => handleSave("username")}
               />
+            </div>
+
+            <div className="inputFieldImportant">
+              <label className="inputLabel">Email</label>
+              <EditableInput
+                fieldName="Email"
+                value={userDetails.email}
+                onChange={handleInputChange("email")}
+                onSave={() => handleSave("email")}
+              />
+            </div>
+            <div className="inputFieldImportant">
+              <label className="inputLabel">Password</label>
+              <EditableInput fieldName="Password" value="*************" />
+            </div>
+            <div className="inputFieldImportant">
+              <label className="inputLabel">Linked Account</label>
+              <EditableInput fieldName="Password" value="None" linked />
+            </div>
+            <div className="inputFieldImportant">
+              <label className="inputLabel">Theme</label>
+              <EditableInput fieldName="Password" value="Light Mode" theme />
             </div>
           </Box>
         )}

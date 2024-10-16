@@ -2,8 +2,16 @@ import React, { useState } from "react";
 import { TextField, InputAdornment, IconButton, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import LinkIcon from "@mui/icons-material/Link";
+import BedtimeIcon from "@mui/icons-material/Bedtime";
 
-export default function EditableInput({ onSave, value, onChange }) {
+export default function EditableInput({
+  onSave,
+  value,
+  onChange,
+  linked = false,
+  theme = false,
+}) {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleEditClick = () => {
@@ -58,7 +66,13 @@ export default function EditableInput({ onSave, value, onChange }) {
               </IconButton>
             ) : (
               <IconButton onClick={handleEditClick}>
-                <EditIcon sx={{ color: "#FF894D" }} />
+                {linked ? (
+                  <LinkIcon sx={{ color: "#FF894D" }} />
+                ) : theme ? (
+                  <BedtimeIcon sx={{ color: "#FF894D" }} />
+                ) : (
+                  <EditIcon sx={{ color: "#FF894D" }} />
+                )}
               </IconButton>
             )}
           </InputAdornment>

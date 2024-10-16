@@ -136,3 +136,9 @@
 .svg-icon:hover {
   color: var(--gradientButtonHover);
 }
+
+@media (max-width: 768px) {
+  .calendar-head {
+    width: 80%;
+  }
+}

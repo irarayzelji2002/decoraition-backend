@@ -16,6 +16,7 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
+  overflow-x: hidden;
 }
 
 .content-section {
@@ -27,12 +28,12 @@ body {
 }
 
 .header-section {
-  display: flex; 
-  align-items: center; 
-  justify-content: space-between; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 70%;
-  margin-bottom: 50px; 
-  margin: 0 auto; 
+  margin-bottom: 50px;
+  margin: 0 auto;
 }
 h1 {
   font-size: 3em;
@@ -109,23 +110,23 @@ h1 {
   }
 
   .header-section {
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
-    width: 90%; 
+    width: 90%;
   }
 
   .content-section {
-    text-align: center; 
+    text-align: center;
     margin-bottom: 30px;
   }
 
   .image-section {
-    margin-left: 0; 
+    margin-left: 0;
   }
 
   .image-section img {
-    max-width: 80%; 
-    height: auto; 
+    max-width: 80%;
+    height: auto;
   }
 }
 
@@ -138,7 +139,7 @@ h1 {
 .features-section h2 {
   font-size: 2.5em;
   margin-bottom: 40px;
-  font-weight: bold;
+
   color: var(--color-white);
   text-align: center;
 }
@@ -153,7 +154,8 @@ h1 {
 .feature {
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   border-radius: 15px;
   max-width: 800px;
   width: 100%;
@@ -177,9 +179,13 @@ h1 {
 .feature h3 {
   font-size: 1.5em;
   margin-bottom: 10px;
+  margin-left: 12px;
+  margin-right: 12px;
   background: var(--gradientFont);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  font-weight: 1000;
 }
 
 .feature-odd > div {
@@ -192,6 +198,8 @@ h1 {
 
 .feature p {
   font-size: 1em;
+  margin-left: 12px;
+  margin-right: 12px;
   color: var(--color-white);
 }
 
@@ -220,8 +228,6 @@ h1 {
   border: 3px solid var(--borderLanding);
   color: var(--color-white);
   max-width: 800px;
-  margin-left: flex;
-  margin-right: flex;
   text-align: center;
 }
 
@@ -242,6 +248,8 @@ h1 {
   color: var(--color-white);
   padding: 15px 30px;
   border: none;
+  width: 300px;
+
   border-radius: 30px;
   font-size: 1em;
   margin-top: 20px;
@@ -252,7 +260,25 @@ h1 {
 }
 
 .makeover-btn:hover {
-  background: linear-gradient(90deg, #ec2073, #f15f3e, #f89a47);
-    /* background: var(--gradientButton); */
+  background: var(--gradientButtonHover);
+}
+.footer {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  font-weight: bold;
+  font-weight: 800;
+  position: absolute;
+  background: var(--gradientCircle);
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  align-content: center;
+  outline: 3px solid var(--brightFont);
+}
 
+.decoricon {
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
 }

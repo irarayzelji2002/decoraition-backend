@@ -41,6 +41,9 @@ const Landing = () => {
   const handleLoginClick = () => {
     navigate("/login");
   };
+  const handleRegisterClick = () => {
+    navigate("/register");
+  };
 
   return (
     <div className="landing-container">
@@ -54,8 +57,8 @@ const Landing = () => {
             <br />
             See how AI can help you think up venue, stage, and interior designs.
           </p>
-          <button className="download-btn" onClick={handleLoginClick}>
-            Login Now!
+          <button className="download-btn" onClick={handleRegisterClick}>
+            Register Now!
           </button>
         </div>
 
@@ -81,19 +84,26 @@ const Landing = () => {
             </div>
           ))}
         </div>
+        <div className="makeover-section">
+          <h3>
+            Want to give your spaces a{" "}
+            <span className="highlight">makeover</span>?
+          </h3>
+          <p>Get DecorAltion Planner today.</p>
+          <p>Start your path to wonderfully designed spaces now!</p>
+          <button className="makeover-btn" onClick={handleLoginClick}>
+            Login Now!
+          </button>
+        </div>
       </div>
-
-      <div className="makeover-section">
-        <h3>
-          Want to give your spaces a <span className="highlight">Makeover</span>
-          ?
-        </h3>
-        <p>Get DecorAltion Planner today.</p>
-        <p>Start your path to wonderfully designed spaces now!</p>
-        <button className="makeover-btn" onClick={handleLoginClick}>
-          Login Now!
-        </button>
-      </div>
+      <footer className="footer">
+        <img
+          src="../../img/logo-White.png"
+          alt="DecorAltion Icon"
+          className="decoricon"
+        />
+        <p>DecorAltion </p>
+      </footer>
     </div>
   );
 };

@@ -74,9 +74,10 @@ const Landing = () => {
           ?
         </h3>
         <p>
-          Get DecorAltion Planner today. Start your path to wonderfully designed
-          spaces now!
+          Get DecorAltion Planner today. 
         </p>
+        <p>Start your path to wonderfully designed
+          spaces now!</p>
         <button className="download-btn">Login Now</button>
       </div>
     </div>

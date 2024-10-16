@@ -102,10 +102,6 @@
   cursor: pointer;
 }
 
-.small-circle-button:hover,
-.circle-button:hover {
-  opacity: 0.8;
-}
 .small-button-container {
   display: flex;
   align-items: center;

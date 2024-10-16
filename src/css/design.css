@@ -225,7 +225,6 @@ h6 {
 
 .comment-section {
   display: flex;
-
   width: 30%;
   background-color: var(--nav-card-modal);
   padding: 10px;
@@ -397,7 +396,8 @@ textarea {
   height: 50px;
   display: flex;
   align-items: center;
-  padding: 18px;
+  padding-top: 18px;
+  padding-bottom: 18px;
 }
 
 .searchHead {
@@ -592,6 +592,11 @@ textarea {
   color: var(--color-white);
   margin-left: 10px;
 }
+.css-6hp17o-MuiList-root-MuiMenu-list {
+  background-color: var(--nav-card-modal);
+  color: var(--color-grey);
+  padding-top: 0px !important;
+}
 
 .reply-input .at-symbol {
   color: #49484f;
@@ -615,17 +620,19 @@ textarea {
 
   .comment-section {
     position: fixed; /* Make the div fixed */
-    top: 50%; /* Center vertically */
-    right: 16px; /* Align to the right with some space for the scrollbar */
+    top: 53%; /* Center vertically */
+    right: 10px; /* Align to the right with space for the scrollbar */
     transform: translateY(-50%); /* Adjust for vertical centering */
-    width: calc(80% - 16px); /* Adjust width to account for the right margin */
+    width: calc(
+      80% - 32px
+    ); /* Adjust width to account for the right margin and scrollbar */
     background-color: var(--nav-card-modal);
     padding: 24px; /* Ensure padding is consistent */
     border-radius: 8px;
-    height: 71vh; /* Set a fixed height */
+    height: 85vh; /* Set a fixed height */
     align-items: center;
     flex-direction: column;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
-    z-index: 99; /* Ensure it is above other elements */
+    z-index: 1; /* Ensure it is above other elements */
   }
 }

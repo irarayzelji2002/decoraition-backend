@@ -21,6 +21,7 @@ import Loading from "../../components/Loading";
 import { getAuth, prodErrorMap } from "firebase/auth";
 import BottomBar from "./BottomBar";
 import { query, where } from "firebase/firestore";
+import { AddBudget, AddItem } from "./svg/AddImage";
 
 function Budget() {
   const { designId, projectId } = useParams();
@@ -270,7 +271,7 @@ function Budget() {
             <div className="small-button-container" onClick={toggleModal}>
               <span className="small-button-text">Add a Budget</span>
               <div className="small-circle-button">
-                <AccountBalanceWalletIcon className="icon" />
+                <AddBudget />
               </div>
             </div>
             <div
@@ -283,7 +284,7 @@ function Budget() {
             >
               <span className="small-button-text">Add an Item</span>
               <div className="small-circle-button">
-                <InventoryIcon className="icon" />
+                <AddItem />
               </div>
             </div>
           </div>

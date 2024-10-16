@@ -63,10 +63,10 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/landing" element={<Landing />} />
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} /> {/*Checked */}
           <Route path="/register" element={<Register />} /> {/*Checked */}
-          <Route path="/" element={<Login />} /> {/*Checked */}
+          {/* <Route path="/" element={<Login />} /> Checked */}
           <Route path="/forgot" element={<ForgotPass />} /> {/*Checked */}
           <Route path="/change" element={<ChangePassw />} /> {/*Checked */}
           <Route path="/otp" element={<OneTP />} />

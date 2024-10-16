@@ -205,7 +205,7 @@ function Project() {
           See All
         </span>
       </div>
-      <div className="layout" style={{ marginBottom: "20%" }}>
+      <div className="layout" style={{ paddingBottom: "20%" }}>
         {designs.length > 0 ? (
           designs.slice(0, 6).map((design) => (
             <DesignIcon

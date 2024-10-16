@@ -1,7 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; 
-import "../../css/landing.css";
 import { useNavigate } from "react-router-dom";
+import "../../css/landing.css";
 
 const features = [
   {
@@ -39,6 +38,27 @@ const features = [
 const Landing = () => {
   const navigate = useNavigate();
 
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
+  return (
+    <div className="landing-container">
+      <div className="header-section">
+        <div className="content-section">
+          <h1>
+            Hello from <span className="highlight">DecorAltion!</span>
+          </h1>
+          <p className="tagline">
+            Let AI spark ideas for your spaces.
+            <br />
+            See how AI can help you think up venue, stage, and interior designs.
+          </p>
+          <button className="download-btn" onClick={handleLoginClick}>
+            Login Now!
+          </button>
+        </div>
+
         <div className="image-section">
           <img src="/img/landing-top.png" alt="Landing Top" />
         </div>
@@ -70,7 +90,9 @@ const Landing = () => {
         </h3>
         <p>Get DecorAltion Planner today.</p>
         <p>Start your path to wonderfully designed spaces now!</p>
-
+        <button className="makeover-btn" onClick={handleLoginClick}>
+          Login Now!
+        </button>
       </div>
     </div>
   );

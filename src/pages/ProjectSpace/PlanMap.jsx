@@ -13,6 +13,12 @@ import "../../css/project.css";
 import "../../css/seeAll.css";
 import "../../css/budget.css";
 import { ToastContainer } from "react-toastify";
+import {
+  AddPin,
+  AdjustPin,
+  ChangeOrder,
+  ChangePlan,
+} from "../DesignSpace/svg/AddImage";
 
 function PlanMap() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,25 +56,25 @@ function PlanMap() {
             <div className="small-button-container">
               <span className="small-button-text">Change plan</span>
               <div className="small-circle-button">
-                <AssignmentOutlinedIcon className="icon" />
+                <ChangePlan />
               </div>
             </div>
             <div className="small-button-container">
               <span className="small-button-text">Change pins order</span>
               <div className="small-circle-button">
-                <SwapHorizIcon className="icon" />
+                <ChangeOrder />
               </div>
             </div>
             <div className="small-button-container">
               <span className="small-button-text">Adjust Pins</span>
               <div className="small-circle-button">
-                <TuneIcon className="icon" />
+                <AdjustPin />
               </div>
             </div>
             <div className="small-button-container">
               <span className="small-button-text">Add a Pin</span>
               <div className="small-circle-button">
-                <PushPinIcon className="icon" />
+                <AddPin />
               </div>
             </div>
           </div>

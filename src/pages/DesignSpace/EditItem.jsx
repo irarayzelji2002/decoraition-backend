@@ -6,6 +6,7 @@ import "../../css/addItem.css";
 import TopBar from "../../components/TopBar";
 import { getAuth } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
+import NoImage from "./svg/NoImage";
 
 const EditItem = () => {
   const { itemId, designId, projectId } = useParams(); // Get IDs from URL
@@ -31,25 +32,9 @@ const EditItem = () => {
   }, [designId]);
 
   useEffect(() => {
-    const isProjectPath = window.location.pathname.includes("/project");
     const fetchItemDetails = async () => {
       try {
-        let itemRef;
-        if (isProjectPath) {
-          itemRef = doc(
-            db,
-            "users",
-            userId,
-            "projects",
-            projectId,
-            "designs",
-            designId,
-            "budgets",
-            itemId
-          );
-        } else {
-          itemRef = doc(db, "budgets", itemId);
-        }
+        const itemRef = doc(db, "budgets", itemId);
 
         const itemSnap = await getDoc(itemRef);
 
@@ -83,22 +68,7 @@ const EditItem = () => {
   // Handle updating the item in Firestore
   const handleSave = async () => {
     try {
-      let itemRef;
-      if (isProjectPath) {
-        itemRef = doc(
-          db,
-          "users",
-          userId,
-          "projects",
-          projectId,
-          "designs",
-          designId,
-          "budgets",
-          itemId
-        );
-      } else {
-        itemRef = doc(db, "budgets", itemId);
-      }
+      const itemRef = doc(db, "budgets", itemId);
 
       await updateDoc(itemRef, {
         itemName,
@@ -142,7 +112,12 @@ const EditItem = () => {
             {image ? (
               <img src={image} alt="Item" className="uploaded-image" />
             ) : (
-              <div className="image-placeholder">Add an image to the item</div>
+              <div className="image-placeholder-container">
+                <NoImage />
+                <div className="image-placeholder">
+                  Add an image to the item
+                </div>
+              </div>
             )}
             <label htmlFor="upload-image" className="upload-btn">
               Reupload the image of item

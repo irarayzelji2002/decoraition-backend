@@ -27,6 +27,7 @@ import {
   formatDate,
 } from "./backend/HomepageFunctions.jsx";
 import Loading from "../../components/Loading.jsx";
+import { AddDesign, AddProject } from "../DesignSpace/svg/AddImage.jsx";
 
 function Homepage() {
   const [user, setUser] = useState(null);
@@ -258,7 +259,7 @@ function Homepage() {
                   className="small-circle-button"
                   onClick={() => handleCreateProject(navigate, setProjects)}
                 >
-                  <FolderIcon className="icon" />
+                  <AddProject />
                 </div>
               </div>
               <div className="small-button-container">
@@ -267,7 +268,7 @@ function Homepage() {
                   className="small-circle-button"
                   onClick={() => handleCreateDesign(navigate, setDesigns)}
                 >
-                  <ImageIcon className="icon" />
+                  <AddDesign />
                 </div>
               </div>
             </div>

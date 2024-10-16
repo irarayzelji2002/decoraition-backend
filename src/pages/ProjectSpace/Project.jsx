@@ -25,6 +25,7 @@ import {
   handleCreateDesign,
   handleDeleteDesign,
 } from "./backend/ProjectDetails";
+import { AddProject } from "../DesignSpace/svg/AddImage";
 
 function Project() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -231,19 +232,13 @@ function Project() {
       <div className="circle-button-container">
         {menuOpen && (
           <div className="small-buttons">
-            <div className="small-button-container">
-              <span className="small-button-text">Import a Project</span>
-              <div className="small-circle-button">
-                <FolderIcon className="icon" />
-              </div>
-            </div>
             <div
               className="small-button-container"
               onClick={() => handleCreateDesign(projectId)}
             >
               <span className="small-button-text">Create a Design</span>
               <div className="small-circle-button">
-                <ImageIcon className="icon" />
+                <AddProject />
               </div>
             </div>
           </div>

@@ -80,7 +80,7 @@ const SettingsContent = ({
   setNotifyDays,
   isProjectTab, // New prop to control whether it's the Project tab or Timeline tab
 }) => (
-  <>
+  <div style={{ overflowX: "hidden" }}>
     {/* General Access */}
     <Typography sx={{ fontWeight: "bold", marginBottom: 2 }}>
       General access
@@ -240,5 +240,5 @@ const SettingsContent = ({
         Save
       </Button>
     </Box>
-  </>
+  </div>
 );

@@ -56,10 +56,38 @@ const SettingsContent = ({
           backgroundColor: "var(--bgColor)",
           color: "var(--color-white)",
           width: 250,
+          "& .MuiSvgIcon-root": {
+            color: "var(--color-white)", // Set the arrow icon color to white
+          },
         }}
       >
-        <MenuItem value="Anyone with the link">Anyone with the link</MenuItem>
-        <MenuItem value="Restricted">Restricted</MenuItem>
+        <MenuItem
+          value="Anyone with the link"
+          sx={{
+            backgroundColor: "var(--bgColor)",
+            color: "var(--color-white)",
+            "&:hover": {},
+          }}
+        >
+          Anyone with the link
+        </MenuItem>
+        <MenuItem
+          value="Restricted"
+          sx={{
+            backgroundColor: "var(--dropdown)",
+            color: "var(--color-white)",
+            "&:hover": {
+              backgroundColor: "var(--dropdownHover)",
+              color: "var(--color-white)",
+            },
+            "&.Mui-selected": {
+              backgroundColor: "var(--dropdownSelected)",
+              color: "var(--color-white)",
+            },
+          }}
+        >
+          Restricted
+        </MenuItem>
       </Select>
     </Box>
 
@@ -182,6 +210,10 @@ const SettingsContent = ({
           textTransform: "none",
           fontWeight: "bold",
           padding: "10px 50px",
+          width: "15%",
+          "&:hover": {
+            backgroundImage: "var( --gradientButtonHover)",
+          },
         }}
       >
         Save
@@ -208,69 +240,75 @@ const ProjSetting = () => {
       <TopBar state="Project Settings" />
       <Box
         sx={{
-          padding: 4,
-          backgroundColor: "var( --bgcolor)",
-          color: "var(color-white)",
-          borderRadius: 2,
-          overflowX: "hidden",
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: 4,
         }}
       >
-        {/* Top Navigation */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: 4,
-          }}
-        >
-          {["Project", "Timeline", "Plan Map", "Budget"].map((tab) => (
-            <Typography
-              key={tab}
-              onClick={() => handleTabChange(tab)} // Change tab on click
-              sx={{
-                fontSize: 18,
-                color: tab === activeTab ? "#FF8A65" : "#ccc", // Highlight the active tab
-                cursor: "pointer",
-                paddingBottom: 1,
-                borderBottom: tab === activeTab ? "2px solid #FF8A65" : "none", // Add bottom border for active tab
-              }}
-            >
-              {tab}
-            </Typography>
-          ))}
-        </Box>
-
-        {/* Conditionally render content based on the active tab */}
-        {activeTab === "Project" && (
-          <SettingsContent
-            generalAccess={generalAccess}
-            setGeneralAccess={setGeneralAccess}
-            allowDownload={allowDownload}
-            setAllowDownload={setAllowDownload}
-            inactivityEnabled={inactivityEnabled}
-            setInactivityEnabled={setInactivityEnabled}
-            inactivityDays={inactivityDays}
-            setInactivityDays={setInactivityDays}
-            deletionDays={deletionDays}
-            setDeletionDays={setDeletionDays}
-            notifyDays={notifyDays}
-            setNotifyDays={setNotifyDays}
-            isProjectTab={true} // Project tab condition
-          />
-        )}
-
-        {(activeTab === "Timeline" ||
-          activeTab === "Plan Map" ||
-          activeTab === "Budget") && (
-          <SettingsContent
-            generalAccess={generalAccess}
-            setGeneralAccess={setGeneralAccess}
-            allowDownload={allowDownload}
-            setAllowDownload={setAllowDownload}
-            isProjectTab={false} // Timeline, Plan Map, and Budget tab condition
-          />
-        )}
+        {["Project", "Timeline", "Plan Map", "Budget"].map((tab, index) => (
+          <Typography
+            key={tab}
+            onClick={() => handleTabChange(tab)}
+            sx={{
+              fontSize: 18,
+              fontWeight: "bold",
+              textTransform: "none",
+              cursor: "pointer",
+              paddingBottom: 1,
+              backgroundImage:
+                activeTab === tab ? "var(--gradientFont)" : "none", // Gradient only for active tab
+              backgroundClip: activeTab === tab ? "text" : "unset",
+              WebkitBackgroundClip: activeTab === tab ? "text" : "unset",
+              color: activeTab === tab ? "transparent" : "var(--color-white)",
+              borderBottom:
+                activeTab === tab ? "2px solid transparent" : "none",
+              borderImage: activeTab === tab ? "var(--gradientFont) 1" : "none", // Gradient for border bottom
+              borderImageSlice: activeTab === tab ? 1 : "none",
+              "&:focus": {
+                outline: "none",
+                backgroundColor: "transparent",
+              },
+              "&:active": {
+                outline: "none",
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            {tab}
+          </Typography>
+        ))}
       </Box>
+
+      {/* Conditionally render content based on the active tab */}
+      {activeTab === "Project" && (
+        <SettingsContent
+          generalAccess={generalAccess}
+          setGeneralAccess={setGeneralAccess}
+          allowDownload={allowDownload}
+          setAllowDownload={setAllowDownload}
+          inactivityEnabled={inactivityEnabled}
+          setInactivityEnabled={setInactivityEnabled}
+          inactivityDays={inactivityDays}
+          setInactivityDays={setInactivityDays}
+          deletionDays={deletionDays}
+          setDeletionDays={setDeletionDays}
+          notifyDays={notifyDays}
+          setNotifyDays={setNotifyDays}
+          isProjectTab={true} // Project tab condition
+        />
+      )}
+
+      {(activeTab === "Timeline" ||
+        activeTab === "Plan Map" ||
+        activeTab === "Budget") && (
+        <SettingsContent
+          generalAccess={generalAccess}
+          setGeneralAccess={setGeneralAccess}
+          allowDownload={allowDownload}
+          setAllowDownload={setAllowDownload}
+          isProjectTab={false} // Timeline, Plan Map, and Budget tab condition
+        />
+      )}
     </>
   );
 };

@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import TopBar from "../../components/TopBar";
+import { db } from "../../firebase"; // Import your Firestore instance
+import { doc, getDoc } from "firebase/firestore"; // Im
 import {
   Typography,
   Box,
@@ -9,9 +13,58 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import TopBar from "../../components/TopBar";
 
-// Shared Settings Component
+function DesignSettings() {
+  const { designId } = useParams(); // Get the designId parameter from the URL
+  const [designName, setDesignName] = useState("");
+  const [generalAccess, setGeneralAccess] = useState("Anyone with the link");
+  const [allowDownload, setAllowDownload] = useState(false);
+  const [inactivityEnabled, setInactivityEnabled] = useState(false);
+  const [inactivityDays, setInactivityDays] = useState(90);
+  const [deletionDays, setDeletionDays] = useState(30);
+  const [notifyDays, setNotifyDays] = useState(7);
+
+  useEffect(() => {
+    // Fetch the design name based on the designId
+    const fetchDesignName = async () => {
+      try {
+        const designDoc = await getDoc(doc(db, "designs", designId));
+        if (designDoc.exists()) {
+          setDesignName(designDoc.data().name);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching design name:", error);
+      }
+    };
+
+    fetchDesignName();
+  }, [designId]);
+  return (
+    <div>
+      <TopBar state={`Edit ${designName}`} />
+      <SettingsContent
+        generalAccess={generalAccess}
+        setGeneralAccess={setGeneralAccess}
+        allowDownload={allowDownload}
+        setAllowDownload={setAllowDownload}
+        inactivityEnabled={inactivityEnabled}
+        setInactivityEnabled={setInactivityEnabled}
+        inactivityDays={inactivityDays}
+        setInactivityDays={setInactivityDays}
+        deletionDays={deletionDays}
+        setDeletionDays={setDeletionDays}
+        notifyDays={notifyDays}
+        setNotifyDays={setNotifyDays}
+        isProjectTab={true} // Project tab condition
+      />
+    </div>
+  );
+}
+
+export default DesignSettings;
+
 const SettingsContent = ({
   generalAccess,
   setGeneralAccess,
@@ -45,7 +98,7 @@ const SettingsContent = ({
           marginRight: 2,
         }}
       >
-        <Typography variant="h6" sx={{ color: "var(--color-white)" }}>
+        <Typography variant="h6" sx={{ color: "var(color-white)" }}>
           🌐
         </Typography>
       </Box>
@@ -53,8 +106,8 @@ const SettingsContent = ({
         value={generalAccess}
         onChange={(e) => setGeneralAccess(e.target.value)}
         sx={{
-          backgroundColor: "var(--bgColor)",
-          color: "var(--color-white)",
+          backgroundColor: "var( --bgcolor)",
+          color: "var(color-white)",
           width: 250,
         }}
       >
@@ -125,7 +178,7 @@ const SettingsContent = ({
                 inputProps={{
                   style: {
                     backgroundColor: "var( --bgcolor)",
-                    color: "var(--color-white)",
+                    color: "var(color-white)",
                   },
                 }}
               />
@@ -143,7 +196,7 @@ const SettingsContent = ({
                 inputProps={{
                   style: {
                     backgroundColor: "var( --bgcolor)",
-                    color: "var(--color-white)",
+                    color: "var(color-white)",
                   },
                 }}
               />
@@ -162,7 +215,7 @@ const SettingsContent = ({
                 inputProps={{
                   style: {
                     backgroundColor: "var( --bgcolor)",
-                    color: "var(--color-white)",
+                    color: "var(color-white)",
                   },
                 }}
               />
@@ -189,90 +242,3 @@ const SettingsContent = ({
     </Box>
   </>
 );
-
-const ProjSetting = () => {
-  const [generalAccess, setGeneralAccess] = useState("Anyone with the link");
-  const [allowDownload, setAllowDownload] = useState(false);
-  const [inactivityEnabled, setInactivityEnabled] = useState(false);
-  const [inactivityDays, setInactivityDays] = useState(90);
-  const [deletionDays, setDeletionDays] = useState(30);
-  const [notifyDays, setNotifyDays] = useState(7);
-  const [activeTab, setActiveTab] = useState("Project"); // New state for active tab
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab); // Change active tab
-  };
-
-  return (
-    <>
-      <TopBar state="Project Settings" />
-      <Box
-        sx={{
-          padding: 4,
-          backgroundColor: "var( --bgcolor)",
-          color: "var(color-white)",
-          borderRadius: 2,
-          overflowX: "hidden",
-        }}
-      >
-        {/* Top Navigation */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: 4,
-          }}
-        >
-          {["Project", "Timeline", "Plan Map", "Budget"].map((tab) => (
-            <Typography
-              key={tab}
-              onClick={() => handleTabChange(tab)} // Change tab on click
-              sx={{
-                fontSize: 18,
-                color: tab === activeTab ? "#FF8A65" : "#ccc", // Highlight the active tab
-                cursor: "pointer",
-                paddingBottom: 1,
-                borderBottom: tab === activeTab ? "2px solid #FF8A65" : "none", // Add bottom border for active tab
-              }}
-            >
-              {tab}
-            </Typography>
-          ))}
-        </Box>
-
-        {/* Conditionally render content based on the active tab */}
-        {activeTab === "Project" && (
-          <SettingsContent
-            generalAccess={generalAccess}
-            setGeneralAccess={setGeneralAccess}
-            allowDownload={allowDownload}
-            setAllowDownload={setAllowDownload}
-            inactivityEnabled={inactivityEnabled}
-            setInactivityEnabled={setInactivityEnabled}
-            inactivityDays={inactivityDays}
-            setInactivityDays={setInactivityDays}
-            deletionDays={deletionDays}
-            setDeletionDays={setDeletionDays}
-            notifyDays={notifyDays}
-            setNotifyDays={setNotifyDays}
-            isProjectTab={true} // Project tab condition
-          />
-        )}
-
-        {(activeTab === "Timeline" ||
-          activeTab === "Plan Map" ||
-          activeTab === "Budget") && (
-          <SettingsContent
-            generalAccess={generalAccess}
-            setGeneralAccess={setGeneralAccess}
-            allowDownload={allowDownload}
-            setAllowDownload={setAllowDownload}
-            isProjectTab={false} // Timeline, Plan Map, and Budget tab condition
-          />
-        )}
-      </Box>
-    </>
-  );
-};
-
-export default ProjSetting;

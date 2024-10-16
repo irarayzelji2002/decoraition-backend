@@ -14,7 +14,7 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Link, useNavigate } from "react-router-dom";
 
 const DefaultMenu = ({
-  onClose,
+  onComment,
   onCopyLink,
   onOpenDownloadModal,
   onOpenShareModal,
@@ -25,16 +25,12 @@ const DefaultMenu = ({
   onDelete,
   setIsSidebarOpen,
   onChangeMode,
+  onClose,
+  onSetting,
 }) => {
-  const navigate = useNavigate();
-
-  const handleRedirect = () => {
-    onClose();
-    navigate("/version");
-  };
   return (
     <>
-      <MenuItem onClick={onClose}>
+      <MenuItem onClick={onComment}>
         <ListItemIcon>
           <CommentIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>
@@ -58,7 +54,7 @@ const DefaultMenu = ({
         </ListItemIcon>
         <ListItemText primary="History" />
       </MenuItem>
-      <MenuItem onClick={onClose}>
+      <MenuItem onClick={onSetting}>
         <ListItemIcon>
           <SettingsIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>

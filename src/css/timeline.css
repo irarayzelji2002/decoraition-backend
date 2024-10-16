@@ -19,6 +19,14 @@
   margin-bottom: 20px;
 }
 
+.react-calendar__navigation button:hover {
+  background-color: var(
+    --iconBg
+  ) !important; /* Change to your desired hover background color */
+  color: var(--color-white); /* Change to your desired hover text color */
+
+  /* Add any other hover styles you want */
+}
 /* Calendar section */
 .react-calendar__navigation__label {
   color: var(--color-white);

@@ -63,7 +63,9 @@ const RenameModal = ({ isOpen, onClose }) => {
           }}
         />
       </DialogContent>
-      <DialogActions sx={{ backgroundColor: "var(  --nav-card-modal)" }}>
+      <DialogActions
+        sx={{ backgroundColor: "var(  --nav-card-modal)", margin: "10px" }}
+      >
         <Button
           fullWidth
           variant="contained"

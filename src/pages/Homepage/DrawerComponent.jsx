@@ -186,7 +186,10 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
       </div>
       <Divider sx={{ backgroundColor: "gray", my: 2 }} />
       <List>
-        <ListItem onClick={() => navigate("/")} sx={{ cursor: "pointer" }}>
+        <ListItem
+          onClick={() => navigate("/homepage")}
+          sx={{ cursor: "pointer" }}
+        >
           <ListItemIcon>
             <HomeIcon sx={{ color: darkMode ? "white" : "black" }} />
           </ListItemIcon>

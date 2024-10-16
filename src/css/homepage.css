@@ -208,7 +208,6 @@ h2 {
   border-radius: 8px;
 }
 .options {
-  opacity: 0.8;
   height: 34px;
   width: 34px;
   background-color: var(--bgMain);

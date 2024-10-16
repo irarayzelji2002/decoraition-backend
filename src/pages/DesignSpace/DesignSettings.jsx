@@ -98,7 +98,7 @@ const SettingsContent = ({
           marginRight: 2,
         }}
       >
-        <Typography variant="h6" sx={{ color: "var(color-white)" }}>
+        <Typography variant="h6" sx={{ color: "var(--color-white)" }}>
           🌐
         </Typography>
       </Box>
@@ -107,12 +107,40 @@ const SettingsContent = ({
         onChange={(e) => setGeneralAccess(e.target.value)}
         sx={{
           backgroundColor: "var( --bgcolor)",
-          color: "var(color-white)",
+          color: "var(--color-white)",
           width: 250,
+          "& .MuiSvgIcon-root": {
+            color: "var(--color-white)", // Set the arrow icon color to white
+          },
         }}
       >
-        <MenuItem value="Anyone with the link">Anyone with the link</MenuItem>
-        <MenuItem value="Restricted">Restricted</MenuItem>
+        <MenuItem
+          value="Anyone with the link"
+          sx={{
+            backgroundColor: "var(--bgColor)",
+            color: "var(--color-white)",
+            "&:hover": {},
+          }}
+        >
+          Anyone with the link
+        </MenuItem>
+        <MenuItem
+          value="Restricted"
+          sx={{
+            backgroundColor: "var(--dropdown)",
+            color: "var(--color-white)",
+            "&:hover": {
+              backgroundColor: "var(--dropdownHover)",
+              color: "var(--color-white)",
+            },
+            "&.Mui-selected": {
+              backgroundColor: "var(--dropdownSelected)",
+              color: "var(--color-white)",
+            },
+          }}
+        >
+          Restricted
+        </MenuItem>
       </Select>
     </Box>
 
@@ -235,6 +263,10 @@ const SettingsContent = ({
           textTransform: "none",
           fontWeight: "bold",
           padding: "10px 50px",
+          width: "15%",
+          "&:hover": {
+            backgroundImage: "var( --gradientButtonHover)",
+          },
         }}
       >
         Save

@@ -140,7 +140,9 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
       sx={{
         "& .MuiDrawer-paper": {
           width: { xs: "80%", sm: "25%" },
-          backgroundColor: darkMode ? "#121212" : "#f0f0f0",
+          backgroundColor: darkMode
+            ? "var(--bgMain)"
+            : "var(--nav-card-modal )",
           color: darkMode ? "white" : "black",
           padding: "20px",
           display: "flex",

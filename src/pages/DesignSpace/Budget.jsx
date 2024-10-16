@@ -238,13 +238,13 @@ function Budget() {
         <div className="budgetSpace" style={{ marginBottom: "10%" }}>
           {items.length === 0 ? (
             <div>
+              {" "}
+              <p>No items yet</p>
               <img
                 src={"../../img/project-placeholder.png"}
                 style={{ width: "100px" }}
-                className="image-preview"
                 alt="project placeholder"
               />
-              <p>No items yet</p>
             </div>
           ) : (
             items.map((item, index) => (

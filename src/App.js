@@ -26,6 +26,7 @@ import EditEvent from "./pages/ProjectSpace/EditEvent.jsx";
 import ProjSetting from "./pages/Settings/ProjSetting.jsx";
 import Version from "./pages/DesignSpace/Version.jsx";
 import SeeAllProjects from "./pages/DesignSpace/SeeAllProjects.jsx";
+import DesignSettings from "./pages/DesignSpace/DesignSettings.jsx";
 import Landing from "./pages/Landing/Landing";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 // import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
@@ -63,15 +64,15 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/landing" element={<Landing />} />
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} /> {/*Checked */}
           <Route path="/register" element={<Register />} /> {/*Checked */}
-          <Route path="/" element={<Login />} /> {/*Checked */}
+          {/* <Route path="/" element={<Login />} /> Checked */}
           <Route path="/forgot" element={<ForgotPass />} /> {/*Checked */}
           <Route path="/change" element={<ChangePassw />} /> {/*Checked */}
           <Route path="/otp" element={<OneTP />} />
           <Route path="/homepage" element={<Homepage />} /> {/*Checked */}
-          <Route path="/details" element={<Details />} />
+          <Route path="/details/:designId" element={<Details />} />
           <Route path="/settings" element={<Settings />} />
           {/*Checked */}
           {/* DESIGN SPACE */}
@@ -83,6 +84,7 @@ function App() {
           <Route path="/budget/:designId" element={<Budget />} />
           <Route path="/seeAllProjects" element={<SeeAllProjects />} />
           <Route path="/seeAllDesigns" element={<SeeAllDesigns />} />
+          <Route path="/setting/:designId" element={<DesignSettings />} />
           <Route path="/version" element={<Version />} />
           {/* PROJECT SPACE */}
           <Route path="/project/:projectId" element={<Project />} />

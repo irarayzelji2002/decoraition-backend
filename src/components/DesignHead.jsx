@@ -18,16 +18,14 @@ import ShareMenu from "./ShareMenu.jsx";
 import MakeCopyModal from "./MakeCopyModal.jsx";
 import ShareConfirmationModal from "./ShareConfirmationModal.jsx";
 import "../css/design.css";
-import { useEffect } from "react";
-import { doc, updateDoc, onSnapshot } from "firebase/firestore";
-import { db, auth } from "../firebase.js";
+import { auth } from "../firebase.js";
 import DrawerComponent from "../pages/Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 
 function DesignHead({
-  designName,
   toggleComments,
-  designId,
   setIsSidebarOpen,
   designData,
   newName,
@@ -55,52 +53,13 @@ function DesignHead({
   const [role, setRole] = useState("Editor");
   const [notifyPeople, setNotifyPeople] = useState(true);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [tempName, setTempName] = useState(designName);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState("");
-  const [designs, setDesigns] = useState([]);
-
+  const { designId } = useParams();
   const navigate = useNavigate();
 
   const handleEditNameToggle = () => {
     setIsEditingName((prev) => !prev);
   };
-
-  useEffect(() => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      onSnapshot(userRef, (doc) => {
-        setUsername(doc.data().username);
-      });
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const fetchDesignTitle = () => {
-      const designRef = doc(
-        db,
-        "users",
-        auth.currentUser.uid,
-        "designs",
-        designId
-      );
-
-      const unsubscribe = onSnapshot(designRef, (doc) => {
-        if (doc.exists()) {
-          const designData = doc.data();
-          setTempName(designData.name || "Untitled");
-        }
-      });
-
-      return () => unsubscribe();
-    };
-
-    if (designId) {
-      fetchDesignTitle();
-    }
-  }, [designId]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -157,17 +116,6 @@ function DesignHead({
     setIsShareConfirmationModalOpen(false);
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText("https://example.com/your-project-link").then(
-      () => {
-        setIsCopyLinkModalOpen(true);
-      },
-      (err) => {
-        console.error("Failed to copy: ", err);
-      }
-    );
-  };
-
   const handleCloseCopyLinkModal = () => {
     setIsCopyLinkModalOpen(false);
   };
@@ -218,7 +166,7 @@ function DesignHead({
   };
 
   const handleOpenInfoModal = () => {
-    setIsInfoModalOpen(true);
+    navigate(`/details/${designId}`);
   };
 
   const handleCloseInfoModal = () => {
@@ -235,8 +183,21 @@ function DesignHead({
       handleNameChange();
     }
   };
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+  const handleCopyLink = () => {
+    const currentLink = window.location.href; // Get the current URL
+    navigator.clipboard
+      .writeText(currentLink)
+      .then(() => {
+        toast.success("Link copied to clipboard!", {
+          className: "custom-toast-success", // Apply custom success class
+        }); // Show toast notification
+      })
+      .catch((err) => {
+        toast.error("Failed to copy link.", {
+          className: "custom-toast-success", // Apply custom success class
+        }); // Show error toast notification
+        console.error("Failed to copy: ", err);
+      });
   };
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -252,27 +213,17 @@ function DesignHead({
       });
   };
   const handleSettings = () => {
-    signOut(auth)
-      .then(() => {
-        navigate("/settings");
-      })
-      .catch((error) => {
-        console.error("Settings error:", error);
-      });
+    navigate(`/setting/${designId}`);
   };
 
   return (
-    <div className={`designHead stickyMenu ${menuOpen ? "darkened" : ""}`}>
+    <div className={`designHead stickyMenu`}>
       <DrawerComponent
         isDrawerOpen={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
         toggleDarkMode={toggleDarkMode}
         handleLogout={handleLogout}
-        handleSettings={handleSettings}
         darkMode={darkMode}
-        username={username}
-        userEmail={user ? user.email : ""}
-        designs={designs}
       />
       <div className="left">
         <IconButton
@@ -350,10 +301,11 @@ function DesignHead({
             />
           ) : (
             <DefaultMenu
-              onClose={handleClose}
+              onComment={toggleComments}
               onCopyLink={handleCopyLink}
               onOpenDownloadModal={handleOpenDownloadModal}
               setIsSidebarOpen={setIsSidebarOpen}
+              onSetting={handleSettings}
               onOpenRenameModal={handleOpenRenameModal}
               onOpenRestoreModal={handleOpenRestoreModal}
               onOpenMakeCopyModal={handleOpenMakeCopyModal}

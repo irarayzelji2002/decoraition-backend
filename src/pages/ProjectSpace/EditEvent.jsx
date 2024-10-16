@@ -99,7 +99,7 @@ function EditEvent() {
   };
 
   return (
-    <div>
+    <div style={{ overflowX: "hidden" }}>
       <ToastContainer />
       <TopBar state={"Edit Event"} />
       <div className="edit-event">

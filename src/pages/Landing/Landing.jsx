@@ -1,5 +1,6 @@
 import React from "react";
 import "../../css/landing.css";
+import { useNavigate } from "react-router-dom";
 
 const features = [
   {
@@ -35,6 +36,7 @@ const features = [
 ];
 
 const Landing = () => {
+  const navigate = useNavigate();
   return (
     <div className="landing-container">
       <div className="content-section">
@@ -46,7 +48,9 @@ const Landing = () => {
           <br />
           See how AI can help you think up venue, stage, and interior designs.
         </p>
-        <button className="download-btn">Login Now!</button>
+        <button className="download-btn" onClick={() => navigate("/login")}>
+          Login Now!
+        </button>
       </div>
 
       <div className="features-section">
@@ -73,11 +77,8 @@ const Landing = () => {
           Want to give your spaces a <span className="highlight">Makeover</span>
           ?
         </h3>
-        <p>
-          Get DecorAltion Planner today. 
-        </p>
-        <p>Start your path to wonderfully designed
-          spaces now!</p>
+        <p>Get DecorAltion Planner today.</p>
+        <p>Start your path to wonderfully designed spaces now!</p>
         <button className="download-btn">Login Now</button>
       </div>
     </div>

@@ -48,12 +48,12 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
         }}
       >
         <Typography variant="body1">
-          Are you sure you want to delete this item? This action cannot be
-          undone.
+          Are you sure you want to delete this item? <br />
+          This action cannot be undone.
         </Typography>
       </DialogContent>
       <DialogActions
-        sx={{ backgroundColor: "var(  --nav-card-modal)" }} // Actions background color
+        sx={{ backgroundColor: "var(  --nav-card-modal)", margin: "10px" }} // Actions background color
       >
         <Button
           fullWidth

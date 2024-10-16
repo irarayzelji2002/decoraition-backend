@@ -10,10 +10,11 @@ import { ToastContainer, toast } from "react-toastify";
 import { InputAdornment } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
+import NoImage from "./svg/NoImage";
 
 const AddItem = () => {
   const [itemQuantity, setItemQuantity] = useState(1);
-  const { designId, projectId } = useParams();
+  const { designId } = useParams();
   const [budgetItem, setBudgetItem] = useState("");
   const [cost, setCost] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
@@ -144,6 +145,7 @@ const AddItem = () => {
               />
             ) : (
               <div className="image-placeholder-container">
+                <NoImage />
                 <div className="image-placeholder">
                   Add an image to the item
                 </div>

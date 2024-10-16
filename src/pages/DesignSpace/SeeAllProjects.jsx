@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import SearchAppBar from "../Homepage/SearchAppBar.jsx";
 import { onAuthStateChanged } from "firebase/auth";
-
 import "../../css/seeAll.css";
-
 import { auth, db } from "../../firebase.js";
 import Dropdowns from "../../components/Dropdowns.jsx";
-
 import { useNavigate } from "react-router-dom";
 import DesignIcon from "../../components/DesignIcon.jsx";
 import "../../css/homepage.css";
@@ -20,8 +17,11 @@ import {
   limit,
   startAfter,
 } from "firebase/firestore";
+import FolderIcon from "@mui/icons-material/Folder";
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
 
-export default function SeeAllProjects() {
+export default function SeeAllProjects({ designId, projectId }) {
   const [user, setUser] = useState(null);
   const [designs, setDesigns] = useState([]);
   const [username, setUsername] = useState("");
@@ -30,6 +30,7 @@ export default function SeeAllProjects() {
   const [page, setPage] = useState(1);
   const [isLastPage, setIsLastPage] = useState(false);
   const [totalPages, setTotalPages] = useState(5);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,6 +46,13 @@ export default function SeeAllProjects() {
 
     return () => unsubscribeAuth();
   }, []);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+  const toggleModal = () => {
+    // Your modal toggle logic here
+  };
 
   const fetchDesigns = (userId, page) => {
     const designsRef = collection(db, "projects");
@@ -123,7 +131,7 @@ export default function SeeAllProjects() {
         <div className="dropdown-container">
           <Dropdowns />
         </div>
-
+        {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
         <div className="title">Projects</div>
         <section className="recent-section">
           <div className="recent-designs">
@@ -184,6 +192,33 @@ export default function SeeAllProjects() {
           >
             &gt;
           </button>
+        </div>
+      </div>
+
+      <div className="circle-button-container">
+        {menuOpen && (
+          <div className="small-buttons">
+            <div className="small-button-container" onClick={toggleModal}>
+              <span className="small-button-text">Create a Project</span>
+              <div className="small-circle-button">
+                <FolderIcon className="icon" />
+              </div>
+            </div>
+            <div
+              className="small-button-container"
+              // onClick={() =>
+              //   projectId
+              //     ? navigate(`/addItem/${designId}/${projectId}/project`)
+              //     : navigate(`/addItem/${designId}`)
+              // }
+            ></div>
+          </div>
+        )}
+        <div
+          className={`circle-button ${menuOpen ? "rotate" : ""}`}
+          onClick={toggleMenu}
+        >
+          {menuOpen ? <CloseIcon /> : <AddIcon />}
         </div>
       </div>
     </>

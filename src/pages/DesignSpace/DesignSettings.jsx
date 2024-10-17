@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import TopBar from "../../components/TopBar";
 import { db } from "../../firebase"; // Import your Firestore instance
-import { doc, getDoc } from "firebase/firestore"; // Im
+import { doc, getDoc } from "firebase/firestore";
 import {
   Typography,
   Box,
@@ -13,6 +13,7 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
+import "../../css/designSettings.css"; // Import the CSS file
 
 function DesignSettings() {
   const { designId } = useParams(); // Get the designId parameter from the URL
@@ -41,6 +42,7 @@ function DesignSettings() {
 
     fetchDesignName();
   }, [designId]);
+
   return (
     <div>
       <TopBar state={`Edit ${designName}`} />
@@ -80,24 +82,11 @@ const SettingsContent = ({
   setNotifyDays,
   isProjectTab, // New prop to control whether it's the Project tab or Timeline tab
 }) => (
-  <div style={{ overflowX: "hidden" }}>
+  <div className="settingsContainer">
     {/* General Access */}
-    <Typography sx={{ fontWeight: "bold", marginBottom: 2 }}>
-      General access
-    </Typography>
-    <Box sx={{ display: "flex", alignItems: "center", marginBottom: 3 }}>
-      <Box
-        sx={{
-          backgroundColor: "#FF8A65",
-          width: 40,
-          height: 40,
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginRight: 2,
-        }}
-      >
+    <Typography className="generalAccessTitle">General access</Typography>
+    <Box className="accessBox">
+      <Box className="accessIcon">
         <Typography variant="h6" sx={{ color: "var(--color-white)" }}>
           🌐
         </Typography>
@@ -105,21 +94,13 @@ const SettingsContent = ({
       <Select
         value={generalAccess}
         onChange={(e) => setGeneralAccess(e.target.value)}
-        sx={{
-          backgroundColor: "var( --bgcolor)",
-          color: "var(--color-white)",
-          width: 250,
-          "& .MuiSvgIcon-root": {
-            color: "var(--color-white)", // Set the arrow icon color to white
-          },
-        }}
+        className="accessSelect"
       >
         <MenuItem
           value="Anyone with the link"
           sx={{
             backgroundColor: "var(--bgColor)",
             color: "var(--color-white)",
-            "&:hover": {},
           }}
         >
           Anyone with the link
@@ -145,9 +126,7 @@ const SettingsContent = ({
     </Box>
 
     {/* Viewer Settings */}
-    <Typography sx={{ fontWeight: "bold", marginBottom: 2 }}>
-      Viewer settings
-    </Typography>
+    <Typography className="viewerSettingsTitle">Viewer settings</Typography>
     <FormControlLabel
       control={
         <Switch
@@ -158,19 +137,14 @@ const SettingsContent = ({
       }
       label="Allow to download"
       labelPlacement="start"
-      sx={{
-        marginBottom: 3,
-        justifyContent: "space-between",
-        display: "flex",
-        alignItems: "center",
-      }}
+      className="viewerSettingsLabel"
     />
 
     {/* The following section is only for the Project tab */}
     {isProjectTab && (
       <>
         {/* Inactivity and Deletion */}
-        <Typography sx={{ fontWeight: "bold", marginBottom: 2 }}>
+        <Typography className="inactivityTitle">
           Inactivity and deletion
         </Typography>
         <FormControlLabel
@@ -183,18 +157,13 @@ const SettingsContent = ({
           }
           label="Enable inactivity and deletion"
           labelPlacement="start"
-          sx={{
-            marginBottom: 3,
-            justifyContent: "space-between",
-            display: "flex",
-            alignItems: "center",
-          }}
+          className="inactivityLabel"
         />
 
         {/* Inactivity Settings */}
         {inactivityEnabled && (
           <>
-            <Box sx={{ marginBottom: 2 }}>
+            <Box className="inactivitySettings">
               <Typography>
                 Number of days before inactivity after user inactivity
               </Typography>
@@ -202,17 +171,17 @@ const SettingsContent = ({
                 type="number"
                 value={inactivityDays}
                 onChange={(e) => setInactivityDays(e.target.value)}
-                sx={{ width: "100%", marginTop: 1 }}
+                className="inactivityTextField"
                 inputProps={{
                   style: {
-                    backgroundColor: "var( --bgcolor)",
-                    color: "var(color-white)",
+                    backgroundColor: "var(--bgcolor)",
+                    color: "var(--color-white)",
                   },
                 }}
               />
             </Box>
 
-            <Box sx={{ marginBottom: 2 }}>
+            <Box className="inactivitySettings">
               <Typography>
                 Number of days before deletion after project inactivity
               </Typography>
@@ -220,17 +189,17 @@ const SettingsContent = ({
                 type="number"
                 value={deletionDays}
                 onChange={(e) => setDeletionDays(e.target.value)}
-                sx={{ width: "100%", marginTop: 1 }}
+                className="inactivityTextField"
                 inputProps={{
                   style: {
-                    backgroundColor: "var( --bgcolor)",
-                    color: "var(color-white)",
+                    backgroundColor: "var(--bgcolor)",
+                    color: "var(--color-white)",
                   },
                 }}
               />
             </Box>
 
-            <Box sx={{ marginBottom: 2 }}>
+            <Box className="inactivitySettings">
               <Typography>
                 Notify collaborators number of days prior to entering inactivity
                 mode and deletion
@@ -239,11 +208,11 @@ const SettingsContent = ({
                 type="number"
                 value={notifyDays}
                 onChange={(e) => setNotifyDays(e.target.value)}
-                sx={{ width: "100%", marginTop: 1 }}
+                className="inactivityTextField"
                 inputProps={{
                   style: {
-                    backgroundColor: "var( --bgcolor)",
-                    color: "var(color-white)",
+                    backgroundColor: "var(--bgcolor)",
+                    color: "var(--color-white)",
                   },
                 }}
               />
@@ -254,23 +223,8 @@ const SettingsContent = ({
     )}
 
     {/* Save Button */}
-    <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
-      <Button
-        variant="contained"
-        sx={{
-          backgroundImage: "var( --gradientButton)",
-          borderRadius: "20px",
-          textTransform: "none",
-          fontWeight: "bold",
-          padding: "10px 50px",
-          width: "15%",
-          "&:hover": {
-            backgroundImage: "var( --gradientButtonHover)",
-          },
-        }}
-      >
-        Save
-      </Button>
+    <Box className="saveButtonContainer">
+      <Button className="saveButton">Save</Button>
     </Box>
   </div>
 );

@@ -1,8 +1,5 @@
-/* designSettings.css */
-
 .settingsContainer {
-  overflow-x: hidden;
-  margin: 120px; 
+  margin: 150px;
 }
 
 .generalAccessTitle {
@@ -79,6 +76,7 @@
   font-weight: bold;
   padding: 10px 50px;
   width: 15%;
+  color: white;
 }
 
 .saveButton:hover {

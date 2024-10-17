@@ -14,6 +14,7 @@ import {
   Select,
 } from "@mui/material";
 import "../../css/designSettings.css"; // Import the CSS file
+import PublicIcon from '@mui/icons-material/Public'; // Import the globe icon
 
 function DesignSettings() {
   const { designId } = useParams(); // Get the designId parameter from the URL
@@ -84,12 +85,10 @@ const SettingsContent = ({
 }) => (
   <div className="settingsContainer">
     {/* General Access */}
-    <Typography className="generalAccessTitle">General access</Typography>
+    <div className="generalAccessTitle">General Access</div>
     <Box className="accessBox">
       <Box className="accessIcon">
-        <Typography variant="h6" sx={{ color: "var(--color-white)" }}>
-          🌐
-        </Typography>
+        <PublicIcon sx={{ color: "var(--color-white)" }} />
       </Box>
       <Select
         value={generalAccess}

@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import TopBar from "../../components/TopBar";
+import { db } from "../../firebase"; // Import your Firestore instance
+import { doc, getDoc } from "firebase/firestore";
 import {
   Typography,
   Box,
@@ -9,9 +13,67 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import TopBar from "../../components/TopBar";
+import "../../css/projSettings.css"; // Import the CSS file
+import PublicIcon from "@mui/icons-material/Public"; // Import the globe icon
 
-// Shared Settings Component
+function DesignSettings() {
+  const { designId } = useParams(); // Get the designId parameter from the URL
+  const [designName, setDesignName] = useState("");
+  const [generalAccess, setGeneralAccess] = useState("Anyone with the link");
+  const [allowDownload, setAllowDownload] = useState(false);
+  const [inactivityEnabled, setInactivityEnabled] = useState(false);
+  const [inactivityDays, setInactivityDays] = useState(90);
+  const [deletionDays, setDeletionDays] = useState(30);
+  const [notifyDays, setNotifyDays] = useState(7);
+  const [activeTab, setActiveTab] = useState("Project"); // Default active tab
+
+  useEffect(() => {
+    // Fetch the design name based on the designId
+    const fetchDesignName = async () => {
+      try {
+        const designDoc = await getDoc(doc(db, "designs", designId));
+        if (designDoc.exists()) {
+          setDesignName(designDoc.data().name);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching design name:", error);
+      }
+    };
+
+    fetchDesignName();
+  }, [designId]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab); // Change active tab
+  };
+
+  return (
+    <div>
+      <TopBar state={`Edit ${designName}`} />
+      <SettingsContent
+        generalAccess={generalAccess}
+        setGeneralAccess={setGeneralAccess}
+        allowDownload={allowDownload}
+        setAllowDownload={setAllowDownload}
+        inactivityEnabled={inactivityEnabled}
+        setInactivityEnabled={setInactivityEnabled}
+        inactivityDays={inactivityDays}
+        setInactivityDays={setInactivityDays}
+        deletionDays={deletionDays}
+        setDeletionDays={setDeletionDays}
+        notifyDays={notifyDays}
+        setNotifyDays={setNotifyDays}
+        activeTab={activeTab} // Pass activeTab to SettingsContent
+        handleTabChange={handleTabChange} // Pass handleTabChange function
+      />
+    </div>
+  );
+}
+
+export default DesignSettings;
+
 const SettingsContent = ({
   generalAccess,
   setGeneralAccess,
@@ -25,39 +87,72 @@ const SettingsContent = ({
   setDeletionDays,
   notifyDays,
   setNotifyDays,
-  isProjectTab, // New prop to control whether it's the Project tab or Timeline tab
+  activeTab, // New prop to control the active tab
+  handleTabChange, // Function to change the active tab
 }) => (
-  <>
-    {/* General Access */}
-    <Typography sx={{ fontWeight: "bold", marginBottom: 2 }}>
-      General access
-    </Typography>
-    <Box sx={{ display: "flex", alignItems: "center", marginBottom: 3 }}>
-      <Box
-        sx={{
-          backgroundColor: "#FF8A65",
-          width: 40,
-          height: 40,
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginRight: 2,
-        }}
-      >
-        <Typography variant="h6" sx={{ color: "var(--color-white)" }}>
-          🌐
+  <div className="settingsContainer">
+    {/* Tab Navigation */}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        marginBottom: 4,
+      }}
+    >
+      {["Project", "Timeline", "Plan Map", "Budget"].map((tab) => (
+        <Typography
+          key={tab}
+          onClick={() => handleTabChange(tab)}
+          sx={{
+            fontSize: 18,
+            fontWeight: "bold",
+            textTransform: "none",
+            cursor: "pointer",
+            paddingBottom: 1,
+            backgroundImage: activeTab === tab ? "var(--gradientFont)" : "none", // Gradient only for active tab
+            backgroundClip: activeTab === tab ? "text" : "unset",
+            WebkitBackgroundClip: activeTab === tab ? "text" : "unset",
+            color: activeTab === tab ? "transparent" : "var(--color-white)",
+            borderBottom: activeTab === tab ? "2px solid transparent" : "none",
+            borderImage: activeTab === tab ? "var(--gradientFont) 1" : "none", // Gradient for border bottom
+            borderImageSlice: activeTab === tab ? 1 : "none",
+            "&:focus": {
+              outline: "none",
+              backgroundColor: "transparent",
+            },
+            "&:active": {
+              outline: "none",
+              backgroundColor: "transparent",
+            },
+          }}
+        >
+          {tab}
         </Typography>
+      ))}
+    </Box>
+
+    {/* General Access */}
+    <div className="generalAccessTitle">General Access</div>
+    <Box className="accessBox">
+      <Box className="accessIcon">
+        <PublicIcon sx={{ color: "var(--color-white)" }} />
       </Box>
       <Select
         value={generalAccess}
         onChange={(e) => setGeneralAccess(e.target.value)}
+        className="accessSelect"
         sx={{
-          backgroundColor: "var(--bgColor)",
-          color: "var(--color-white)",
-          width: 250,
-          "& .MuiSvgIcon-root": {
-            color: "var(--color-white)", // Set the arrow icon color to white
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--borderInput)",
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--bright-grey)",
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--bright-grey)",
+          },
+          "& .MuiSelect-select": {
+            color: "var(--color-white)",
           },
         }}
       >
@@ -66,7 +161,14 @@ const SettingsContent = ({
           sx={{
             backgroundColor: "var(--bgColor)",
             color: "var(--color-white)",
-            "&:hover": {},
+            "&:hover": {
+              backgroundColor: "var(--dropdownHover)",
+              color: "var(--color-white)",
+            },
+            "&.Mui-selected": {
+              backgroundColor: "var(--dropdownSelected)",
+              color: "var(--color-white)",
+            },
           }}
         >
           Anyone with the link
@@ -74,8 +176,11 @@ const SettingsContent = ({
         <MenuItem
           value="Restricted"
           sx={{
-            backgroundColor: "var(--dropdown)",
-            color: "var(--color-white)",
+            backgroundColor: "var(--bgColor)",
+            color:
+              generalAccess === "Restricted"
+                ? "var(--color-white)"
+                : "var(--color-grey)",
             "&:hover": {
               backgroundColor: "var(--dropdownHover)",
               color: "var(--color-white)",
@@ -92,9 +197,7 @@ const SettingsContent = ({
     </Box>
 
     {/* Viewer Settings */}
-    <Typography sx={{ fontWeight: "bold", marginBottom: 2 }}>
-      Viewer settings
-    </Typography>
+    <Typography className="viewerSettingsTitle">Viewer settings</Typography>
     <FormControlLabel
       control={
         <Switch
@@ -105,19 +208,14 @@ const SettingsContent = ({
       }
       label="Allow to download"
       labelPlacement="start"
-      sx={{
-        marginBottom: 3,
-        justifyContent: "space-between",
-        display: "flex",
-        alignItems: "center",
-      }}
+      className="viewerSettingsLabel"
     />
 
     {/* The following section is only for the Project tab */}
-    {isProjectTab && (
+    {activeTab === "Project" && ( // Change this condition based on the active tab
       <>
         {/* Inactivity and Deletion */}
-        <Typography sx={{ fontWeight: "bold", marginBottom: 2 }}>
+        <Typography className="inactivityTitle">
           Inactivity and deletion
         </Typography>
         <FormControlLabel
@@ -130,18 +228,13 @@ const SettingsContent = ({
           }
           label="Enable inactivity and deletion"
           labelPlacement="start"
-          sx={{
-            marginBottom: 3,
-            justifyContent: "space-between",
-            display: "flex",
-            alignItems: "center",
-          }}
+          className="inactivityLabel"
         />
 
         {/* Inactivity Settings */}
         {inactivityEnabled && (
           <>
-            <Box sx={{ marginBottom: 2 }}>
+            <Box className="inactivitySettings">
               <Typography>
                 Number of days before inactivity after user inactivity
               </Typography>
@@ -149,17 +242,34 @@ const SettingsContent = ({
                 type="number"
                 value={inactivityDays}
                 onChange={(e) => setInactivityDays(e.target.value)}
-                sx={{ width: "100%", marginTop: 1 }}
+                className="inactivityTextField"
                 inputProps={{
                   style: {
-                    backgroundColor: "var( --bgcolor)",
+                    backgroundColor: "var(--bgcolor)",
+                    color: "var(--color-white)",
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderColor: "var(--borderInput)",
+                    "& fieldset": {
+                      borderColor: "var(--borderInput)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "var(--bright-grey)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "var(--bright-grey)",
+                    },
+                  },
+                  "& input": {
                     color: "var(--color-white)",
                   },
                 }}
               />
             </Box>
 
-            <Box sx={{ marginBottom: 2 }}>
+            <Box className="inactivitySettings">
               <Typography>
                 Number of days before deletion after project inactivity
               </Typography>
@@ -167,17 +277,34 @@ const SettingsContent = ({
                 type="number"
                 value={deletionDays}
                 onChange={(e) => setDeletionDays(e.target.value)}
-                sx={{ width: "100%", marginTop: 1 }}
+                className="inactivityTextField"
                 inputProps={{
                   style: {
-                    backgroundColor: "var( --bgcolor)",
+                    backgroundColor: "var(--bgcolor)",
+                    color: "var(--color-white)",
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderColor: "var(--borderInput)",
+                    "& fieldset": {
+                      borderColor: "var(--borderInput)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "var(--bright-grey)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "var(--bright-grey)",
+                    },
+                  },
+                  "& input": {
                     color: "var(--color-white)",
                   },
                 }}
               />
             </Box>
 
-            <Box sx={{ marginBottom: 2 }}>
+            <Box className="inactivitySettings">
               <Typography>
                 Notify collaborators number of days prior to entering inactivity
                 mode and deletion
@@ -186,10 +313,27 @@ const SettingsContent = ({
                 type="number"
                 value={notifyDays}
                 onChange={(e) => setNotifyDays(e.target.value)}
-                sx={{ width: "100%", marginTop: 1 }}
+                className="inactivityTextField"
                 inputProps={{
                   style: {
-                    backgroundColor: "var( --bgcolor)",
+                    backgroundColor: "var(--bgcolor)",
+                    color: "var(--color-white)",
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderColor: "var(--borderInput)",
+                    "& fieldset": {
+                      borderColor: "var(--borderInput)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "var(--bright-grey)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "var(--bright-grey)",
+                    },
+                  },
+                  "& input": {
                     color: "var(--color-white)",
                   },
                 }}
@@ -201,116 +345,8 @@ const SettingsContent = ({
     )}
 
     {/* Save Button */}
-    <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
-      <Button
-        variant="contained"
-        sx={{
-          backgroundImage: "var( --gradientButton)",
-          borderRadius: "20px",
-          textTransform: "none",
-          fontWeight: "bold",
-          padding: "10px 50px",
-          width: "15%",
-          "&:hover": {
-            backgroundImage: "var( --gradientButtonHover)",
-          },
-        }}
-      >
-        Save
-      </Button>
+    <Box className="saveButtonContainer">
+      <Button className="saveButton">Save</Button>
     </Box>
-  </>
+  </div>
 );
-
-const ProjSetting = () => {
-  const [generalAccess, setGeneralAccess] = useState("Anyone with the link");
-  const [allowDownload, setAllowDownload] = useState(false);
-  const [inactivityEnabled, setInactivityEnabled] = useState(false);
-  const [inactivityDays, setInactivityDays] = useState(90);
-  const [deletionDays, setDeletionDays] = useState(30);
-  const [notifyDays, setNotifyDays] = useState(7);
-  const [activeTab, setActiveTab] = useState("Project"); // New state for active tab
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab); // Change active tab
-  };
-
-  return (
-    <>
-      <TopBar state="Project Settings" />
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: 4,
-        }}
-      >
-        {["Project", "Timeline", "Plan Map", "Budget"].map((tab, index) => (
-          <Typography
-            key={tab}
-            onClick={() => handleTabChange(tab)}
-            sx={{
-              fontSize: 18,
-              fontWeight: "bold",
-              textTransform: "none",
-              cursor: "pointer",
-              paddingBottom: 1,
-              backgroundImage:
-                activeTab === tab ? "var(--gradientFont)" : "none", // Gradient only for active tab
-              backgroundClip: activeTab === tab ? "text" : "unset",
-              WebkitBackgroundClip: activeTab === tab ? "text" : "unset",
-              color: activeTab === tab ? "transparent" : "var(--color-white)",
-              borderBottom:
-                activeTab === tab ? "2px solid transparent" : "none",
-              borderImage: activeTab === tab ? "var(--gradientFont) 1" : "none", // Gradient for border bottom
-              borderImageSlice: activeTab === tab ? 1 : "none",
-              "&:focus": {
-                outline: "none",
-                backgroundColor: "transparent",
-              },
-              "&:active": {
-                outline: "none",
-                backgroundColor: "transparent",
-              },
-            }}
-          >
-            {tab}
-          </Typography>
-        ))}
-      </Box>
-
-      {/* Conditionally render content based on the active tab */}
-      {activeTab === "Project" && (
-        <SettingsContent
-          generalAccess={generalAccess}
-          setGeneralAccess={setGeneralAccess}
-          allowDownload={allowDownload}
-          setAllowDownload={setAllowDownload}
-          inactivityEnabled={inactivityEnabled}
-          setInactivityEnabled={setInactivityEnabled}
-          inactivityDays={inactivityDays}
-          setInactivityDays={setInactivityDays}
-          deletionDays={deletionDays}
-          setDeletionDays={setDeletionDays}
-          notifyDays={notifyDays}
-          setNotifyDays={setNotifyDays}
-          isProjectTab={true} // Project tab condition
-        />
-      )}
-
-      {(activeTab === "Timeline" ||
-        activeTab === "Plan Map" ||
-        activeTab === "Budget") && (
-        <SettingsContent
-          generalAccess={generalAccess}
-          setGeneralAccess={setGeneralAccess}
-          allowDownload={allowDownload}
-          setAllowDownload={setAllowDownload}
-          isProjectTab={false} // Timeline, Plan Map, and Budget tab condition
-        />
-      )}
-    </>
-  );
-};
-
-export default ProjSetting;

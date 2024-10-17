@@ -14,7 +14,7 @@ import {
   Select,
 } from "@mui/material";
 import "../../css/designSettings.css"; // Import the CSS file
-import PublicIcon from '@mui/icons-material/Public'; // Import the globe icon
+import PublicIcon from "@mui/icons-material/Public"; // Import the globe icon
 
 function DesignSettings() {
   const { designId } = useParams(); // Get the designId parameter from the URL
@@ -25,6 +25,7 @@ function DesignSettings() {
   const [inactivityDays, setInactivityDays] = useState(90);
   const [deletionDays, setDeletionDays] = useState(30);
   const [notifyDays, setNotifyDays] = useState(7);
+  const [activeTab, setActiveTab] = useState("Project"); // Default active tab
 
   useEffect(() => {
     // Fetch the design name based on the designId
@@ -44,6 +45,10 @@ function DesignSettings() {
     fetchDesignName();
   }, [designId]);
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab); // Change active tab
+  };
+
   return (
     <div>
       <TopBar state={`Edit ${designName}`} />
@@ -60,7 +65,8 @@ function DesignSettings() {
         setDeletionDays={setDeletionDays}
         notifyDays={notifyDays}
         setNotifyDays={setNotifyDays}
-        isProjectTab={true} // Project tab condition
+        activeTab={activeTab} // Pass activeTab to SettingsContent
+        handleTabChange={handleTabChange} // Pass handleTabChange function
       />
     </div>
   );
@@ -81,9 +87,50 @@ const SettingsContent = ({
   setDeletionDays,
   notifyDays,
   setNotifyDays,
-  isProjectTab, // New prop to control whether it's the Project tab or Timeline tab
+  activeTab, // New prop to control the active tab
+  handleTabChange, // Function to change the active tab
 }) => (
   <div className="settingsContainer">
+    {/* Tab Navigation */}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        marginBottom: 4,
+      }}
+    >
+      {["Project", "Timeline", "Plan Map", "Budget"].map((tab) => (
+        <Typography
+          key={tab}
+          onClick={() => handleTabChange(tab)}
+          sx={{
+            fontSize: 18,
+            fontWeight: "bold",
+            textTransform: "none",
+            cursor: "pointer",
+            paddingBottom: 1,
+            backgroundImage: activeTab === tab ? "var(--gradientFont)" : "none", // Gradient only for active tab
+            backgroundClip: activeTab === tab ? "text" : "unset",
+            WebkitBackgroundClip: activeTab === tab ? "text" : "unset",
+            color: activeTab === tab ? "transparent" : "var(--color-white)",
+            borderBottom: activeTab === tab ? "2px solid transparent" : "none",
+            borderImage: activeTab === tab ? "var(--gradientFont) 1" : "none", // Gradient for border bottom
+            borderImageSlice: activeTab === tab ? 1 : "none",
+            "&:focus": {
+              outline: "none",
+              backgroundColor: "transparent",
+            },
+            "&:active": {
+              outline: "none",
+              backgroundColor: "transparent",
+            },
+          }}
+        >
+          {tab}
+        </Typography>
+      ))}
+    </Box>
+
     {/* General Access */}
     <div className="generalAccessTitle">General Access</div>
     <Box className="accessBox">
@@ -105,7 +152,7 @@ const SettingsContent = ({
             borderColor: "var(--bright-grey)",
           },
           "& .MuiSelect-select": {
-            color: "var(--color-white)", 
+            color: "var(--color-white)",
           },
         }}
       >
@@ -113,14 +160,14 @@ const SettingsContent = ({
           value="Anyone with the link"
           sx={{
             backgroundColor: "var(--bgColor)",
-            color: "var(--color-white)", 
+            color: "var(--color-white)",
             "&:hover": {
               backgroundColor: "var(--dropdownHover)",
               color: "var(--color-white)",
             },
             "&.Mui-selected": {
               backgroundColor: "var(--dropdownSelected)",
-              color: "var(--color-white)", 
+              color: "var(--color-white)",
             },
           }}
         >
@@ -133,10 +180,10 @@ const SettingsContent = ({
             color:
               generalAccess === "Restricted"
                 ? "var(--color-white)"
-                : "var(--color-grey)", 
+                : "var(--color-grey)",
             "&:hover": {
               backgroundColor: "var(--dropdownHover)",
-              color: "var(--color-white)", 
+              color: "var(--color-white)",
             },
             "&.Mui-selected": {
               backgroundColor: "var(--dropdownSelected)",
@@ -165,7 +212,7 @@ const SettingsContent = ({
     />
 
     {/* The following section is only for the Project tab */}
-    {isProjectTab && (
+    {activeTab === "Project" && ( // Change this condition based on the active tab
       <>
         {/* Inactivity and Deletion */}
         <Typography className="inactivityTitle">
@@ -204,19 +251,19 @@ const SettingsContent = ({
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderColor: "var(--borderInput)", 
+                    borderColor: "var(--borderInput)",
                     "& fieldset": {
-                      borderColor: "var(--borderInput)", 
+                      borderColor: "var(--borderInput)",
                     },
                     "&:hover fieldset": {
-                      borderColor: "var(--bright-grey)", 
+                      borderColor: "var(--bright-grey)",
                     },
                     "&.Mui-focused fieldset": {
-                      borderColor: "var(--bright-grey)", 
+                      borderColor: "var(--bright-grey)",
                     },
                   },
                   "& input": {
-                    color: "var(--color-white)", 
+                    color: "var(--color-white)",
                   },
                 }}
               />
@@ -239,19 +286,19 @@ const SettingsContent = ({
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderColor: "var(--borderInput)", 
+                    borderColor: "var(--borderInput)",
                     "& fieldset": {
-                      borderColor: "var(--borderInput)", 
+                      borderColor: "var(--borderInput)",
                     },
                     "&:hover fieldset": {
-                      borderColor: "var(--bright-grey)", 
+                      borderColor: "var(--bright-grey)",
                     },
                     "&.Mui-focused fieldset": {
-                      borderColor: "var(--bright-grey)", 
+                      borderColor: "var(--bright-grey)",
                     },
                   },
                   "& input": {
-                    color: "var(--color-white)", 
+                    color: "var(--color-white)",
                   },
                 }}
               />
@@ -275,19 +322,19 @@ const SettingsContent = ({
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    borderColor: "var(--borderInput)", 
+                    borderColor: "var(--borderInput)",
                     "& fieldset": {
-                      borderColor: "var(--borderInput)", 
+                      borderColor: "var(--borderInput)",
                     },
                     "&:hover fieldset": {
-                      borderColor: "var(--bright-grey)", 
+                      borderColor: "var(--bright-grey)",
                     },
                     "&.Mui-focused fieldset": {
-                      borderColor: "var(--bright-grey)", 
+                      borderColor: "var(--bright-grey)",
                     },
                   },
                   "& input": {
-                    color: "var(--color-white)", 
+                    color: "var(--color-white)",
                   },
                 }}
               />

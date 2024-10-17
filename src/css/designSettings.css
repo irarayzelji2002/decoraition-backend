@@ -2,6 +2,7 @@
 
 .settingsContainer {
   overflow-x: hidden;
+  margin: 120px; 
 }
 
 .generalAccessTitle {

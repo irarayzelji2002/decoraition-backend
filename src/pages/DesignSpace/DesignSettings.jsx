@@ -98,38 +98,7 @@ const SettingsContent = ({
         justifyContent: "space-between",
         marginBottom: 4,
       }}
-    >
-      {["Project", "Timeline", "Plan Map", "Budget"].map((tab) => (
-        <Typography
-          key={tab}
-          onClick={() => handleTabChange(tab)}
-          sx={{
-            fontSize: 18,
-            fontWeight: "bold",
-            textTransform: "none",
-            cursor: "pointer",
-            paddingBottom: 1,
-            backgroundImage: activeTab === tab ? "var(--gradientFont)" : "none", // Gradient only for active tab
-            backgroundClip: activeTab === tab ? "text" : "unset",
-            WebkitBackgroundClip: activeTab === tab ? "text" : "unset",
-            color: activeTab === tab ? "transparent" : "var(--color-white)",
-            borderBottom: activeTab === tab ? "2px solid transparent" : "none",
-            borderImage: activeTab === tab ? "var(--gradientFont) 1" : "none", // Gradient for border bottom
-            borderImageSlice: activeTab === tab ? 1 : "none",
-            "&:focus": {
-              outline: "none",
-              backgroundColor: "transparent",
-            },
-            "&:active": {
-              outline: "none",
-              backgroundColor: "transparent",
-            },
-          }}
-        >
-          {tab}
-        </Typography>
-      ))}
-    </Box>
+    ></Box>
 
     {/* General Access */}
     <div className="generalAccessTitle">General Access</div>
@@ -153,6 +122,9 @@ const SettingsContent = ({
           },
           "& .MuiSelect-select": {
             color: "var(--color-white)",
+          },
+          "& .MuiSvgIcon-root": {
+            color: "var(--color-white)", // Set the arrow icon color to white
           },
         }}
       >
@@ -204,6 +176,14 @@ const SettingsContent = ({
           checked={allowDownload}
           onChange={(e) => setAllowDownload(e.target.checked)}
           color="warning"
+          sx={{
+            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+              backgroundColor: "var(--color-white)",
+            },
+            "& .MuiSwitch-thumb": {
+              backgroundImage: "var(--gradientCircle)", // Apply gradient to the thumb
+            },
+          }}
         />
       }
       label="Allow to download"
@@ -224,6 +204,14 @@ const SettingsContent = ({
               checked={inactivityEnabled}
               onChange={(e) => setInactivityEnabled(e.target.checked)}
               color="warning"
+              sx={{
+                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                  backgroundColor: "var(--color-white)",
+                },
+                "& .MuiSwitch-thumb": {
+                  backgroundImage: "var(--gradientCircle)", // Apply gradient to the thumb
+                },
+              }}
             />
           }
           label="Enable inactivity and deletion"

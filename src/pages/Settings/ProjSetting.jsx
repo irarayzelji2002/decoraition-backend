@@ -154,6 +154,9 @@ const SettingsContent = ({
           "& .MuiSelect-select": {
             color: "var(--color-white)",
           },
+          "& .MuiSvgIcon-root": {
+            color: "var(--color-white)", // Set the arrow icon color to white
+          },
         }}
       >
         <MenuItem
@@ -168,6 +171,9 @@ const SettingsContent = ({
             "&.Mui-selected": {
               backgroundColor: "var(--dropdownSelected)",
               color: "var(--color-white)",
+            },
+            "& .MuiSvgIcon-root": {
+              color: "var(--color-white)", // Set the arrow icon color to white
             },
           }}
         >
@@ -204,6 +210,14 @@ const SettingsContent = ({
           checked={allowDownload}
           onChange={(e) => setAllowDownload(e.target.checked)}
           color="warning"
+          sx={{
+            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+              backgroundColor: "var(--color-white)",
+            },
+            "& .MuiSwitch-thumb": {
+              backgroundImage: "var(--gradientCircle)", // Apply gradient to the thumb
+            },
+          }}
         />
       }
       label="Allow to download"
@@ -224,6 +238,14 @@ const SettingsContent = ({
               checked={inactivityEnabled}
               onChange={(e) => setInactivityEnabled(e.target.checked)}
               color="warning"
+              sx={{
+                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                  backgroundColor: "var(--color-white)",
+                },
+                "& .MuiSwitch-thumb": {
+                  backgroundImage: "var(--gradientCircle)", // Apply gradient to the thumb
+                },
+              }}
             />
           }
           label="Enable inactivity and deletion"

@@ -1,0 +1,85 @@
+/* designSettings.css */
+
+.settingsContainer {
+  overflow-x: hidden;
+}
+
+.generalAccessTitle {
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.accessBox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.accessIcon {
+  background-color: #ff8a65;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 2rem;
+}
+
+.accessSelect {
+  background-color: var(--bgcolor);
+  color: var(--color-white);
+  width: 250px;
+}
+
+.viewerSettingsTitle {
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.viewerSettingsLabel {
+  margin-bottom: 3rem;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+}
+
+.inactivityTitle {
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.inactivityLabel {
+  margin-bottom: 3rem;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+}
+
+.inactivitySettings {
+  margin-bottom: 2rem;
+}
+
+.inactivityTextField {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.saveButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 4rem;
+}
+
+.saveButton {
+  background-image: var(--gradientButton);
+  border-radius: 20px;
+  text-transform: none;
+  font-weight: bold;
+  padding: 10px 50px;
+  width: 15%;
+}
+
+.saveButton:hover {
+  background-image: var(--gradientButtonHover);
+}

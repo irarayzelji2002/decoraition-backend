@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, InputAdornment, IconButton, Button } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import EditIcon from "@mui/icons-material/Edit";
@@ -12,10 +12,16 @@ export default function EditableInput({
   onSave,
   onReset,
   errors,
+  initErrors,
   isEditable = true,
+  setErrors,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value);
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const handleEdit = () => {
     if (isEditable) setIsEditing(true);
@@ -37,6 +43,7 @@ export default function EditableInput({
     if (onReset) {
       onReset(field);
       setIsEditing(false);
+      setErrors(initErrors);
     }
   };
 
@@ -44,7 +51,7 @@ export default function EditableInput({
     <TextField
       label={label}
       type="text"
-      value={value}
+      value={inputValue}
       onChange={handleChange}
       disabled={!isEditing}
       fullWidth

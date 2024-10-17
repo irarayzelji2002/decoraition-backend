@@ -16,13 +16,13 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 // Set persistence to browser session
-// setPersistence(auth, browserSessionPersistence)
-//   .then(() => {
-//     console.log("Persistence set to session");
-//   })
-//   .catch((error) => {
-//     console.error("Error setting persistence:", error);
-//   });
+setPersistence(auth, browserSessionPersistence)
+  .then(() => {
+    console.log("Persistence set to session");
+  })
+  .catch((error) => {
+    console.error("Error setting persistence:", error);
+  });
 
 // Handle forgot password functionality
 export const handleForgotPassword = async (email) => {

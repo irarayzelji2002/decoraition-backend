@@ -6,6 +6,8 @@ import {
   handleSetError,
   getHasError,
   getErrMessage,
+  stringAvatar,
+  stringToColor,
   showToast,
   capitalizeFieldName,
 } from "../../functions/utils";
@@ -18,6 +20,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   getAuth,
+  linkWithPopup,
+  linkWithCredential,
 } from "firebase/auth";
 import {
   Tabs,
@@ -59,6 +63,7 @@ function Settings({ ...sharedProps }) {
   const [theme, setTheme] = useState(userDoc.theme ?? 0);
   const [connectedAccount, setConnectedAccount] = useState(userDoc.connectedAccount ?? null);
   const [profilePic, setProfilePic] = useState(userDoc.profilePic ?? "");
+  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [otp, setOtp] = useState(0);
@@ -159,7 +164,6 @@ function Settings({ ...sharedProps }) {
     setLastName(trimmedLastName);
     setUsername(trimmedUsername);
 
-    setUserDetailsErr(initUserDetailsErr);
     const tempErrors = initUserDetailsErr;
     if (trimmedFirstName === "") {
       tempErrors.find((field) => field.field === "firstName").hasError = true;
@@ -172,6 +176,13 @@ function Settings({ ...sharedProps }) {
     if (trimmedUsername === "") {
       tempErrors.find((field) => field.field === "username").hasError = true;
       tempErrors.find((field) => field.field === "username").errMessage = "This field is required";
+    } else {
+      const usernameExists = await checkExistingUsername(userDoc.id, trimmedUsername);
+      if (usernameExists) {
+        tempErrors.find((field) => field.field === "username").hasError = true;
+        tempErrors.find((field) => field.field === "username").errMessage =
+          "Username already exists";
+      }
     }
     if (
       trimmedFirstName === userDoc.firstName &&
@@ -184,15 +195,35 @@ function Settings({ ...sharedProps }) {
 
     setUserDetailsErr(tempErrors);
     const hasError = tempErrors.some((field) => field.hasError);
-    if (!hasError) {
-      const success = await handleUpdateUserDetails({
-        firstName: trimmedFirstName,
-        lastName: trimmedLastName,
-        username: trimmedUsername,
-      });
-      return success;
+    if (hasError) {
+      return false;
     }
-    return false;
+    const success = await handleUpdateUserDetails({
+      firstName: trimmedFirstName,
+      lastName: trimmedLastName,
+      username: trimmedUsername,
+    });
+    setUserDetailsErr(initUserDetailsErr);
+    return success;
+  };
+
+  const checkExistingUsername = async (userId, username) => {
+    try {
+      const response = await axios.get(`/api/user/check-existing-username/${userId}/${username}`);
+      if (response.status === 200) {
+        console.log(response.data.message);
+        return false;
+      } else {
+        console.error("Unexpected response:", response);
+        return true;
+      }
+    } catch (error) {
+      console.error("Checking username:", error);
+      if (error.response) {
+        console.error("Error response data:", error?.response?.data?.error);
+      }
+      return true;
+    }
   };
 
   // Update firstName, lastName, and username
@@ -219,18 +250,27 @@ function Settings({ ...sharedProps }) {
       }
     } catch (error) {
       console.error("Error updating user profile:", error);
-      showToast("error", "Failed to update user profile");
+      if (error?.response?.data?.error) {
+        const tempErrors = userDetailsErr;
+        tempErrors.find((field) => field.field === "username").hasError = true;
+        tempErrors.find((field) => field.field === "username").errMessage =
+          "This field is required";
+        setUserDetailsErr(tempErrors);
+        console.log("tempErrors", tempErrors);
+      } else {
+        showToast("error", error?.response?.data?.error || "Failed to update user profile");
+      }
       return false;
     }
   };
 
   // Update theme or email
   const handleSave = async (field, value) => {
+    console.log(`${field}: ${value}`);
     if (field === "email") {
       const trimmedEmail = value.trim();
+      console.log("trimmedEmail", trimmedEmail);
       setEmail(trimmedEmail);
-
-      setEmailErr(initEmailErr);
       const tempErrors = initEmailErr;
       if (trimmedEmail === "") {
         tempErrors.find((field) => field.field === "email").hasError = true;
@@ -238,18 +278,44 @@ function Settings({ ...sharedProps }) {
       } else if (trimmedEmail === userDoc.email) {
         tempErrors.find((field) => field.field === "email").hasError = true;
         tempErrors.find((field) => field.field === "email").errMessage = "Email did not change.";
+      } else {
+        const emailExists = await checkExistingEmail(userDoc.id, trimmedEmail);
+        if (emailExists) {
+          tempErrors.find((field) => field.field === "email").hasError = true;
+          tempErrors.find((field) => field.field === "email").errMessage = "Email already exists";
+        }
       }
-
       setEmailErr(tempErrors);
       const hasError = tempErrors.some((field) => field.hasError);
-      if (!hasError) {
-        const success = await handleUpdateField("email", trimmedEmail);
-        return success;
+      if (hasError) {
+        return false;
       }
-      return false;
+      // Proceed with updating email
+      const success = await handleUpdateField("email", trimmedEmail);
+      setEmailErr(initEmailErr);
+      return success;
     } else if (field === "theme") {
       const success = await handleUpdateField("theme", value);
       return success;
+    }
+  };
+
+  const checkExistingEmail = async (userId, email) => {
+    try {
+      const response = await axios.get(`/api/user/check-existing-email/${userId}/${email}`);
+      if (response.status === 200) {
+        console.log(response.data.message);
+        return false;
+      } else {
+        console.error("Unexpected response:", response);
+        return true;
+      }
+    } catch (error) {
+      console.error("Error checking email:", error);
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+      }
+      return true;
     }
   };
 
@@ -283,12 +349,6 @@ function Settings({ ...sharedProps }) {
     } catch (error) {
       console.error(`Error updating ${field}:`, error);
       showToast("error", `${error.response?.data?.error || `Failed to update ${field}`}`);
-      if (error.response?.data?.error === "Email already exists") {
-        const tempErrors = emailErr;
-        tempErrors.find((field) => field.field === "email").hasError = true;
-        tempErrors.find((field) => field.field === "email").errMessage = "Email already exists";
-        setEmailErr(tempErrors);
-      }
       return false;
     }
   };
@@ -331,13 +391,25 @@ function Settings({ ...sharedProps }) {
   // Update connectedAccount
   const openlinkAccountModal = () => {
     if (!(connectedAccount === 0 || connectedAccount === 1)) {
-      setIsLinkAccountModalOpen(true);
+      setIsLinkAccountModalOpen(true); //connect to Google/Facebook
     } else {
       reAuthenticateUser();
     }
   };
 
   const reAuthenticateUser = async () => {
+    let reAuthUser;
+    let providerId = null;
+    let providerName = "";
+
+    if (connectedAccount === 0) {
+      providerId = "google.com";
+      providerName = "Google";
+    } else if (connectedAccount === 1) {
+      providerId = "facebook.com";
+      providerName = "Facebook";
+    }
+
     try {
       if (!user) {
         showToast("error", "User not authenticated");
@@ -345,53 +417,102 @@ function Settings({ ...sharedProps }) {
       }
 
       // Reauthenticate the user
-      // let reAuthUser;
-      // if (connectedAccount === 0) {
-      //   const provider = new GoogleAuthProvider();
-      //   const result = await reauthenticateWithPopup(user, provider);
-      //   reAuthUser = result.user;
-      // } else if (connectedAccount === 1) {
-      //   const provider = new FacebookAuthProvider();
-      //   const result = await reauthenticateWithPopup(user, provider);
-      //   reAuthUser = result.user;
-      // }
-      // if (!reAuthUser) {
-      //   showToast("error", "Reauthentication failed");
-      //   return;
-      // }
+      if (connectedAccount === 0) {
+        const provider = new GoogleAuthProvider();
+        const result = await reauthenticateWithPopup(user, provider);
+        reAuthUser = result.user;
+        console.log("reached");
+      } else if (connectedAccount === 1) {
+        const provider = new FacebookAuthProvider();
+        const result = await reauthenticateWithPopup(user, provider);
+        reAuthUser = result.user;
+      }
+      console.log("reached out");
+      if (!reAuthUser) {
+        showToast("error", "Reauthentication failed");
+        return;
+      }
 
-      setIsUnlinkAccountModalOpen(true);
+      // Check if there's a email/password account
+      const userPassProviderData = user.providerData.find((p) => p.providerId === "password");
+      if (!userPassProviderData) {
+        setIsUnlinkAccountModalOpen(true);
+      } else {
+        handleUnlink(false, providerName);
+      }
     } catch (error) {
-      showToast("error", "Failed to reauthenticate user.");
       console.error("Failed to reauthenticate user.", error.code);
+      console.error(error.message);
+      if (error.code === "auth/user-mismatch") {
+        showToast(
+          "error",
+          `Please select the correct ${providerName} account linked to this account`
+        );
+        // if user doesn't exist, it created an auth user without a user document, so this will clean up the auth user
+        cleanupUnusedAuthUsers();
+      }
     }
   };
 
-  const handleUnlink = async () => {
+  const cleanupUnusedAuthUsers = async () => {
     try {
-      // Password validation
-      setUnlinkErr(initUnlinkErr);
-      const tempErrors = initUnlinkErr;
-      if (!unlinkPassword) {
-        tempErrors.find((field) => field.field === "password").hasError = true;
-        tempErrors.find((field) => field.field === "password").errMessage =
-          "This field is required";
-      }
-      if (!unlinkConfirmPassword) {
-        tempErrors.find((field) => field.field === "confirmPassword").hasError = true;
-        tempErrors.find((field) => field.field === "confirmPassword").errMessage =
-          "This field is required";
-      } else if (unlinkPassword !== unlinkConfirmPassword) {
-        tempErrors.find((field) => field.field === "confirmPassword").hasError = true;
-        tempErrors.find((field) => field.field === "confirmPassword").errMessage =
-          "Password and confirm password does not match";
-      }
-      setUnlinkErr(tempErrors);
-      const hasError = tempErrors.some((field) => field.hasError);
-      console.log("tempErrors", tempErrors);
-      console.log("hasError", hasError);
-      if (hasError) {
-        return;
+      const response = await axios.delete("/api/cleanup-unused-auth-users", {
+        headers: {
+          Authorization: `Bearer ${await user.getIdToken()}`,
+        },
+      });
+      console.log(response.data.message);
+    } catch (error) {
+      console.error("Error cleaning up unused auth users:", error);
+    }
+  };
+
+  const handleUnlink = async (newPassAccount, providerName) => {
+    try {
+      if (newPassAccount) {
+        // Password validation
+        const tempErrors = initUnlinkErr;
+        if (!unlinkPassword) {
+          tempErrors.find((field) => field.field === "password").hasError = true;
+          tempErrors.find((field) => field.field === "password").errMessage =
+            "This field is required";
+        }
+        if (!unlinkConfirmPassword) {
+          tempErrors.find((field) => field.field === "confirmPassword").hasError = true;
+          tempErrors.find((field) => field.field === "confirmPassword").errMessage =
+            "This field is required";
+        } else if (unlinkPassword !== unlinkConfirmPassword) {
+          tempErrors.find((field) => field.field === "confirmPassword").hasError = true;
+          tempErrors.find((field) => field.field === "confirmPassword").errMessage =
+            "Password and confirm password do not match";
+        }
+        const hasError = tempErrors.some((field) => field.hasError);
+        console.log("tempErrors", tempErrors);
+        console.log("hasError", hasError);
+        if (hasError) {
+          setUnlinkErr(tempErrors);
+          return;
+        }
+
+        // Create email/password account and handle potential errors
+        try {
+          const credential = EmailAuthProvider.credential(user.email, unlinkPassword);
+          await linkWithCredential(user, credential);
+          console.log("Email/Password account linked successfully");
+        } catch (error) {
+          console.error("Error linking email/password account:", error);
+          console.log("Error Code:", error.code);
+          if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
+            tempErrors.find((field) => field.field === "password").hasError = true;
+            tempErrors.find((field) => field.field === "password").errMessage =
+              "Incorrect password";
+            setUnlinkErr(tempErrors);
+            return;
+          } else {
+            showToast("error", `Failed to unlink ${providerName} account. Please try again.`);
+            return;
+          }
+        }
       }
 
       // After linking email/password, proceed with unlinking Google/Facebook account
@@ -404,37 +525,50 @@ function Settings({ ...sharedProps }) {
         setUnlinkErr(initEmailErr);
       }
     } catch (error) {
-      setUnlinkPassword("");
-      setUnlinkConfirmPassword("");
-      setUnlinkErr(initEmailErr);
       console.error("Error unlinking account:", error);
-      // Check if the error is related to invalid credentials
-      const tempErrors = unlinkErr;
-      if (error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
-        tempErrors.find((field) => field.field === "password").hasError = true;
-        tempErrors.find((field) => field.field === "password").errMessage = "Incorrect password";
-        console.log("Password incorrect, unlink unsuccessful.");
-      } else {
-        showToast("error", "Failed to unlink account. Please check your password and try again.");
-        console.error("Unlink unsuccessful.", error.code);
-      }
-      setUnlinkErr(tempErrors);
+      console.log("Error Code:", error.code);
+      showToast("error", `Failed to unlink ${providerName} account. Please try again.`);
     }
   };
 
   const handleLinkAccount = async (provider) => {
     try {
       let newConnectedAccount = null;
-      if (provider === "google") {
-        const acctProvider = new GoogleAuthProvider();
-        await user.linkWithPopup(acctProvider);
-        newConnectedAccount = 0;
-      } else if (provider === "facebook") {
-        const acctProvider = new FacebookAuthProvider();
-        await user.linkWithPopup(acctProvider);
-        newConnectedAccount = 1;
+      let acctProvider = null;
+      let result;
+      try {
+        // Clean up auth user that doesn't have a user document
+        cleanupUnusedAuthUsers();
+        if (provider === "google") {
+          acctProvider = new GoogleAuthProvider();
+          result = await linkWithPopup(user, acctProvider);
+          newConnectedAccount = 0;
+        } else if (provider === "facebook") {
+          acctProvider = new FacebookAuthProvider();
+          result = await linkWithPopup(user, acctProvider);
+          newConnectedAccount = 1;
+          console.log("result", result);
+          console.log("result.user", result.user);
+        }
+      } catch (error) {
+        if (error.code === "auth/credential-already-in-use") {
+          //if user selected is not in users collection (user.uid is doc id of users collection), delete the auth user and retry
+          showToast(
+            "error",
+            `${capitalizeFieldName(
+              provider
+            )} account already used by another account. Please select another ${capitalizeFieldName(
+              provider
+            )} account`
+          );
+        }
       }
-      handleConnectedAccountChange(newConnectedAccount);
+      if (result?.user) {
+        console.log("Account linked updating db:", result.user);
+        handleConnectedAccountChange(newConnectedAccount);
+      } else {
+        console.log("No account was linked.");
+      }
     } catch (error) {
       console.error("Error unlinking account:", error);
       showToast("error", "Failed to link account.");
@@ -475,28 +609,84 @@ function Settings({ ...sharedProps }) {
     fileInputRef.current.click();
   };
 
+  // Password change
   const handlePasswordChange = (index, value) => {
     if (index === 0) {
+      setOldPassword(value);
+    } else if (index === 1) {
       setNewPassword(value);
-    } else {
+    } else if (index === 2) {
       setConfirmNewPassword(value);
     }
   };
 
-  const handlePasswordSave = (values) => {
-    setNewPassword(values[0]);
-    setConfirmNewPassword(values[1]);
-    // Here you would typically call an API to update the password
-    handleUpdatePassword({
-      newPassword: values[0],
-      confirmNewPassword: values[1],
+  const handlePasswordSave = async (values) => {
+    setOldPassword(values[0]);
+    setNewPassword(values[1]);
+    setConfirmNewPassword(values[2]);
+
+    const tempErrors = initPassErr;
+    console.log("oldPassword", oldPassword);
+    console.log("newPassword", newPassword);
+    console.log("confirmNewPassword", confirmNewPassword);
+    console.log("oldPassword", values[0]);
+    console.log("newPassword", values[1]);
+    console.log("confirmNewPassword", values[2]);
+    if (!oldPassword) {
+      tempErrors.find((field) => field.field === "oldPassword").hasError = true;
+      tempErrors.find((field) => field.field === "oldPassword").errMessage =
+        "This field is required";
+    } else {
+      try {
+        // Reauthenticate the user
+        const credential = EmailAuthProvider.credential(user.email, oldPassword);
+        await reauthenticateWithCredential(user, credential);
+
+        if (oldPassword === newPassword) {
+          tempErrors.find((field) => field.field === "newPassword").hasError = true;
+          tempErrors.find((field) => field.field === "newPassword").errMessage =
+            "Cannot be the same passsword";
+        }
+      } catch (error) {
+        console.error("Error reauthenticating account:", error);
+        tempErrors.find((field) => field.field === "oldPassword").hasError = true;
+        tempErrors.find((field) => field.field === "oldPassword").errMessage = "Incorrect password";
+      }
+    }
+    if (!newPassword) {
+      tempErrors.find((field) => field.field === "newPassword").hasError = true;
+      tempErrors.find((field) => field.field === "newPassword").errMessage =
+        "This field is required";
+    }
+    if (!confirmNewPassword) {
+      tempErrors.find((field) => field.field === "confirmNewPassword").hasError = true;
+      tempErrors.find((field) => field.field === "confirmNewPassword").errMessage =
+        "This field is required";
+    } else if (newPassword !== confirmNewPassword) {
+      tempErrors.find((field) => field.field === "confirmNewPassword").hasError = true;
+      tempErrors.find((field) => field.field === "confirmNewPassword").errMessage =
+        "New password and confirm new password does not match";
+    }
+    setPassErr(tempErrors);
+
+    const hasError = tempErrors.some((field) => field.hasError);
+    console.log("tempErrors", tempErrors);
+    console.log("hasError", hasError);
+    if (hasError) {
+      return false;
+    }
+    // Proceed with updating password
+    const success = await handleUpdatePassword({
+      newPassword: values[1],
+      confirmNewPassword: values[2],
     });
+    setPassErr(initPassErr);
+    return success;
   };
 
   const handleUpdatePassword = async (passwordData) => {
     try {
       // Call your API endpoint to update the password
-      // This is a placeholder and should be replaced with your actual API call
       const response = await axios.post(
         "/api/user/update-password",
         {
@@ -509,13 +699,16 @@ function Settings({ ...sharedProps }) {
       if (response.status === 200) {
         // Password updated successfully
         showToast("success", "Password updated successfully");
+        return true;
       } else {
         // Handle error
         showToast("error", "Failed to update password");
+        return false;
       }
     } catch (error) {
       console.error("Error updating password:", error);
       showToast("error", "An error occurred while updating password");
+      return false;
     }
   };
 
@@ -559,14 +752,17 @@ function Settings({ ...sharedProps }) {
           <Box mt={4} className="tab-content" sx={{ maxWidth: "1200px" }}>
             <div className="avatar-container" style={{ display: "flex", alignItems: "center" }}>
               <Avatar
+                {...(userDoc.username && stringAvatar(userDoc.username))}
                 alt="User Avatar"
                 src={profilePic || ""}
                 sx={{
                   width: 150,
                   height: 150,
+                  fontSize: "4rem",
                   marginLeft: "20px",
-                  border: "3px solid #FF567D", // Avatar border
-                  boxShadow: "0 0 5px 2px rgba(255, 86, 125, 0.5)", // Avatar shadow
+                  background: "var(--gradientButton)",
+                  color: "white",
+                  border: "5px solid var(--brightFont)", // Avatar border
                 }}
               />
 
@@ -639,6 +835,7 @@ function Settings({ ...sharedProps }) {
               onChange={handleThreeInputsChange}
               onSave={handleSaveThreeInputs}
               errors={userDetailsErr}
+              initErrors={initUserDetailsErr}
               setErrors={setUserDetailsErr}
             />
             <EditableInput
@@ -648,15 +845,18 @@ function Settings({ ...sharedProps }) {
               onSave={(value) => handleSave("email", value)}
               onReset={handleReset}
               errors={emailErr}
+              initErrors={initEmailErr}
+              setErrors={setEmailErr}
               isEditable={connectedAccount == null ? true : false}
             />
             {/* TO DO: OTP verification before enable isEditing */}
             <EditablePassInput
-              labels={["New Password", "Confirm New Password", "Password"]}
-              values={[newPassword, confirmNewPassword]}
+              labels={["Old Password", "New Password", "Confirm New Password", "Password"]}
+              values={[oldPassword, newPassword, confirmNewPassword]}
               onChange={handlePasswordChange}
               onSave={handlePasswordSave}
               errors={passErr}
+              initErrors={initPassErr}
               setErrors={setPassErr}
               isEditable={connectedAccount == null ? true : false}
             />
@@ -714,7 +914,9 @@ function Settings({ ...sharedProps }) {
           />
           <span style={{ color: "#ff0000" }}>{getErrMessage("confirmPassword", unlinkErr)}</span>
           <br />
-          <button onClick={handleUnlink}>
+          <button
+            onClick={() => handleUnlink(true, connectedAccount === 0 ? "Google" : "Facebook")}
+          >
             Unlink {connectedAccount === 0 ? "Google" : "Facebook"} Account
           </button>
           <br />

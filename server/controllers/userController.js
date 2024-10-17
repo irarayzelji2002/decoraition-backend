@@ -1,6 +1,7 @@
 const { db, auth, clientAuth, clientDb } = require("../firebase");
 const { createUserWithEmailAndPassword, signInWithEmailAndPassword } = require("firebase/auth");
 const { getStorage, ref, uploadBytes, getDownloadURL } = require("firebase/storage");
+const { doc, getDoc } = require("firebase/firestore");
 
 const emailjs = require("@emailjs/browser");
 const {
@@ -162,35 +163,6 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Login with email and password
-exports.loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Sign in user with Firebase Authentication
-    const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
-    const user = userCredential.user;
-
-    // Fetch additional user data from Firestore
-    const userDoc = await db.collection("users").doc(user.uid).get();
-    const userData = userDoc.data();
-
-    // Add the document ID (user.uid) to userData
-    const userDataWithId = {
-      ...userData,
-      id: user.uid,
-    };
-
-    res.status(200).json({
-      message: "Login successful",
-      userData: userDataWithId,
-    });
-  } catch (error) {
-    console.error("Error logging in user:", error);
-    res.status(401).json({ error: "Login failed", message: error.message });
-  }
-};
-
 // Login with Google
 exports.loginUserGoogle = async (req, res) => {
   try {
@@ -338,6 +310,17 @@ exports.changePassword = async (req, res) => {
   }
 };
 
+// Update password
+exports.updatePassword = async (req, res) => {
+  const { userId, newPassword } = req.body;
+  try {
+    await auth.updateUser(userId, { password: newPassword });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to change password" });
+  }
+};
+
 // Update Profile Picture
 exports.updateProfilePic = async (req, res) => {
   const { selectedFile, userId } = req.body;
@@ -394,14 +377,6 @@ exports.updateUserField = async (req, res) => {
 
       case "email":
         if (userDoc.data().email !== value) {
-          const emailExists = await db
-            .collection("users")
-            .where("email", "==", value)
-            .where("userId", "!=", userId)
-            .get();
-          if (!emailExists.empty) {
-            return res.status(400).json({ error: "Email already exists" });
-          }
           try {
             await auth.updateUser(userId, { email: value });
             updateData.email = value;
@@ -422,7 +397,44 @@ exports.updateUserField = async (req, res) => {
       .json({ message: `${field} updated successfully`, [field]: value, updatedAt: updatedAt });
   } catch (error) {
     console.error(`Error updating ${field}:`, error);
+    console.log(error.code);
     res.status(500).json({ error: `Failed to update ${field}` });
+  }
+};
+
+exports.checkExistingEmail = async (req, res) => {
+  const { userId, email } = req.params;
+  if (!userId || email === undefined) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const userDocRef = db.collection("users").doc(userId);
+    const userDoc = await userDocRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (userDoc.data().email !== email) {
+      try {
+        const existingUser = await auth.getUserByEmail(email);
+        if (existingUser && existingUser.uid !== userId) {
+          return res.status(400).json({ error: "Email already exists" });
+        }
+      } catch (error) {
+        if (error.code === "auth/user-not-found") {
+          return res.status(200).json({ success: true, message: "Email is available" });
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    return res.status(200).json({ success: true, message: "Email is available" });
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return res.status(500).json({ error: "Failed to check email" });
   }
 };
 
@@ -441,24 +453,13 @@ exports.updateUserDetails = async (req, res) => {
     if (!userDoc.exists) {
       return res.status(404).json({ error: "User not found" });
     }
-
+    console.log("got user doc");
     const updateData = {};
     updateData.updatedAt = new Date();
 
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
-
-    if (username !== undefined) {
-      const usernameExists = await db
-        .collection("users")
-        .where("username", "==", username)
-        .where("userId", "!=", userId)
-        .get();
-      if (!usernameExists.empty) {
-        return res.status(400).json({ error: "Username already exists" });
-      }
-      updateData.username = username;
-    }
+    if (username !== undefined) updateData.username = username;
 
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
@@ -466,6 +467,39 @@ exports.updateUserDetails = async (req, res) => {
 
     await userDocRef.update(updateData);
     res.status(200).json({ message: "Profile updated successfully", updatedFields: updateData });
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({ error: "Failed to update user profile" });
+  }
+};
+
+exports.checkExistingUsername = async (req, res) => {
+  const { userId, username } = req.params;
+
+  if (!userId || username === undefined) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const userDocRef = db.collection("users").doc(userId);
+    const userDoc = await userDocRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    try {
+      const usernameExists = await db.collection("users").where("username", "==", username).get();
+      const filteredDocs = usernameExists.docs.filter((doc) => doc.id !== userId);
+      if (filteredDocs.length > 0) {
+        return res.status(400).json({ error: "Username already exists" });
+      } else if (filteredDocs.length === 0) {
+        return res.status(200).json({ success: true, message: "Username is available" });
+      }
+    } catch (error) {
+      throw error;
+    }
+
+    res.status(200).json({ message: "Username available" });
   } catch (error) {
     console.error("Error updating user profile:", error);
     res.status(500).json({ error: "Failed to update user profile" });
@@ -488,14 +522,25 @@ exports.updateConnectedAccount = async (req, res) => {
     const userRecord = await auth.getUser(userId);
     if (connectedAccount === null) {
       // Unlink all providers except password
+      const providersToUnlink = [];
       const providers = userRecord.providerData;
+
       for (const provider of providers) {
         if (provider.providerId !== "password") {
-          await auth.updateUser(userId, {
-            providerToUnlink: provider.providerId,
-          });
+          providersToUnlink.push(provider.providerId);
         }
       }
+
+      if (providersToUnlink.length > 0) {
+        try {
+          await auth.updateUser(userId, {
+            providersToUnlink: providersToUnlink,
+          });
+        } catch (error) {
+          console.error("Error unlinking providers:", error);
+        }
+      }
+
       if (oldConnectedAccount === 0) message = "Google account unlinked successfully.";
       else if (oldConnectedAccount === 1) message = "Facebook account unlinked successfully.";
     } else if (!(connectedAccount === 0 || connectedAccount === 1)) {
@@ -518,6 +563,28 @@ exports.updateConnectedAccount = async (req, res) => {
   } catch (error) {
     console.error("Error updating connected account:", error);
     res.status(500).json({ error: "Failed to update connected account" });
+  }
+};
+
+exports.cleanupUnusedAuthUsers = async (req, res) => {
+  try {
+    // Get all users from Firebase Authentication
+    const listUsersResult = await auth.listUsers();
+    const authUserIds = listUsersResult.users.map((user) => user.uid);
+    // Get all user document IDs from Firestore
+    const usersSnapshot = await db.collection("users").get();
+    const firestoreUserIds = usersSnapshot.docs.map((doc) => doc.id);
+    // Identify unused user IDs
+    const unusedUserIds = authUserIds.filter((uid) => !firestoreUserIds.includes(uid));
+    // Delete unused users
+    for (const uid of unusedUserIds) {
+      await auth.deleteUser(uid);
+      console.log(`Deleted user: ${uid}`);
+    }
+    res.status(200).json({ message: "Unused authentication users have been cleaned up." });
+  } catch (error) {
+    console.error("Error cleaning up unused users:", error);
+    res.status(500).json({ error: "Failed to clean up unused authentication users" });
   }
 };
 

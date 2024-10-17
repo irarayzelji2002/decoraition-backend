@@ -10,9 +10,9 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import { showToast } from "./functions/utils.js";
 
 import "./App.css";
+import Layout from "./components/Layout.jsx";
 import Loading from "./components/Loading.jsx";
 import Login from "./pages/Account/Login.jsx";
 import Register from "./pages/Account/Register.jsx";
@@ -237,202 +237,204 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Routes>
-          {/* BEFORE LOGIN */}
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot" element={<ForgotPass />} />
-          <Route path="/change" element={<ChangePassw />} />
-          <Route path="/otp" element={<OneTP />} />
-          {/* ACCOUNT/HOMEPAGE */}
-          <Route
-            path="/homepage"
-            element={
-              <ProtectedRoute>
-                <Homepage {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/details"
-            element={
-              <ProtectedRoute>
-                <Details {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <Settings {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          {/* DESIGN SPACE */}
-          <Route
-            path="/design/:designId"
-            element={
-              <ProtectedRoute>
-                <Design {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/searchItem"
-            element={
-              <ProtectedRoute>
-                <SearchItem {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/addItem/:designId"
-            element={
-              <ProtectedRoute>
-                <AddItem {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/editItem/:designId/:itemId"
-            element={
-              <ProtectedRoute>
-                <EditItem {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/users"
-            element={
-              <ProtectedRoute>
-                <Users {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/budget/:designId"
-            element={
-              <ProtectedRoute>
-                <Budget {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/seeAllProjects"
-            element={
-              <ProtectedRoute>
-                <SeeAllProjects {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/seeAllDesigns"
-            element={
-              <ProtectedRoute>
-                <SeeAllDesigns {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/version"
-            element={
-              <ProtectedRoute>
-                <Version {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          {/* PROJECT SPACE */}
-          <Route
-            path="/project/:projectId"
-            element={
-              <ProtectedRoute>
-                <Project {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/design/:designId/:projectId/project"
-            element={
-              <ProtectedRoute>
-                <Design {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/budget/:designId/:projectId/project"
-            element={
-              <ProtectedRoute>
-                <Budget {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/addItem/:designId/:projectId/project"
-            element={
-              <ProtectedRoute>
-                <AddItem {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/editItem/:designId/:itemId/:projectId/project"
-            element={
-              <ProtectedRoute>
-                <EditItem {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/planMap/:projectId"
-            element={
-              <ProtectedRoute>
-                <PlanMap {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/timeline/:projectId"
-            element={
-              <ProtectedRoute>
-                <Timeline {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/projectBudget/:projectId"
-            element={
-              <ProtectedRoute>
-                <ProjBudget {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/addPin/"
-            element={
-              <ProtectedRoute>
-                <AddPin {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/editEvent/:projectId"
-            element={
-              <ProtectedRoute>
-                <EditEvent {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/projSetting/"
-            element={
-              <ProtectedRoute>
-                <ProjSetting {...sharedProps} />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+        <Layout>
+          <Routes>
+            {/* BEFORE LOGIN */}
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot" element={<ForgotPass />} />
+            <Route path="/change" element={<ChangePassw />} />
+            <Route path="/otp" element={<OneTP />} />
+            {/* ACCOUNT/HOMEPAGE */}
+            <Route
+              path="/homepage"
+              element={
+                <ProtectedRoute>
+                  <Homepage {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/details"
+              element={
+                <ProtectedRoute>
+                  <Details {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            {/* DESIGN SPACE */}
+            <Route
+              path="/design/:designId"
+              element={
+                <ProtectedRoute>
+                  <Design {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/searchItem"
+              element={
+                <ProtectedRoute>
+                  <SearchItem {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/addItem/:designId"
+              element={
+                <ProtectedRoute>
+                  <AddItem {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editItem/:designId/:itemId"
+              element={
+                <ProtectedRoute>
+                  <EditItem {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute>
+                  <Users {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/budget/:designId"
+              element={
+                <ProtectedRoute>
+                  <Budget {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/seeAllProjects"
+              element={
+                <ProtectedRoute>
+                  <SeeAllProjects {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/seeAllDesigns"
+              element={
+                <ProtectedRoute>
+                  <SeeAllDesigns {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/version"
+              element={
+                <ProtectedRoute>
+                  <Version {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            {/* PROJECT SPACE */}
+            <Route
+              path="/project/:projectId"
+              element={
+                <ProtectedRoute>
+                  <Project {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/design/:designId/:projectId/project"
+              element={
+                <ProtectedRoute>
+                  <Design {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/budget/:designId/:projectId/project"
+              element={
+                <ProtectedRoute>
+                  <Budget {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/addItem/:designId/:projectId/project"
+              element={
+                <ProtectedRoute>
+                  <AddItem {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editItem/:designId/:itemId/:projectId/project"
+              element={
+                <ProtectedRoute>
+                  <EditItem {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/planMap/:projectId"
+              element={
+                <ProtectedRoute>
+                  <PlanMap {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/timeline/:projectId"
+              element={
+                <ProtectedRoute>
+                  <Timeline {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/projectBudget/:projectId"
+              element={
+                <ProtectedRoute>
+                  <ProjBudget {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/addPin/"
+              element={
+                <ProtectedRoute>
+                  <AddPin {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editEvent/:projectId"
+              element={
+                <ProtectedRoute>
+                  <EditEvent {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/projSetting/"
+              element={
+                <ProtectedRoute>
+                  <ProjSetting {...sharedProps} />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Layout>
       </div>
     </Router>
   );

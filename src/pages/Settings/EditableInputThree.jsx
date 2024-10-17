@@ -11,6 +11,7 @@ const EditableInputThree = ({
   onChange,
   onSave,
   errors,
+  initErrors,
   setErrors,
   origValues,
 }) => {
@@ -45,12 +46,7 @@ const EditableInputThree = ({
     setIsEditing(false);
     setInputValues(origValues);
     if (setErrors) {
-      labels.forEach((label) => {
-        handleSetError(toCamelCase(label), "", errors, setErrors);
-      });
-      if (labels.length > 1) {
-        handleSetError("all", "", errors, setErrors);
-      }
+      setErrors(initErrors);
     }
   };
 

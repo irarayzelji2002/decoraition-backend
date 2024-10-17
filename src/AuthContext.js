@@ -28,11 +28,12 @@ export function useAuthProvider() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("Setting up auth state listener");
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log("Auth state changed");
+      console.log("Auth state changed. User:", user);
       setUser(user);
       if (user) {
-        console.log("user", user);
+        console.log("User authenticated, updating state");
         const fetchUserDoc = async (retryCount = 0) => {
           try {
             const idToken = await user.getIdToken();
@@ -62,7 +63,7 @@ export function useAuthProvider() {
         };
         fetchUserDoc();
       } else {
-        console.log("no user", user);
+        console.log("User not authenticated, clearing state");
         setUser(null);
         setUserDoc(null);
         setLoading(false);

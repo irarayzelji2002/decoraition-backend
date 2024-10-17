@@ -13,6 +13,7 @@ const EditablePassInput = ({
   onChange,
   onSave,
   errors,
+  initErrors,
   setErrors,
   isEditable = true,
 }) => {
@@ -53,109 +54,100 @@ const EditablePassInput = ({
     const newValues = Array(values.length).fill("");
     setInputValues(newValues);
     if (setErrors) {
-      labels.forEach((label) => {
-        handleSetError(toCamelCase(label), "", errors, setErrors);
+      setErrors(initErrors);
+      labels.slice(0, labels.length - 1).forEach((label, index) => {
+        onChange(index, ""); // exclude the last one
       });
-      if (labels.length > 1) {
-        handleSetError("all", "", errors, setErrors);
-      }
     }
   };
-
-  const renderPasswordField = (index, value, label) => (
-    <TextField
-      key={index}
-      label={label}
-      type={showPassword ? "text" : "password"}
-      value={value}
-      onChange={(e) => handleChange(index, e.target.value)}
-      disabled={!isEditing}
-      fullWidth
-      margin="normal"
-      helperText={getErrMessage(toCamelCase(label), errors)}
-      sx={{
-        marginTop: "10px",
-        marginBottom: "10px",
-        backgroundColor: "var(--inputBg)",
-        input: { color: "var(--color-white)" },
-        "& .MuiOutlinedInput-root": {
-          "& fieldset": {
-            borderColor: "var(--borderInput)", // Border color when not focused
-            borderWidth: "2px", // Adjust the border thickness here
-          },
-          "&:hover fieldset": {
-            borderColor: "var(--borderInput)", // Border color on hover
-            borderWidth: "2px", // Maintain the thickness on hover
-          },
-          "&.Mui-focused fieldset": {
-            borderColor: "var(--brightFont)", // Border color when focused
-            borderWidth: "2px", // Maintain the thickness on focus
-          },
-        },
-        "& .MuiFormHelperText-root": {
-          color: "white",
-        },
-      }}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            {isEditing && (
-              <IconButton onClick={() => handleReset(index)}>
-                <CloseRoundedIcon />
-              </IconButton>
-            )}
-            <IconButton onClick={handleClickShowPassword} edge="end" disabled={!isEditing}>
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
-    />
-  );
-
-  const renderPasswordView = (value, label) => (
-    <TextField
-      label={label}
-      type="password"
-      value={value}
-      disabled
-      fullWidth
-      margin="normal"
-      sx={{
-        marginTop: "10px",
-        marginBottom: "10px",
-        backgroundColor: "var(--inputBg)",
-        input: { color: "var(--color-white)" },
-        "& .MuiOutlinedInput-root": {
-          "& fieldset": {
-            borderColor: "var(--borderInput)", // Border color when not focused
-            borderWidth: "2px", // Adjust the border thickness here
-          },
-          "&:hover fieldset": {
-            borderColor: "var(--borderInput)", // Border color on hover
-            borderWidth: "2px", // Maintain the thickness on hover
-          },
-          "&.Mui-focused fieldset": {
-            borderColor: "var(--brightFont)", // Border color when focused
-            borderWidth: "2px", // Maintain the thickness on focus
-          },
-        },
-        "& .MuiFormHelperText-root": {
-          color: "white",
-        },
-      }}
-    />
-  );
 
   return (
     <Box>
       {isEditing ? (
         <>
-          {renderPasswordField(0, inputValues[0], labels[0])}
-          {renderPasswordField(1, inputValues[1], labels[1])}
+          {labels.slice(0, labels.length - 1).map((label, index) => (
+            <TextField
+              key={index}
+              label={label}
+              type={showPassword ? "text" : "password"}
+              value={inputValues[index]}
+              onChange={(e) => handleChange(index, e.target.value)}
+              disabled={!isEditing}
+              fullWidth
+              margin="normal"
+              helperText={getErrMessage(toCamelCase(label), errors)}
+              sx={{
+                marginTop: "10px",
+                marginBottom: "10px",
+                backgroundColor: "var(--inputBg)",
+                input: { color: "var(--color-white)" },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "var(--borderInput)",
+                    borderWidth: "2px",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "var(--borderInput)",
+                    borderWidth: "2px",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "var(--brightFont)",
+                    borderWidth: "2px",
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  color: "white",
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {isEditing && (
+                      <IconButton onClick={() => handleReset(index)}>
+                        <CloseRoundedIcon />
+                      </IconButton>
+                    )}
+                    <IconButton onClick={handleClickShowPassword} edge="end" disabled={!isEditing}>
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          ))}
         </>
       ) : (
-        <>{renderPasswordView("********", labels[2])}</>
+        <TextField
+          label={labels[labels.length - 1]} // last label
+          type="password"
+          value="********"
+          disabled
+          fullWidth
+          margin="normal"
+          sx={{
+            marginTop: "10px",
+            marginBottom: "10px",
+            backgroundColor: "var(--inputBg)",
+            input: { color: "var(--color-white)" },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "var(--borderInput)",
+                borderWidth: "2px",
+              },
+              "&:hover fieldset": {
+                borderColor: "var(--borderInput)",
+                borderWidth: "2px",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "var(--brightFont)",
+                borderWidth: "2px",
+              },
+            },
+            "& .MuiFormHelperText-root": {
+              color: "white",
+            },
+          }}
+        />
       )}
 
       {isEditable && (

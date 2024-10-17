@@ -12,7 +12,7 @@ export const handleSetError = (variable, message, errors, setErrors) => {
     const updatedFields = [...errors];
     updatedFields[index] = {
       ...updatedFields[index],
-      hasError: true,
+      hasError: message !== "",
       errMessage: message,
     };
     setErrors(updatedFields);
@@ -55,7 +55,7 @@ export const stringAvatar = (passedname) => {
       backgroundColor: `${bgColor} !important`,
       color: `${getContrastingTextColor(stringToColor(name))} !important`,
     },
-    children: initials,
+    children: initials.toUpperCase(),
   };
 };
 

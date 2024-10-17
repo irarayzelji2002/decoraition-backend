@@ -29,8 +29,7 @@ const authenticateUser = async (req, res, next) => {
 
 // User routes
 router.post("/register", userController.createUser);
-router.post("/login", userController.loginUser);
-router.post("/loginWithGoogle", userController.loginUserGoogle);
+router.post("/login-with-google", userController.loginUserGoogle);
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/verify-otp", userController.verifyOTP);
 router.post("/resend-otp", userController.resendOTP);
@@ -39,6 +38,8 @@ router.post("/change-password", userController.changePassword);
 router.get("/user/:userId", authenticateUser, userController.fetchUserData);
 router.post("/user/profile-pic", authenticateUser, userController.updateProfilePic);
 router.post("/user/update-field", authenticateUser, userController.updateUserField);
+router.get("/user/check-existing-email/:userId/:email", userController.checkExistingEmail);
+router.get("/user/check-existing-username/:userId/:username", userController.checkExistingUsername);
 router.post("/user/user-details", authenticateUser, userController.updateUserDetails);
 router.put(
   "/user/connected-account/:userId",
@@ -50,8 +51,14 @@ router.post(
   authenticateUser,
   userController.updateNotificationSettings
 );
+router.post("/user/update-password", authenticateUser, userController.updatePassword);
 router.post("/user/layout-settings", authenticateUser, userController.updateLayoutSettings);
 router.post("/user/theme", authenticateUser, userController.updateTheme);
+router.delete(
+  "/cleanup-unused-auth-users",
+  authenticateUser,
+  userController.cleanupUnusedAuthUsers
+);
 
 // Design routes
 router.get("/design/:userId", authenticateUser, designController.fetchUserDesigns);

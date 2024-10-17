@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IconButton, Menu } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import CommentIcon from "@mui/icons-material/Comment";
+import { toast } from "react-toastify";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { signOut } from "firebase/auth";
@@ -29,7 +29,7 @@ import {
 } from "./backend/ProjectDetails";
 import { useParams } from "react-router-dom";
 
-function ProjectHead({ designName, designId, setIsSidebarOpen }) {
+function ProjectHead({ designName }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isChangeModeMenuOpen, setIsChangeModeMenuOpen] = useState(false);
@@ -38,11 +38,9 @@ function ProjectHead({ designName, designId, setIsSidebarOpen }) {
     useState(false);
   const [isCopyLinkModalOpen, setIsCopyLinkModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
-  const [isMakeCopyModalOpen, setIsMakeCopyModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [collaborators, setCollaborators] = useState([]);
   const [newCollaborator, setNewCollaborator] = useState("");
@@ -84,25 +82,6 @@ function ProjectHead({ designName, designId, setIsSidebarOpen }) {
       });
     }
   }, [user]);
-
-  useEffect(() => {
-    const fetchDesignTitle = () => {
-      const designRef = doc(db, "designs", designId);
-
-      const unsubscribe = onSnapshot(designRef, (doc) => {
-        if (doc.exists()) {
-          const projectData = doc.data();
-          setTempName("Untitled");
-        }
-      });
-
-      return () => unsubscribe();
-    };
-
-    if (designId) {
-      fetchDesignTitle();
-    }
-  }, [designId]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -159,17 +138,6 @@ function ProjectHead({ designName, designId, setIsSidebarOpen }) {
     setIsShareConfirmationModalOpen(false);
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText("https://example.com/your-project-link").then(
-      () => {
-        setIsCopyLinkModalOpen(true);
-      },
-      (err) => {
-        console.error("Failed to copy: ", err);
-      }
-    );
-  };
-
   const handleCloseCopyLinkModal = () => {
     setIsCopyLinkModalOpen(false);
   };
@@ -203,20 +171,8 @@ function ProjectHead({ designName, designId, setIsSidebarOpen }) {
     setIsRenameModalOpen(false);
   };
 
-  const handleOpenRestoreModal = () => {
-    setIsRestoreModalOpen(true);
-  };
-
   const handleCloseRestoreModal = () => {
     setIsRestoreModalOpen(false);
-  };
-
-  const handleOpenMakeCopyModal = () => {
-    setIsMakeCopyModalOpen(true);
-  };
-
-  const handleCloseMakeCopyModal = () => {
-    setIsMakeCopyModalOpen(false);
   };
 
   const handleOpenInfoModal = () => {
@@ -252,12 +208,23 @@ function ProjectHead({ designName, designId, setIsSidebarOpen }) {
       });
   };
   const handleSettings = () => {
-    signOut(auth)
+    navigate(`/projSetting/${projectId}`);
+  };
+
+  const handleCopyLink = () => {
+    const currentLink = window.location.href; // Get the current URL
+    navigator.clipboard
+      .writeText(currentLink)
       .then(() => {
-        navigate("/settings");
+        toast.success("Link copied to clipboard!", {
+          className: "custom-toast-success", // Apply custom success class
+        }); // Show toast notification
       })
-      .catch((error) => {
-        console.error("Settings error:", error);
+      .catch((err) => {
+        toast.error("Failed to copy link.", {
+          className: "custom-toast-success", // Apply custom success class
+        }); // Show error toast notification
+        console.error("Failed to copy: ", err);
       });
   };
 
@@ -347,13 +314,12 @@ function ProjectHead({ designName, designId, setIsSidebarOpen }) {
             />
           ) : (
             <DefaultMenu
+              project={true}
               onClose={handleClose}
               onCopyLink={handleCopyLink}
               onOpenDownloadModal={handleOpenDownloadModal}
-              setIsSidebarOpen={setIsSidebarOpen}
               onOpenRenameModal={handleOpenRenameModal}
-              onOpenRestoreModal={handleOpenRestoreModal}
-              onOpenMakeCopyModal={handleOpenMakeCopyModal}
+              onSetting={handleSettings}
               onOpenInfoModal={handleOpenInfoModal}
               onOpenShareModal={handleShareClick}
               onDelete={handleOpenDeleteModal}
@@ -399,10 +365,6 @@ function ProjectHead({ designName, designId, setIsSidebarOpen }) {
       <RestoreModal
         isOpen={isRestoreModalOpen}
         onClose={handleCloseRestoreModal}
-      />
-      <MakeCopyModal
-        isOpen={isMakeCopyModalOpen}
-        onClose={handleCloseMakeCopyModal}
       />
       <InfoModal isOpen={isInfoModalOpen} onClose={handleCloseInfoModal} />
     </div>

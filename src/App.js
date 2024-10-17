@@ -109,7 +109,7 @@ function App() {
           <Route path="/projBudget/:projectId" element={<ProjBudget />} />
           <Route path="/addPin/" element={<AddPin />} />
           <Route path="/editEvent/:projectId" element={<EditEvent />} />
-          <Route path="/projSetting/" element={<ProjSetting />} />
+          <Route path="/projSetting/:projectId" element={<ProjSetting />} />
         </Routes>
       </Router>
     </AuthProvider>

@@ -584,6 +584,10 @@ textarea {
   margin-top: 10px;
 }
 
+.reply-input:focus-within {
+  border: 1px solid var(--brightFont); /* Add your desired border color */
+}
+
 .reply-input input {
   flex-grow: 1;
   border: none;
@@ -592,6 +596,7 @@ textarea {
   color: var(--color-white);
   margin-left: 10px;
 }
+
 .css-6hp17o-MuiList-root-MuiMenu-list {
   background-color: var(--nav-card-modal);
   color: var(--color-grey);

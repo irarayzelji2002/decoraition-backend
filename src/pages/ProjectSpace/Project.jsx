@@ -25,7 +25,10 @@ import {
   handleCreateDesign,
   handleDeleteDesign,
 } from "./backend/ProjectDetails";
-import { AddProject } from "../DesignSpace/svg/AddImage";
+import { Button } from "@mui/material";
+import { AddDesign, AddProject } from "../DesignSpace/svg/AddImage";
+import { HorizontalIcon, VerticalIcon } from "./svg/ExportIcon";
+import DesignSvg from "../Homepage/svg/DesignSvg";
 
 function Project() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -181,7 +184,7 @@ function Project() {
       <div
         style={{
           display: "flex",
-          width: "92%",
+          width: "auto",
 
           padding: "20px",
         }}
@@ -202,9 +205,17 @@ function Project() {
           </span>
         </span>
 
-        <span className="seeAll" style={{ marginLeft: "auto " }}>
-          See All
-        </span>
+        <div
+          className="button-container"
+          style={{ display: "flex", marginLeft: "auto" }}
+        >
+          <Button style={{ marginRight: "10px" }}>
+            <HorizontalIcon />
+          </Button>
+          <Button>
+            <VerticalIcon />
+          </Button>
+        </div>
       </div>
       <div className="layout" style={{ paddingBottom: "20%" }}>
         {designs.length > 0 ? (
@@ -232,6 +243,15 @@ function Project() {
       <div className="circle-button-container">
         {menuOpen && (
           <div className="small-buttons">
+            <div
+              className="small-button-container"
+              onClick={() => handleCreateDesign(projectId)}
+            >
+              <span className="small-button-text">Import a Design</span>
+              <div className="small-circle-button">
+                <AddDesign />
+              </div>
+            </div>
             <div
               className="small-button-container"
               onClick={() => handleCreateDesign(projectId)}

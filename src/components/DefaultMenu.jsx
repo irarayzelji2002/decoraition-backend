@@ -14,6 +14,7 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Link, useNavigate } from "react-router-dom";
 
 const DefaultMenu = ({
+  project,
   onComment,
   onCopyLink,
   onOpenDownloadModal,
@@ -30,12 +31,14 @@ const DefaultMenu = ({
 }) => {
   return (
     <>
-      <MenuItem onClick={onComment}>
-        <ListItemIcon>
-          <CommentIcon sx={{ color: "whitesmoke" }} />
-        </ListItemIcon>
-        <ListItemText primary="Comment" />
-      </MenuItem>
+      {!project && (
+        <MenuItem onClick={onComment}>
+          <ListItemIcon>
+            <CommentIcon sx={{ color: "whitesmoke" }} />
+          </ListItemIcon>
+          <ListItemText primary="Comment" />
+        </MenuItem>
+      )}
       <MenuItem onClick={onOpenShareModal}>
         <ListItemIcon>
           <ShareIcon sx={{ color: "whitesmoke" }} />
@@ -48,42 +51,50 @@ const DefaultMenu = ({
         </ListItemIcon>
         <ListItemText primary="Copy Link" />
       </MenuItem>
-      <MenuItem onClick={setIsSidebarOpen}>
-        <ListItemIcon>
-          <HistoryIcon sx={{ color: "whitesmoke" }} />
-        </ListItemIcon>
-        <ListItemText primary="History" />
-      </MenuItem>
+      {!project && (
+        <MenuItem onClick={setIsSidebarOpen}>
+          <ListItemIcon>
+            <HistoryIcon sx={{ color: "whitesmoke" }} />
+          </ListItemIcon>
+          <ListItemText primary="History" />
+        </MenuItem>
+      )}
       <MenuItem onClick={onSetting}>
         <ListItemIcon>
           <SettingsIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>
         <ListItemText primary="Settings" />
       </MenuItem>
-      <MenuItem onClick={onChangeMode}>
-        <ListItemIcon>
-          <EditIcon sx={{ color: "whitesmoke" }} />
-        </ListItemIcon>
-        <ListItemText primary="Change Mode" />
-      </MenuItem>
+      {!project && (
+        <MenuItem onClick={onChangeMode}>
+          <ListItemIcon>
+            <EditIcon sx={{ color: "whitesmoke" }} />
+          </ListItemIcon>
+          <ListItemText primary="Change Mode" />
+        </MenuItem>
+      )}
       <MenuItem onClick={onOpenDownloadModal}>
         <ListItemIcon>
           <DownloadIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>
         <ListItemText primary="Download" />
       </MenuItem>
-      <MenuItem onClick={onOpenMakeCopyModal}>
-        <ListItemIcon>
-          <FileCopyIcon sx={{ color: "whitesmoke" }} />
-        </ListItemIcon>
-        <ListItemText primary="Make a Copy" />
-      </MenuItem>
-      <MenuItem onClick={onOpenRestoreModal}>
-        <ListItemIcon>
-          <RestoreIcon sx={{ color: "whitesmoke" }} />
-        </ListItemIcon>
-        <ListItemText primary="Restore" />
-      </MenuItem>
+      {!project && (
+        <MenuItem onClick={onOpenMakeCopyModal}>
+          <ListItemIcon>
+            <FileCopyIcon sx={{ color: "whitesmoke" }} />
+          </ListItemIcon>
+          <ListItemText primary="Make a Copy" />
+        </MenuItem>
+      )}
+      {!project && (
+        <MenuItem onClick={onOpenRestoreModal}>
+          <ListItemIcon>
+            <RestoreIcon sx={{ color: "whitesmoke" }} />
+          </ListItemIcon>
+          <ListItemText primary="Restore" />
+        </MenuItem>
+      )}
       <MenuItem onClick={onOpenRenameModal}>
         <ListItemIcon>
           <EditIcon sx={{ color: "whitesmoke" }} />
@@ -100,7 +111,7 @@ const DefaultMenu = ({
         <ListItemIcon>
           <InfoIcon sx={{ color: "whitesmoke" }} />
         </ListItemIcon>
-        <ListItemText primary="Info" />
+        <ListItemText primary="Details" />
       </MenuItem>
     </>
   );

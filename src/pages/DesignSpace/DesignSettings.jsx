@@ -94,12 +94,34 @@ const SettingsContent = ({
         value={generalAccess}
         onChange={(e) => setGeneralAccess(e.target.value)}
         className="accessSelect"
+        sx={{
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--borderInput)",
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--bright-grey)",
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "var(--bright-grey)",
+          },
+          "& .MuiSelect-select": {
+            color: "var(--color-white)", 
+          },
+        }}
       >
         <MenuItem
           value="Anyone with the link"
           sx={{
             backgroundColor: "var(--bgColor)",
-            color: "var(--color-white)",
+            color: "var(--color-white)", 
+            "&:hover": {
+              backgroundColor: "var(--dropdownHover)",
+              color: "var(--color-white)",
+            },
+            "&.Mui-selected": {
+              backgroundColor: "var(--dropdownSelected)",
+              color: "var(--color-white)", 
+            },
           }}
         >
           Anyone with the link
@@ -107,11 +129,14 @@ const SettingsContent = ({
         <MenuItem
           value="Restricted"
           sx={{
-            backgroundColor: "var(--dropdown)",
-            color: "var(--color-white)",
+            backgroundColor: "var(--bgColor)",
+            color:
+              generalAccess === "Restricted"
+                ? "var(--color-white)"
+                : "var(--color-grey)", 
             "&:hover": {
               backgroundColor: "var(--dropdownHover)",
-              color: "var(--color-white)",
+              color: "var(--color-white)", 
             },
             "&.Mui-selected": {
               backgroundColor: "var(--dropdownSelected)",
@@ -177,6 +202,23 @@ const SettingsContent = ({
                     color: "var(--color-white)",
                   },
                 }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderColor: "var(--borderInput)", 
+                    "& fieldset": {
+                      borderColor: "var(--borderInput)", 
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "var(--bright-grey)", 
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "var(--bright-grey)", 
+                    },
+                  },
+                  "& input": {
+                    color: "var(--color-white)", 
+                  },
+                }}
               />
             </Box>
 
@@ -193,6 +235,23 @@ const SettingsContent = ({
                   style: {
                     backgroundColor: "var(--bgcolor)",
                     color: "var(--color-white)",
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderColor: "var(--borderInput)", 
+                    "& fieldset": {
+                      borderColor: "var(--borderInput)", 
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "var(--bright-grey)", 
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "var(--bright-grey)", 
+                    },
+                  },
+                  "& input": {
+                    color: "var(--color-white)", 
                   },
                 }}
               />
@@ -212,6 +271,23 @@ const SettingsContent = ({
                   style: {
                     backgroundColor: "var(--bgcolor)",
                     color: "var(--color-white)",
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderColor: "var(--borderInput)", 
+                    "& fieldset": {
+                      borderColor: "var(--borderInput)", 
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "var(--bright-grey)", 
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "var(--bright-grey)", 
+                    },
+                  },
+                  "& input": {
+                    color: "var(--color-white)", 
                   },
                 }}
               />

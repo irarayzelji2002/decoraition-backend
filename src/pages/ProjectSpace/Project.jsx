@@ -110,7 +110,6 @@ function Project({ ...sharedProps }) {
   }
   return (
     <div className="app-container">
-      <ToastContainer progressStyle={{ backgroundColor: "var(--brightFont)" }} />
       <ProjectHead />
       <div
         style={{

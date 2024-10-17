@@ -43,7 +43,6 @@ import EditableInputThree from "./EditableInputThree";
 import EditablePassInput from "./EditablePassInput";
 import LongToggleInput from "./LongToggleInput";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 function Settings({ ...sharedProps }) {
   const { user, userDoc } = sharedProps;
@@ -715,7 +714,6 @@ function Settings({ ...sharedProps }) {
   return (
     <>
       <TopBar state="Settings" />
-      <ToastContainer />
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}

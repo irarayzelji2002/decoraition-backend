@@ -98,7 +98,6 @@ function EditEvent({ ...sharedProps }) {
 
   return (
     <div>
-      <ToastContainer />
       <TopBar state={"Edit Event"} />
       <div className="edit-event">
         <div className="form-container">

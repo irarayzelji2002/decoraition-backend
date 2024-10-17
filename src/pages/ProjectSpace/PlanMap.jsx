@@ -24,7 +24,6 @@ function PlanMap({ ...sharedProps }) {
 
   return (
     <div className="app-container">
-      <ToastContainer />
       <ProjectHead />
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
       <div style={{ display: "flex", flexDirection: "row" }}>

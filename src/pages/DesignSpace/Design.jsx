@@ -114,7 +114,6 @@ function Design({ ...sharedProps }) {
 
   return (
     <div className="whole">
-      <ToastContainer progressStyle={{ backgroundColor: "var(--brightFont)" }} />
       <DesignHead
         designData={designData}
         newName={newName}

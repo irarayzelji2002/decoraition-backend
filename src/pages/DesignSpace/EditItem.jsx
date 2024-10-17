@@ -133,7 +133,6 @@ const EditItem = ({ ...sharedProps }) => {
   return (
     <>
       <TopBar state={"Edit Item"} />
-      <ToastContainer progressStyle={{ backgroundColor: "var(--brightFont)" }} />
       <div className="add-item-container">
         <div className="left-column">
           <div className="upload-section">

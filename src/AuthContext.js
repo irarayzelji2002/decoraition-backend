@@ -79,6 +79,7 @@ export function useAuthProvider() {
       setUser(null);
       setUserDoc(null);
       navigate("/login");
+      window.location.reload();
     } catch (error) {
       console.error("Error logging out:", error);
       showToast("error", "Failed to log out.");

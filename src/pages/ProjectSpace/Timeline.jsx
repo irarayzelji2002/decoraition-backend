@@ -62,7 +62,6 @@ function Timeline({ ...sharedProps }) {
   return (
     <>
       <ProjectHead />
-      <ToastContainer />
       <div className="timeline-container">
         {/* Calendar Section */}
         <div className="calendar-head">

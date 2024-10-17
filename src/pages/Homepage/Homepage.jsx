@@ -22,7 +22,6 @@ import SearchAppBar from "./SearchAppBar.jsx";
 import DesignIcon from "../../components/DesignIcon.jsx";
 import ProjectOptionsHome from "../../components/ProjectOptionsHome.jsx";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "../../css/homepage.css";
 import "../../css/design.css";
 import ProjectIcon from "./svg/ProjectIcon.jsx";
@@ -62,7 +61,6 @@ function Homepage({ ...sharedProps }) {
 
   return (
     <div className={`homepage ${menuOpen ? "darkened" : ""}`}>
-      <ToastContainer />
       {menuOpen && (
         <div className="overlay" onClick={() => toggleMenu(menuOpen, setMenuOpen)}></div>
       )}

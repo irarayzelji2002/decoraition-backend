@@ -36,7 +36,6 @@ function Item({ item, onDelete, onEdit }) {
 
   return (
     <div className="itemSpace" style={{ display: "flex", flexDirection: "row" }}>
-      <ToastContainer progressStyle={{ backgroundColor: "var(--brightFont)" }} />
       <Modal
         open={open}
         onClose={handleClose}

@@ -196,7 +196,6 @@ function Budget({ ...sharedProps }) {
   }
   return (
     <div className={`budget-page ${menuOpen ? "" : ""}`}>
-      <ToastContainer progressStyle={{ backgroundColor: "var(--brightFont)" }} />
       <DesignHead
         designData={designData}
         newName={newName}

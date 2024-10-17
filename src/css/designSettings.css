@@ -1,5 +1,7 @@
 .settingsContainer {
   margin: 150px;
+  margin-bottom: 50px;
+  padding-bottom: 100px; /* Add padding for spacing inside the container */
 }
 
 .generalAccessTitle {
@@ -74,11 +76,26 @@
   border-radius: 20px;
   text-transform: none;
   font-weight: bold;
-  padding: 10px 50px;
-  width: 15%;
-  color: white;
+  padding: 8px 20px; /* Reduced padding for height and width */
+  width: auto; /* Set to auto for better responsiveness */
+  color: var(--color-white);
 }
 
 .saveButton:hover {
   background-image: var(--gradientButtonHover);
+}
+
+.saveButton.MuiButton-root {
+  color: var(--color-white) !important;
+  background: var(--gradientButton);
+  padding: 15px 30px; /* Adjusted padding for smaller button */
+  border: none;
+  width: auto; /* Set to auto for better responsiveness */
+  border-radius: 30px; /* Consistent with the primary button */
+  font-size: 0.9em; /* Slightly smaller font size */
+  margin-top: 10px; /* Reduced margin for a more compact look */
+  margin-bottom: 10px; /* Reduced margin for a more compact look */
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }

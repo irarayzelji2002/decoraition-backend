@@ -273,7 +273,7 @@ function PromptBar() {
               style={{ display: "none" }}
               onChange={(e) => console.log(e.target.files[0])}
             />
-
+            {/* 
             <MuiColorInput
               sx={{
                 width: "100%",
@@ -296,7 +296,7 @@ function PromptBar() {
               format="hex"
               value={value}
               onChange={handleChange}
-            />
+            /> */}
           </div>
         </Box>
       </Modal>

@@ -40,8 +40,8 @@ const theme = createTheme({
   },
 });
 function DesignSettings() {
-  const { designId } = useParams(); // Get the designId parameter from the URL
-  const [designName, setDesignName] = useState("");
+  const { projectId } = useParams(); // Get the designId parameter from the URL
+  const [projectName, setProjectName] = useState("");
   const [generalAccess, setGeneralAccess] = useState("Anyone with the link");
   const [allowDownload, setAllowDownload] = useState(false);
   const [inactivityEnabled, setInactivityEnabled] = useState(false);
@@ -52,11 +52,11 @@ function DesignSettings() {
 
   useEffect(() => {
     // Fetch the design name based on the designId
-    const fetchDesignName = async () => {
+    const fetchProjectName = async () => {
       try {
-        const designDoc = await getDoc(doc(db, "designs", designId));
+        const designDoc = await getDoc(doc(db, "projects", projectId));
         if (designDoc.exists()) {
-          setDesignName(designDoc.data().name);
+          setProjectName(designDoc.data().name);
         } else {
           console.log("No such document!");
         }
@@ -65,8 +65,8 @@ function DesignSettings() {
       }
     };
 
-    fetchDesignName();
-  }, [designId]);
+    fetchProjectName();
+  }, [projectId]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab); // Change active tab
@@ -74,7 +74,7 @@ function DesignSettings() {
 
   return (
     <div>
-      <TopBar state={`Edit ${designName}`} />
+      <TopBar state={`Project Settings for ${projectName}`} />
       <SettingsContent
         generalAccess={generalAccess}
         setGeneralAccess={setGeneralAccess}

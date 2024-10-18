@@ -104,7 +104,7 @@ export const handleDeleteDesign = async (projectId, designId) => {
     const currentUser = auth.currentUser;
 
     if (currentUser) {
-      const projectRef = doc(db, "projects", projectId, "designs", designId);
+      const projectRef = doc(db, "designs", designId);
 
       await deleteDoc(projectRef);
 

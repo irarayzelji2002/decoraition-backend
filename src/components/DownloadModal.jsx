@@ -11,7 +11,6 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Menu, styled } from "@mui/material";
-import { WidthFull, Wifi } from "@mui/icons-material";
 
 const DownloadModal = ({ isOpen, onClose }) => {
   const [version, setVersion] = React.useState("");
@@ -28,22 +27,25 @@ const DownloadModal = ({ isOpen, onClose }) => {
     >
       <DialogTitle
         sx={{
-          backgroundColor: "var(  --nav-card-modal)", // Title background color
-          // Title text color
+          backgroundColor: "var(--nav-card-modal)", // Title background color
+          color: "var(--color-white)", // Title text color
           display: "flex",
           alignItems: "center",
         }}
       >
         <IconButton
           onClick={onClose}
-          sx={{ color: "whitesmoke", marginRight: 1 }}
+          sx={{ color: "var(--color-white)", marginRight: 1 }}
         >
-          <ArrowBackIcon />
+          <ArrowBackIcon sx={{ color: "var(--color-white)" }} />
         </IconButton>
         Download
       </DialogTitle>
       <DialogContent
-        sx={{ backgroundColor: "var(--nav-card-modal)", color: "whitesmoke" }}
+        sx={{
+          backgroundColor: "var(--nav-card-modal)",
+          color: "var(--color-white)",
+        }}
       >
         <Typography variant="body1">
           Choose your download options and format.
@@ -145,7 +147,7 @@ const DownloadModal = ({ isOpen, onClose }) => {
           variant="contained"
           onClick={onClose}
           sx={{
-            background: "transparent",
+            color: "var(--color-white)",
             border: "2px solid transparent",
             borderRadius: "20px",
             backgroundImage: "var(--lightGradient), var(--gradientButton)",
@@ -174,7 +176,7 @@ export default DownloadModal;
 
 const StyledMenu = styled(Menu)(({ theme }) => ({
   "& .MuiPaper-root": {
-    backgroundColor: "#2c2c2e",
+    backgroundColor: "var(--nav-card-modal)",
     color: "var(--color-white)",
     borderRadius: "12px",
     padding: 0,
@@ -202,7 +204,7 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
 const formControlStyles = {
   m: 1,
   width: "80%",
-  backgroundColor: "#2c2c2e",
+  backgroundColor: "var(--nav-card-modal)",
   color: "var(--color-white)",
   borderRadius: "8px",
   "& .MuiOutlinedInput-notchedOutline": {
@@ -225,7 +227,7 @@ const menuItemStyles = {
   },
   "&.Mui-selected": {
     backgroundColor: "var(--dropdownSelected)",
-    color: "#d1d1d1",
+    color: "var(--nav-card-modal)",
     fontWeight: "bold",
   },
   "&.Mui-selected:hover": {

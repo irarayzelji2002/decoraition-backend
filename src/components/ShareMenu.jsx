@@ -26,7 +26,7 @@ const ShareMenu = ({ onClose, onBackToMenu, onOpenShareModal }) => {
     <>
       <MenuItem onClick={onBackToMenu}>
         <ListItemIcon>
-          <ArrowBackIcon sx={{ color: "whitesmoke" }} />
+          <ArrowBackIcon sx={{ color: "var(--color-white)" }} />
         </ListItemIcon>
         <ListItemText primary="Share" />
       </MenuItem>
@@ -38,7 +38,7 @@ const ShareMenu = ({ onClose, onBackToMenu, onOpenShareModal }) => {
       </MenuItem>
       <MenuItem onClick={handleCopyLink}>
         <ListItemIcon>
-          <ContentCopy sx={{ color: "whitesmoke" }} />
+          <ContentCopy sx={{ color: "var(--color-white)" }} />
         </ListItemIcon>
         <ListItemText primary="Copy Link" />
       </MenuItem>

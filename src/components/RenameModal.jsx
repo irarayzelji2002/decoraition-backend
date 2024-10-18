@@ -39,7 +39,10 @@ const RenameModal = ({ isOpen, onClose }) => {
         Rename
       </DialogTitle>
       <DialogContent
-        sx={{ backgroundColor: "var(  --nav-card-modal)", color: "whitesmoke" }}
+        sx={{
+          backgroundColor: "var(  --nav-card-modal)",
+          color: "var(--color-white)",
+        }}
       >
         <TextField
           placeholder="New Name"
@@ -48,7 +51,7 @@ const RenameModal = ({ isOpen, onClose }) => {
           sx={{
             marginBottom: "16px",
             backgroundColor: "var(  --nav-card-modal)",
-            input: { color: "whitesmoke" }, //placehold color
+            input: { color: "var(--color-white)" }, //placehold color
             "& .MuiOutlinedInput-root": {
               "& fieldset": {
                 borderColor: "var( --borderInput)",
@@ -88,6 +91,7 @@ const RenameModal = ({ isOpen, onClose }) => {
           variant="contained"
           onClick={onClose}
           sx={{
+            color: "var(--color-white)",
             background: "transparent",
             border: "2px solid transparent",
             borderRadius: "20px",

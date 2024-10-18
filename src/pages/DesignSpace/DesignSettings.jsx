@@ -75,7 +75,7 @@ function DesignSettings() {
 
   return (
     <div>
-      <TopBar state={`Edit ${designName}`} />
+      <TopBar state={`Design Settings for ${designName}`} />
       <SettingsContent
         generalAccess={generalAccess}
         setGeneralAccess={setGeneralAccess}

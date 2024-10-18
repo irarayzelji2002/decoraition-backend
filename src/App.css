@@ -132,6 +132,14 @@ select:-webkit-autofill {
   --gradientButtonHover: linear-gradient(90deg, #ec2073, #f15f3e, #f89a47);
   --gradientFont: linear-gradient(20deg, #f89a47, #f15f3e, #ec2073);
   --darkGradient: linear-gradient(#c6c6c6, #e5e5e5);
+  --dropdown: #e0e0e0; /* Light version of #25232a */
+  --dropdownHover: #f0f0f0; /* Light version of #3e3c47 */
+  --dropdownSelected: #d0d0d0; /* Light version of #32313a */
   --budgetCard: #e0e0e0;
+  --lightGradient: linear-gradient(
+    #e0e0e0,
+    #e0e0e0
+  ); /* Light version of #27262c */
+
   --bgMain: #dbdae2;
 }

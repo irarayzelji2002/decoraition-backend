@@ -25,7 +25,7 @@ const MakeCopyModal = ({ isOpen, onClose }) => {
       <DialogTitle
         sx={{
           backgroundColor: "var(  --nav-card-modal)", // Title background color
-          color: "whitesmoke", // Title text color
+          color: "var(--color-white)", // Title text color
           display: "flex",
           alignItems: "center",
         }}
@@ -33,14 +33,17 @@ const MakeCopyModal = ({ isOpen, onClose }) => {
         {/* Wrapping ArrowBackIcon inside IconButton for clickability */}
         <IconButton
           onClick={onClose}
-          sx={{ color: "whitesmoke", marginRight: 1 }}
+          sx={{ color: "var(--color-white)", marginRight: 1 }}
         >
           <ArrowBackIcon />
         </IconButton>
         Make a Copy
       </DialogTitle>
       <DialogContent
-        sx={{ backgroundColor: "var(  --nav-card-modal)", color: "whitesmoke" }}
+        sx={{
+          backgroundColor: "var(  --nav-card-modal)",
+          color: "var(--color-white)",
+        }}
       >
         <Typography variant="body1">
           Choose options for making a copy of the item.
@@ -72,6 +75,7 @@ const MakeCopyModal = ({ isOpen, onClose }) => {
           variant="contained"
           onClick={onClose}
           sx={{
+            color: "var(--color-white)",
             background: "transparent",
             border: "2px solid transparent",
             borderRadius: "20px",

@@ -17,7 +17,7 @@ import {
 } from "./backend/SettingsFunction";
 import Loading from "../../components/Loading";
 
-const theme = createTheme({
+export const theme = createTheme({
   components: {
     MuiSwitch: {
       styleOverrides: {

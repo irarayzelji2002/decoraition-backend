@@ -98,7 +98,7 @@ function Homepage() {
         onSearchChange={setSearchQuery}
       />
 
-      <div className={` ${isDrawerOpen ? "dimmed" : ""}`}>
+      <div className="recent-section">
         <div className="headerPlace">
           <div className="header">
             <img
@@ -134,16 +134,9 @@ function Homepage() {
         <div className="recent-designs">
           {searchQuery && <h2>Search Results</h2>}
           {searchQuery && (
-            <div
-              style={{
-                display: "flex",
-                textAlign: "left",
-                width: "100%",
-                marginLeft: "20px",
-              }}
-            >
-              <div className="layout" style={{ marginBottom: "100px" }}>
-                {filteredDesigns.length > 0 ? (
+            <div className="recent-designs">
+              <div className="layout">
+                {filteredDesigns.length > 0 &&
                   filteredDesigns.slice(0, 3).map((design) => (
                     <DesignIcon
                       key={design.id}
@@ -157,13 +150,13 @@ function Homepage() {
                         })
                       }
                     />
-                  ))
-                ) : (
-                  <div className="no-content">
-                    <p>No designs found.</p>
-                  </div>
-                )}
+                  ))}
               </div>
+              {filteredDesigns.length === 0 && (
+                <div className="no-content">
+                  <p>No designs found.</p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -181,9 +174,8 @@ function Homepage() {
                 See All
               </Link>
             </div>
-
             <div className="layout">
-              {designs.length > 0 ? (
+              {designs.length > 0 &&
                 designs.slice(0, 6).map((design) => (
                   <DesignIcon
                     key={design.id}
@@ -197,14 +189,14 @@ function Homepage() {
                       })
                     }
                   />
-                ))
-              ) : (
-                <div className="no-content">
-                  <img src="/img/design-placeholder.png" alt="No designs yet" />
-                  <p>No designs yet. Start creating.</p>
-                </div>
-              )}
+                ))}{" "}
             </div>
+            {designs.length === 0 && (
+              <div className="no-content">
+                <img src="/img/design-placeholder.png" alt="No designs yet" />
+                <p>No designs yet. Start creating.</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -221,9 +213,8 @@ function Homepage() {
                 See All
               </Link>
             </div>
-
             <div className="layout">
-              {projects.length > 0 ? (
+              {projects.length > 0 &&
                 projects.slice(0, 6).map((project) => (
                   <DesignIcon
                     key={project.id}
@@ -239,14 +230,14 @@ function Homepage() {
                       })
                     }
                   />
-                ))
-              ) : (
-                <div className="no-content">
-                  <img src="/img/design-placeholder.png" alt="No designs yet" />
-                  <p>No designs yet. Start creating.</p>
-                </div>
-              )}
+                ))}{" "}
             </div>
+            {projects.length === 0 && (
+              <div className="no-content">
+                <img src="/img/design-placeholder.png" alt="No designs yet" />
+                <p>No designs yet. Start creating.</p>
+              </div>
+            )}
           </div>
         </section>
 

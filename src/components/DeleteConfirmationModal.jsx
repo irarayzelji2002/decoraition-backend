@@ -25,18 +25,18 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
       <DialogTitle
         sx={{
           backgroundColor: "var(  --nav-card-modal)", // Title background color
-          color: "whitesmoke", // Set title text color to white
+          color: "var(--color-white)", // Set title text color to white
           display: "flex",
           alignItems: "center",
         }}
       >
         <IconButton
           onClick={onClose}
-          sx={{ color: "whitesmoke", marginRight: 1 }} // Set icon color to white
+          sx={{ color: "var(--color-white)", marginRight: 1 }} // Set icon color to white
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h6" sx={{ color: "whitesmoke" }}>
+        <Typography variant="h6" sx={{ color: "var(--color-white)" }}>
           {" "}
           Confirm Delete
         </Typography>
@@ -44,7 +44,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
       <DialogContent
         sx={{
           backgroundColor: "var(  --nav-card-modal)", // Content background color
-          color: "whitesmoke", // Text color in the content
+          color: "var(--color-white)", // Text color in the content
         }}
       >
         <Typography variant="body1">
@@ -77,6 +77,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
           variant="contained"
           onClick={onClose}
           sx={{
+            color: "var(--color-white)",
             background: "transparent",
             border: "2px solid transparent",
             borderRadius: "20px",

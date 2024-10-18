@@ -17,10 +17,12 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import { useNavigate } from "react-router-dom";
 
 const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleAuthChange = async (user) => {
@@ -36,9 +38,6 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
 
     return () => unsubscribeAuth();
   }, []);
-  const handleSearch = (event) => {
-    onSearchChange(event.target.value); // Pass the search value to the parent
-  };
   const [isFocused, setIsFocused] = React.useState(false);
 
   const handleFocus = () => {
@@ -62,8 +61,8 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
     setIsDrawerOpen(false);
   };
 
-  const handleFormSubmit = (event) => {
-    event.preventDefault(); // Prevent the default form submission
+  const handleSettingsClick = () => {
+    navigate("/settings");
   };
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -100,7 +99,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             sx={{
               display: "flex",
               alignItems: "center",
-              width: isFocused ? "50%" : "40%",
+              width: "75%",
               borderRadius: "24px",
               backgroundColor: "var(--inputBg)",
               transition: "width 0.3s ease-in-out",
@@ -124,7 +123,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             />
           </Paper>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ marginRight: 2 }}>
+          <Box sx={{ marginRight: 2 }} onClick={handleSettingsClick}>
             <SettingsIcon sx={{ color: "var(--color-white)" }} />
           </Box>
           <Box sx={{ marginRight: 2 }}>

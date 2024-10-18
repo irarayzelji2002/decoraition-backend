@@ -300,7 +300,7 @@ function Budget() {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>Add a Budget</h2>
+              <h2 style={{ color: "var(--color-white)" }}>Add a Budget</h2>
               <CloseIcon className="close-icon" onClick={toggleModal} />
             </div>
             <div className="modal-body">

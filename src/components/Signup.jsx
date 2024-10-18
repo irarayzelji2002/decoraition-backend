@@ -40,7 +40,7 @@ const commonInputStyles = {
     },
   },
   "& .MuiFormHelperText-root": {
-    color: "white",
+    color: "var(--color-white)",
   },
 };
 
@@ -297,7 +297,10 @@ const Signup = () => {
         </Box>
         <Grid container justifyContent="center" alignItems="center">
           <Grid item>
-            <Typography variant="body2" sx={{ color: "white", marginRight: 1 }}>
+            <Typography
+              variant="body2"
+              sx={{ color: "var(--color-white)", marginRight: 1 }}
+            >
               Already have an account?
             </Typography>
           </Grid>

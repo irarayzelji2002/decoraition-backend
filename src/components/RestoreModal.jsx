@@ -25,21 +25,24 @@ const RestoreModal = ({ isOpen, onClose }) => {
       <DialogTitle
         sx={{
           backgroundColor: "var(  --nav-card-modal)", // Title background color
-          color: "whitesmoke", // Title text color
+          color: "var(--color-white)", // Title text color
           display: "flex",
           alignItems: "center",
         }}
       >
         <IconButton
           onClick={onClose}
-          sx={{ color: "whitesmoke", marginRight: 1 }}
+          sx={{ color: "var(--color-white)", marginRight: 1 }}
         >
           <ArrowBackIcon />
         </IconButton>
         Restore
       </DialogTitle>
       <DialogContent
-        sx={{ backgroundColor: "var(  --nav-card-modal)", color: "whitesmoke" }}
+        sx={{
+          backgroundColor: "var(  --nav-card-modal)",
+          color: "var(--color-white)",
+        }}
       >
         <Typography variant="body1">
           Are you sure you want to restore this item?
@@ -79,6 +82,7 @@ const RestoreModal = ({ isOpen, onClose }) => {
             backgroundClip: "padding-box, border-box",
             fontWeight: "bold",
             textTransform: "none",
+            color: "var(--color-white)",
           }}
           onMouseOver={(e) =>
             (e.target.style.backgroundImage =

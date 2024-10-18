@@ -217,22 +217,24 @@ function Project() {
           </Button>
         </div>
       </div>
-      <div className="layout" style={{ paddingBottom: "20%" }}>
-        {designs.length > 0 ? (
-          designs.slice(0, 6).map((design) => (
-            <DesignIcon
-              key={design.id}
-              name={design.name}
-              designId={design.id}
-              onDelete={() => handleDeleteDesign(projectId, design.id)}
-              onOpen={() =>
-                navigate(`/design/${design.id}`, {
-                  state: { designId: design.id },
-                })
-              }
-            />
-          ))
-        ) : (
+      <div style={{ paddingBottom: "20%" }}>
+        <div className="layout">
+          {designs.length > 0 &&
+            designs.slice(0, 6).map((design) => (
+              <DesignIcon
+                key={design.id}
+                name={design.name}
+                designId={design.id}
+                onDelete={() => handleDeleteDesign(projectId, design.id)}
+                onOpen={() =>
+                  navigate(`/design/${design.id}`, {
+                    state: { designId: design.id },
+                  })
+                }
+              />
+            ))}
+        </div>
+        {designs.length === 0 && (
           <div className="no-content">
             <img src="/img/design-placeholder.png" alt="No designs yet" />
             <p>No designs yet. Start creating.</p>

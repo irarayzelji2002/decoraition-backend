@@ -13,6 +13,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import {
+  signOut,
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
@@ -106,6 +107,7 @@ export default function LoginModal() {
 
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
+    await signOut(auth);
     try {
       await setPersistence(auth, browserLocalPersistence); // Set persistence for Google login
       const result = await signInWithPopup(auth, provider);
@@ -126,9 +128,8 @@ export default function LoginModal() {
         username,
       });
 
-      toast.success("You have been logged in", {
-        icon: <Person />,
-        position: "top-right",
+      // Show success toast and navigate to homepage
+      toast.success("Login successful!", {
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -144,8 +145,9 @@ export default function LoginModal() {
       });
       setTimeout(() => navigate("/homepage"), 1500);
     } catch (error) {
-      console.error("Google login error", error);
-      toast.error("Google login failed. Please try again.");
+      console.error(error);
+      toast.error("Login failed. Please try again.");
+      setErrors({ general: "Login failed. Please try again." });
     }
   };
 

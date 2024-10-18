@@ -177,6 +177,20 @@ h2 {
   cursor: pointer;
 } */
 
+.miniThumbnail {
+  width: 30px;
+  height: 30px;
+  background-color: var(--budgetCard);
+  margin-right: 16px;
+  border-radius: 8px;
+  border: var(--color-grey) 1px solid;
+}
+.drawerUser {
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+  margin-left: 12px;
+}
 .layout {
   display: grid;
 

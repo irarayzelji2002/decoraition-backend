@@ -87,6 +87,7 @@
 }
 
 .saveButton.MuiButton-root {
+  text-transform: none;
   color: var(--color-white);
   background: var(--gradientButton);
   padding: 10px 60px;

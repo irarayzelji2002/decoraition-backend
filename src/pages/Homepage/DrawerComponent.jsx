@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
 import {
   fetchUserDesigns,
   fetchUserProjects,
@@ -35,9 +36,8 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-const DrawerComponent = ({ isDrawerOpen, onClose, ...sharedProps }) => {
-  const { user, userDoc, handleLogout, designs, setDesigns } = sharedProps;
-  console.log("sharedProps: ", sharedProps);
+const DrawerComponent = ({ isDrawerOpen, onClose }) => {
+  const { user, userDoc, handleLogout, designs, setDesigns } = useSharedProps();
 
   // State to handle dark mode
   const initDarkMode = userDoc?.theme === 0 ? true : false;

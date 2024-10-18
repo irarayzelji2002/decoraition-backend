@@ -1,4 +1,5 @@
 import React from "react";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
 import TopBar from "../../components/TopBar";
 import "../../css/searchItem.css";
 import SearchIcon from "@mui/icons-material/Search"; // Importing the SearchIcon
@@ -7,7 +8,7 @@ import InputBase from "@mui/material/InputBase";
 
 import IconButton from "@mui/material/IconButton";
 
-function SearchItem({ ...sharedProps }) {
+function SearchItem() {
   const items = new Array(12).fill({
     name: "Clothing Fabric Wedding Fabric Party Fabric Lase...",
     price: "₱246.00",

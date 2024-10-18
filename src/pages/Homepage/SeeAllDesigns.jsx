@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSharedProps } from "../../contexts/SharedPropsContext.js";
 import SearchAppBar from "./SearchAppBar.jsx";
 import { onAuthStateChanged } from "firebase/auth";
 import "../../css/seeAll.css";
@@ -19,9 +20,9 @@ import {
 } from "firebase/firestore";
 import { handleDeleteDesign } from "./backend/HomepageActions";
 
-export default function SeeAllDesigns({ ...sharedProps }) {
+export default function SeeAllDesigns() {
   const navigate = useNavigate();
-  const { user, userDesigns, setUserDesigns } = sharedProps;
+  const { user, userDesigns, setUserDesigns } = useSharedProps();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [lastVisible, setLastVisible] = useState(null);
@@ -84,7 +85,6 @@ export default function SeeAllDesigns({ ...sharedProps }) {
         onSearchChange={(value) => setSearchQuery(value)}
         user={user}
         username={user.username}
-        {...sharedProps}
       />
       <div className="bg">
         <div className="dropdown-container">

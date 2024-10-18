@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import axios from "axios";
-import { showToast } from "./functions/utils";
+import { showToast } from "../functions/utils";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -26,6 +26,7 @@ export function useAuthProvider() {
   const [user, setUser] = useState(null);
   const [userDoc, setUserDoc] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userDocFetched, setUserDocFetched] = useState(false);
 
   useEffect(() => {
     console.log("Setting up auth state listener");
@@ -62,11 +63,13 @@ export function useAuthProvider() {
           setLoading(false);
         };
         fetchUserDoc();
+        setUserDocFetched(true);
       } else {
         console.log("User not authenticated, clearing state");
         setUser(null);
         setUserDoc(null);
         setLoading(false);
+        setUserDocFetched(true);
       }
     });
 
@@ -94,6 +97,7 @@ export function useAuthProvider() {
     handleLogout,
     loading,
     setLoading,
+    userDocFetched,
   };
 }
 

@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useAuth } from "./AuthContext";
-import ProtectedRoute from "./ProtectedRoute";
-import useSharedProps from "./hooks/useSharedProps";
-import useFirestoreSnapshots from "./hooks/useFirestoreSnapshots";
-import {
-  getAuth,
-  onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence,
-} from "firebase/auth";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { SharedPropsProvider } from "./contexts/SharedPropsContext";
+import { useAuth } from "./contexts/AuthContext.js";
 
 import "./App.css";
 import Layout from "./components/Layout.jsx";
 import Loading from "./components/Loading.jsx";
+import Landing from "./pages/Landing/Landing.jsx";
 import Login from "./pages/Account/Login.jsx";
 import Register from "./pages/Account/Register.jsx";
 import Users from "./users.js";
@@ -40,400 +33,253 @@ import ProjSetting from "./pages/Settings/ProjSetting.jsx";
 import Version from "./pages/DesignSpace/Version.jsx";
 // import { Rotate90DegreesCcw } from "@mui/icons-material";
 
+function ProtectedRoute({ children }) {
+  const { user, userDoc, userDocFetched } = useAuth();
+  if (!userDocFetched) return <Loading />;
+  return user && userDoc ? children : <Navigate to="/login" replace />;
+}
+
+function AuthPublicRoute({ children }) {
+  const { user, userDoc, userDocFetched } = useAuth();
+  if (!userDocFetched) return <Loading />;
+  return !user && !userDoc ? children : <Navigate to="/homepage" replace />;
+}
+
 function App() {
-  const { user, setUser, userDoc, setUserDoc, handleLogout, loading, setLoading } = useAuth() || {};
-  const { setSharedProps } = useSharedProps();
-
-  // State for each collection
-  const [users, setUsers] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [designs, setDesigns] = useState([]);
-  const [designVersions, setDesignVersions] = useState([]);
-  const [comments, setComments] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  const [projectBudgets, setProjectBudgets] = useState([]);
-  const [budgets, setBudgets] = useState([]);
-  const [items, setItems] = useState([]);
-  const [planMaps, setPlanMaps] = useState([]);
-  const [pins, setPins] = useState([]);
-  const [timelines, setTimelines] = useState([]);
-  const [events, setEvents] = useState([]);
-
-  // State for each user-related data
-  const [userProjects, setUserProjects] = useState([]);
-  const [userDesigns, setUserDesigns] = useState([]);
-  const [userDesignVersions, setUserDesignVersions] = useState([]);
-  const [userDesignsComments, setUserDesignsComments] = useState([]);
-  const [userComments, setUserComments] = useState([]);
-  const [userNotifications, setUserNotifications] = useState([]);
-  const [userProjectBudgets, setUserProjectBudgets] = useState([]);
-  const [userBudgets, setUserBudgets] = useState([]);
-  const [userItems, setUserItems] = useState([]);
-  const [userPlanMaps, setUserPlanMaps] = useState([]);
-  const [userPins, setUserPins] = useState([]);
-  const [userTimelines, setUserTimelines] = useState([]);
-  const [userEvents, setUserEvents] = useState([]);
-
-  useEffect(() => {
-    const auth = getAuth();
-    setPersistence(auth, browserLocalPersistence)
-      .then(() => {
-        console.log("Persistence set to browserLocalPersistence");
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-          setUser(currentUser);
-          setLoading(false);
-        });
-        return () => unsubscribe();
-      })
-      .catch((error) => {
-        console.error("Error setting persistence:", error);
-        setLoading(false);
-      });
-  }, [setUser, setLoading]);
-
-  // Use useFirestoreSnapshots hook to set up real-time listeners
-  const generalCollections = [
-    "users",
-    "projects",
-    "designs",
-    "designVersions",
-    "comments",
-    "notifications",
-    "projectBudgets",
-    "budgets",
-    "items",
-    "planMaps",
-    "pins",
-    "timelines",
-    "events",
-  ];
-  const userRelatedCollections = [
-    "userDoc",
-    "userProjects",
-    "userDesigns",
-    "userDesignVersions",
-    "userDesignsComments",
-    "userComments",
-    "userNotifications",
-    "userProjectBudgets",
-    "userBudgets",
-    "userItems",
-    "userPlanMaps",
-    "userPins",
-    "userTimelines",
-    "userEvents",
-  ];
-  const generalCollectionsStateSetterFunctions = {
-    users: setUsers,
-    projects: setProjects,
-    designs: setDesigns,
-    designVersions: setDesignVersions,
-    comments: setComments,
-    notifications: setNotifications,
-    projectBudgets: setProjectBudgets,
-    budgets: setBudgets,
-    items: setItems,
-    planMaps: setPlanMaps,
-    pins: setPins,
-    timelines: setTimelines,
-    events: setEvents,
-  };
-  const userRelatedCollectionsStateSetterFunctions = {
-    userDoc: setUserDoc,
-    userProjects: setUserProjects,
-    userDesigns: setUserDesigns,
-    userDesignVersions: setUserDesignVersions,
-    userDesignsComments: setUserDesignsComments,
-    userComments: setUserComments,
-    userNotifications: setUserNotifications,
-    userProjectBudgets: setUserProjectBudgets,
-    userBudgets: setUserBudgets,
-    userItems: setUserItems,
-    userPlanMaps: setUserPlanMaps,
-    userPins: setUserPins,
-    userTimelines: setUserTimelines,
-    userEvents: setUserEvents,
-  };
-
-  const { isUserDataLoaded, isCollectionLoaded } = useFirestoreSnapshots(
-    [...generalCollections, ...userRelatedCollections],
-    {
-      ...generalCollectionsStateSetterFunctions,
-      ...userRelatedCollectionsStateSetterFunctions,
-    },
-    user ? user : null
-  );
-
-  const sharedProps = {
-    user,
-    setUser,
-    userDoc,
-    setUserDoc,
-    handleLogout,
-    loading,
-    setLoading,
-    users,
-    setUsers,
-    projects,
-    setProjects,
-    designs,
-    setDesigns,
-    designVersions,
-    setDesignVersions,
-    comments,
-    setComments,
-    notifications,
-    setNotifications,
-    projectBudgets,
-    setProjectBudgets,
-    budgets,
-    setBudgets,
-    items,
-    setItems,
-    planMaps,
-    setPlanMaps,
-    pins,
-    setPins,
-    timelines,
-    setTimelines,
-    events,
-    setEvents,
-    userProjects,
-    setUserProjects,
-    userDesigns,
-    setUserDesigns,
-    userDesignVersions,
-    setUserDesignVersions,
-    userDesignsComments,
-    setUserDesignsComments,
-    userComments,
-    setUserComments,
-    userNotifications,
-    setUserNotifications,
-    userProjectBudgets,
-    setUserProjectBudgets,
-    userBudgets,
-    setUserBudgets,
-    userItems,
-    setUserItems,
-    userPlanMaps,
-    setUserPlanMaps,
-    userPins,
-    setUserPins,
-    userTimelines,
-    setUserTimelines,
-    userEvents,
-    setUserEvents,
-  };
-
-  useEffect(() => {
-    setSharedProps(sharedProps);
-  }, []);
-
-  if (!isCollectionLoaded || loading) {
-    return <Loading />;
-  }
-
   return (
     <Router>
       <div className="App">
         <Layout>
-          <Routes>
-            {/* BEFORE LOGIN */}
-            <Route path="/" element={<Login />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot" element={<ForgotPass />} />
-            <Route path="/change" element={<ChangePassw />} />
-            <Route path="/otp" element={<OneTP />} />
-            {/* ACCOUNT/HOMEPAGE */}
-            <Route
-              path="/homepage"
-              element={
-                <ProtectedRoute>
-                  <Homepage {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/details"
-              element={
-                <ProtectedRoute>
-                  <Details {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <Settings {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            {/* DESIGN SPACE */}
-            <Route
-              path="/design/:designId"
-              element={
-                <ProtectedRoute>
-                  <Design {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/searchItem"
-              element={
-                <ProtectedRoute>
-                  <SearchItem {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/addItem/:designId"
-              element={
-                <ProtectedRoute>
-                  <AddItem {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/editItem/:designId/:itemId"
-              element={
-                <ProtectedRoute>
-                  <EditItem {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/users"
-              element={
-                <ProtectedRoute>
-                  <Users {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/budget/:designId"
-              element={
-                <ProtectedRoute>
-                  <Budget {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/seeAllProjects"
-              element={
-                <ProtectedRoute>
-                  <SeeAllProjects {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/seeAllDesigns"
-              element={
-                <ProtectedRoute>
-                  <SeeAllDesigns {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/version"
-              element={
-                <ProtectedRoute>
-                  <Version {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            {/* PROJECT SPACE */}
-            <Route
-              path="/project/:projectId"
-              element={
-                <ProtectedRoute>
-                  <Project {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/design/:designId/:projectId/project"
-              element={
-                <ProtectedRoute>
-                  <Design {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/budget/:designId/:projectId/project"
-              element={
-                <ProtectedRoute>
-                  <Budget {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/addItem/:designId/:projectId/project"
-              element={
-                <ProtectedRoute>
-                  <AddItem {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/editItem/:designId/:itemId/:projectId/project"
-              element={
-                <ProtectedRoute>
-                  <EditItem {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/planMap/:projectId"
-              element={
-                <ProtectedRoute>
-                  <PlanMap {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/timeline/:projectId"
-              element={
-                <ProtectedRoute>
-                  <Timeline {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/projectBudget/:projectId"
-              element={
-                <ProtectedRoute>
-                  <ProjBudget {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/addPin/"
-              element={
-                <ProtectedRoute>
-                  <AddPin {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/editEvent/:projectId"
-              element={
-                <ProtectedRoute>
-                  <EditEvent {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/projSetting/"
-              element={
-                <ProtectedRoute>
-                  <ProjSetting {...sharedProps} />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+          <SharedPropsProvider>
+            <Routes>
+              {/* PUBLIC ROUTES */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/landing" element={<Landing />} />
+
+              {/* AUTH PUBLIC ROUTES */}
+              <Route
+                path="/login"
+                element={
+                  <AuthPublicRoute>
+                    <Login />
+                  </AuthPublicRoute>
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  <AuthPublicRoute>
+                    <Register />
+                  </AuthPublicRoute>
+                }
+              />
+              <Route
+                path="/forgot"
+                element={
+                  <AuthPublicRoute>
+                    <ForgotPass />
+                  </AuthPublicRoute>
+                }
+              />
+              <Route
+                path="/change"
+                element={
+                  <AuthPublicRoute>
+                    <ChangePassw />
+                  </AuthPublicRoute>
+                }
+              />
+              <Route
+                path="/otp"
+                element={
+                  <AuthPublicRoute>
+                    <OneTP />
+                  </AuthPublicRoute>
+                }
+              />
+              {/* PROTECTED ROUTES */}
+              {/* Homepage */}
+              <Route
+                path="/homepage"
+                element={
+                  <ProtectedRoute>
+                    <Homepage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/version"
+                element={
+                  <ProtectedRoute>
+                    <Version />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/seeAllDesigns"
+                element={
+                  <ProtectedRoute>
+                    <SeeAllDesigns />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/seeAllProjects"
+                element={
+                  <ProtectedRoute>
+                    <SeeAllProjects />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/details"
+                element={
+                  <ProtectedRoute>
+                    <Details />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Account */}
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Design Space */}
+              <Route
+                path="/design/:designId"
+                element={
+                  <ProtectedRoute>
+                    <Design />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/budget/:designId"
+                element={
+                  <ProtectedRoute>
+                    <Budget />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/searchItem"
+                element={
+                  <ProtectedRoute>
+                    <SearchItem />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/addItem/:designId"
+                element={
+                  <ProtectedRoute>
+                    <AddItem />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/editItem/:designId/:itemId"
+                element={
+                  <ProtectedRoute>
+                    <EditItem />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Project Space */}
+              <Route
+                path="/project/:projectId"
+                element={
+                  <ProtectedRoute>
+                    <Project />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/projSetting"
+                element={
+                  <ProtectedRoute>
+                    <ProjSetting />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/design/:designId/:projectId/project"
+                element={
+                  <ProtectedRoute>
+                    <Design />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/planMap/:projectId"
+                element={
+                  <ProtectedRoute>
+                    <PlanMap />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/addPin"
+                element={
+                  <ProtectedRoute>
+                    <AddPin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/timeline/:projectId"
+                element={
+                  <ProtectedRoute>
+                    <Timeline />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/editEvent/:projectId"
+                element={
+                  <ProtectedRoute>
+                    <EditEvent />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/projectBudget/:projectId"
+                element={
+                  <ProtectedRoute>
+                    <ProjBudget />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/budget/:designId/:projectId/project"
+                element={
+                  <ProtectedRoute>
+                    <Budget />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/addItem/:designId/:projectId/project"
+                element={
+                  <ProtectedRoute>
+                    <AddItem />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/editItem/:designId/:itemId/:projectId/project"
+                element={
+                  <ProtectedRoute>
+                    <EditItem />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </SharedPropsProvider>
         </Layout>
       </div>
     </Router>

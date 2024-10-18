@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
 import axios from "axios";
 import { showToast } from "../../functions/utils";
 
@@ -28,8 +29,8 @@ const theme = createTheme({
   },
 });
 
-export default function Notifications({ ...sharedProps }) {
-  const { user, userDoc } = sharedProps;
+export default function Notifications() {
+  const { user, userDoc } = useSharedProps();
   const [allowNotif, setAllowNotif] = useState(userDoc?.notifSettings?.allowNotif ?? true);
   const [deleteNotif, setDeleteNotif] = useState(userDoc?.notifSettings?.deleteNotif ?? true);
   const [deleteNotifAfter, setDeleteNotifAfter] = useState(
@@ -60,6 +61,35 @@ export default function Notifications({ ...sharedProps }) {
     deletedProject: userDoc?.notifSettings?.deletedProject ?? false,
     changeRoleInProject: userDoc?.notifSettings?.changeRoleInProject ?? false,
   });
+
+  useEffect(() => {
+    if (userDoc) {
+      setAllowNotif(userDoc.notifSettings?.allowNotif ?? true);
+      setDeleteNotif(userDoc.notifSettings?.deleteNotif ?? true);
+      setDeleteNotifAfter(userDoc.notifSettings?.deleteNotifAfter ?? 15);
+      setTimeForCalEventReminder(userDoc.notifSettings?.timeForCalEventReminder ?? "0800");
+      setCommentNotifications({
+        mentionedInComment: userDoc.notifSettings?.mentionedInComment ?? true,
+        newCommentReplyAsOwner: userDoc.notifSettings?.newCommentReplyAsOwner ?? true,
+        newCommentReplyAsCollab: userDoc.notifSettings?.newCommentReplyAsCollab ?? false,
+        commentStatusChangeAsOwner: userDoc.notifSettings?.commentStatusChangeAsOwner ?? true,
+        commentStatusChangeAsCollab: userDoc.notifSettings?.commentStatusChangeAsCollab ?? false,
+      });
+      setCalEventReminder(userDoc.notifSettings?.calEventReminder ?? true);
+      setDesignNotifications({
+        renamedDesign: userDoc.notifSettings?.renamedDesign ?? true,
+        inactiveDesign: userDoc.notifSettings?.inactiveDesign ?? false,
+        deletedDesign: userDoc.notifSettings?.deletedDesign ?? false,
+        changeRoleInDesign: userDoc.notifSettings?.changeRoleInDesign ?? false,
+      });
+      setProjectNotifications({
+        renamedProject: userDoc.notifSettings?.renamedProject ?? true,
+        inactiveProject: userDoc.notifSettings?.inactiveProject ?? false,
+        deletedProject: userDoc.notifSettings?.deletedProject ?? false,
+        changeRoleInProject: userDoc.notifSettings?.changeRoleInProject ?? false,
+      });
+    }
+  }, [userDoc]);
 
   const handleCommentNotificationChange = (name, value) => {
     setCommentNotifications({

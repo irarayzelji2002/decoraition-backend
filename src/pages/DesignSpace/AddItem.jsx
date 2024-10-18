@@ -1,3 +1,5 @@
+import { useSharedProps } from "../../contexts/SharedPropsContext";
+import { showToast } from "../../functions/utils";
 import "../../css/addItem.css";
 import TopBar from "../../components/TopBar";
 import React, { useState, useEffect } from "react";
@@ -6,9 +8,8 @@ import "../../css/budget.css";
 import { db } from "../../firebase"; // Assuming you have firebase setup
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { ToastContainer, toast } from "react-toastify";
 
-const AddItem = ({ ...sharedProps }) => {
+const AddItem = () => {
   const [itemQuantity, setItemQuantity] = useState(1);
   const [image, setImage] = useState(null);
   const { designId, projectId } = useParams();
@@ -64,21 +65,7 @@ const AddItem = ({ ...sharedProps }) => {
       setBudgetItem("");
 
       const itemName = budgetItem;
-      toast.success(`${itemName} has been added!`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
+      showToast("success", `${itemName} has been added!`);
       setTimeout(() => {
         window.history.back();
       }, 1000);

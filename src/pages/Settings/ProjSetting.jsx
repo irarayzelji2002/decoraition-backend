@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
 import {
   Typography,
   Box,
@@ -26,7 +27,6 @@ const SettingsContent = ({
   notifyDays,
   setNotifyDays,
   isProjectTab, // New prop to control whether it's the Project tab or Timeline tab
-  ...sharedProps
 }) => (
   <>
     {/* General Access */}

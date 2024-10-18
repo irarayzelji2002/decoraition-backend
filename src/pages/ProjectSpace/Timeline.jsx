@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
+import { showToast } from "../../functions/utils";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../css/timeline.css";
@@ -8,11 +10,10 @@ import { useParams } from "react-router-dom";
 import EditPen from "../DesignSpace/svg/EditPen";
 import Trash from "../DesignSpace/svg/Trash";
 import { fetchTasks, deleteTask } from "./backend/ProjectDetails";
-import { ToastContainer } from "react-toastify";
 import { auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 
-function Timeline({ ...sharedProps }) {
+function Timeline() {
   const [date, setDate] = useState(new Date());
   const { projectId } = useParams();
   const [tasks, setTasks] = useState([]);

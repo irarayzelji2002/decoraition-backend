@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSharedProps } from "../contexts/SharedPropsContext.js";
 import { IconButton, Menu } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CommentIcon from "@mui/icons-material/Comment";
@@ -36,7 +37,6 @@ function DesignHead({
   isEditingName,
   setIsEditingName,
   handleNameChange,
-  ...sharedProps
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
@@ -246,7 +246,6 @@ function DesignHead({
         username={username}
         userEmail={user ? user.email : ""}
         designs={designs}
-        {...sharedProps}
       />
       <div className="left">
         <IconButton

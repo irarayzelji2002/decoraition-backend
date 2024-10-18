@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSharedProps } from "../../contexts/SharedPropsContext.js";
 import SearchAppBar from "./SearchAppBar.jsx";
 import { handleDeleteProject } from "./backend/HomepageActions.jsx";
-
 import Dropdowns from "../../components/Dropdowns.jsx";
 import ProjectOptionsHome from "../../components/ProjectOptionsHome.jsx";
 import "../../css/homepage.css";
 import "../../css/seeAll.css";
 
-export default function SeeAllProjects({ ...sharedProps }) {
+export default function SeeAllProjects() {
   const navigate = useNavigate();
-  const { user, setUser, projects, setProjects, designs, setDesigns } = sharedProps;
+  const { user, setUser, projects, setProjects, designs, setDesigns } = useSharedProps();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [lastVisible, setLastVisible] = useState(null);
@@ -67,11 +67,7 @@ export default function SeeAllProjects({ ...sharedProps }) {
 
   return (
     <>
-      <SearchAppBar
-        onSearchChange={(value) => setSearchQuery(value)}
-        user={user}
-        {...sharedProps}
-      />
+      <SearchAppBar onSearchChange={(value) => setSearchQuery(value)} user={user} />
       <div className="bg">
         <div className="dropdown-container">
           <Dropdowns />

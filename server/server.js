@@ -14,6 +14,7 @@ const { auth, db, clientAuth, clientDb } = require("./firebase");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded());
 
 // API routes
 app.use("/api", apiRoutes);
@@ -32,25 +33,6 @@ app.get("/manifest", (req, res) => {
 });
 app.get("/service-worker.js", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "service-worker.js"));
-});
-
-// Multer storage configuration
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../public/uploads"));
-  },
-  filename: function (req, file, cb) {
-    const originalName = file.originalname.replace(/ /g, "-");
-    const uniqueFilename = Date.now() + "-" + generateRandomString(8) + "-" + originalName;
-    cb(null, uniqueFilename);
-  },
-});
-
-const upload = multer({ storage: storage });
-
-// Example route to handle file uploads
-app.post("/upload", upload.single("file"), (req, res) => {
-  res.send("File uploaded successfully");
 });
 
 // Function to generate a random string

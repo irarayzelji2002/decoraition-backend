@@ -1,6 +1,6 @@
-const { db, auth, clientAuth, clientDb } = require("../firebase");
+const { db, auth, clientAuth, clientDb, storage } = require("../firebase");
 const { createUserWithEmailAndPassword, signInWithEmailAndPassword } = require("firebase/auth");
-const { getStorage, ref, uploadBytes, getDownloadURL } = require("firebase/storage");
+const { ref, uploadBytes, getDownloadURL, deleteObject } = require("firebase/storage");
 const { doc, getDoc } = require("firebase/firestore");
 
 const emailjs = require("@emailjs/browser");
@@ -163,21 +163,27 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Login with Google
-exports.loginUserGoogle = async (req, res) => {
+// Login with Google/Facebook
+exports.loginUserOAuth = async (req, res) => {
   try {
-    const { user } = req.body;
+    const { user, connectedAccount } = req.body;
 
     // Check if the user exists in the 'users' collection
-    const userDoc = await db.collection("users").doc(user.uid).get();
+    const userDocRef = db.collection("users").doc(user.uid);
+    const userDoc = await userDocRef.get();
+    const userData = userDoc.data();
 
     if (userDoc.exists) {
       // User exists, fetch their data
-      const userData = userDoc.data();
+      if (userData.connectedAccount === null && userData.connectedAccount !== connectedAccount) {
+        const updatedAt = new Date();
+        await userDocRef.update({ connectedAccount: connectedAccount, updatedAt: updatedAt });
+      }
 
       // Add the document ID (user.uid) to userData
       const userDataWithId = {
         ...userData,
+        connectedAccount: connectedAccount,
         id: user.uid,
       };
 
@@ -323,25 +329,102 @@ exports.updatePassword = async (req, res) => {
 
 // Update Profile Picture
 exports.updateProfilePic = async (req, res) => {
-  const { selectedFile, userId } = req.body;
+  const userId = req.body.userId;
+  const file = req.file;
   const updatedAt = new Date();
 
-  if (!selectedFile || !userId) {
+  if (!file || !userId) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  try {
-    const storage = getStorage();
-    const storageRef = ref(storage, `profilePic/${userId}`);
-    await uploadBytes(storageRef, selectedFile);
-    const photoURL = await getDownloadURL(storageRef);
+  // Access file metadata
+  const fileName = file.originalname;
+  const fileSize = file.size;
+  const fileType = file.mimetype;
+  console.log(`File Name: ${fileName}; File Size: ${fileSize}; File Type: ${fileType}`);
 
+  try {
     const userDocRef = db.collection("users").doc(userId);
-    await userDocRef.update({ photoURL: photoURL, updatedAt: updatedAt });
+    const userDoc = await userDocRef.get();
+    const userData = userDoc.data();
+
+    // Check if there's an existing profile picture then extract the file path from URL, check if exists before deleting
+    if (userData && userData.profilePic) {
+      const oldFileUrl = userData.profilePic;
+      const oldFilePath = oldFileUrl.split("/o/")[1].split("?")[0];
+      const oldFileRef = ref(storage, decodeURIComponent(oldFilePath));
+      try {
+        await getDownloadURL(oldFileRef);
+        try {
+          await deleteObject(oldFileRef);
+          console.log("Old profile picture deleted successfully");
+        } catch (deleteError) {
+          console.error("Error deleting old profile picture:", deleteError);
+        }
+      } catch (error) {
+        console.log("Old profile picture doesn't exist or is inaccessible");
+      }
+    }
+
+    // Upload new file
+    const storageRef = ref(storage, `profilePic/${userId}`);
+    const snapshot = await uploadBytes(storageRef, file.buffer, {
+      contentType: file.mimetype,
+    });
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    // Update user document
+    await userDocRef.update({ profilePic: downloadURL, updatedAt: updatedAt });
 
     res.status(200).json({
       message: "Profile picture updated successfully",
-      photoURL: photoURL,
+      profilePic: downloadURL,
+      updatedAt: updatedAt,
+    });
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
+    res.status(500).json({ error: "Failed to update profile picture" });
+  }
+};
+
+// Remove profile picture
+exports.removeProfilePic = async (req, res) => {
+  const userId = req.body.userId;
+  const updatedAt = new Date();
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID missing" });
+  }
+
+  try {
+    const userDocRef = db.collection("users").doc(userId);
+    const userDoc = await userDocRef.get();
+    const userData = userDoc.data();
+
+    // Check if there's an existing profile picture then extract the file path from URL, check if exists before deleting
+    if (userData && userData.profilePic) {
+      const oldFileUrl = userData.profilePic;
+      const oldFilePath = oldFileUrl.split("/o/")[1].split("?")[0];
+      const oldFileRef = ref(storage, decodeURIComponent(oldFilePath));
+      try {
+        await getDownloadURL(oldFileRef);
+        try {
+          await deleteObject(oldFileRef);
+          console.log("Old profile picture deleted successfully");
+        } catch (deleteError) {
+          console.error("Error deleting old profile picture:", deleteError);
+        }
+      } catch (error) {
+        console.log("Old profile picture doesn't exist or is inaccessible");
+      }
+    }
+
+    // Update user document
+    await userDocRef.update({ profilePic: null, updatedAt: updatedAt });
+
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      profilePic: null,
       updatedAt: updatedAt,
     });
   } catch (error) {
@@ -438,6 +521,29 @@ exports.checkExistingEmail = async (req, res) => {
   }
 };
 
+exports.checkExistingEmailForReg = async (req, res) => {
+  const { email } = req.params;
+  if (email === undefined) {
+    return res.status(400).json({ error: "Missing email" });
+  }
+
+  try {
+    try {
+      const existingUser = await db.collection("users").where("email", "==", email).get();
+      if (existingUser) {
+        return res.status(400).json({ error: "Email already exists" });
+      } else {
+        return res.status(200).json({ success: true, message: "Email is available" });
+      }
+    } catch (error) {
+      throw error;
+    }
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return res.status(500).json({ error: "Failed to check email" });
+  }
+};
+
 // Update User Field (firstName, lastName, and username)
 exports.updateUserDetails = async (req, res) => {
   const { userId, firstName, lastName, username } = req.body;
@@ -500,6 +606,30 @@ exports.checkExistingUsername = async (req, res) => {
     }
 
     res.status(200).json({ message: "Username available" });
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({ error: "Failed to update user profile" });
+  }
+};
+
+exports.checkExistingUsernameForReg = async (req, res) => {
+  const { username } = req.params;
+
+  if (username === undefined) {
+    return res.status(400).json({ error: "Missing username" });
+  }
+
+  try {
+    try {
+      const usernameExists = await db.collection("users").where("username", "==", username).get();
+      if (usernameExists) {
+        return res.status(400).json({ error: "Username already exists" });
+      } else {
+        return res.status(200).json({ success: true, message: "Username is available" });
+      }
+    } catch (error) {
+      throw error;
+    }
   } catch (error) {
     console.error("Error updating user profile:", error);
     res.status(500).json({ error: "Failed to update user profile" });

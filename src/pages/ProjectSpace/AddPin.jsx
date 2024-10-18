@@ -1,11 +1,12 @@
 import { MuiColorInput } from "mui-color-input";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
 import { Dropdown, Menu, MenuButton } from "@mui/joy";
 import MenuItem from "@mui/joy/MenuItem";
 import * as React from "react";
 import "../../css/addItem.css";
 import "../../css/budget.css";
 import TopBar from "../../components/TopBar";
-function AddPin({ EditMode, ...sharedProps }) {
+function AddPin({ EditMode }) {
   const [value, setValue] = React.useState("#ffffff");
 
   const handleChange = (newValue) => {

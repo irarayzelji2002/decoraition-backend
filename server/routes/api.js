@@ -11,6 +11,7 @@ const budgetController = require("../controllers/budgetController");
 const planMapController = require("../controllers/planMapController");
 const timelineController = require("../controllers/timelineController");
 const { auth } = require("../firebase");
+const { upload } = require("../uploadConfig");
 
 const authenticateUser = async (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
@@ -29,14 +30,22 @@ const authenticateUser = async (req, res, next) => {
 
 // User routes
 router.post("/register", userController.createUser);
-router.post("/login-with-google", userController.loginUserGoogle);
+router.post("/login-with-oauth", userController.loginUserOAuth);
+router.get("/check-existing-email/:email", userController.checkExistingEmailForReg);
+router.get("/check-existing-username/:username", userController.checkExistingUsernameForReg);
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/verify-otp", userController.verifyOTP);
 router.post("/resend-otp", userController.resendOTP);
 router.post("/expire-otp", userController.expireOTP);
 router.post("/change-password", userController.changePassword);
 router.get("/user/:userId", authenticateUser, userController.fetchUserData);
-router.post("/user/profile-pic", authenticateUser, userController.updateProfilePic);
+router.post(
+  "/user/profile-pic",
+  authenticateUser,
+  upload.single("file"),
+  userController.updateProfilePic
+);
+router.post("/user/remove-profile-pic", authenticateUser, userController.removeProfilePic);
 router.post("/user/update-field", authenticateUser, userController.updateUserField);
 router.get("/user/check-existing-email/:userId/:email", userController.checkExistingEmail);
 router.get("/user/check-existing-username/:userId/:username", userController.checkExistingUsername);

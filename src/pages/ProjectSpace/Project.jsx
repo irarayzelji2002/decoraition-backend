@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { showToast } from "../../functions/utils.js";
+import { useSharedProps } from "../../contexts/SharedPropsContext.js";
 import { onSnapshot, doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Paper, IconButton, InputBase } from "@mui/material";
@@ -10,7 +12,6 @@ import {
   Folder as FolderIcon,
   Image as ImageIcon,
 } from "@mui/icons-material";
-import { ToastContainer, toast } from "react-toastify";
 import { auth, db } from "../../firebase";
 import ProjectHead from "./ProjectHead";
 import Modal from "../../components/Modal";
@@ -23,16 +24,13 @@ import "../../css/project.css";
 import { fetchDesigns, handleCreateDesign, handleDeleteDesign } from "./backend/ProjectDetails";
 import { handleDeleteProject } from "../Homepage/backend/HomepageActions.jsx";
 
-function Project({ ...sharedProps }) {
+function Project() {
   const navigate = useNavigate();
   const { projectId } = useParams();
-  const { userDesigns, userProjects } = sharedProps;
+  const { user, projects, setProjects, userDesigns, userProjects } = useSharedProps();
 
-  const user = sharedProps.user;
   const userId = user.uid;
-  const projects = sharedProps.projects;
   const project = projects.find((p) => p.id === projectId);
-  const setProjects = sharedProps.setProjects;
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);

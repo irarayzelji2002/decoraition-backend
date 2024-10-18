@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSharedProps } from "../../contexts/SharedPropsContext.js";
 import { stringAvatar, stringToColor } from "../../functions/utils.js";
 import DelayedTooltip from "../../components/DelayedTooltip.jsx";
 
@@ -19,8 +20,8 @@ import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
-const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery, ...sharedProps }) => {
-  const { userDoc } = sharedProps;
+const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
+  const { userDoc } = useSharedProps();
   const navigate = useNavigate();
   const [isFocused, setIsFocused] = React.useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -69,11 +70,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery, ...sharedProps
           </IconButton>
 
           <Drawer anchor="left" open={isDrawerOpen} onClose={handleDrawerClose}>
-            <DrawerComponent
-              isDrawerOpen={isDrawerOpen}
-              onClose={handleDrawerClose}
-              {...sharedProps}
-            />
+            <DrawerComponent isDrawerOpen={isDrawerOpen} onClose={handleDrawerClose} />
           </Drawer>
 
           <Paper
@@ -132,7 +129,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery, ...sharedProps
               textOverflow: "ellipsis",
             }}
           >
-            {userDoc.username || "Guest"}
+            {userDoc?.username || "Guest"}
           </Box>
           <IconButton onClick={() => navigate("/settings")} sx={{ p: 0 }}>
             <DelayedTooltip
@@ -142,7 +139,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery, ...sharedProps
               setOpen={setAccountTooltipOpen}
             >
               <Avatar
-                {...(userDoc.username && stringAvatar(userDoc.username))}
+                {...(userDoc?.username && stringAvatar(userDoc?.username))}
                 src={userDoc?.profilePic ? userDoc?.profilePic : ""}
                 sx={{
                   height: 40,

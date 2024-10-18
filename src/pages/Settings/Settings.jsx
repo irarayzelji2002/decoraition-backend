@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
 import { auth } from "../../firebase";
 import axios from "axios";
 import {
@@ -42,11 +43,9 @@ import EditableInput from "./EditableInput";
 import EditableInputThree from "./EditableInputThree";
 import EditablePassInput from "./EditablePassInput";
 import LongToggleInput from "./LongToggleInput";
-import { ToastContainer, toast } from "react-toastify";
 
-function Settings({ ...sharedProps }) {
-  const { user, userDoc } = sharedProps;
-  console.log("sharedProps:", sharedProps);
+function Settings() {
+  const { user, userDoc } = useSharedProps();
 
   const [selectedTab, setSelectedTab] = useState(0);
   const fileInputRef = useRef(null);
@@ -54,6 +53,7 @@ function Settings({ ...sharedProps }) {
   const [isLinkAccountModalOpen, setIsLinkAccountModalOpen] = useState(false);
   const [isUnlinkAccountModalOpen, setIsUnlinkAccountModalOpen] = useState(false);
   const [isChangeProfileModalOpen, setIsChangeProfileModalOpen] = useState(false);
+  const [isRemoveProfileModalOpen, setIsRemoveProfileModalOpen] = useState(false);
 
   const [firstName, setFirstName] = useState(userDoc.firstName ?? "");
   const [lastName, setLastName] = useState(userDoc.lastName ?? "");
@@ -61,13 +61,27 @@ function Settings({ ...sharedProps }) {
   const [email, setEmail] = useState(userDoc.email ?? "");
   const [theme, setTheme] = useState(userDoc.theme ?? 0);
   const [connectedAccount, setConnectedAccount] = useState(userDoc.connectedAccount ?? null);
-  const [profilePic, setProfilePic] = useState(userDoc.profilePic ?? "");
+  const [profilePic, setProfilePic] = useState(userDoc.profilePic ?? null);
+  const [profilePicPreview, setProfilePicPreview] = useState(userDoc.profilePic ?? "");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [otp, setOtp] = useState(0);
   const [unlinkPassword, setUnlinkPassword] = useState("");
   const [unlinkConfirmPassword, setUnlinkConfirmPassword] = useState("");
+
+  useEffect(() => {
+    if (userDoc) {
+      setFirstName(userDoc.firstName ?? "");
+      setLastName(userDoc.lastName ?? "");
+      setUsername(userDoc.username ?? "");
+      setEmail(userDoc.email ?? "");
+      setTheme(userDoc.theme ?? 0);
+      setConnectedAccount(userDoc.connectedAccount ?? null);
+      setProfilePic(userDoc.profilePic ?? null);
+      setProfilePicPreview(userDoc.profilePic ?? "");
+    }
+  }, [userDoc]);
 
   const initUserDetailsErr = [
     { field: "firstName", hasError: false, errMessage: "" },
@@ -122,20 +136,6 @@ function Settings({ ...sharedProps }) {
       setOtp(0);
     } else if (field === "otp") {
       setOtp(0);
-    }
-  };
-
-  // Handle file input change
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFile(file); // Set the selected file
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePic(reader.result); // Set the avatar preview
-      };
-      reader.readAsDataURL(file);
-      console.log("File uploaded:", file);
     }
   };
 
@@ -353,6 +353,28 @@ function Settings({ ...sharedProps }) {
   };
 
   // Update profilePic
+  const handleChangePhotoClick = () => {
+    setIsChangeProfileModalOpen(true);
+    console.log("profilePic", profilePic);
+  };
+
+  const handleUploadPhotoClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file); // Set the selected file
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePicPreview(reader.result); // Set the avatar preview
+      };
+      reader.readAsDataURL(file);
+      console.log("File uploaded:", file);
+    }
+  };
+
   const handleSavePhoto = async () => {
     if (!selectedFile) {
       showToast("error", "Please select a file first");
@@ -361,9 +383,9 @@ function Settings({ ...sharedProps }) {
 
     try {
       const formData = new FormData();
-      formData.append("selectedFile", selectedFile);
       formData.append("userId", userDoc.id);
-
+      formData.append("file", selectedFile);
+      console.log(formData);
       const response = await axios.post("/api/user/profile-pic", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -373,11 +395,40 @@ function Settings({ ...sharedProps }) {
 
       if (response.status === 200) {
         showToast("success", "Profile picture updated successfully");
-        // setUser({ ...user, photoURL: response.data.photoURL });
+        setSelectedFile(null);
+        setIsChangeProfileModalOpen(false);
+        // setProfilePic(userDoc.profilePic ?? "");
+        // setProfilePicPreview(userDoc.profilePic ?? "");
+        // setUser({ ...user, profilePic: response.data.profilePic });
       }
     } catch (error) {
       console.error("Error updating profile picture:", error);
       showToast("error", "Failed to update profile picture");
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    try {
+      const response = await axios.post(
+        "/api/user/remove-profile-pic",
+        { userId: userDoc.id },
+        {
+          headers: {
+            Authorization: `Bearer ${await user.getIdToken()}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        showToast("success", "Profile picture removed");
+        setSelectedFile(null);
+        setIsRemoveProfileModalOpen(false);
+        // setProfilePic(userDoc.profilePic ?? "");
+        // setProfilePicPreview(userDoc.profilePic ?? "");
+      }
+    } catch (error) {
+      console.error("Error removing profile picture:", error);
+      showToast("error", "Failed to remove profile picture");
     }
   };
 
@@ -603,11 +654,6 @@ function Settings({ ...sharedProps }) {
     }
   };
 
-  // Trigger file input click
-  const handleChangePhotoClick = () => {
-    fileInputRef.current.click();
-  };
-
   // Password change
   const handlePasswordChange = (index, value) => {
     if (index === 0) {
@@ -752,7 +798,7 @@ function Settings({ ...sharedProps }) {
               <Avatar
                 {...(userDoc.username && stringAvatar(userDoc.username))}
                 alt="User Avatar"
-                src={profilePic || ""}
+                src={profilePic ?? ""}
                 sx={{
                   width: 150,
                   height: 150,
@@ -773,15 +819,6 @@ function Settings({ ...sharedProps }) {
                   marginRight: "20px",
                 }}
               >
-                {/* Hidden File Input */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  style={{ display: "none" }}
-                  onChange={handleFileChange}
-                />
-
                 {/* Change Photo Button */}
                 <Button
                   variant="contained"
@@ -794,34 +831,24 @@ function Settings({ ...sharedProps }) {
                 >
                   Change photo
                 </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<SaveIcon />}
-                  className="save-photo-btn"
-                  onClick={handleSavePhoto}
-                  sx={{
-                    background: "linear-gradient(to right, #4CAF50, #81C784)",
-                    marginBottom: "10px",
-                  }}
-                >
-                  Save photo
-                </Button>
 
                 {/* Remove Photo Button */}
-                <Button
-                  variant="outlined"
-                  color="error"
-                  startIcon={<DeleteIcon />}
-                  className="remove-photo-btn"
-                  sx={{
-                    borderColor: "#FF894D",
-                    color: "#FF894D",
-                    marginLeft: "10px",
-                  }}
-                >
-                  Remove photo
-                </Button>
+                {profilePic && (
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    startIcon={<DeleteIcon />}
+                    className="remove-photo-btn"
+                    onClick={() => setIsRemoveProfileModalOpen(true)}
+                    sx={{
+                      borderColor: "#FF894D",
+                      color: "#FF894D",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    Remove photo
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -847,7 +874,6 @@ function Settings({ ...sharedProps }) {
               setErrors={setEmailErr}
               isEditable={connectedAccount == null ? true : false}
             />
-            {/* TO DO: OTP verification before enable isEditing */}
             <EditablePassInput
               labels={["Old Password", "New Password", "Confirm New Password", "Password"]}
               values={[oldPassword, newPassword, confirmNewPassword]}
@@ -858,7 +884,6 @@ function Settings({ ...sharedProps }) {
               setErrors={setPassErr}
               isEditable={connectedAccount == null ? true : false}
             />
-            {/* TO DO: if not linked, sign in and if success toggle icon*/}
             <LongToggleInput
               label="Connected Account"
               value={connectedAccount}
@@ -877,7 +902,7 @@ function Settings({ ...sharedProps }) {
         {/* Notification Tab Content */}
         {selectedTab === 1 && (
           <Box mt={4} className="notification-settings">
-            <Notifications {...sharedProps} />
+            <Notifications />
           </Box>
         )}
       </div>{" "}
@@ -919,6 +944,73 @@ function Settings({ ...sharedProps }) {
           </button>
           <br />
           <button onClick={() => setIsUnlinkAccountModalOpen(false)}>Cancel</button>
+        </div>
+      )}
+      {isChangeProfileModalOpen && (
+        <div style={{ position: "absolute", top: 0, left: 0 }}>
+          <Avatar
+            {...(userDoc.username && stringAvatar(userDoc.username))}
+            alt="User Avatar"
+            src={profilePicPreview || ""}
+            sx={{
+              width: 150,
+              height: 150,
+              fontSize: "4rem",
+              marginLeft: "20px",
+              background: "var(--gradientButton)",
+              color: "white",
+              border: "5px solid var(--brightFont)", // Avatar border
+            }}
+          />
+          {/* Hidden File Input */}
+          <input
+            type="file"
+            accept="image/png, image/jpeg, image/gif, image/webp"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+          <Button
+            variant="contained"
+            className="change-photo-btn"
+            onClick={handleUploadPhotoClick}
+            sx={{
+              background: "linear-gradient(to right, #F54D70, #FF894D)",
+              marginBottom: "10px",
+            }}
+          >
+            {profilePic ? "Change photo" : "Upload photo"}
+          </Button>
+          <br />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<SaveIcon />}
+            className="save-photo-btn"
+            onClick={handleSavePhoto}
+            sx={{
+              background: "linear-gradient(to right, #4CAF50, #81C784)",
+              marginBottom: "10px",
+            }}
+          >
+            Save photo
+          </Button>
+          <br />
+          <button
+            onClick={() => {
+              setIsChangeProfileModalOpen(false);
+              setProfilePicPreview(userDoc.profilePic ?? null);
+              setSelectedFile(null);
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+      {isRemoveProfileModalOpen && (
+        <div style={{ position: "absolute", top: 0, left: 0 }}>
+          <button onClick={handleRemovePhoto}>Yes</button>
+          <button onClick={() => setIsRemoveProfileModalOpen(false)}>No</button>
         </div>
       )}
     </>

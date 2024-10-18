@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useSharedProps } from "./contexts/SharedPropsContext";
 import "./App.css";
 import "./css/loginModal.css";
 // import Login from "./pages/Account/login.js";
 
-export default function Users({ ...sharedProps }) {
+export default function Users() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [backendData, setBackendData] = useState({});

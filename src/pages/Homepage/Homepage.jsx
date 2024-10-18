@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useSharedProps } from "../../contexts/SharedPropsContext.js";
+import { showToast } from "../../functions/utils.js";
 import {
   fetchUserDesigns,
   fetchUserProjects,
@@ -21,14 +23,13 @@ import ImageIcon from "@mui/icons-material/Image";
 import SearchAppBar from "./SearchAppBar.jsx";
 import DesignIcon from "../../components/DesignIcon.jsx";
 import ProjectOptionsHome from "../../components/ProjectOptionsHome.jsx";
-import { ToastContainer } from "react-toastify";
 import "../../css/homepage.css";
 import "../../css/design.css";
 import ProjectIcon from "./svg/ProjectIcon.jsx";
 import DesignSvg from "./svg/DesignSvg.jsx";
 import Loading from "../../components/Loading.jsx";
 
-function Homepage({ ...sharedProps }) {
+function Homepage() {
   const navigate = useNavigate();
   const {
     user,
@@ -41,7 +42,7 @@ function Homepage({ ...sharedProps }) {
     setUserDesigns,
     userProjects,
     setUserProjects,
-  } = sharedProps;
+  } = useSharedProps();
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -69,7 +70,6 @@ function Homepage({ ...sharedProps }) {
         onMenuClick={() => setDrawerOpen(true)}
         onSearchChange={setSearchQuery}
         searchQuery={searchQuery}
-        {...sharedProps}
       />
 
       <div className={`content ${isDrawerOpen ? "dimmed" : ""}`}>

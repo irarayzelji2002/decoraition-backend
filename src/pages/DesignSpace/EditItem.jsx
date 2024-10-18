@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
+import { showToast } from "../../functions/utils";
 import { doc, getDoc, updateDoc } from "firebase/firestore"; // Firebase Firestore methods
 import { db } from "../../firebase"; // Your Firebase config file
 import "../../css/addItem.css";
 import TopBar from "../../components/TopBar";
 import { getAuth } from "firebase/auth";
-import { ToastContainer, toast } from "react-toastify";
 
-const EditItem = ({ ...sharedProps }) => {
+const EditItem = () => {
   const { itemId, designId, projectId } = useParams(); // Get IDs from URL
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
@@ -106,22 +107,7 @@ const EditItem = ({ ...sharedProps }) => {
         quantity: itemQuantity,
         // Optionally handle image updates (requires uploading image to Firebase storage)
       });
-
-      toast.success(`${itemName} has been updated!`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
+      showToast("success", `${itemName} has been updated!`);
       setTimeout(() => {
         navigate(-1);
       }, 1000);

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSharedProps } from "../../contexts/SharedPropsContext.js";
 import { IconButton, Menu } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CommentIcon from "@mui/icons-material/Comment";
@@ -26,7 +27,7 @@ import { useHandleNameChange, useProjectDetails } from "./backend/ProjectDetails
 import { useParams } from "react-router-dom";
 import { toggleDarkMode, handleLogout } from "../Homepage/backend/HomepageActions.jsx";
 
-function ProjectHead({ designName, designId, setIsSidebarOpen, ...sharedProps }) {
+function ProjectHead({ designName, designId, setIsSidebarOpen }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isChangeModeMenuOpen, setIsChangeModeMenuOpen] = useState(false);
@@ -241,7 +242,6 @@ function ProjectHead({ designName, designId, setIsSidebarOpen, ...sharedProps })
         username={username}
         userEmail={user ? user.email : ""}
         designs={designs}
-        {...sharedProps}
       />
       <div className="left">
         <IconButton

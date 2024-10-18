@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
+import { showToast } from "../../functions/utils";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase"; // Assuming you have firebase setup
@@ -7,7 +9,6 @@ import { getAuth } from "firebase/auth";
 import PromptBar from "./PromptBar";
 import BottomBar from "./BottomBar";
 import Loading from "../../components/Loading";
-import { ToastContainer, toast } from "react-toastify";
 import Version from "./Version";
 import "../../css/design.css";
 import { FaCheckCircle, FaEllipsisV, FaAt } from "react-icons/fa"; // Icons used: Check, Dots, At symbol
@@ -26,7 +27,7 @@ import {
   handleSidebarEffect,
 } from "./backend/DesignActions"; // Import the functions from the backend file
 
-function Design({ ...sharedProps }) {
+function Design() {
   const { designId, projectId } = useParams(); // Get designId from the URL
   const [designData, setDesignData] = useState(null);
   const [newName, setNewName] = useState("");

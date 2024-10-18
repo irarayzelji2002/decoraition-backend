@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
 import { Button } from "@mui/material";
 
-function Version({ ...sharedProps }) {
+function Version() {
   const [selectedImage, setSelectedImage] = useState(null); // Start with no image selected
 
   const images = [

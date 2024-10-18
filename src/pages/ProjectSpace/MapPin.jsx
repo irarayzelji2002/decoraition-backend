@@ -1,9 +1,10 @@
+import { useSharedProps } from "../../contexts/SharedPropsContext";
 import "../../css/planMap.css";
 import EditPen from "../DesignSpace/svg/EditPen";
 import ExportIcon from "./svg/ExportIcon";
 import Trash from "../DesignSpace/svg/Trash";
 
-function MapPin({ ...sharedProps }) {
+function MapPin() {
   return (
     <div className="pinHolder">
       <div className="pinColor"></div>

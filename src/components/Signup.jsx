@@ -75,39 +75,54 @@ const Signup = () => {
 
   const handleValidation = () => {
     let formErrors = {};
+    const trimmedFirstName = firstName.trim();
+    const trimmedLastName = lastName.trim();
+    const trimmedUsername = username.trim();
+    const trimmedEmail = email.trim();
+    setFirstName(trimmedFirstName);
+    setLastName(trimmedLastName);
+    setUsername(trimmedUsername);
+    setEmail(trimmedEmail);
 
-    if (!firstName) formErrors.firstName = "First name is required";
-    if (!lastName) formErrors.lastName = "Last name is required";
-    if (!username) formErrors.username = "Username is required";
-    if (!email) formErrors.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) formErrors.email = "Invalid email format";
+    if (!trimmedFirstName) formErrors.firstName = "First name is required";
+    if (!trimmedLastName) formErrors.lastName = "Last name is required";
+    if (!trimmedUsername) formErrors.username = "Username is required";
+    // Using trimmedEmail consistently for validation
+    if (!trimmedEmail) formErrors.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail))
+      formErrors.email = "Invalid email format";
     if (!password) formErrors.password = "Password is required";
-    else if (password.length < 6)
-      formErrors.password = "Password must be at least 6 characters long";
-    else if (!/[!@#$%^&*]/.test(password))
-      formErrors.password = "Password must contain at least 1 special character";
-    if (!confirmPassword) formErrors.confirmPassword = "Please confirm your password";
-    else if (password !== confirmPassword) formErrors.confirmPassword = "Passwords do not match";
+    else {
+      if (password.length < 6) formErrors.password = "Password must be at least 6 characters long";
+      if (!/[!@#$%^&*]/.test(password))
+        formErrors.password = "Password must contain at least 1 special character";
+    }
+    if (confirmPassword !== password) formErrors.confirmPassword = "Passwords do not match";
 
-    return formErrors;
+    // Returning early if there are form errors
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return { formErrors, finalData: null };
+    }
+
+    const finalData = {
+      firstName: trimmedFirstName,
+      lastName: trimmedLastName,
+      username: trimmedUsername,
+      email: trimmedEmail,
+      password: password,
+    };
+
+    return { formErrors, finalData };
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const formErrors = handleValidation();
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
+    const { formErrors, finalData } = handleValidation();
+    if (!finalData) return;
 
     try {
-      const response = await axios.post("/api/register", {
-        firstName,
-        lastName,
-        username,
-        email,
-        password,
-      });
+      const response = await axios.post("/api/register", finalData);
       if (response.status === 200) {
         showToast("success", "Registration successful!");
         navigate("/login");
@@ -116,15 +131,13 @@ const Signup = () => {
       }
     } catch (error) {
       console.error("Registration error:", error);
-      const errMessage = error.response?.data?.message;
-      if (errMessage === "Username already in use") {
-        formErrors.username = "Username already in use";
-        setErrors(formErrors);
-      } else if (errMessage === "Email already in use") {
-        formErrors.email = "Email already in use";
-        setErrors(formErrors);
+      const errMessage = error.response?.data?.message || "Registration failed. Please try again.";
+      if (errMessage === "Email already in use") {
+        setErrors({ ...formErrors, email: "Email already in use" });
+      } else if (errMessage === "Username already in use") {
+        setErrors({ ...formErrors, username: "Username already in use" });
       } else {
-        showToast("error", errMessage || "An error occurred during registration");
+        showToast("error", errMessage);
       }
     }
   };

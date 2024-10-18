@@ -2,6 +2,7 @@
 const { initializeApp: initializeClientApp } = require("firebase/app");
 const { getAuth } = require("firebase/auth");
 const { getFirestore } = require("firebase/firestore");
+const { getStorage } = require("firebase/storage");
 const { getAnalytics, isSupported } = require("firebase/analytics");
 const firebaseConfig = require("./firebaseConfig");
 const { adminApp, adminAuth, adminDb } = require("./admin");
@@ -12,6 +13,7 @@ const auth = adminAuth;
 const clientApp = initializeClientApp(firebaseConfig);
 const clientAuth = getAuth(clientApp);
 const clientDb = getFirestore(clientApp);
+const storage = getStorage();
 // Initialize analytics only if supported
 let analytics = null;
 isSupported()
@@ -31,6 +33,7 @@ module.exports = {
   analytics,
   auth,
   db,
+  storage,
 };
 
 // Default export

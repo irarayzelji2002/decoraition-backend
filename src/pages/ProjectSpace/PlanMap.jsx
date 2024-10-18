@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useSharedProps } from "../../contexts/SharedPropsContext";
+import { showToast } from "../../functions/utils";
 import ProjectHead from "./ProjectHead";
 import MapPin from "./MapPin";
 import BottomBarDesign from "./BottomBarProject";
@@ -12,9 +14,8 @@ import PushPinIcon from "@mui/icons-material/PushPin";
 import "../../css/project.css";
 import "../../css/seeAll.css";
 import "../../css/budget.css";
-import { ToastContainer } from "react-toastify";
 
-function PlanMap({ ...sharedProps }) {
+function PlanMap() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { projectId } = useParams();
 

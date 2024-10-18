@@ -63,8 +63,10 @@ function PromptBar() {
       </h3>
       <Slider
         defaultValue={1}
+        valueLabelDisplay="on"
         max={4}
         sx={{
+          marginTop: "10px",
           color: "var(--slider)", // Slider color
           "& .MuiSlider-thumb": {
             background: "var(--gradientCircle)", // Gradient thumb

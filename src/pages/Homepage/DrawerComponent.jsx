@@ -20,17 +20,21 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
-import { auth, db } from "../../firebase";
+import { auth } from "../../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { ArrowBackIos } from "@mui/icons-material";
 import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  deleteDoc,
-  setDoc,
-} from "firebase/firestore";
+  fetchUserData,
+  fetchDesigns,
+  fetchProjects,
+} from "./backend/HomepageFunctions.jsx";
+import {
+  DesignIcn,
+  Home,
+  LogoutIcn,
+  ProjectIcn,
+  SettingsIcn,
+} from "./svg/DesignSvg.jsx";
 
 const DrawerComponent = ({ isDrawerOpen, onClose }) => {
   // State to handle dark mode
@@ -40,49 +44,29 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
   const [username, setUsername] = useState("");
   const [user, setUser] = useState(null);
   const [designs, setDesigns] = useState([]);
-  const [profileURL, setProfileURL] = useState("");
+  const [projects, setProjects] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
+  const [activeProject, setActiveProject] = useState(null);
   const optionsRef = useRef(null);
 
   useEffect(() => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      onSnapshot(userRef, (doc) => {
-        const userData = doc.data();
-        setUsername(userData.username);
-        setProfileURL(userData.photoURL);
-      });
-    }
-  }, [user]);
-  useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+    const handleAuthChange = async (user) => {
       if (user) {
         setUser(user);
-        fetchDesigns(user.uid);
+        await fetchUserData(user, setUsername, setUser);
+        await fetchDesigns(user.uid, setDesigns);
+        await fetchProjects(user.uid, setProjects);
       } else {
         setUser(null);
         setDesigns([]);
+        setProjects([]);
       }
-    });
+    };
+
+    const unsubscribeAuth = onAuthStateChanged(auth, handleAuthChange);
 
     return () => unsubscribeAuth();
   }, []);
-
-  const fetchDesigns = (userId) => {
-    const designsRef = collection(db, "designs");
-    const q = query(designsRef, where("createdAt", ">", new Date(0))); // Example query
-
-    const unsubscribeDesigns = onSnapshot(q, (querySnapshot) => {
-      const designList = [];
-      querySnapshot.forEach((doc) => {
-        designList.push({ id: doc.id, ...doc.data() });
-      });
-      setDesigns(designList);
-    });
-
-    return () => unsubscribeDesigns();
-  };
-
   const toggleOptions = () => {
     setShowOptions(!showOptions);
   };
@@ -123,6 +107,9 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
     if (optionsRef.current && !optionsRef.current.contains(event.target)) {
       setActiveItem(null);
     }
+    if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+      setActiveProject(null);
+    }
   };
 
   useEffect(() => {
@@ -157,43 +144,59 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-end",
+            alignItems: "center",
             marginBottom: "20px",
+            spaceBetween: "space-between",
           }}
         >
-          <IconButton sx={{ color: "white" }} onClick={toggleDarkMode}>
+          <ArrowBackIos onClick={onClose} />
+          <h2
+            className="navName"
+            style={{
+              fontSize: "1.75em",
+              marginTop: "-16px",
+              width: "60%",
+            }}
+          >
+            DecorAItion
+          </h2>
+          <IconButton
+            sx={{ color: "white", marginLeft: "6px" }}
+            onClick={toggleDarkMode}
+          >
             <BedtimeIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
-          <IconButton sx={{ color: "white", marginLeft: "16px" }}>
+          <IconButton sx={{ color: "white" }}>
             <NotificationsIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
         </div>
       </div>
 
-      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+      <div className="drawerUser">
         <Avatar
           sx={{
             width: 56,
             height: 56,
             marginBottom: "10px",
-            marginLeft: "auto",
-            marginRight: "auto",
           }}
-          src={profileURL || ""}
+          src={user?.profilePicture || ""}
         >
           {username ? username.charAt(0).toUpperCase() : ""}
         </Avatar>
-        <Typography variant="body1">{username || "Guest"}</Typography>
-        <Typography variant="caption">{user?.email || "No email"}</Typography>
+        <div>
+          <Typography variant="body1" style={{ fontWeight: "bold" }}>
+            {username || "Guest"}
+          </Typography>
+          <Typography variant="caption">{user?.email || "No email"}</Typography>
+        </div>
       </div>
-      <Divider sx={{ backgroundColor: "gray", my: 2 }} />
       <List>
         <ListItem
           onClick={() => navigate("/homepage")}
           sx={{ cursor: "pointer" }}
         >
           <ListItemIcon>
-            <HomeIcon sx={{ color: darkMode ? "white" : "black" }} />
+            <Home />
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
@@ -203,7 +206,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
           sx={{ cursor: "pointer" }}
         >
           <ListItemIcon>
-            <PhotoLibraryIcon sx={{ color: darkMode ? "white" : "black" }} />
+            <DesignIcn />
           </ListItemIcon>
           <ListItemText primary="Design" />
         </ListItem>
@@ -212,17 +215,25 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
           sx={{ cursor: "pointer" }}
         >
           <ListItemIcon>
-            <FolderIcon sx={{ color: darkMode ? "white" : "black" }} />
+            <ProjectIcn />
           </ListItemIcon>
           <ListItemText primary="Projects" />
         </ListItem>
         <Divider sx={{ backgroundColor: "gray", my: 2 }} />
-        <Typography variant="body2" sx={{ paddingLeft: 2, marginBottom: 1 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            paddingLeft: 2,
+            marginBottom: 1,
+            fontWeight: "bold",
+            opacity: 0.8,
+          }}
+        >
           Recent Designs
         </Typography>
 
         {designs.length > 0 ? (
-          designs.slice(0, 5).map((design, index) => (
+          designs.slice(0, 3).map((design, index) => (
             <ListItem
               key={design.id}
               button
@@ -232,6 +243,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
                 })
               }
             >
+              <div className="miniThumbnail" />
               <ListItemText primary={design.name} />
               <IconButton
                 edge="end"
@@ -275,17 +287,84 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
         )}
 
         <Divider sx={{ backgroundColor: "gray", my: 2 }} />
+        <Typography
+          variant="body2"
+          sx={{
+            paddingLeft: 2,
+            marginBottom: 1,
+            fontWeight: "bold",
+            opacity: 0.8,
+          }}
+        >
+          Recent Projects
+        </Typography>
+
+        {projects.length > 0 ? (
+          projects.slice(0, 3).map((project, index) => (
+            <ListItem
+              key={project.id}
+              button
+              onClick={() =>
+                navigate(`/project/${project.id}`, {
+                  state: { projectId: project.id },
+                })
+              }
+            >
+              <div className="miniThumbnail" />
+              <ListItemText primary={project.name} />
+              <IconButton
+                edge="end"
+                aria-label="more"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent the ListItem onClick from firing
+                  setActiveProject(index);
+                }}
+              >
+                <MoreHorizIcon sx={{ color: darkMode ? "white" : "black" }} />
+              </IconButton>
+              {activeProject === index && (
+                <div ref={optionsRef} className="dropdown-menu">
+                  <div
+                    className="dropdown-item"
+                    onClick={() =>
+                      navigate(`/project/${project.id}`, {
+                        state: { projectId: project.id },
+                      })
+                    }
+                  >
+                    <span className="icon"></span> Open
+                  </div>
+                  <div className="dropdown-item">
+                    <span className="icon"></span> Delete
+                  </div>
+                  <div className="dropdown-item">
+                    <span className="icon"></span> Copy Link
+                  </div>
+                  <div className="dropdown-item">
+                    <span className="icon"></span> Rename
+                  </div>
+                </div>
+              )}
+            </ListItem>
+          ))
+        ) : (
+          <ListItem>
+            <ListItemText primary="No recent designs" />
+          </ListItem>
+        )}
+
+        <Divider sx={{ backgroundColor: "gray", my: 2 }} />
 
         {/* Settings Menu Item */}
         <ListItem button onClick={() => navigate("/settings")}>
           <ListItemIcon>
-            <SettingsIcon sx={{ color: darkMode ? "white" : "black" }} />
+            <SettingsIcn />
           </ListItemIcon>
           <ListItemText primary="Settings" />
         </ListItem>
         <ListItem button onClick={handleLogout}>
           <ListItemIcon>
-            <LogoutIcon sx={{ color: darkMode ? "white" : "black" }} />
+            <LogoutIcn />
           </ListItemIcon>
           <ListItemText primary="Sign Out" />
         </ListItem>

@@ -48,7 +48,7 @@
 }
 
 .viewerSettingsTitle {
-  font-weight: bold;
+  font-weight: bold !important;
   margin-bottom: 2rem;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .inactivityTitle {
-  font-weight: bold;
+  font-weight: bold !important;
   margin-bottom: 2rem;
 }
 

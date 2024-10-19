@@ -52,8 +52,6 @@ export const handleCreateDesign = async (projectId, navigate) => {
     const designId = new Date().getTime().toString() + randomString;
 
     if (currentUser) {
-      const projectRef = doc(db, "users", currentUser.uid, "projects", projectId);
-
       // Design reference within the specific project
       const designRef = doc(db, "designs", designId);
 
@@ -106,7 +104,7 @@ export const handleDeleteDesign = async (projectId, designId) => {
     const currentUser = auth.currentUser;
 
     if (currentUser) {
-      const projectRef = doc(db, "projects", projectId, "designs", designId);
+      const projectRef = doc(db, "designs", designId);
 
       await deleteDoc(projectRef);
 
@@ -171,7 +169,6 @@ export const useProjectDetails = (projectId, setUserId, setProjectData, setNewNa
 
         const fetchProjectDetails = async () => {
           try {
-            // const projectRef = doc(db, "users", user.uid, "projects", projectId);
             const projectRef = doc(db, "projects", projectId);
             const projectSnapshot = await getDoc(projectRef);
             if (projectSnapshot.exists()) {
@@ -215,15 +212,6 @@ const saveData = async (projectId, formData) => {
   }
   const userId = currentUser.uid;
   try {
-    await addDoc(collection(db, "users", userId, "projects", projectId, "timeline"), {
-      projectId,
-      taskName: formData.taskName,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      description: formData.description,
-      repeat: formData.repeat,
-      reminders: formData.reminders,
-    });
     await addDoc(collection(db, "events"), {
       userId: userId,
       projectId,
@@ -266,7 +254,6 @@ const saveData = async (projectId, formData) => {
 export { saveData };
 
 export const fetchTasks = (userId, projectId, setTasks) => {
-  // const tasksRef = collection(db, "users", userId, "projects", projectId, "timeline");
   const tasksRef = collection(db, "events");
   const q = query(tasksRef, where("projectId", "==", projectId));
 
@@ -283,7 +270,6 @@ export const fetchTasks = (userId, projectId, setTasks) => {
 
 export const deleteTask = async (taskId) => {
   try {
-    // const taskRef = doc(db, "users", userId, "projects", projectId, "timeline", taskId);
     const taskRef = doc(db, "events", taskId);
     await deleteDoc(taskRef);
     toast.success("Task successfully deleted!", {
@@ -316,7 +302,6 @@ export const deleteTask = async (taskId) => {
 
 export const updateTask = async (userId, projectId, taskId, updatedData) => {
   try {
-    // const taskRef = doc(db, "users", userId, "projects", projectId, "timeline", taskId);
     const taskRef = doc(db, "events", taskId);
     await updateDoc(taskRef, updatedData);
     toast.success("Task updated successfully!", {

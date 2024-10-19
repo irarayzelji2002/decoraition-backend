@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSharedProps } from "../../contexts/SharedPropsContext";
-import { showToast } from "../../functions/utils";
 import { doc, getDoc, updateDoc } from "firebase/firestore"; // Firebase Firestore methods
 import { db } from "../../firebase"; // Your Firebase config file
 import "../../css/addItem.css";
 import TopBar from "../../components/TopBar";
 import { getAuth } from "firebase/auth";
+import { ToastContainer, toast } from "react-toastify";
+import NoImage from "./svg/NoImage";
 
 const EditItem = () => {
   const { itemId, designId, projectId } = useParams(); // Get IDs from URL
@@ -32,25 +32,9 @@ const EditItem = () => {
   }, [designId]);
 
   useEffect(() => {
-    const isProjectPath = window.location.pathname.includes("/project");
     const fetchItemDetails = async () => {
       try {
-        let itemRef;
-        if (isProjectPath) {
-          itemRef = doc(
-            db,
-            "users",
-            userId,
-            "projects",
-            projectId,
-            "designs",
-            designId,
-            "budgets",
-            itemId
-          );
-        } else {
-          itemRef = doc(db, "budgets", itemId);
-        }
+        const itemRef = doc(db, "budgets", itemId);
 
         const itemSnap = await getDoc(itemRef);
 
@@ -84,22 +68,7 @@ const EditItem = () => {
   // Handle updating the item in Firestore
   const handleSave = async () => {
     try {
-      let itemRef;
-      if (isProjectPath) {
-        itemRef = doc(
-          db,
-          "users",
-          userId,
-          "projects",
-          projectId,
-          "designs",
-          designId,
-          "budgets",
-          itemId
-        );
-      } else {
-        itemRef = doc(db, "budgets", itemId);
-      }
+      const itemRef = doc(db, "budgets", itemId);
 
       await updateDoc(itemRef, {
         itemName,
@@ -107,7 +76,22 @@ const EditItem = () => {
         quantity: itemQuantity,
         // Optionally handle image updates (requires uploading image to Firebase storage)
       });
-      showToast("success", `${itemName} has been updated!`);
+
+      toast.success(`${itemName} has been updated!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
       setTimeout(() => {
         navigate(-1);
       }, 1000);
@@ -119,13 +103,17 @@ const EditItem = () => {
   return (
     <>
       <TopBar state={"Edit Item"} />
+      <ToastContainer progressStyle={{ backgroundColor: "var(--brightFont)" }} />
       <div className="add-item-container">
         <div className="left-column">
           <div className="upload-section">
             {image ? (
               <img src={image} alt="Item" className="uploaded-image" />
             ) : (
-              <div className="image-placeholder">Add an image to the item</div>
+              <div className="image-placeholder-container">
+                <NoImage />
+                <div className="image-placeholder">Add an image to the item</div>
+              </div>
             )}
             <label htmlFor="upload-image" className="upload-btn">
               Reupload the image of item

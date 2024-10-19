@@ -12,10 +12,10 @@ import {
   FormControlLabel,
   MenuItem,
   Select,
-  ThemeProvider,
 } from "@mui/material";
-import "../../css/projSettings.css"; // Import the CSS file
+import "../../css/designSettings.css"; // Import the CSS file
 import PublicIcon from "@mui/icons-material/Public"; // Import the globe icon
+import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   components: {
@@ -39,9 +39,10 @@ const theme = createTheme({
     },
   },
 });
+
 function DesignSettings() {
-  const { projectId } = useParams(); // Get the designId parameter from the URL
-  const [projectName, setProjectName] = useState("");
+  const { designId } = useParams(); // Get the designId parameter from the URL
+  const [designName, setDesignName] = useState("");
   const [generalAccess, setGeneralAccess] = useState("Anyone with the link");
   const [allowDownload, setAllowDownload] = useState(false);
   const [inactivityEnabled, setInactivityEnabled] = useState(false);
@@ -52,11 +53,11 @@ function DesignSettings() {
 
   useEffect(() => {
     // Fetch the design name based on the designId
-    const fetchProjectName = async () => {
+    const fetchDesignName = async () => {
       try {
-        const designDoc = await getDoc(doc(db, "projects", projectId));
+        const designDoc = await getDoc(doc(db, "designs", designId));
         if (designDoc.exists()) {
-          setProjectName(designDoc.data().name);
+          setDesignName(designDoc.data().name);
         } else {
           console.log("No such document!");
         }
@@ -65,8 +66,8 @@ function DesignSettings() {
       }
     };
 
-    fetchProjectName();
-  }, [projectId]);
+    fetchDesignName();
+  }, [designId]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab); // Change active tab
@@ -74,7 +75,7 @@ function DesignSettings() {
 
   return (
     <div>
-      <TopBar state={`Project Settings for ${projectName}`} />
+      <TopBar state={`Design Settings for ${designName}`} />
       <SettingsContent
         generalAccess={generalAccess}
         setGeneralAccess={setGeneralAccess}
@@ -122,38 +123,7 @@ const SettingsContent = ({
           justifyContent: "space-between",
           marginBottom: 4,
         }}
-      >
-        {["Project", "Timeline", "Plan Map", "Budget"].map((tab) => (
-          <Typography
-            key={tab}
-            onClick={() => handleTabChange(tab)}
-            sx={{
-              fontSize: 18,
-              fontWeight: "bold",
-              textTransform: "none",
-              cursor: "pointer",
-              paddingBottom: 1,
-              backgroundImage: activeTab === tab ? "var(--gradientFont)" : "none", // Gradient only for active tab
-              backgroundClip: activeTab === tab ? "text" : "unset",
-              WebkitBackgroundClip: activeTab === tab ? "text" : "unset",
-              color: activeTab === tab ? "transparent" : "var(--color-white)",
-              borderBottom: activeTab === tab ? "2px solid transparent" : "none",
-              borderImage: activeTab === tab ? "var(--gradientFont) 1" : "none", // Gradient for border bottom
-              borderImageSlice: activeTab === tab ? 1 : "none",
-              "&:focus": {
-                outline: "none",
-                backgroundColor: "transparent",
-              },
-              "&:active": {
-                outline: "none",
-                backgroundColor: "transparent",
-              },
-            }}
-          >
-            {tab}
-          </Typography>
-        ))}
-      </Box>
+      ></Box>
 
       {/* General Access */}
       <div className="generalAccessTitle">General Access</div>
@@ -196,9 +166,6 @@ const SettingsContent = ({
                 backgroundColor: "var(--dropdownSelected)",
                 color: "var(--color-white)",
               },
-              "& .MuiSvgIcon-root": {
-                color: "var(--color-white)", // Set the arrow icon color to white
-              },
             }}
           >
             Anyone with the link
@@ -207,7 +174,10 @@ const SettingsContent = ({
             value="Restricted"
             sx={{
               backgroundColor: "var(--bgColor)",
-              color: generalAccess === "Restricted" ? "var(--color-white)" : "var(--color-grey)",
+              color:
+                generalAccess === "Restricted"
+                  ? "var(--color-white)"
+                  : "var(--color-grey)",
               "&:hover": {
                 backgroundColor: "var(--dropdownHover)",
                 color: "var(--color-white)",
@@ -253,7 +223,9 @@ const SettingsContent = ({
       {activeTab === "Project" && ( // Change this condition based on the active tab
         <>
           {/* Inactivity and Deletion */}
-          <Typography className="inactivityTitle">Inactivity and deletion</Typography>
+          <Typography className="inactivityTitle">
+            Inactivity and deletion
+          </Typography>
           <FormControlLabel
             control={
               <Switch
@@ -282,7 +254,9 @@ const SettingsContent = ({
           {inactivityEnabled && (
             <>
               <Box className="inactivitySettings">
-                <Typography>Number of days before inactivity after user inactivity</Typography>
+                <Typography>
+                  Number of days before inactivity after user inactivity
+                </Typography>
                 <TextField
                   type="number"
                   value={inactivityDays}
@@ -315,7 +289,9 @@ const SettingsContent = ({
               </Box>
 
               <Box className="inactivitySettings">
-                <Typography>Number of days before deletion after project inactivity</Typography>
+                <Typography>
+                  Number of days before deletion after project inactivity
+                </Typography>
                 <TextField
                   type="number"
                   value={deletionDays}
@@ -349,7 +325,8 @@ const SettingsContent = ({
 
               <Box className="inactivitySettings">
                 <Typography>
-                  Notify collaborators number of days prior to entering inactivity mode and deletion
+                  Notify collaborators number of days prior to entering
+                  inactivity mode and deletion
                 </Typography>
                 <TextField
                   type="number"

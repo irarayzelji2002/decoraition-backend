@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSharedProps } from "../../contexts/SharedPropsContext";
-import { showToast } from "../../functions/utils";
 import Item from "./Item";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -11,11 +9,13 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import { onSnapshot } from "firebase/firestore";
 import "../../css/budget.css";
 import { db } from "../../firebase"; // Assuming you have firebase setup
+import { ToastContainer, toast } from "react-toastify";
 import { collection, updateDoc, doc, deleteDoc, getDoc } from "firebase/firestore";
 import Loading from "../../components/Loading";
 import { getAuth, prodErrorMap } from "firebase/auth";
 import BottomBar from "./BottomBar";
 import { query, where } from "firebase/firestore";
+import { AddBudget, AddItem } from "./svg/AddImage";
 
 function Budget() {
   const { designId, projectId } = useParams();
@@ -123,10 +123,27 @@ function Budget() {
 
       await deleteDoc(itemRef); // Delete the document from Firestore
       setItems(items.filter((item) => item.id !== itemId)); // Update local state
-      showToast("success", "Item has been deleted!");
+      toast.success("Item has been deleted!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
     } catch (error) {
       console.error("Error deleting item:", error);
-      showToast("error", "Failed to delete item");
+      toast.error("Failed to delete item", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -140,7 +157,21 @@ function Budget() {
       const designRef = doc(db, "designs", designId);
       await updateDoc(designRef, { name: newName });
       setIsEditingName(false);
-      showToast("success", "Design name updated successfully!");
+      toast.success("Design name updated successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          color: "var(--color-white)",
+          backgroundColor: "var(--inputBg)",
+        },
+        progressStyle: {
+          backgroundColor: "var(--brightFont)",
+        },
+      });
     } catch (error) {
       console.error("Error updating design name:", error);
       alert("Failed to update design name");
@@ -166,6 +197,7 @@ function Budget() {
   }
   return (
     <div className={`budget-page ${menuOpen ? "" : ""}`}>
+      <ToastContainer progressStyle={{ backgroundColor: "var(--brightFont)" }} />
       <DesignHead
         designData={designData}
         newName={newName}
@@ -192,13 +224,13 @@ function Budget() {
         <div className="budgetSpace" style={{ marginBottom: "10%" }}>
           {items.length === 0 ? (
             <div>
+              {" "}
+              <p>No items yet</p>
               <img
                 src={"../../img/project-placeholder.png"}
                 style={{ width: "100px" }}
-                className="image-preview"
                 alt="project placeholder"
               />
-              <p>No items yet</p>
             </div>
           ) : (
             items.map((item, index) => (
@@ -222,7 +254,7 @@ function Budget() {
             <div className="small-button-container" onClick={toggleModal}>
               <span className="small-button-text">Add a Budget</span>
               <div className="small-circle-button">
-                <AccountBalanceWalletIcon className="icon" />
+                <AddBudget />
               </div>
             </div>
             <div
@@ -235,7 +267,7 @@ function Budget() {
             >
               <span className="small-button-text">Add an Item</span>
               <div className="small-circle-button">
-                <InventoryIcon className="icon" />
+                <AddItem />
               </div>
             </div>
           </div>
@@ -248,7 +280,7 @@ function Budget() {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>Add a Budget</h2>
+              <h2 style={{ color: "var(--color-white)" }}>Add a Budget</h2>
               <CloseIcon className="close-icon" onClick={toggleModal} />
             </div>
             <div className="modal-body">

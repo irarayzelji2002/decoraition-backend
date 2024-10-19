@@ -127,10 +127,13 @@
 }
 
 .input-group {
+  width: 100%;
+  padding: 18px;
   background-color: var(--nav-card-modal);
   border: 2px solid var(--borderInput);
   border-radius: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .input-group:focus-within {
@@ -146,12 +149,17 @@
 .price-quantity-section input,
 .price-quantity-section select {
   width: 100%;
-  padding: 18px;
-
   border: none;
   background-color: transparent;
   color: var(--color-white);
   font-size: 1.125em;
+}
+
+.input-group input:focus,
+.price-quantity-section input:focus,
+.price-quantity-section select:focus {
+  outline: none; /* Remove focus outline */
+  box-shadow: none; /* Remove focus box-shadow */
 }
 
 /* Container for Price and Currency Selector */

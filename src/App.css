@@ -55,6 +55,14 @@ select:-webkit-autofill {
   border: 2px solid var(--color-tertiary); /* Space around the thumb */
 }
 
+.rightBeside {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  width: 100%;
+}
+
 :root {
   --bg-header: url("../public/img/bg-login.png");
   --bg-image: #1f1e22;

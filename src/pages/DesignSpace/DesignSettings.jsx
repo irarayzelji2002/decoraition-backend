@@ -45,6 +45,10 @@ function DesignSettings() {
   const [designName, setDesignName] = useState("");
   const [generalAccess, setGeneralAccess] = useState("Anyone with the link");
   const [allowDownload, setAllowDownload] = useState(false);
+  const [allowHistory, setAllowHistory] = useState(false);
+  const [allowMakeACopy, setAllowMakeACopy] = useState(false);
+  const [allowCopyByOwner, setAllowCopyByOwner] = useState(false);
+  const [allowCopyByEditor, setAllowCopyByEditor] = useState(false);
   const [inactivityEnabled, setInactivityEnabled] = useState(false);
   const [inactivityDays, setInactivityDays] = useState(90);
   const [deletionDays, setDeletionDays] = useState(30);
@@ -81,6 +85,14 @@ function DesignSettings() {
         setGeneralAccess={setGeneralAccess}
         allowDownload={allowDownload}
         setAllowDownload={setAllowDownload}
+        allowHistory={allowHistory}
+        setAllowHistory={setAllowHistory}
+        allowMakeACopy={allowMakeACopy}
+        setAllowMakeACopy={setAllowMakeACopy}
+        allowCopyByOwner={allowCopyByOwner}
+        setAllowCopyByOwner={setAllowCopyByOwner}
+        allowCopyByEditor={allowCopyByEditor}
+        setAllowCopyByEditor={setAllowCopyByEditor}
         inactivityEnabled={inactivityEnabled}
         setInactivityEnabled={setInactivityEnabled}
         inactivityDays={inactivityDays}
@@ -103,6 +115,14 @@ const SettingsContent = ({
   setGeneralAccess,
   allowDownload,
   setAllowDownload,
+  allowHistory,
+  setAllowHistory,
+  allowMakeACopy,
+  setAllowMakeACopy,
+  allowCopyByOwner,
+  setAllowCopyByOwner,
+  setAllowCopyByEditor,
+  allowCopyByEditor,
   inactivityEnabled,
   setInactivityEnabled,
   inactivityDays,
@@ -111,8 +131,8 @@ const SettingsContent = ({
   setDeletionDays,
   notifyDays,
   setNotifyDays,
-  activeTab, // New prop to control the active tab
-  handleTabChange, // Function to change the active tab
+  activeTab,
+  handleTabChange,
 }) => (
   <ThemeProvider theme={theme}>
     <div className="settingsContainer">
@@ -124,7 +144,6 @@ const SettingsContent = ({
           marginBottom: 4,
         }}
       ></Box>
-
       {/* General Access */}
       <div className="generalAccessTitle">General Access</div>
       <Box className="accessBox">
@@ -192,7 +211,6 @@ const SettingsContent = ({
           </MenuItem>
         </Select>
       </Box>
-
       {/* Viewer Settings */}
       <Typography className="viewerSettingsTitle">Viewer settings</Typography>
       <FormControlLabel
@@ -217,8 +235,147 @@ const SettingsContent = ({
         label="Allow to download"
         labelPlacement="start"
         className="viewerSettingsLabel"
+      />{" "}
+      {/* Allow to view history */}
+      <FormControlLabel
+        control={
+          <Switch
+            checked={allowHistory}
+            onChange={(e) => setAllowHistory(e.target.checked)}
+            color="warning"
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                backgroundColor: "var(--inputBg)",
+              },
+              "& .MuiSwitch-thumb": {
+                backgroundImage: "var(--color-white)", // Apply gradient to the thumb
+              },
+              "& .MuiSwitch-track": {
+                backgroundColor: "var(--inputBg)", // Track color
+              },
+            }}
+          />
+        }
+        label="Allow to view history"
+        labelPlacement="start"
+        className="viewerSettingsLabel"
       />
-
+      {/* Allow to make a copy */}
+      <FormControlLabel
+        control={
+          <Switch
+            checked={allowMakeACopy}
+            onChange={(e) => setAllowMakeACopy(e.target.checked)}
+            color="warning"
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                backgroundColor: "var(--inputBg)",
+              },
+              "& .MuiSwitch-thumb": {
+                backgroundImage: "var(--color-white)", // Apply gradient to the thumb
+              },
+              "& .MuiSwitch-track": {
+                backgroundColor: "var(--inputBg)", // Track color
+              },
+            }}
+          />
+        }
+        label="Allow to make a copy"
+        labelPlacement="start"
+        className="viewerSettingsLabel"
+      />
+      {/* History Settings */}
+      <Typography className="viewerSettingsTitle">History settings</Typography>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={allowCopyByOwner}
+            onChange={(e) => setAllowCopyByOwner(e.target.checked)}
+            color="warning"
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                backgroundColor: "var(--inputBg)",
+              },
+              "& .MuiSwitch-thumb": {
+                backgroundImage: "var(--color-white)", // Apply gradient to the thumb
+              },
+              "& .MuiSwitch-track": {
+                backgroundColor: "var(--inputBg)", // Track color
+              },
+            }}
+          />
+        }
+        label="Document copies made by owner"
+        labelPlacement="start"
+        className="HistorySettingsLabel"
+      />{" "}
+      <FormControlLabel
+        control={
+          <Switch
+            checked={allowCopyByEditor}
+            onChange={(e) => setAllowCopyByEditor(e.target.checked)}
+            color="warning"
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                backgroundColor: "var(--inputBg)",
+              },
+              "& .MuiSwitch-thumb": {
+                backgroundImage: "var(--color-white)", // Apply gradient to the thumb
+              },
+              "& .MuiSwitch-track": {
+                backgroundColor: "var(--inputBg)", // Track color
+              },
+            }}
+          />
+        }
+        label="Document copies made by editor"
+        labelPlacement="start"
+        className="HistorySettingsLabel"
+      />{" "}
+      {/* General Access */}
+      <div className="generalAccessTitle">Associated Project</div>
+      <Box className="accessBox">
+        <Select
+          value={generalAccess}
+          onChange={(e) => setGeneralAccess(e.target.value)}
+          className="accessSelect"
+          sx={{
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "var(--borderInput)",
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "var(--bright-grey)",
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "var(--bright-grey)",
+            },
+            "& .MuiSelect-select": {
+              color: "var(--color-white)",
+            },
+            "& .MuiSvgIcon-root": {
+              color: "var(--color-white)", // Set the arrow icon color to white
+            },
+          }}
+        >
+          <MenuItem
+            value="Anyone with the link"
+            sx={{
+              backgroundColor: "var(--bgColor)",
+              color: "var(--color-white)",
+              "&:hover": {
+                backgroundColor: "var(--dropdownHover)",
+                color: "var(--color-white)",
+              },
+              "&.Mui-selected": {
+                backgroundColor: "var(--dropdownSelected)",
+                color: "var(--color-white)",
+              },
+            }}
+          >
+            Select an existing project
+          </MenuItem>
+        </Select>
+      </Box>
       {/* The following section is only for the Project tab */}
       {activeTab === "Project" && ( // Change this condition based on the active tab
         <>
@@ -362,7 +519,6 @@ const SettingsContent = ({
           )}
         </>
       )}
-
       {/* Save Button */}
       <Box className="saveButtonContainer">
         <Button className="saveButton">Save</Button>

@@ -1,7 +1,7 @@
 .navName {
   font-family: "Open Sans", sans-serif !important;
   font-size: 4em;
-  background: var(--gradientButton);
+  background: var(--gradientFont);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: -10px;
@@ -207,7 +207,7 @@ h2 {
 
 .subDate {
   margin-top: -8px;
-  font-size: 12px;
+  font-size: 0.75em;
 }
 
 .iconFrame {
@@ -237,7 +237,7 @@ h2 {
 }
 
 .selectOption {
-  font-size: 24px;
+  font-size: 1.5em;
   color: var(--color-white);
   margin-top: 0px;
 }
@@ -272,7 +272,7 @@ h2 {
   color: var(--color-white);
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 0.875em;
   cursor: pointer;
 }
 

@@ -119,6 +119,7 @@ const Signup = () => {
       });
 
       console.log(user);
+      await auth.signOut();
       navigate("/login");
     } catch (error) {
       const errorCode = error.code;

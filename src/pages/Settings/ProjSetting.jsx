@@ -17,6 +17,7 @@ import {
 import "../../css/projSettings.css"; // Import the CSS file
 import PublicIcon from "@mui/icons-material/Public"; // Import the globe icon
 import { createTheme } from "@mui/material/styles";
+
 const theme = createTheme({
   components: {
     MuiSwitch: {
@@ -39,7 +40,8 @@ const theme = createTheme({
     },
   },
 });
-function DesignSettings() {
+
+export default function ProjectSettings() {
   const { projectId } = useParams(); // Get the designId parameter from the URL
   const [projectName, setProjectName] = useState("");
   const [generalAccess, setGeneralAccess] = useState("Anyone with the link");
@@ -94,8 +96,6 @@ function DesignSettings() {
     </div>
   );
 }
-
-export default DesignSettings;
 
 const SettingsContent = ({
   generalAccess,

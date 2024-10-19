@@ -16,6 +16,7 @@ import { getAuth, prodErrorMap } from "firebase/auth";
 import BottomBar from "./BottomBar";
 import { query, where } from "firebase/firestore";
 import { AddBudget, AddItem } from "./svg/AddImage";
+import { showToast } from "../../functions/utils";
 
 function Budget() {
   const { designId, projectId } = useParams();
@@ -123,27 +124,10 @@ function Budget() {
 
       await deleteDoc(itemRef); // Delete the document from Firestore
       setItems(items.filter((item) => item.id !== itemId)); // Update local state
-      toast.success("Item has been deleted!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
+      showToast("success", "Item has been deleted!");
     } catch (error) {
       console.error("Error deleting item:", error);
-      toast.error("Failed to delete item", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      showToast("error", "Error deleting item:");
     }
   };
 
@@ -157,21 +141,7 @@ function Budget() {
       const designRef = doc(db, "designs", designId);
       await updateDoc(designRef, { name: newName });
       setIsEditingName(false);
-      toast.success("Design name updated successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
+      showToast("success", "Design name updated successfully!");
     } catch (error) {
       console.error("Error updating design name:", error);
       alert("Failed to update design name");

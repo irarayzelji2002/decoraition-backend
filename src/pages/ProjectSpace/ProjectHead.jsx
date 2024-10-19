@@ -20,11 +20,12 @@ import ShareConfirmationModal from "../../components/ShareConfirmationModal.jsx"
 import "../../css/design.css";
 import { useEffect } from "react";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
-import { db, auth } from "../../../server/firebase.js";
+import { db, auth } from "../../firebase.js";
 import DrawerComponent from "../Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
 import { useHandleNameChange, useProjectDetails } from "./backend/ProjectDetails";
 import { useParams } from "react-router-dom";
+import { showToast } from "../../functions/utils.js";
 
 function ProjectHead({ designName }) {
   const [anchorEl, setAnchorEl] = useState(null);

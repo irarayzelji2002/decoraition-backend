@@ -11,6 +11,7 @@ import { InputAdornment } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import NoImage from "./svg/NoImage";
+import { showToast } from "../../functions/utils";
 
 const AddItem = () => {
   const [itemQuantity, setItemQuantity] = useState(1);
@@ -63,21 +64,7 @@ const AddItem = () => {
       setBudgetItem("");
 
       const itemName = budgetItem;
-      toast.success(`${itemName} has been added!`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
+      showToast("success", `${itemName} has been added!`);
       setTimeout(() => {
         window.history.back();
       }, 1000);

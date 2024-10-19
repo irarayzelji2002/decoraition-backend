@@ -3,6 +3,8 @@ import { MenuItem, ListItemIcon, ListItemText } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import { toast } from "react-toastify";
+import { showToast } from "../functions/utils";
+
 const ShareMenu = ({ onClose, onBackToMenu, onOpenShareModal }) => {
   const handleCopyLink = () => {
     const currentLink = window.location.href; // Get the current URL

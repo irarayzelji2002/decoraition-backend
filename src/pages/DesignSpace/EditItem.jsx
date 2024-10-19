@@ -7,6 +7,7 @@ import TopBar from "../../components/TopBar";
 import { getAuth } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import NoImage from "./svg/NoImage";
+import { showToast } from "../../functions/utils";
 
 const EditItem = () => {
   const { itemId, designId, projectId } = useParams(); // Get IDs from URL
@@ -77,21 +78,7 @@ const EditItem = () => {
         // Optionally handle image updates (requires uploading image to Firebase storage)
       });
 
-      toast.success(`${itemName} has been updated!`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
-      });
+      showToast("success", `${itemName} has been updated!`);
       setTimeout(() => {
         navigate(-1);
       }, 1000);

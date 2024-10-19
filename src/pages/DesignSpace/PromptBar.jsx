@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import "../../css/design.css";
 import Slider from "@mui/joy/Slider";
 import Button from "@mui/joy/Button";
-import { MuiColorInput } from "mui-color-input";
+
 import { Modal, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Textarea from "@mui/joy/Textarea";
 import AddImage from "./svg/AddImage";
 import AddColor from "./svg/AddColor";
-import IconButton from "@mui/joy/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Create } from "@mui/icons-material";
+
 import CreatePallete from "./CreatePallete";
 
 function PromptBar() {
@@ -165,7 +163,7 @@ function PromptBar() {
               backgroundImage: "var(--gradientCircleHover)",
             },
           }}
-          onClick={() => handleOpenColor("Add a Color Palette")}
+          onClick={() => handleOpenColor("Add a color palette")}
         >
           <AddColor />
         </Button>

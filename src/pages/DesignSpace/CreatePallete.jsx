@@ -58,7 +58,7 @@ const CreatePallete = ({ handleCloseModal, modalTitle }) => {
           <div className="rightBeside">
             <div className="input-group">
               <input
-                placeholder="Name of Color Pallete"
+                placeholder="Name of the color pallete"
                 style={{ border: "none" }}
               />
             </div>{" "}
@@ -113,7 +113,7 @@ const CreatePallete = ({ handleCloseModal, modalTitle }) => {
                 },
               }}
             >
-              Add Color Pallete
+              Add color pallete
             </Button>
           </div>
         </>

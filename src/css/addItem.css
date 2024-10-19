@@ -296,7 +296,7 @@
     padding: 0;
   }
   .search-section input {
-    font-size: 14px;
+    font-size: 0.875em;
   }
 
   .image-placeholder {

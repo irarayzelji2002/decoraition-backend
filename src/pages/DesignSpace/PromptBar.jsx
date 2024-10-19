@@ -7,8 +7,11 @@ import { Modal, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Textarea from "@mui/joy/Textarea";
 import AddImage from "./svg/AddImage";
-import { Add } from "@mui/icons-material";
 import AddColor from "./svg/AddColor";
+import IconButton from "@mui/joy/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Create } from "@mui/icons-material";
+import CreatePallete from "./CreatePallete";
 
 function PromptBar() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -275,30 +278,6 @@ function PromptBar() {
               style={{ display: "none" }}
               onChange={(e) => console.log(e.target.files[0])}
             />
-            {/* 
-            <MuiColorInput
-              sx={{
-                width: "100%",
-                margin: "10px",
-                "& .MuiInputBase-root": {
-                  color: "var(--color-white)", // Set input text color to white
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    border: "2px solid var(--borderInput)",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "var(--borderInput)", // Set border color on hover
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "var(--brightFont)", // Set border color on focus
-                  },
-                },
-              }}
-              format="hex"
-              value={value}
-              onChange={handleChange}
-            /> */}
           </div>
         </Box>
       </Modal>
@@ -308,66 +287,10 @@ function PromptBar() {
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
       >
-        <Box
-          sx={{
-            backgroundColor: "var(--color-tertiary)",
-            color: "var(--color-white)",
-            width: "500px",
-            maxWidth: "90%",
-            borderRadius: "20px",
-            p: 3,
-            position: "relative",
-            margin: "auto",
-            top: "20%",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <h2
-              id="modal-title"
-              style={{ color: "var(--color-white)", margin: 0 }}
-            >
-              {modalTitle}
-            </h2>
-            <Button
-              onClick={handleCloseModal}
-              sx={{
-                backgroundColor: "transparent",
-                color: "var(--color-white)",
-                minWidth: "auto",
-                padding: "0",
-                "&:hover": { backgroundColor: "transparent" },
-              }}
-            >
-              <CloseIcon />
-            </Button>
-          </div>
-
-          <div style={{ marginTop: "30px" }}>
-            <MuiColorInput
-              sx={{
-                width: "100%",
-                margin: "10px",
-                "& .MuiInputBase-root": {
-                  color: "var(--color-white)", // Set input text color to white
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    border: "2px solid var(--borderInput)",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "var(--borderInput)", // Set border color on hover
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "var(--brightFont)", // Set border color on focus
-                  },
-                },
-              }}
-              format="hex"
-              value={value}
-              onChange={handleChange}
-            />
-          </div>
-        </Box>
+        <CreatePallete
+          handleCloseModal={handleCloseModal}
+          modalTitle={modalTitle}
+        />
       </Modal>
     </div>
   );

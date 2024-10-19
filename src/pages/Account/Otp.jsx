@@ -242,19 +242,13 @@ export default function OneTP() {
   const email = location.state?.email;
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 0) {
-          clearInterval(timer);
-          handleExpiredOTP();
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
+    if (timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [timeLeft]);
 
   const handleExpiredOTP = async () => {
     try {
@@ -262,13 +256,15 @@ export default function OneTP() {
     } catch (error) {
       console.error("Failed to expire OTP:", error);
     }
+    setError("");
   };
 
   const handleVerify = async () => {
     try {
       const response = await axios.post("/api/verify-otp", { email, otp });
       if (response.data.success) {
-        navigate("/change", { state: { email } });
+        const token = response.data.token;
+        navigate("/change", { state: { email, token } });
       }
     } catch (error) {
       setError(error.response?.data?.message || "Invalid OTP");
@@ -278,12 +274,18 @@ export default function OneTP() {
   const handleResend = async () => {
     try {
       await axios.post("/api/resend-otp", { email });
-
-      setTimeLeft(300);
+      setTimeLeft(300); // Reset the time to 5 minutes
     } catch (error) {
       setError("Failed to resend OTP");
     }
+    setError("");
   };
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      handleExpiredOTP(); // Expire OTP if the timer hits zero
+    }
+  }, [timeLeft]);
 
   return (
     <div className="bg">
@@ -294,7 +296,7 @@ export default function OneTP() {
         <h2 style={{ marginLeft: "10px" }}>Verify your account</h2>
 
         <center>
-          <h5>Enter the OTP code sent to mam**03**@gmail.com</h5>
+          <h5>Enter the OTP code sent to {email}</h5>
           {error && <p>{error}</p>}
           <Box
             sx={{
@@ -304,8 +306,7 @@ export default function OneTP() {
               gap: 2,
             }}
           >
-            <OTP separator={<span>-</span>} value={otp} onChange={setOtp} length={5} />
-            <span>{otp}</span>
+            <OTP separator={<span>-</span>} value={otp} onChange={setOtp} length={6} />
           </Box>
           <h5>
             Didn’t receive the OTP code?

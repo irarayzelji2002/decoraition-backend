@@ -97,7 +97,8 @@ const Signup = () => {
       if (!/[!@#$%^&*]/.test(password))
         formErrors.password = "Password must contain at least 1 special character";
     }
-    if (confirmPassword !== password) formErrors.confirmPassword = "Passwords do not match";
+    if (!confirmPassword) formErrors.confirmPassword = "Confirm password is required";
+    else if (confirmPassword !== password) formErrors.confirmPassword = "Passwords do not match";
 
     // Returning early if there are form errors
     if (Object.keys(formErrors).length > 0) {

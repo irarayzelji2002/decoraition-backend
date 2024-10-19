@@ -26,6 +26,7 @@
     "dotenv": "^16.4.5",
     "env-cmd": "^10.1.0",
     "firebase": "^10.13.1",
+    "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "mui-color-input": "^4.0.0",
     "parse-full-name": "^1.2.6",

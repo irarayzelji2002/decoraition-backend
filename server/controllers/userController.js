@@ -3,12 +3,13 @@ const { createUserWithEmailAndPassword, signInWithEmailAndPassword } = require("
 const { ref, uploadBytes, getDownloadURL, deleteObject } = require("firebase/storage");
 const { doc, getDoc } = require("firebase/firestore");
 
-const emailjs = require("@emailjs/browser");
-const {
-  REACT_APP_EMAILJS_SERVICE_ID,
-  REACT_APP_EMAILJS_TEMPLATE_ID,
-  REACT_APP_EMAILJS_PUBLIC_KEY,
-} = process.env;
+const { Resend } = require("resend");
+const resend = new Resend(process.env.REACT_APP_RESEND_API_KEY);
+const jwt = require("jsonwebtoken");
+
+// const crypto = require("crypto");
+// const secret = crypto.randomBytes(32).toString("hex");
+// console.log("secret", secret);
 
 // Create User
 exports.createUser = async (req, res) => {
@@ -204,6 +205,24 @@ exports.loginUserOAuth = async (req, res) => {
   }
 };
 
+const sendEmail = async (to, subject, body) => {
+  try {
+    // "decoraition@gmail.com" or "no-reply@decoraition.org"
+    const response = await resend.emails.send({
+      from: "no-reply@decoraition.org",
+      to,
+      subject,
+      html: body,
+    });
+
+    console.log("Email sent successfully:", response);
+    return response;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error("Failed to send email");
+  }
+};
+
 // Send OTP if email exists
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -212,22 +231,29 @@ exports.forgotPassword = async (req, res) => {
     if (userDoc.empty) {
       return res.status(404).json({ message: "Email not found" });
     }
-    const username = userDoc.docs[0].username;
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    await db.collection("users").doc(userDoc.docs[0].id).update({ otp });
+    const userData = userDoc.docs[0].data();
+    const userId = userDoc.docs[0].id;
 
-    // Send email with OTP using emailjs
-    const templateParams = {
-      from_email: "decoraition@gmail.com",
-      to_email: email,
-      to_name: username,
-      otp: otp,
-    };
-    await emailjs.send(
-      REACT_APP_EMAILJS_SERVICE_ID,
-      REACT_APP_EMAILJS_TEMPLATE_ID,
-      templateParams,
-      REACT_APP_EMAILJS_PUBLIC_KEY
+    // check if connected account
+    const connectedAccount = userData.connectedAccount;
+    if (connectedAccount !== null) {
+      let provider = "linked";
+      if (connectedAccount === 0) provider = "Google";
+      else if (connectedAccount === 1) provider = "Facebook";
+      return res.status(404).json({
+        message: `Email is using a ${provider} account, login with your ${provider} account.`,
+      });
+    }
+
+    const username = userData.username;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    await db.collection("users").doc(userId).update({ otp });
+
+    // Send email with OTP using resend
+    await sendEmail(
+      email,
+      "DecorAItion Forgot Password OTP",
+      `<p>Hi ${username}! Here is your OTP: ${otp}. It will expire in 5 minutes.</p>`
     );
     res.json({ success: true });
   } catch (error) {
@@ -250,7 +276,8 @@ exports.verifyOTP = async (req, res) => {
     }
     // Remove OTP from user document
     await db.collection("users").doc(userDoc.docs[0].id).update({ otp: null });
-    res.json({ success: true });
+    const token = jwt.sign({ email }, process.env.REACT_APP_JWT_SECRET, { expiresIn: "15m" }); //1m for testing
+    res.status(200).json({ success: true, token });
   } catch (error) {
     console.error("Error in verifyOTP:", error);
     res.status(500).json({ message: "Server error" });
@@ -269,18 +296,11 @@ exports.resendOTP = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await db.collection("users").doc(userDoc.docs[0].id).update({ otp });
 
-    // Send email with new OTP using emailjs
-    const templateParams = {
-      from_email: "decoraition@gmail.com",
-      to_email: email,
-      to_name: username,
-      otp: otp,
-    };
-    await emailjs.send(
-      REACT_APP_EMAILJS_SERVICE_ID,
-      REACT_APP_EMAILJS_TEMPLATE_ID,
-      templateParams,
-      REACT_APP_EMAILJS_PUBLIC_KEY
+    // Send email with new OTP using resend
+    await sendEmail(
+      email,
+      "DecorAItion Forgot Password OTP",
+      `<p>Hi ${username}! Here is your OTP: ${otp}. It will expire in 5 minutes.</p>`
     );
     res.json({ success: true });
   } catch (error) {
@@ -297,6 +317,7 @@ exports.expireOTP = async (req, res) => {
     if (!userDoc.empty) {
       await db.collection("users").doc(userDoc.docs[0].id).update({ otp: null });
     }
+    console.log(`OTP cleared for ${email} (${userDoc.docs[0].id})`);
     res.json({ success: true });
   } catch (error) {
     console.error("Error in expireOTP:", error);
@@ -306,11 +327,18 @@ exports.expireOTP = async (req, res) => {
 
 // Change password
 exports.changePassword = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, newPassword, token } = req.body;
   try {
+    try {
+      jwt.verify(token, process.env.REACT_APP_JWT_SECRET);
+    } catch (error) {
+      console.log("Token verification error:", error);
+      return res.status(401).json({ message: "Invalid or expired token" });
+    }
+
     const user = await auth.getUserByEmail(email);
-    await auth.updateUser(user.uid, { password });
-    res.json({ success: true });
+    await auth.updateUser(user.uid, { password: newPassword });
+    res.status(200).json({ success: true });
   } catch (error) {
     res.status(500).json({ message: "Failed to change password" });
   }

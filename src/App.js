@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import { SharedPropsProvider } from "./contexts/SharedPropsContext";
 import { useAuth } from "./contexts/AuthContext.js";
 
@@ -36,13 +36,15 @@ import Version from "./pages/DesignSpace/Version.jsx";
 function ProtectedRoute({ children }) {
   const { user, userDoc, userDocFetched } = useAuth();
   if (!userDocFetched) return <Loading />;
-  return user && userDoc ? children : <Navigate to="/login" replace />;
+  if (!user || !userDoc) return <Navigate to="/login" replace />;
+  return children;
 }
 
 function AuthPublicRoute({ children }) {
   const { user, userDoc, userDocFetched } = useAuth();
   if (!userDocFetched) return <Loading />;
-  return !user && !userDoc ? children : <Navigate to="/homepage" replace />;
+  if (user && userDoc) return <Navigate to="/homepage" replace />;
+  return children;
 }
 
 function App() {

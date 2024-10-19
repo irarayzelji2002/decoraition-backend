@@ -23,17 +23,24 @@ export default function ForgotPass1() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setEmailError("");
 
-    //email validation
-    if (!email) {
+    const trimmedEmail = email.trim();
+    setEmail(trimmedEmail);
+
+    // Email validation
+    if (!trimmedEmail) {
       setEmailError("Email is required.");
+      return;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setEmailError("Invalid email format");
       return;
     }
 
+    // Call endpoint to check if email exists before sending otp & redorect to otp page
     try {
       const response = await axios.post("/api/forgot-password", { email });
       if (response.data.success) {
+        setEmailError("");
         navigate("/otp", { state: { email } });
       }
     } catch (error) {

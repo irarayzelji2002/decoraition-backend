@@ -1,11 +1,16 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import ChangePass from "../../components/ChangePass";
 import "../../css/forgotPass.css";
+import { showToast } from "../../functions/utils";
 
 export default function ChangePassw() {
   const location = useLocation();
-  const email = location.state?.email;
+  const { email, token } = location.state || {};
+  if (!email || !token) {
+    showToast("error", "Session invalid");
+    return <Navigate to="/forgot" replace />;
+  }
 
   return (
     <div className="bg-login">
@@ -13,7 +18,7 @@ export default function ChangePassw() {
         <h1>Forgot Password</h1>
       </div>
       <div className="modal-bg">
-        <ChangePass email={email} />
+        <ChangePass email={email} token={token} />
       </div>
     </div>
   );

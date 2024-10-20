@@ -112,7 +112,7 @@ const ShareModal = ({
                 sx={{
                   color: "var(--color-white)",
                   "&.Mui-checked": {
-                    color: "var(--brightFont)", // Change color when checked
+                    color: "var(--brightFont)",
                   },
                 }}
               />
@@ -140,15 +140,15 @@ const ShareModal = ({
               variant="contained"
               onClick={onNext}
               sx={{
-                width: "95%", // Button width
-                background: "var(--gradientButton)", // Gradient background
-                borderRadius: "20px", // Button border radius
-                color: "var(--color-white)", // Button text color
+                width: "95%",
+                background: "var(--gradientButton)",
+                borderRadius: "20px",
+                color: "var(--color-white)",
                 margin: "10px",
                 fontWeight: "bold",
                 textTransform: "none",
                 "&:hover": {
-                  background: "var(--gradientButtonHover)", // Reverse gradient on hover
+                  background: "var(--gradientButtonHover)",
                 },
               }}
             >
@@ -187,7 +187,7 @@ const ShareModal = ({
                 <Checkbox
                   checked={notifyPeople}
                   onChange={() => setNotifyPeople(!notifyPeople)}
-                  sx={{ color: "var(--color-white)" }} // Checkbox color
+                  sx={{ color: "var(--color-white)" }}
                 />
                 <Typography
                   variant="body2"
@@ -203,15 +203,15 @@ const ShareModal = ({
               variant="contained"
               onClick={onShareProject}
               sx={{
-                width: "92%", // Button width
-                background: "var(--gradientButton)", // Gradient background
-                borderRadius: "20px", // Button border radius
-                color: "var(--color-white)", // Button text color
+                width: "92%",
+                background: "var(--gradientButton)",
+                borderRadius: "20px",
+                color: "var(--color-white)",
                 margin: "16px",
                 fontWeight: "bold",
                 textTransform: "none",
                 "&:hover": {
-                  background: "var(--gradientButtonHover)", // Reverse gradient on hover
+                  background: "var(--gradientButtonHover)",
                 },
               }}
             >

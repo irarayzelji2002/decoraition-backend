@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EmailInput from "./EmailInput";
+import { Avatar } from "@mui/material";
 
 const ShareModal = ({
   isOpen,
@@ -164,6 +165,39 @@ const ShareModal = ({
               Assign roles and choose notification settings for the added
               collaborators.
             </Typography>
+
+            <div className="drawerUser">
+              <Avatar
+                sx={{
+                  width: 56,
+                  height: 56,
+                  marginBottom: "10px",
+                }}
+                src={""}
+              >
+                U
+              </Avatar>
+              <div>
+                <Typography variant="body1" style={{ fontWeight: "bold" }}>
+                  Guest
+                </Typography>
+                <Typography variant="caption">email@gmail.com</Typography>
+              </div>
+              <Select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                sx={{
+                  marginRight: "16px",
+                  backgroundColor: "#3E3E42",
+                  color: "var(--color-white)",
+                  marginLeft: "auto",
+                }}
+              >
+                <MenuItem value="Editor">Editor</MenuItem>
+                <MenuItem value="Commenter">Commenter</MenuItem>
+                <MenuItem value="Viewer">Viewer</MenuItem>
+              </Select>
+            </div>
 
             {collaborators.map((collaborator, index) => (
               <div key={index} style={{ marginBottom: "16px" }}>

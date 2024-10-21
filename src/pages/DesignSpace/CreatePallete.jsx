@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
-import { MuiColorInput } from "mui-color-input";
 import { ArrowBackIos } from "@mui/icons-material";
 import { ChromePicker } from "react-color";
 
@@ -140,6 +139,19 @@ const CreatePallete = ({ handleCloseModal, modalTitle }) => {
             </Button>
           </div>
 
+          <div
+            style={{
+              marginTop: "20px !important",
+              height: "5px",
+              padding: "10px",
+              width: "auto",
+              margin: "auto",
+              backgroundColor: value,
+              borderRadius: "10px",
+              border: "1px solid var(--color-grey)",
+            }}
+          ></div>
+
           <ChromePicker
             disableAlpha
             color={value}
@@ -150,7 +162,7 @@ const CreatePallete = ({ handleCloseModal, modalTitle }) => {
                   background: "transparent",
                   borderRadius: "10px",
                   boxShadow: "0 0 10px rgba(0, 0, 0, 0)",
-                  padding: "10px",
+                  marginTop: "20px",
                   width: "auto",
                   fontFamily: "Inter, sans-serif",
                   fontWeight: "500",
@@ -173,19 +185,32 @@ const CreatePallete = ({ handleCloseModal, modalTitle }) => {
               },
             }}
           />
-          <IconButton
-            aria-label="delete"
-            style={{
-              height: "12px",
-              marginLeft: "90%",
-            }}
-          >
-            <DeleteIcon
-              style={{
+          <div className="rightBeside">
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{
+                background: "var(--gradientButton)",
+                borderRadius: "20px",
                 color: "var(--color-white)",
+                fontWeight: "bold",
+                textTransform: "none",
+                "&:hover": {
+                  background: "var(--gradientButtonHover)", // Reverse gradient on hover
+                },
               }}
-            />
-          </IconButton>
+            >
+              Save Color
+            </Button>
+
+            <IconButton aria-label="delete">
+              <DeleteIcon
+                style={{
+                  color: "var(--color-white)",
+                }}
+              />
+            </IconButton>
+          </div>
         </>
       )}
     </Box>

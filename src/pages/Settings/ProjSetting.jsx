@@ -17,6 +17,7 @@ import {
 import "../../css/projSettings.css"; // Import the CSS file
 import PublicIcon from "@mui/icons-material/Public"; // Import the globe icon
 import { createTheme } from "@mui/material/styles";
+
 const theme = createTheme({
   components: {
     MuiSwitch: {
@@ -39,6 +40,7 @@ const theme = createTheme({
     },
   },
 });
+
 function DesignSettings() {
   const { projectId } = useParams(); // Get the designId parameter from the URL
   const [projectName, setProjectName] = useState("");
@@ -230,28 +232,10 @@ const SettingsContent = ({
 
       {/* Viewer Settings */}
       <Typography className="viewerSettingsTitle">Viewer settings</Typography>
-      <FormControlLabel
-        control={
-          <Switch
-            checked={allowDownload}
-            onChange={(e) => setAllowDownload(e.target.checked)}
-            color="warning"
-            sx={{
-              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                backgroundColor: "var(--inputBg)",
-              },
-              "& .MuiSwitch-thumb": {
-                backgroundImage: "var(--color-white)", // Apply gradient to the thumb
-              },
-              "& .MuiSwitch-track": {
-                backgroundColor: "var(--inputBg)", // Track color
-              },
-            }}
-          />
-        }
+      <CustomSwitch
         label="Allow to download"
-        labelPlacement="start"
-        className="viewerSettingsLabel"
+        checked={allowDownload}
+        onChange={setAllowDownload}
       />
 
       {/* The following section is only for the Project tab */}
@@ -261,138 +245,30 @@ const SettingsContent = ({
           <Typography className="inactivityTitle">
             Inactivity and deletion
           </Typography>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={inactivityEnabled}
-                onChange={(e) => setInactivityEnabled(e.target.checked)}
-                color="warning"
-                sx={{
-                  "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                    backgroundColor: "var(--inputBg)",
-                  },
-                  "& .MuiSwitch-thumb": {
-                    backgroundImage: "var(--color-white)", // Apply gradient to the thumb
-                  },
-                  "& .MuiSwitch-track": {
-                    backgroundColor: "var(--inputBg)", // Track color
-                  },
-                }}
-              />
-            }
+          <CustomSwitch
             label="Enable inactivity and deletion"
-            labelPlacement="start"
-            className="inactivityLabel"
+            checked={inactivityEnabled}
+            onChange={setInactivityEnabled}
           />
 
           {/* Inactivity Settings */}
           {inactivityEnabled && (
             <>
-              <Box className="inactivitySettings">
-                <Typography>
-                  Number of days before inactivity after user inactivity
-                </Typography>
-                <TextField
-                  type="number"
-                  value={inactivityDays}
-                  onChange={(e) => setInactivityDays(e.target.value)}
-                  className="inactivityTextField"
-                  inputProps={{
-                    style: {
-                      backgroundColor: "var(--bgcolor)",
-                      color: "var(--color-white)",
-                    },
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderColor: "var(--borderInput)",
-                      "& fieldset": {
-                        borderColor: "var(--borderInput)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "var(--bright-grey)",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "var(--bright-grey)",
-                      },
-                    },
-                    "& input": {
-                      color: "var(--color-white)",
-                    },
-                  }}
-                />
-              </Box>
-
-              <Box className="inactivitySettings">
-                <Typography>
-                  Number of days before deletion after project inactivity
-                </Typography>
-                <TextField
-                  type="number"
-                  value={deletionDays}
-                  onChange={(e) => setDeletionDays(e.target.value)}
-                  className="inactivityTextField"
-                  inputProps={{
-                    style: {
-                      backgroundColor: "var(--bgcolor)",
-                      color: "var(--color-white)",
-                    },
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderColor: "var(--borderInput)",
-                      "& fieldset": {
-                        borderColor: "var(--borderInput)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "var(--bright-grey)",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "var(--bright-grey)",
-                      },
-                    },
-                    "& input": {
-                      color: "var(--color-white)",
-                    },
-                  }}
-                />
-              </Box>
-
-              <Box className="inactivitySettings">
-                <Typography>
-                  Notify collaborators number of days prior to entering
-                  inactivity mode and deletion
-                </Typography>
-                <TextField
-                  type="number"
-                  value={notifyDays}
-                  onChange={(e) => setNotifyDays(e.target.value)}
-                  className="inactivityTextField"
-                  inputProps={{
-                    style: {
-                      backgroundColor: "var(--bgcolor)",
-                      color: "var(--color-white)",
-                    },
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderColor: "var(--borderInput)",
-                      "& fieldset": {
-                        borderColor: "var(--borderInput)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "var(--bright-grey)",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "var(--bright-grey)",
-                      },
-                    },
-                    "& input": {
-                      color: "var(--color-white)",
-                    },
-                  }}
-                />
-              </Box>
+              <InactivitySetting
+                label="Number of days before inactivity after user inactivity"
+                value={inactivityDays}
+                onChange={setInactivityDays}
+              />
+              <InactivitySetting
+                label="Number of days before deletion after project inactivity"
+                value={deletionDays}
+                onChange={setDeletionDays}
+              />
+              <InactivitySetting
+                label="Notify collaborators number of days prior to entering inactivity mode and deletion"
+                value={notifyDays}
+                onChange={setNotifyDays}
+              />
             </>
           )}
         </>
@@ -405,3 +281,115 @@ const SettingsContent = ({
     </div>
   </ThemeProvider>
 );
+
+// Custom Switch Component for reusability
+const CustomSwitch = ({ label, checked, onChange }) => (
+  <Box
+    className="customSwitchContainer"
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+      marginBottom: "1rem",
+    }}
+  >
+    <Typography className="switchLabel">{label}</Typography>
+    <Switch
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      color="warning"
+      sx={switchStyles}
+    />
+  </Box>
+);
+
+// Inactivity Setting Component for input fields
+const InactivitySetting = ({ label, value, onChange }) => (
+  <Box className="inactivitySettings">
+    <Typography>{label}</Typography>
+    <TextField
+      type="number"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="inactivityTextField"
+      inputProps={textFieldInputProps}
+      sx={textFieldStyles}
+    />
+  </Box>
+);
+
+// Reusable styles for MenuItem
+const menuItemStyles = {
+  backgroundColor: "var(--bgColor)",
+  color: "var(--color-white)",
+  "&:hover": {
+    backgroundColor: "var(--dropdownHover)",
+    color: "var(--color-white)",
+  },
+  "&.Mui-selected": {
+    backgroundColor: "var(--dropdownSelected)",
+    color: "var(--color-white)",
+  },
+};
+
+// Styles for Switch
+const switchStyles = {
+  "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+    backgroundColor: "var(--inputBg)",
+  },
+  "& .MuiSwitch-thumb": {
+    backgroundImage: "var(--color-white)",
+  },
+  "& .MuiSwitch-track": {
+    backgroundColor: "var(--inputBg)",
+  },
+};
+
+// Styles for Select
+const selectStyles = {
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "var(--inputBg)",
+    borderWidth: 2, // border thickness
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: "var(--bright-grey)", //  hover
+  },
+  "& .MuiSelect-select": {
+    color: "var(--color-white)", //
+  },
+
+  "& .MuiSelect-icon": {
+    color: "var(--color-white)", // dropdown arrow icon color to white
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: "var(--bright-grey)", // focused state
+  },
+};
+
+// Styles for TextField
+const textFieldStyles = {
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderWidth: 2, // border thickness
+  },
+  "& .MuiOutlinedInput-root": {
+    borderColor: "var(--borderInput)",
+
+    "& fieldset": {
+      borderColor: "var(--borderInput)",
+    },
+    "&:hover fieldset": {
+      borderColor: "var(--bright-grey)",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "var(--bright-grey)",
+    },
+  },
+  "& input": {
+    color: "var(--color-white)", // input text color
+  },
+};
+
+const textFieldInputProps = {
+  style: { color: "var(--color-white)" }, // Input text color
+};

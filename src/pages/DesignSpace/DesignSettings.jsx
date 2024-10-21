@@ -240,19 +240,24 @@ const SettingsContent = ({
 
 // Custom Switch Component for reusability
 const CustomSwitch = ({ label, checked, onChange }) => (
-  <FormControlLabel
-    control={
-      <Switch
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        color="warning"
-        sx={switchStyles}
-      />
-    }
-    label={label}
-    labelPlacement="start"
-    className="viewerSettingsLabel"
-  />
+  <Box
+    className="customSwitchContainer"
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+      marginBottom: "1rem",
+    }}
+  >
+    <Typography className="switchLabel">{label}</Typography>
+    <Switch
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      color="warning"
+      sx={switchStyles}
+    />
+  </Box>
 );
 
 // Inactivity Setting Component for input fields

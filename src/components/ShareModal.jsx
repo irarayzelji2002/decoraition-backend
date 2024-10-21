@@ -28,6 +28,13 @@ const ShareModal = ({
   const [newCollaborator, setNewCollaborator] = useState("");
   const [role, setRole] = useState("Viewer");
   const [notifyPeople, setNotifyPeople] = useState(false);
+  const [isViewer, setIsViewer] = useState(false);
+
+  const users = [
+    { name: "Guest 1", email: "email1@gmail.com" },
+    { name: "Guest 2", email: "email2@gmail.com" },
+    { name: "Guest 3", email: "email3@gmail.com" },
+  ];
 
   return (
     <Dialog
@@ -57,7 +64,7 @@ const ShareModal = ({
           }}
           onClick={onClose}
         />
-        {isSecondPage ? "Set Roles and Notifications" : "Add Collaborators"}
+        {isSecondPage ? "Manage Access" : "Add Collaborators"}
       </DialogTitle>
 
       <DialogContent
@@ -73,8 +80,14 @@ const ShareModal = ({
         }}
       >
         {!isSecondPage ? (
-          <div style={{ width: "auto", padding: "12px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ width: "auto", padding: "16px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                paddingLeft: "16px",
+              }}
+            >
               <EmailInput />
             </div>
             <Divider sx={{ backgroundColor: "grey", marginBottom: "16px" }} />
@@ -162,10 +175,48 @@ const ShareModal = ({
               variant="body1"
               sx={{ marginBottom: "16px", padding: "12px" }}
             >
-              Assign roles and choose notification settings for the added
-              collaborators.
+              People with access
             </Typography>
-
+            {users.map((user, index) => (
+              <div className="drawerUser" key={index}>
+                <Avatar
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    marginBottom: "10px",
+                  }}
+                  src={""}
+                >
+                  {user.name.charAt(0)}
+                </Avatar>
+                <div>
+                  <Typography variant="body1" style={{ fontWeight: "bold" }}>
+                    {user.name}
+                  </Typography>
+                  <Typography variant="caption">{user.email}</Typography>
+                </div>
+                <Select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  sx={{
+                    marginRight: "16px",
+                    backgroundColor: "#3E3E42",
+                    color: "var(--color-white)",
+                    marginLeft: "auto",
+                  }}
+                >
+                  <MenuItem value="Editor">Editor</MenuItem>
+                  <MenuItem value="Commenter">Commenter</MenuItem>
+                  <MenuItem value="Viewer">Viewer</MenuItem>
+                </Select>
+              </div>
+            ))}
+            <Typography
+              variant="body1"
+              sx={{ marginBottom: "16px", padding: "12px" }}
+            >
+              General Access
+            </Typography>
             <div className="drawerUser">
               <Avatar
                 sx={{
@@ -175,62 +226,35 @@ const ShareModal = ({
                 }}
                 src={""}
               >
-                U
+                W
               </Avatar>
-              <div>
-                <Typography variant="body1" style={{ fontWeight: "bold" }}>
-                  Guest
-                </Typography>
-                <Typography variant="caption">email@gmail.com</Typography>
-              </div>
-              <Select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                sx={{
-                  marginRight: "16px",
-                  backgroundColor: "#3E3E42",
-                  color: "var(--color-white)",
-                  marginLeft: "auto",
-                }}
-              >
-                <MenuItem value="Editor">Editor</MenuItem>
-                <MenuItem value="Commenter">Commenter</MenuItem>
-                <MenuItem value="Viewer">Viewer</MenuItem>
-              </Select>
-            </div>
 
-            {collaborators.map((collaborator, index) => (
-              <div key={index} style={{ marginBottom: "16px" }}>
-                <Typography variant="body2" color="var(--color-white)">
-                  {collaborator}
-                </Typography>
+              {isViewer ? (
+                <div>
+                  <Typography variant="body1" style={{ fontWeight: "bold" }}>
+                    Anyone with link
+                  </Typography>
+                  <Typography variant="caption">
+                    Anyone on the Internet can access as an Editor
+                  </Typography>
+                </div>
+              ) : (
                 <Select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
                   sx={{
                     marginRight: "16px",
                     backgroundColor: "#3E3E42",
                     color: "var(--color-white)",
                   }}
                 >
-                  <MenuItem value="Editor">Editor</MenuItem>
+                  <MenuItem value="Editor">
+                    Anyone with link Anyone on the Internet can access as an
+                    Editor
+                  </MenuItem>
                   <MenuItem value="Commenter">Commenter</MenuItem>
                   <MenuItem value="Viewer">Viewer</MenuItem>
                 </Select>
-
-                <Checkbox
-                  checked={notifyPeople}
-                  onChange={() => setNotifyPeople(!notifyPeople)}
-                  sx={{ color: "var(--color-white)" }}
-                />
-                <Typography
-                  variant="body2"
-                  sx={{ display: "inline", color: "var(--color-white)" }}
-                >
-                  Notify
-                </Typography>
-              </div>
-            ))}
+              )}
+            </div>
 
             <Button
               fullWidth

@@ -1,8 +1,8 @@
 function AddImage() {
   return (
     <svg
-      width="22"
-      height="22"
+      width="25"
+      height="25"
       viewBox="0 0 391 322"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -28,8 +28,8 @@ export default AddImage;
 export function AddItem() {
   return (
     <svg
-      width="19"
-      height="20"
+      width="30"
+      height="30"
       viewBox="0 0 19 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -48,8 +48,8 @@ export function AddItem() {
 export function AddBudget() {
   return (
     <svg
-      width="23"
-      height="20"
+      width="30"
+      height="30"
       viewBox="0 0 23 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -74,8 +74,8 @@ export function AddBudget() {
 export function AddProject() {
   return (
     <svg
-      width="24"
-      height="20"
+      width="30"
+      height="30"
       viewBox="0 0 24 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -99,8 +99,8 @@ export function AddProject() {
 export function AddDesign() {
   return (
     <svg
-      width="26"
-      height="20"
+      width="30"
+      height="30"
       viewBox="0 0 26 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -126,8 +126,8 @@ export function AddDesign() {
 export function ChangePlan() {
   return (
     <svg
-      width="24"
-      height="26"
+      width="30"
+      height="30"
       viewBox="0 0 21 21"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -154,8 +154,8 @@ export function ChangePlan() {
 export function ChangeOrder() {
   return (
     <svg
-      width="24"
-      height="26"
+      width="30"
+      height="30"
       viewBox="0 0 19 22"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -180,8 +180,8 @@ export function ChangeOrder() {
 export function AdjustPin() {
   return (
     <svg
-      width="24"
-      height="26"
+      width="30"
+      height="30"
       viewBox="0 0 19 22"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -202,8 +202,8 @@ export function AdjustPin() {
 export function AddPin() {
   return (
     <svg
-      width="24"
-      height="26"
+      width="30"
+      height="30"
       viewBox="0 0 18 22"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

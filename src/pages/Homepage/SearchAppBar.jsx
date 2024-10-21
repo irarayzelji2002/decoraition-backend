@@ -123,9 +123,6 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             />
           </Paper>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ marginRight: 2 }} onClick={handleSettingsClick}>
-            <SettingsIcon sx={{ color: "var(--color-white)" }} />
-          </Box>
           <Box sx={{ marginRight: 2 }}>
             <Badge
               sx={{

@@ -19,16 +19,15 @@ import { Avatar } from "@mui/material";
 const ShareModal = ({
   isOpen,
   onClose,
-  onAddCollaborator,
   onNext,
   onShareProject,
-  collaborators,
   isSecondPage,
 }) => {
-  const [newCollaborator, setNewCollaborator] = useState("");
   const [role, setRole] = useState("Viewer");
   const [notifyPeople, setNotifyPeople] = useState(false);
   const [isViewer, setIsViewer] = useState(false);
+  const [genAccess, setGenAccess] = useState("Restrict");
+  const [genRole, setGenRole] = useState("Viewer");
 
   const users = [
     { name: "Guest 1", email: "email1@gmail.com" },
@@ -217,12 +216,13 @@ const ShareModal = ({
             >
               General Access
             </Typography>
-            <div className="drawerUser">
+            <div className="drawerUser" style={{ gap: "0px" }}>
               <Avatar
                 sx={{
                   width: 56,
                   height: 56,
                   marginBottom: "10px",
+                  marginRight: "16px",
                 }}
                 src={""}
               >
@@ -239,20 +239,53 @@ const ShareModal = ({
                   </Typography>
                 </div>
               ) : (
-                <Select
-                  sx={{
-                    marginRight: "16px",
-                    backgroundColor: "#3E3E42",
-                    color: "var(--color-white)",
-                  }}
-                >
-                  <MenuItem value="Editor">
-                    Anyone with link Anyone on the Internet can access as an
-                    Editor
-                  </MenuItem>
-                  <MenuItem value="Commenter">Commenter</MenuItem>
-                  <MenuItem value="Viewer">Viewer</MenuItem>
-                </Select>
+                <>
+                  <Select
+                    value={genAccess}
+                    onChange={(e) => setGenAccess(e.target.value)}
+                    sx={{
+                      backgroundColor: "#3E3E42",
+                      color: "var(--color-white)",
+                      width: "60%",
+                    }}
+                  >
+                    <MenuItem value="Public">
+                      <Typography
+                        variant="body1"
+                        style={{ fontWeight: "bold" }}
+                      >
+                        Anyone with link&nbsp;
+                      </Typography>
+                      <Typography variant="caption">
+                        Anyone on the Internet can access as an Editor
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem value="Restrict">
+                      <Typography
+                        variant="body1"
+                        style={{ fontWeight: "bold" }}
+                      >
+                        Restricted&nbsp;
+                      </Typography>
+                      <Typography variant="caption">
+                        Only collaborators have access
+                      </Typography>
+                    </MenuItem>
+                  </Select>
+                  <Select
+                    value={genRole}
+                    onChange={(e) => setGenRole(e.target.value)}
+                    sx={{
+                      backgroundColor: "#3E3E42",
+                      color: "var(--color-white)",
+                      width: "15%",
+                    }}
+                  >
+                    <MenuItem value="Editor">Editor</MenuItem>
+                    <MenuItem value="Commenter">Commenter</MenuItem>
+                    <MenuItem value="Viewer">Viewer</MenuItem>
+                  </Select>
+                </>
               )}
             </div>
 

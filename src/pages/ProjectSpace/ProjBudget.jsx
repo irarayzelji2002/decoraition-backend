@@ -136,6 +136,7 @@ function ProjBudget() {
                         src="../../img/logoWhitebg.png"
                         alt={`design preview `}
                         className="image-preview"
+                        style={{ marginRight: "10px" }}
                       />
                     </div>
                   </div>

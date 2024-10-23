@@ -18,6 +18,7 @@ import BottomBarDesign from "./BottomBarProject";
 import Loading from "../../components/Loading";
 import DesignIcon from "../../components/DesignIcon";
 import Dropdowns from "../../components/Dropdowns";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import "../../css/seeAll.css";
 import "../../css/project.css";
 import {
@@ -28,7 +29,8 @@ import {
 import { Button } from "@mui/material";
 import { AddDesign, AddProject } from "../DesignSpace/svg/AddImage";
 import { HorizontalIcon, VerticalIcon } from "./svg/ExportIcon";
-import DesignSvg from "../Homepage/svg/DesignSvg";
+import { Typography } from "@mui/material";
+import { Delete as DeleteIcon } from "@mui/icons-material";
 
 function Project() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -40,8 +42,16 @@ function Project() {
   const [designs, setDesigns] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [isVertical, setIsVertical] = useState(false);
   const navigate = useNavigate();
 
+  const handleVerticalClick = () => {
+    setIsVertical(true);
+  };
+
+  const handleHorizontalClick = () => {
+    setIsVertical(false);
+  };
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -209,30 +219,106 @@ function Project() {
           className="button-container"
           style={{ display: "flex", marginLeft: "auto" }}
         >
-          <Button style={{ marginRight: "10px" }}>
+          <Button
+            style={{ marginRight: "10px" }}
+            onClick={handleHorizontalClick}
+          >
             <HorizontalIcon />
           </Button>
-          <Button>
+          <Button onClick={handleVerticalClick}>
             <VerticalIcon />
           </Button>
         </div>
       </div>
       <div style={{ paddingBottom: "20%" }}>
-        <div className="layout">
-          {designs.length > 0 &&
-            designs.slice(0, 6).map((design) => (
-              <DesignIcon
-                key={design.id}
-                name={design.name}
-                designId={design.id}
-                onDelete={() => handleDeleteDesign(projectId, design.id)}
-                onOpen={() =>
-                  navigate(`/design/${design.id}`, {
-                    state: { designId: design.id },
-                  })
-                }
-              />
-            ))}
+        {isVertical && (
+          <div
+            className="design-item"
+            style={{ backgroundColor: "transparent", border: "none" }}
+          >
+            <div className="list-content">
+              <Typography
+                variant="h6"
+                className="ellipsis-text"
+                style={{ width: "20%" }}
+              >
+                Name
+              </Typography>
+
+              <Typography variant="body2" className="ellipsis-text">
+                Owner
+              </Typography>
+              <Typography variant="body2" className="ellipsis-text">
+                Date Modified
+              </Typography>
+              <Typography variant="body2" className="ellipsis-text">
+                Created
+              </Typography>
+              <IconButton style={{ opacity: 0 }}>
+                <MoreVertIcon style={{ color: "var(--color-white)" }} />
+              </IconButton>
+            </div>
+          </div>
+        )}
+        <div className={`layout ${isVertical ? "vertical" : ""}`}>
+          {isVertical
+            ? designs.length > 0 &&
+              designs.slice(0, 6).map((design) => (
+                <div
+                  key={design.id}
+                  className="design-item"
+                  onClick={() =>
+                    navigate(`/design/${design.id}`, {
+                      state: { designId: design.id },
+                    })
+                  }
+                >
+                  <div className="list-content">
+                    <Typography
+                      variant="h6"
+                      className="ellipsis-text"
+                      style={{ width: "20%" }}
+                    >
+                      {design.name}
+                    </Typography>
+
+                    <Typography variant="body2" className="ellipsis-text">
+                      {/* Owner */}
+                      Me
+                    </Typography>
+                    <Typography variant="body2" className="ellipsis-text">
+                      {/* Date Modified */}
+                      Dec 2,2021
+                    </Typography>
+                    <Typography variant="body2" className="ellipsis-text">
+                      {/* Created */}
+                      Dec 1,2021
+                    </Typography>
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent the div click event
+                        // Handle three dots icon click
+                      }}
+                    >
+                      <MoreVertIcon style={{ color: "var(--color-white)" }} />
+                    </IconButton>
+                  </div>
+                </div>
+              ))
+            : designs.length > 0 &&
+              designs.slice(0, 6).map((design) => (
+                <DesignIcon
+                  key={design.id}
+                  name={design.name}
+                  designId={design.id}
+                  onDelete={() => handleDeleteDesign(projectId, design.id)}
+                  onOpen={() =>
+                    navigate(`/design/${design.id}`, {
+                      state: { designId: design.id },
+                    })
+                  }
+                />
+              ))}
         </div>
         {designs.length === 0 && (
           <div className="no-content">

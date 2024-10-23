@@ -127,6 +127,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
       sx={{
         "& .MuiDrawer-paper": {
           width: { xs: "80%", sm: "25%" },
+          minWidth: "300px",
           backgroundColor: darkMode
             ? "var(--bgMain)"
             : "var(--nav-card-modal )",
@@ -153,15 +154,15 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
           <h2
             className="navName"
             style={{
-              fontSize: "1.75em",
+              fontSize: "1.5em",
               marginTop: "-16px",
-              width: "60%",
+              width: "auto",
             }}
           >
             DecorAItion
           </h2>
           <IconButton
-            sx={{ color: "white", marginLeft: "6px" }}
+            sx={{ color: "white", marginLeft: "auto" }}
             onClick={toggleDarkMode}
           >
             <BedtimeIcon sx={{ color: "var(--color-white)" }} />

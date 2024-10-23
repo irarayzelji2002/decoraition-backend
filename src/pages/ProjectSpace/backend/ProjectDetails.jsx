@@ -89,12 +89,7 @@ export const handleCreateDesign = async (projectId, navigate) => {
   } catch (error) {
     console.error("Error creating design: ", error);
     toast.error("Error creating design! Please try again.", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
+      className: "custom-toast-success", // Apply custom class name
     });
   }
 };
@@ -141,19 +136,7 @@ export const useHandleNameChange = (
       await updateDoc(projectRef, { name: newName });
       setIsEditingName(false);
       toast.success("Design name updated successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
+        className: "custom-toast-success", // Apply custom class name
       });
     } catch (error) {
       console.error("Error updating design name:", error);
@@ -233,20 +216,7 @@ const saveData = async (projectId, formData) => {
       reminders: formData.reminders,
     });
     toast.success("Document successfully written!", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      style: {
-        color: "var(--color-white)",
-        backgroundColor: "var(--inputBg)",
-      },
-      progressStyle: {
-        backgroundColor: "var(--brightFont)",
-      },
-      onClose: () => window.history.back(),
+      className: "custom-toast-success", // Apply custom class name
     });
   } catch (e) {
     console.error("Error adding document: ", e);
@@ -283,19 +253,7 @@ export const deleteTask = async (taskId) => {
     const taskRef = doc(db, "events", taskId);
     await deleteDoc(taskRef);
     toast.success("Task successfully deleted!", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      style: {
-        color: "var(--color-white)",
-        backgroundColor: "var(--inputBg)",
-      },
-      progressStyle: {
-        backgroundColor: "var(--brightFont)",
-      },
+      className: "custom-toast-success", // Apply custom class name
     });
   } catch (e) {
     console.error("Error deleting document: ", e);
@@ -315,29 +273,12 @@ export const updateTask = async (userId, projectId, taskId, updatedData) => {
     const taskRef = doc(db, "events", taskId);
     await updateDoc(taskRef, updatedData);
     toast.success("Task updated successfully!", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      style: {
-        color: "var(--color-white)",
-        backgroundColor: "var(--inputBg)",
-      },
-      progressStyle: {
-        backgroundColor: "var(--brightFont)",
-      },
+      className: "custom-toast-success", // Apply custom class name
     });
   } catch (error) {
     console.error("Error updating task:", error);
     toast.error("Error updating task! Please try again.", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
+      className: "custom-toast-success", // Apply custom class name
     });
   }
 };

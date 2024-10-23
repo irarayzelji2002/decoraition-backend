@@ -75,7 +75,11 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
           paddingTop: "10px",
         }}
       >
-        <Toolbar sx={{ backgroundColor: "transparent" }}>
+        <Toolbar
+          sx={{
+            backgroundColor: "transparent",
+          }}
+        >
           <IconButton
             size="large"
             edge="start"
@@ -86,7 +90,15 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
           >
             <MenuIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
+          <img
+            style={{
+              height: "30px",
 
+              marginRight: "14px",
+            }}
+            src="/img/Logo-Colored.png"
+            alt="logo"
+          />
           <Drawer anchor="left" open={isDrawerOpen} onClose={handleDrawerClose}>
             <DrawerComponent
               isDrawerOpen={isDrawerOpen}
@@ -99,7 +111,8 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             sx={{
               display: "flex",
               alignItems: "center",
-              width: "75%",
+              width: "100%",
+              marginRight: "12px",
               borderRadius: "24px",
               backgroundColor: "var(--inputBg)",
               transition: "width 0.3s ease-in-out",
@@ -122,62 +135,63 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
               inputProps={{ "aria-label": "search google maps" }}
             />
           </Paper>
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ marginRight: 2 }}>
-            <Badge
-              sx={{
-                "& .MuiBadge-badge": {
-                  backgroundColor: "var(--color-secondary)", // Optional: to set the badge color
-                  color: "white", // Optional: to set the text color inside the badge
-                },
-              }}
-              badgeContent={2}
-            >
-              <NotificationsIcon sx={{ color: "var(--color-white)" }} />
-            </Badge>
-          </Box>
-          <Box
-            sx={{
-              color: "var(--color-white)",
-              marginRight: 1,
-              fontSize: "1em",
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {username || "Guest"}
-          </Box>
-          {user?.profilePicture ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ marginRight: 2 }}>
+              <Badge
+                sx={{
+                  "& .MuiBadge-badge": {
+                    backgroundColor: "var(--color-secondary)", // Optional: to set the badge color
+                    color: "white", // Optional: to set the text color inside the badge
+                  },
+                }}
+                badgeContent={2}
+              >
+                <NotificationsIcon sx={{ color: "var(--color-white)" }} />
+              </Badge>
+            </Box>
             <Box
-              component="img"
               sx={{
-                height: 40,
-                width: 40,
-                borderRadius: "50%",
-                marginLeft: "auto",
-                marginRight: "12px",
-                border: "2px solid var(--brightFont)",
-              }}
-              alt="User Profile Picture"
-              src={user.profilePicture}
-            />
-          ) : (
-            <Avatar
-              sx={{
-                height: 40,
-                width: 40,
-                borderRadius: "50%",
-                marginLeft: "auto",
-                marginRight: "12px",
-                background: "var(--gradientButton)",
-                border: "2px solid var(--brightFont)",
-                color: "white", // Optional: to set the text color inside the avatar
+                color: "var(--color-white)",
+                marginRight: 1,
+                fontSize: "1em",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
               }}
             >
-              {username ? getInitial(username) : ""}
-            </Avatar>
-          )}
+              {username || "Guest"}
+            </Box>
+            {user?.profilePicture ? (
+              <Box
+                component="img"
+                sx={{
+                  height: 40,
+                  width: 40,
+                  borderRadius: "50%",
+                  marginLeft: "auto",
+                  marginRight: "12px",
+                  border: "2px solid var(--brightFont)",
+                }}
+                alt="User Profile Picture"
+                src={user.profilePicture}
+              />
+            ) : (
+              <Avatar
+                sx={{
+                  height: 40,
+                  width: 40,
+                  borderRadius: "50%",
+                  marginLeft: "auto",
+                  marginRight: "12px",
+                  background: "var(--gradientButton)",
+                  border: "2px solid var(--brightFont)",
+                  color: "white", // Optional: to set the text color inside the avatar
+                }}
+              >
+                {username ? getInitial(username) : ""}
+              </Avatar>
+            )}
+          </div>
         </Toolbar>
       </AppBar>
     </Box>

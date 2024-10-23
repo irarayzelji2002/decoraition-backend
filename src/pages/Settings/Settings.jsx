@@ -1,14 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  Tabs,
-  Tab,
-  Avatar,
-  Button,
-  IconButton,
-  TextField,
-  Box,
-  InputAdornment,
-} from "@mui/material";
+import { Tabs, Tab, Avatar, Button, Box } from "@mui/material";
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
@@ -113,9 +104,13 @@ function Settings() {
         await updateDoc(userDocRef, {
           [field]: userDetails[field],
         });
-        toast.success(`${field} updated successfully`);
+        toast.success(`${field} updated successfully`, {
+          className: "custom-toast-success", // Apply custom class name
+        });
       } catch (error) {
-        toast.error(`Error updating ${field}: ${error.message}`);
+        toast.error(`Error updating ${field}: ${error.message}`, {
+          className: "custom-toast-success", // Apply custom class name
+        });
       }
     }
   };

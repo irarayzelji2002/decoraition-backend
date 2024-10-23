@@ -78,19 +78,7 @@ const EditItem = () => {
       });
 
       toast.success(`${itemName} has been updated!`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
+        className: "custom-toast-success", // Apply custom class name
       });
       setTimeout(() => {
         navigate(-1);

@@ -130,25 +130,12 @@ function Budget() {
       await deleteDoc(itemRef); // Delete the document from Firestore
       setItems(items.filter((item) => item.id !== itemId)); // Update local state
       toast.success("Item has been deleted!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
+        className: "custom-toast-success", // Apply custom class name
       });
     } catch (error) {
       console.error("Error deleting item:", error);
       toast.error("Failed to delete item", {
-        position: "top-right",
-        autoClose: 3000,
+        className: "custom-toast-success", // Apply custom class name
       });
     }
   };

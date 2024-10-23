@@ -83,24 +83,14 @@ export default function LoginModal() {
         password
       );
       toast.success("You have been logged in", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
+        className: "custom-toast-success", // Apply custom class name
       });
       setTimeout(() => navigate("/homepage"), 1500);
     } catch (error) {
       console.error(error);
-      toast.error("Login failed. Please try again.");
+      toast.error("Login failed. Please try again.", {
+        className: "custom-toast-success", // Apply custom class name
+      });
       setErrors({ general: "Login failed. Please try again." });
     }
   };
@@ -129,24 +119,15 @@ export default function LoginModal() {
       });
 
       // Show success toast and navigate to homepage
-      toast.success("Login successful!", {
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
+      toast.success("Google Login successful!", {
+        className: "custom-toast-success", // Apply custom class name
       });
       setTimeout(() => navigate("/homepage"), 1500);
     } catch (error) {
       console.error(error);
-      toast.error("Login failed. Please try again.");
+      toast.error("Google Login failed. Please try again.", {
+        className: "custom-toast-success", // Apply custom class name
+      });
       setErrors({ general: "Login failed. Please try again." });
     }
   };

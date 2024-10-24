@@ -124,20 +124,7 @@ export const handleCreateDesign = async (navigate) => {
       });
 
       toast.success("Design created successfully!", {
-        icon: <CheckCircle />,
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
+        className: "custom-toast-success", // Apply custom class name
       });
 
       setTimeout(() => navigate(`/design/${designId}`), 1500);
@@ -145,12 +132,7 @@ export const handleCreateDesign = async (navigate) => {
   } catch (error) {
     console.error("Error creating design: ", error);
     toast.error("Error creating design! Please try again.", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
+      className: "custom-toast-success", // Apply custom class name
     });
   }
 };
@@ -191,12 +173,7 @@ export const handleCreateProject = async (navigate) => {
   } catch (error) {
     console.error("Error creating project: ", error);
     toast.error("Error creating project! Please try again.", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
+      className: "custom-toast-success", // Apply custom class name
     });
   }
 };

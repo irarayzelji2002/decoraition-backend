@@ -167,26 +167,41 @@ export default function Notifications() {
           Notification preferences
         </Typography>
         <FormGroup>
-          <FormControlLabel
-            label="Allow push notifications"
-            control={
-              <Switch
-                checked={allowNotif}
-                onChange={(event) => setAllowNotif(event.target.checked)}
-                aria-label="Allow push notifications"
-              />
-            }
-          />
-          <FormControlLabel
-            label="Enable deletion of notifications"
-            control={
-              <Switch
-                checked={deleteNotif}
-                onChange={(event) => setDeleteNotif(event.target.checked)}
-                aria-label="Enable deletion of notifications"
-              />
-            }
-          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Allow push notifications
+            </Typography>
+            <Switch
+              checked={allowNotif}
+              onChange={(event) => setAllowNotif(event.target.checked)}
+              aria-label="Allow push notifications"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Enable deletion of notifications
+            </Typography>
+            <Switch
+              checked={deleteNotif}
+              onChange={(event) => setDeleteNotif(event.target.checked)}
+              aria-label="Enable deletion of notifications"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
           <Typography
             variant="h6"
             gutterBottom
@@ -225,81 +240,116 @@ export default function Notifications() {
           Comment notification preferences
         </Typography>
         <FormGroup>
-          <FormControlLabel
-            label="Mentioned in a comment or reply"
-            control={
-              <Switch
-                checked={commentNotifications.mentionedInComment}
-                onChange={(event) =>
-                  handleCommentNotificationChange(
-                    "mentionedInComment",
-                    event.target.checked
-                  )
-                }
-                aria-label="Mentioned in a comment or reply"
-              />
-            }
-          />
-          <FormControlLabel
-            label="A new comment or reply if I'm the owner"
-            control={
-              <Switch
-                checked={commentNotifications.newCommentReplyAsOwner}
-                onChange={(event) =>
-                  handleCommentNotificationChange(
-                    "newCommentReplyAsOwner",
-                    event.target.checked
-                  )
-                }
-                aria-label="A new comment or reply if I'm the owner"
-              />
-            }
-          />
-          <FormControlLabel
-            label="A new comment or reply if I'm an editor or commenter"
-            control={
-              <Switch
-                checked={commentNotifications.newCommentReplyAsCollab}
-                onChange={(event) =>
-                  handleCommentNotificationChange(
-                    "newCommentReplyAsCollab",
-                    event.target.checked
-                  )
-                }
-                aria-label="A new comment or reply if I'm an editor or commenter"
-              />
-            }
-          />
-          <FormControlLabel
-            label="Comment is resolved or reopened if I'm the owner"
-            control={
-              <Switch
-                checked={commentNotifications.commentStatusChangeAsOwner}
-                onChange={(event) =>
-                  handleCommentNotificationChange(
-                    "commentStatusChangeAsOwner",
-                    event.target.checked
-                  )
-                }
-                aria-label="Comment is resolved or reopened if I'm the owner"
-              />
-            }
-          />
-          <FormControlLabel
-            label="Comment is resolved or reopened if I'm an editor or commenter"
-            control={
-              <Switch
-                checked={commentNotifications.commentStatusChangeAsCollab}
-                onChange={(event) =>
-                  handleCommentNotificationChange(
-                    "commentStatusChangeAsCollab",
-                    event.target.checked
-                  )
-                }
-                aria-label="Comment is resolved or reopened if I'm an editor or commenter"
-              />
-            }
-          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Mentioned in a comment or reply
+            </Typography>
+            <Switch
+              checked={commentNotifications.mentionedInComment}
+              onChange={(event) =>
+                handleCommentNotificationChange(
+                  "mentionedInComment",
+                  event.target.checked
+                )
+              }
+              aria-label="Mentioned in a comment or reply"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              A new comment or reply if I'm the owner
+            </Typography>
+            <Switch
+              checked={commentNotifications.newCommentReplyAsOwner}
+              onChange={(event) =>
+                handleCommentNotificationChange(
+                  "newCommentReplyAsOwner",
+                  event.target.checked
+                )
+              }
+              aria-label="A new comment or reply if I'm the owner"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              A new comment or reply if I'm an editor or commenter
+            </Typography>
+            <Switch
+              checked={commentNotifications.newCommentReplyAsCollab}
+              onChange={(event) =>
+                handleCommentNotificationChange(
+                  "newCommentReplyAsCollab",
+                  event.target.checked
+                )
+              }
+              aria-label="A new comment or reply if I'm an editor or commenter"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Comment is resolved or reopened if I'm the owner
+            </Typography>
+            <Switch
+              checked={commentNotifications.commentStatusChangeAsOwner}
+              onChange={(event) =>
+                handleCommentNotificationChange(
+                  "commentStatusChangeAsOwner",
+                  event.target.checked
+                )
+              }
+              aria-label="Comment is resolved or reopened if I'm the owner"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Comment is resolved or reopened if I'm an editor or commenter
+            </Typography>
+            <Switch
+              checked={commentNotifications.commentStatusChangeAsCollab}
+              onChange={(event) =>
+                handleCommentNotificationChange(
+                  "commentStatusChangeAsCollab",
+                  event.target.checked
+                )
+              }
+              aria-label="Comment is resolved or reopened if I'm an editor or commenter"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
         </FormGroup>
 
         <Typography
@@ -310,18 +360,25 @@ export default function Notifications() {
           Timeline notification preferences
         </Typography>
         <FormGroup>
-          <FormControlLabel
-            label="Calendar event reminders"
-            control={
-              <Switch
-                checked={timelineNotifications}
-                onChange={(event) =>
-                  setTimelineNotifications(event.target.checked)
-                }
-                aria-label="Calendar event reminders"
-              />
-            }
-          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Calendar event reminders
+            </Typography>
+            <Switch
+              checked={timelineNotifications}
+              onChange={(event) =>
+                setTimelineNotifications(event.target.checked)
+              }
+              aria-label="Calendar event reminders"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
         </FormGroup>
 
         <Typography
@@ -332,66 +389,94 @@ export default function Notifications() {
           Design notification preferences
         </Typography>
         <FormGroup>
-          <FormControlLabel
-            label="Design is renamedProject by a manager"
-            control={
-              <Switch
-                checked={designNotifications.renamedDesign}
-                onChange={(event) =>
-                  handleDesignNotificationChange(
-                    "renamedDesign",
-                    event.target.checked
-                  )
-                }
-                aria-label="Design is renamedProject by a manager"
-              />
-            }
-          />
-          <FormControlLabel
-            label="Design will be or is in inactive mode"
-            control={
-              <Switch
-                checked={designNotifications.inactiveDesign}
-                onChange={(event) =>
-                  handleDesignNotificationChange(
-                    "inactiveDesign",
-                    event.target.checked
-                  )
-                }
-                aria-label="Design will be or is in inactive mode"
-              />
-            }
-          />
-          <FormControlLabel
-            label="Design will be or is deletedProject"
-            control={
-              <Switch
-                checked={designNotifications.deletedDesign}
-                onChange={(event) =>
-                  handleDesignNotificationChange(
-                    "deletedDesign",
-                    event.target.checked
-                  )
-                }
-                aria-label="Design will be or is deletedProject"
-              />
-            }
-          />
-          <FormControlLabel
-            label="Your role in the design is changed by an owner or editor"
-            control={
-              <Switch
-                checked={designNotifications.changeRoleInDesign}
-                onChange={(event) =>
-                  handleDesignNotificationChange(
-                    "changeRoleInDesign",
-                    event.target.checked
-                  )
-                }
-                aria-label="Your role in the design is changed by an owner or editor"
-              />
-            }
-          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Design is renamed Project by a manager
+            </Typography>
+            <Switch
+              checked={designNotifications.renamedDesign}
+              onChange={(event) =>
+                handleDesignNotificationChange(
+                  "renamedDesign",
+                  event.target.checked
+                )
+              }
+              aria-label="Design is renamed Project by a manager"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Design will be or is in inactive mode
+            </Typography>
+            <Switch
+              checked={designNotifications.inactiveDesign}
+              onChange={(event) =>
+                handleDesignNotificationChange(
+                  "inactiveDesign",
+                  event.target.checked
+                )
+              }
+              aria-label="Design will be or is in inactive mode"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Design will be or is deleted
+            </Typography>
+            <Switch
+              checked={designNotifications.deletedDesign}
+              onChange={(event) =>
+                handleDesignNotificationChange(
+                  "deletedDesign",
+                  event.target.checked
+                )
+              }
+              aria-label="Design will be or is deleted"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography style={{ color: "var(--color-white)" }}>
+              Your role in the design is changed by an owner or editor
+            </Typography>
+            <Switch
+              checked={designNotifications.changeRoleInDesign}
+              onChange={(event) =>
+                handleDesignNotificationChange(
+                  "changeRoleInDesign",
+                  event.target.checked
+                )
+              }
+              aria-label="Your role in the design is changed by an owner or editor"
+              color="warning" // Set the color prop for the switch
+            />
+          </div>
         </FormGroup>
 
         <Typography
@@ -402,9 +487,17 @@ export default function Notifications() {
           Project notification preferences
         </Typography>
         <FormGroup>
-          <FormControlLabel
-            label="Project is renamedProject by a manager"
-            control={
+          <FormGroup>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography style={{ color: "var(--color-white)" }}>
+                Project is renamed by a manager
+              </Typography>
               <Switch
                 checked={projectNotifications.renamedProject}
                 onChange={(event) =>
@@ -413,13 +506,20 @@ export default function Notifications() {
                     event.target.checked
                   )
                 }
-                aria-label="Project is renamedProject by a manager"
+                aria-label="Project is renamed by a manager"
+                color="warning" // Set the color prop for the switch
               />
-            }
-          />
-          <FormControlLabel
-            label="Project will be or is in inactive mode"
-            control={
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography style={{ color: "var(--color-white)" }}>
+                Project will be or is in inactive mode
+              </Typography>
               <Switch
                 checked={projectNotifications.inactiveProject}
                 onChange={(event) =>
@@ -429,12 +529,19 @@ export default function Notifications() {
                   )
                 }
                 aria-label="Project will be or is in inactive mode"
+                color="warning" // Set the color prop for the switch
               />
-            }
-          />
-          <FormControlLabel
-            label="Project will be or is deletedProject"
-            control={
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography style={{ color: "var(--color-white)" }}>
+                Project will be or is deleted
+              </Typography>
               <Switch
                 checked={projectNotifications.deletedProject}
                 onChange={(event) =>
@@ -443,13 +550,20 @@ export default function Notifications() {
                     event.target.checked
                   )
                 }
-                aria-label="Project will be or is deletedProject"
+                aria-label="Project will be or is deleted"
+                color="warning" // Set the color prop for the switch
               />
-            }
-          />
-          <FormControlLabel
-            label="Your role in the project is changed by an manager"
-            control={
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography style={{ color: "var(--color-white)" }}>
+                Your role in the project is changed by a manager
+              </Typography>
               <Switch
                 checked={projectNotifications.changeRoleInProject}
                 onChange={(event) =>
@@ -458,10 +572,11 @@ export default function Notifications() {
                     event.target.checked
                   )
                 }
-                aria-label="Your role in the project is changed by an manager"
+                color="warning" // Set the color prop directly here
+                aria-label="Your role in the project is changed by a manager"
               />
-            }
-          />
+            </div>
+          </FormGroup>
 
           <Button
             sx={{

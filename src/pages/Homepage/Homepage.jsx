@@ -103,8 +103,7 @@ function Homepage() {
           <div className="header">
             <img
               style={{
-                height: "100px",
-                paddingTop: "18px",
+                height: "96px",
                 marginRight: "14px",
               }}
               src="/img/Logo-Colored.png"

@@ -14,6 +14,7 @@ import RenameModal from "../../components/RenameModal";
 const ItemList = ({ design, projectId, handleDeleteDesign }) => {
   const navigate = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCopyLinkModal, setShowCopyLinkModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
@@ -25,8 +26,9 @@ const ItemList = ({ design, projectId, handleDeleteDesign }) => {
     });
   };
 
-  const toggleOptions = () => {
+  const toggleOptions = (event) => {
     setShowOptions((prev) => !prev);
+    setMenuPosition({ top: event.clientY, left: event.clientX });
   };
 
   const openDeleteModal = () => {
@@ -94,22 +96,20 @@ const ItemList = ({ design, projectId, handleDeleteDesign }) => {
         <Typography variant="body2" className="ellipsis-text">
           Dec 1, 2021
         </Typography>
-
         <IconButton
           onClick={(e) => {
-            e.stopPropagation();
-            toggleOptions();
+            e.stopPropagation(); // Prevent the div click event
+            toggleOptions(e); // Toggle the options menu
           }}
         >
-          <MoreVertIcon style={{ color: "var(--color-white)" }} />
+          <MoreVertIcon sx={{ color: "var(--color-white)" }} />
         </IconButton>
-        <div className="options" onClick={toggleOptions}>
-          <h3 className="selectOption">
-            <center>&#8942;</center>
-          </h3>
-        </div>
         {showOptions && (
-          <div ref={optionsRef} className="dropdown-menu">
+          <div
+            ref={optionsRef}
+            className="dropdown-menu"
+            style={{ top: menuPosition.top, left: menuPosition.left - 200 }}
+          >
             <div className="dropdown-item" onClick={handleClick}>
               <OpenInNewIcon style={{ fontSize: 20 }} className="icon" />
               Open

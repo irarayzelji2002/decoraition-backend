@@ -5,10 +5,6 @@ import BottomBarDesign from "./BottomBarProject";
 import { useParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import TuneIcon from "@mui/icons-material/Tune";
-import PushPinIcon from "@mui/icons-material/PushPin";
 import "../../css/project.css";
 import "../../css/seeAll.css";
 import "../../css/budget.css";
@@ -19,13 +15,19 @@ import {
   ChangeOrder,
   ChangePlan,
 } from "../DesignSpace/svg/AddImage";
+import { useNavigate } from "react-router-dom";
 
 function PlanMap() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { projectId } = useParams();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const navigateToAddPin = () => {
+    navigate("/addPin");
   };
 
   return (
@@ -71,7 +73,7 @@ function PlanMap() {
                 <AdjustPin />
               </div>
             </div>
-            <div className="small-button-container">
+            <div className="small-button-container" onClick={navigateToAddPin}>
               <span className="small-button-text">Add a Pin</span>
               <div className="small-circle-button">
                 <AddPin />

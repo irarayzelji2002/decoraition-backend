@@ -36,6 +36,64 @@
   align-items: flex-end;
 }
 
+.dropdownNew {
+  color: var(--color-white);
+  background-color: var(--bgMain);
+  border-bottom: 1px solid #4a4a4d;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.color-picker {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: #4a4a4d 2px solid;
+  margin: 8px;
+  border-radius: 8px;
+}
+
+.color-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ff0000; /* Example color, change as needed */
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.color-text {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.color-dropper {
+  margin-left: auto;
+}
+.modalColor {
+  background-color: var(--nav-card-modal);
+  padding: 20px;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+  margin-bottom: auto;
+  border-radius: 8px;
+}
+
+.dropdownNew.Mui-focused {
+  border-bottom: 1px solid var(--color-white); /* Change border color when focused */
+  outline: none;
+  box-shadow: none; /* Remove blue outline effect */
+  color: var(--color-white); /* Ensure text color remains white */
+}
+
+.dropdownNew.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-white);
+}
+
 .modal-content {
   width: 100%;
   background-color: var(--nav-card-modal);

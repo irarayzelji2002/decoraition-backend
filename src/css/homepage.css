@@ -1,6 +1,6 @@
 .navName {
   font-family: "Open Sans", sans-serif !important;
-  font-size: 4em;
+  font-size: 3.6em;
   background: var(--gradientFont);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -35,7 +35,7 @@
 
 .navTagline {
   font-family: "Open Sans", sans-serif !important;
-  font-size: 1em;
+  font-size: 1.2em;
   font-weight: bold;
   text-align: center;
 }

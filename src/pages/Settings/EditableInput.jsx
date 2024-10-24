@@ -1,29 +1,18 @@
-import React, { useState } from "react";
-import { TextField, InputAdornment, IconButton, Button } from "@mui/material";
+import React from "react";
+import { TextField, InputAdornment, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import LinkIcon from "@mui/icons-material/Link";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
 
 export default function EditableInput({
-  onSave,
   value,
   onChange,
   linked = false,
   theme = false,
+  single = false,
+  isEditing,
 }) {
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleSaveClick = () => {
-    setIsEditing(false);
-    onSave();
-    // Save the new value to your state or backend here
-  };
-
   return (
     <TextField
       value={value}
@@ -60,12 +49,8 @@ export default function EditableInput({
         readOnly: !isEditing,
         endAdornment: (
           <InputAdornment position="end">
-            {isEditing ? (
-              <IconButton onClick={handleSaveClick}>
-                <SaveIcon sx={{ color: "#FF894D" }} />
-              </IconButton>
-            ) : (
-              <IconButton onClick={handleEditClick}>
+            {!single && (
+              <>
                 {linked ? (
                   <LinkIcon sx={{ color: "#FF894D" }} />
                 ) : theme ? (
@@ -73,7 +58,7 @@ export default function EditableInput({
                 ) : (
                   <EditIcon sx={{ color: "#FF894D" }} />
                 )}
-              </IconButton>
+              </>
             )}
           </InputAdornment>
         ),

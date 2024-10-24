@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { onSnapshot, doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { Paper, IconButton, InputBase } from "@mui/material";
+import { Paper, IconButton, InputBase, List } from "@mui/material";
 import {
   Search as SearchIcon,
   Add as AddIcon,
@@ -30,7 +30,8 @@ import { Button } from "@mui/material";
 import { AddDesign, AddProject } from "../DesignSpace/svg/AddImage";
 import { HorizontalIcon, VerticalIcon } from "./svg/ExportIcon";
 import { Typography } from "@mui/material";
-import { Delete as DeleteIcon } from "@mui/icons-material";
+import { ListIcon } from "./svg/ExportIcon";
+import ItemList from "./ItemList";
 
 function Project() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -220,13 +221,14 @@ function Project() {
           style={{ display: "flex", marginLeft: "auto" }}
         >
           <Button
+            className="gradient-from-none"
             style={{ marginRight: "10px" }}
             onClick={handleHorizontalClick}
           >
             <HorizontalIcon />
           </Button>
-          <Button onClick={handleVerticalClick}>
-            <VerticalIcon />
+          <Button className="gradient-from-none" onClick={handleVerticalClick}>
+            <ListIcon />
           </Button>
         </div>
       </div>
@@ -263,48 +265,16 @@ function Project() {
         <div className={`layout ${isVertical ? "vertical" : ""}`}>
           {isVertical
             ? designs.length > 0 &&
-              designs.slice(0, 6).map((design) => (
-                <div
-                  key={design.id}
-                  className="design-item"
-                  onClick={() =>
-                    navigate(`/design/${design.id}`, {
-                      state: { designId: design.id },
-                    })
-                  }
-                >
-                  <div className="list-content">
-                    <Typography
-                      variant="h6"
-                      className="ellipsis-text"
-                      style={{ width: "20%" }}
-                    >
-                      {design.name}
-                    </Typography>
-
-                    <Typography variant="body2" className="ellipsis-text">
-                      {/* Owner */}
-                      Me
-                    </Typography>
-                    <Typography variant="body2" className="ellipsis-text">
-                      {/* Date Modified */}
-                      Dec 2,2021
-                    </Typography>
-                    <Typography variant="body2" className="ellipsis-text">
-                      {/* Created */}
-                      Dec 1,2021
-                    </Typography>
-                    <IconButton
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent the div click event
-                        // Handle three dots icon click
-                      }}
-                    >
-                      <MoreVertIcon style={{ color: "var(--color-white)" }} />
-                    </IconButton>
-                  </div>
-                </div>
-              ))
+              designs
+                .slice(0, 6)
+                .map((design) => (
+                  <ItemList
+                    key={design.id}
+                    design={design}
+                    projectId={projectId}
+                    handleDeleteDesign={handleDeleteDesign}
+                  />
+                ))
             : designs.length > 0 &&
               designs.slice(0, 6).map((design) => (
                 <DesignIcon

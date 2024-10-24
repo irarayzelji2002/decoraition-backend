@@ -68,6 +68,46 @@ select:-webkit-autofill {
   flex-direction: row;
   width: 100%;
 }
+.small-btn {
+  text-transform: none;
+  font-weight: bold;
+  border-radius: 20px !important;
+
+  width: 150px;
+  background: var(--gradientButton);
+}
+
+.small-btn:hover {
+  background: var(--gradientButtonHover);
+}
+
+.small-btn.editing {
+  background: linear-gradient(to right, #4caf50, #81c784);
+}
+
+.small-btn.editing:hover {
+  background: linear-gradient(to right, #388e3c, #66bb6a);
+}
+
+.invisible-button {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.invisible-button:hover {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.form-control-label-right {
+  display: flex !important;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.form-control-label-right .MuiFormControlLabel-label {
+  flex-grow: 1;
+}
 
 :root {
   --bg-header: url("../public/img/bg-login.png");

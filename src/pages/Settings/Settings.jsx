@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Tabs, Tab, Avatar, Button, Box } from "@mui/material";
-import {
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Bedtime as BedtimeIcon,
-  Save as SaveIcon,
-} from "@mui/icons-material";
+import { Tabs, Tab, Avatar, Button, Box, IconButton } from "@mui/material";
+import { Edit as EditIcon, Save as SaveIcon } from "@mui/icons-material";
 import Notifications from "./Notifications";
 import TopBar from "../../components/TopBar";
 import "../../css/settings.css";
@@ -16,6 +11,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { db } from "../../firebase";
+import LinkIcon from "@mui/icons-material/Link";
 
 function Settings() {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -97,18 +93,17 @@ function Settings() {
     });
   };
 
-  const handleSave = async (field) => {
+  const handleSave = async () => {
     if (userId) {
       try {
         const userDocRef = doc(db, "users", userId);
-        await updateDoc(userDocRef, {
-          [field]: userDetails[field],
-        });
-        toast.success(`${field} updated successfully`, {
+        await updateDoc(userDocRef, userDetails);
+        toast.success(`Details updated successfully`, {
           className: "custom-toast-success", // Apply custom class name
         });
+        setIsEditing(false); // Exit editing mode after saving
       } catch (error) {
-        toast.error(`Error updating ${field}: ${error.message}`, {
+        toast.error(`Error updating details: ${error.message}`, {
           className: "custom-toast-success", // Apply custom class name
         });
       }
@@ -298,6 +293,29 @@ function Settings() {
               </div>
             </div>
 
+            {/* Edit/Save Button */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "20px",
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={
+                  isEditing ? (
+                    <SaveIcon sx={{ color: "#FF894D" }} />
+                  ) : (
+                    <EditIcon sx={{ color: "#FF894D" }} />
+                  )
+                }
+                onClick={isEditing ? handleSave : toggleEdit}
+                className="invisible-button"
+              ></Button>
+            </div>
+
             {/* Additional Fields */}
             <div className="inputField">
               <label className="inputLabel">First Name</label>
@@ -305,7 +323,8 @@ function Settings() {
                 fieldName="First Name"
                 value={userDetails.firstName}
                 onChange={handleInputChange("firstName")}
-                onSave={() => handleSave("firstName")}
+                // isEditing={isEditing}
+                single={true}
               />
             </div>
             <div className="inputField">
@@ -314,7 +333,8 @@ function Settings() {
                 fieldName="Last Name"
                 value={userDetails.lastName}
                 onChange={handleInputChange("lastName")}
-                onSave={() => handleSave("lastName")}
+                // isEditing={isEditing}
+                single={true}
               />
             </div>
             <div className="inputField">
@@ -323,7 +343,8 @@ function Settings() {
                 fieldName="Username"
                 value={userDetails.username}
                 onChange={handleInputChange("username")}
-                onSave={() => handleSave("username")}
+                // isEditing={isEditing}
+                single={true}
               />
             </div>
 
@@ -333,20 +354,34 @@ function Settings() {
                 fieldName="Email"
                 value={userDetails.email}
                 onChange={handleInputChange("email")}
-                onSave={() => handleSave("email")}
+                // isEditing={isEditing}
               />
             </div>
             <div className="inputFieldImportant">
               <label className="inputLabel">Password</label>
-              <EditableInput fieldName="Password" value="*************" />
+              <EditableInput
+                fieldName="Password"
+                value="*************"
+                // isEditing={isEditing}
+              />
             </div>
             <div className="inputFieldImportant">
               <label className="inputLabel">Linked Account</label>
-              <EditableInput fieldName="Password" value="None" linked />
+              <EditableInput
+                fieldName="Password"
+                value="None"
+                linked
+                // isEditing={isEditing}
+              />
             </div>
             <div className="inputFieldImportant">
               <label className="inputLabel">Theme</label>
-              <EditableInput fieldName="Password" value="Light Mode" theme />
+              <EditableInput
+                fieldName="Password"
+                value="Light Mode"
+                theme
+                // isEditing={isEditing}
+              />
             </div>
           </Box>
         )}

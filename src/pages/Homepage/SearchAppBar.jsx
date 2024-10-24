@@ -90,15 +90,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
           >
             <MenuIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
-          <img
-            style={{
-              height: "30px",
 
-              marginRight: "14px",
-            }}
-            src="/img/Logo-Colored.png"
-            alt="logo"
-          />
           <Drawer anchor="left" open={isDrawerOpen} onClose={handleDrawerClose}>
             <DrawerComponent
               isDrawerOpen={isDrawerOpen}

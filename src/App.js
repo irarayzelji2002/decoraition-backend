@@ -28,6 +28,7 @@ import Version from "./pages/DesignSpace/Version.jsx";
 import SeeAllProjects from "./pages/DesignSpace/SeeAllProjects.jsx";
 import DesignSettings from "./pages/DesignSpace/DesignSettings.jsx";
 import Landing from "./pages/Landing/Landing";
+import Error from "./components/Error.jsx";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
 // import ProtectedRoute from "./ProtectedRoute"; // Adjust the path as necessary
 // import { Rotate90DegreesCcw } from "@mui/icons-material";
@@ -74,6 +75,7 @@ function App() {
           <Route path="/homepage" element={<Homepage />} /> {/*Checked */}
           <Route path="/details/:designId" element={<Details />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/error" element={<Error />} />
           {/*Checked */}
           {/* DESIGN SPACE */}
           <Route path="/design/:designId" element={<Design />} />

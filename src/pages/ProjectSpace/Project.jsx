@@ -232,7 +232,11 @@ function Project() {
           </Button>
         </div>
       </div>
-      <div style={{ paddingBottom: "20%" }}>
+      <div
+        style={{
+          paddingBottom: "20%",
+        }}
+      >
         {isVertical && (
           <div
             className="design-item"
@@ -262,34 +266,42 @@ function Project() {
             </div>
           </div>
         )}
-        <div className={`layout ${isVertical ? "vertical" : ""}`}>
-          {isVertical
-            ? designs.length > 0 &&
-              designs
-                .slice(0, 6)
-                .map((design) => (
-                  <ItemList
+        <div
+          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+        >
+          <div
+            className={`layout ${isVertical ? "vertical" : ""}`}
+            style={{ width: "90%" }}
+          >
+            {isVertical
+              ? designs.length > 0 &&
+                designs
+                  .slice(0, 6)
+                  .map((design) => (
+                    <ItemList
+                      key={design.id}
+                      design={design}
+                      projectId={projectId}
+                      handleDeleteDesign={handleDeleteDesign}
+                    />
+                  ))
+              : designs.length > 0 &&
+                designs.slice(0, 6).map((design) => (
+                  <DesignIcon
                     key={design.id}
-                    design={design}
-                    projectId={projectId}
-                    handleDeleteDesign={handleDeleteDesign}
+                    name={design.name}
+                    designId={design.id}
+                    onDelete={() => handleDeleteDesign(projectId, design.id)}
+                    onOpen={() =>
+                      navigate(`/design/${design.id}`, {
+                        state: { designId: design.id },
+                      })
+                    }
                   />
-                ))
-            : designs.length > 0 &&
-              designs.slice(0, 6).map((design) => (
-                <DesignIcon
-                  key={design.id}
-                  name={design.name}
-                  designId={design.id}
-                  onDelete={() => handleDeleteDesign(projectId, design.id)}
-                  onOpen={() =>
-                    navigate(`/design/${design.id}`, {
-                      state: { designId: design.id },
-                    })
-                  }
-                />
-              ))}
+                ))}
+          </div>
         </div>
+
         {designs.length === 0 && (
           <div className="no-content">
             <img src="/img/design-placeholder.png" alt="No designs yet" />

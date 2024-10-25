@@ -13,12 +13,9 @@ import {
 } from "@mui/material";
 import BedtimeIcon from "@mui/icons-material/Bedtime";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import HomeIcon from "@mui/icons-material/Home";
-import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
-import FolderIcon from "@mui/icons-material/Folder";
+import NotifTab from "./NotifTab";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
+
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -119,6 +116,16 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
     };
   }, []);
 
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+
+  const handleNotifClick = () => {
+    setIsNotifOpen(true);
+  };
+
+  const handleNotifClose = () => {
+    setIsNotifOpen(false);
+  };
+
   return (
     <Drawer
       anchor="left"
@@ -167,9 +174,11 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
           >
             <BedtimeIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
-          <IconButton sx={{ color: "white" }}>
+          <IconButton onClick={handleNotifClick} sx={{ color: "white" }}>
             <NotificationsIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
+
+          <NotifTab isDrawerOpen={isNotifOpen} onClose={handleNotifClose} />
         </div>
       </div>
 
@@ -357,13 +366,13 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
         <Divider sx={{ backgroundColor: "gray", my: 2 }} />
 
         {/* Settings Menu Item */}
-        <ListItem button onClick={() => navigate("/settings")}>
+        <ListItem onClick={() => navigate("/settings")}>
           <ListItemIcon>
             <SettingsIcn />
           </ListItemIcon>
           <ListItemText primary="Settings" />
         </ListItem>
-        <ListItem button onClick={handleLogout}>
+        <ListItem onClick={handleLogout}>
           <ListItemIcon>
             <LogoutIcn />
           </ListItemIcon>

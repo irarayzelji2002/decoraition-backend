@@ -628,6 +628,20 @@ textarea {
   border: 2px solid var(--brightFont);
 }
 
+.circle-small {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--color-grey);
+  background-color: transparent;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+}
+
+.circle-small:hover {
+  border: 2px solid var(--brightFont);
+}
+
 .plus-circle {
   display: flex;
   font-size: 2.25em;

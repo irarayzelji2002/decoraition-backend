@@ -28,6 +28,7 @@ import Version from "./pages/DesignSpace/Version.jsx";
 import SeeAllProjects from "./pages/DesignSpace/SeeAllProjects.jsx";
 import DesignSettings from "./pages/DesignSpace/DesignSettings.jsx";
 import Landing from "./pages/Landing/Landing";
+import PinOrder from "./pages/ProjectSpace/PinOrder.jsx";
 import Error from "./components/Error.jsx";
 import GenerateImgLoadingPage from "./components/GenerateImgLoadingPage.jsx";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
@@ -114,7 +115,8 @@ function App() {
           <Route path="/planMap/:projectId" element={<PlanMap />} />
           <Route path="/timeline/:projectId" element={<Timeline />} />
           <Route path="/projBudget/:projectId" element={<ProjBudget />} />
-          <Route path="/addPin/" element={<AddPin />} />
+          <Route path="/addPin/:projectId" element={<AddPin />} />
+          <Route path="/pinOrder/:projectId" element={<PinOrder />} />
           <Route path="/editEvent/:projectId" element={<EditEvent />} />
           <Route path="/projSetting/:projectId" element={<ProjSetting />} />
         </Routes>

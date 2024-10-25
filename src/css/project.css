@@ -231,6 +231,12 @@ body {
   background-color: #f0f0f0;
 }
 
+.draggable {
+  cursor: pointer;
+
+  width: 20px;
+}
+
 .floating-menu .icon {
   margin-right: 10px;
 }

@@ -100,7 +100,7 @@ function AddPin({ EditMode }) {
     <>
       <TopBar state={"Add Pin"} />
       <div className="sectionBudget" style={{ background: "none" }}>
-        <div className="budgetSpace">
+        <div className="budgetSpaceImg">
           <div className="image-frame">
             <img
               src="../../img/logoWhitebg.png"
@@ -109,7 +109,7 @@ function AddPin({ EditMode }) {
             />
           </div>
         </div>
-        <div className="budgetSpace">
+        <div className="budgetSpaceImg">
           <div style={{ width: "100%" }}>
             {" "}
             <label style={{ marginLeft: "12px" }}>Pin number: 4</label>

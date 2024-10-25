@@ -109,6 +109,24 @@ select:-webkit-autofill {
   flex-grow: 1;
 }
 
+.custom-select {
+  width: 100%;
+  color: var(--color-white) !important;
+  border: 2px solid var(--borderInput) !important;
+}
+
+.custom-select .MuiOutlinedInput-notchedOutline {
+  border: none;
+}
+
+.custom-select:hover .MuiOutlinedInput-notchedOutline {
+  border: none;
+}
+
+.custom-select.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border: none;
+}
+
 :root {
   --bg-header: url("../public/img/bg-login.png");
   --bg-image: #1f1e22;

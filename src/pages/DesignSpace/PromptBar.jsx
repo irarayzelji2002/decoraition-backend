@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import "../../css/design.css";
 import Slider from "@mui/joy/Slider";
 import Button from "@mui/joy/Button";
-
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Modal, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Textarea from "@mui/joy/Textarea";
@@ -15,6 +16,7 @@ function PromptBar() {
   const [modalOpen, setModalOpen] = useState(false);
   const [colorOpen, setColorOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
+  const [dateModified, setDateModified] = React.useState("");
   const [value, setValue] = React.useState("#ffffff");
 
   const handleChange = (newValue) => {
@@ -169,6 +171,93 @@ function PromptBar() {
         </Button>
       </div>
 
+      <h6 style={{ margin: "8px" }}>Select your color pallete</h6>
+      <FormControl sx={{ width: "100%" }}>
+        <Select
+          id="date-modified-select"
+          sx={{
+            width: "100%",
+            color: "var(--color-white)",
+            border: "2px solid var(--borderInput)",
+            "& .MuiOutlinedInput-notchedOutline": {
+              border: "none",
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              border: "none",
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              border: "none",
+            },
+          }}
+          value={dateModified}
+          label="Choose Pallete"
+          onChange={(e) => setDateModified(e.target.value)}
+          IconComponent={ArrowDropDownIcon}
+        >
+          <MenuItem>
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value="2023-01-01">
+            <div style={{ display: "flex", gap: "2px" }}>
+              Red-Green
+              <div style={{ display: "flex", marginLeft: "10px" }}>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#efefef", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#ef4f56", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#397438", marginLeft: "-10px" }}
+                ></div>
+              </div>
+            </div>
+          </MenuItem>
+          <MenuItem value="2023-02-01">
+            {" "}
+            <div style={{ display: "flex", gap: "2px" }}>
+              Pink-Yellow
+              <div style={{ display: "flex", marginLeft: "10px" }}>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#ff8344", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#ec2073", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#3e3c47", marginLeft: "-10px" }}
+                ></div>
+              </div>
+            </div>
+          </MenuItem>
+          <MenuItem value="2023-03-01">
+            {" "}
+            <div style={{ display: "flex", gap: "2px" }}>
+              Among Us
+              <div style={{ display: "flex", marginLeft: "10px" }}>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#3e3c47", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#faa653", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#ff4500", marginLeft: "-10px" }}
+                ></div>
+              </div>
+            </div>
+          </MenuItem>
+        </Select>
+      </FormControl>
       <Button
         type="submit"
         fullWidth

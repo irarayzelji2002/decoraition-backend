@@ -206,7 +206,7 @@ function Budget() {
       />
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
       <div className="cutoff">
-        <div className="budgetSpace">
+        <div className="budgetSpaceImg">
           <span
             className="priceSum"
             style={{
@@ -223,7 +223,7 @@ function Budget() {
             />
           </div>
         </div>
-        <div className="budgetSpace" style={{ marginBottom: "10%" }}>
+        <div className="budgetSpaceImg" style={{ marginBottom: "10%" }}>
           {items.length === 0 ? (
             <div>
               {" "}

@@ -323,7 +323,7 @@ function Settings() {
                 fieldName="First Name"
                 value={userDetails.firstName}
                 onChange={handleInputChange("firstName")}
-                // isEditing={isEditing}
+                isEditing={isEditing}
                 single={true}
               />
             </div>
@@ -333,7 +333,7 @@ function Settings() {
                 fieldName="Last Name"
                 value={userDetails.lastName}
                 onChange={handleInputChange("lastName")}
-                // isEditing={isEditing}
+                isEditing={isEditing}
                 single={true}
               />
             </div>
@@ -343,7 +343,7 @@ function Settings() {
                 fieldName="Username"
                 value={userDetails.username}
                 onChange={handleInputChange("username")}
-                // isEditing={isEditing}
+                isEditing={isEditing}
                 single={true}
               />
             </div>

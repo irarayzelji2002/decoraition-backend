@@ -175,32 +175,24 @@ function PromptBar() {
       <FormControl sx={{ width: "100%" }}>
         <Select
           id="date-modified-select"
-          sx={{
-            width: "100%",
-            color: "var(--color-white)",
-            border: "2px solid var(--borderInput)",
-            "& .MuiOutlinedInput-notchedOutline": {
-              border: "none",
-            },
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              border: "none",
-            },
-            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              border: "none",
-            },
-          }}
+          className="custom-select"
           value={dateModified}
           label="Choose Pallete"
           onChange={(e) => setDateModified(e.target.value)}
-          IconComponent={ArrowDropDownIcon}
+          IconComponent={(props) => (
+            <ArrowDropDownIcon
+              {...props}
+              sx={{ color: "var(--color-white) !important" }}
+            />
+          )}
         >
           <MenuItem>
             <em>None</em>
           </MenuItem>
           <MenuItem value="2023-01-01">
             <div style={{ display: "flex", gap: "2px" }}>
-              Red-Green
-              <div style={{ display: "flex", marginLeft: "10px" }}>
+              Red-Green &nbsp;
+              <div style={{ display: "flex", marginLeft: "auto" }}>
                 <div
                   className="circle-small"
                   style={{ backgroundColor: "#efefef", marginLeft: "-10px" }}
@@ -219,8 +211,8 @@ function PromptBar() {
           <MenuItem value="2023-02-01">
             {" "}
             <div style={{ display: "flex", gap: "2px" }}>
-              Pink-Yellow
-              <div style={{ display: "flex", marginLeft: "10px" }}>
+              Pink-Yellow &nbsp;
+              <div style={{ display: "flex", marginLeft: "auto" }}>
                 <div
                   className="circle-small"
                   style={{ backgroundColor: "#ff8344", marginLeft: "-10px" }}
@@ -237,10 +229,9 @@ function PromptBar() {
             </div>
           </MenuItem>
           <MenuItem value="2023-03-01">
-            {" "}
             <div style={{ display: "flex", gap: "2px" }}>
-              Among Us
-              <div style={{ display: "flex", marginLeft: "10px" }}>
+              Among Us &nbsp;
+              <div style={{ display: "flex", marginLeft: "auto" }}>
                 <div
                   className="circle-small"
                   style={{ backgroundColor: "#3e3c47", marginLeft: "-10px" }}

@@ -233,14 +233,8 @@ function ProjectHead({ designName }) {
       <DrawerComponent
         isDrawerOpen={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
-        toggleDarkMode={toggleDarkMode}
-        handleLogout={handleLogout}
-        handleSettings={handleSettings}
-        darkMode={darkMode}
-        username={username}
-        userEmail={user ? user.email : ""}
-        designs={designs}
       />
+
       <div className="left">
         <IconButton
           size="large"

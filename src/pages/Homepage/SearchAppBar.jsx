@@ -13,7 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 import { fetchUserData } from "./backend/HomepageFunctions";
-import SettingsIcon from "@mui/icons-material/Settings";
+import NotifTab from "./NotifTab";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -61,9 +61,16 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
     setIsDrawerOpen(false);
   };
 
-  const handleSettingsClick = () => {
-    navigate("/settings");
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+
+  const handleNotifClick = () => {
+    setIsNotifOpen(true);
   };
+
+  const handleNotifClose = () => {
+    setIsNotifOpen(false);
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -91,12 +98,12 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             <MenuIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
 
-          <Drawer anchor="left" open={isDrawerOpen} onClose={handleDrawerClose}>
-            <DrawerComponent
-              isDrawerOpen={isDrawerOpen}
-              onClose={handleDrawerClose}
-            />
-          </Drawer>
+          <DrawerComponent
+            isDrawerOpen={isDrawerOpen}
+            onClose={handleDrawerClose}
+          />
+
+          <NotifTab isDrawerOpen={isNotifOpen} onClose={handleNotifClose} />
 
           <Paper
             component="form"
@@ -130,7 +137,9 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
           <div style={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ marginRight: 2 }}>
               <Badge
+                onClick={handleNotifClick}
                 sx={{
+                  cursor: "pointer",
                   "& .MuiBadge-badge": {
                     backgroundColor: "var(--color-secondary)", // Optional: to set the badge color
                     color: "white", // Optional: to set the text color inside the badge

@@ -135,7 +135,7 @@ export const useHandleNameChange = (
       const projectRef = doc(db, "projects", projectId);
       await updateDoc(projectRef, { name: newName });
       setIsEditingName(false);
-      toast.success("Design name updated successfully!", {
+      toast.success("Project name updated successfully!", {
         className: "custom-toast-success", // Apply custom class name
       });
     } catch (error) {

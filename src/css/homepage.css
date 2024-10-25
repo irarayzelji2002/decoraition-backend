@@ -151,6 +151,7 @@ h2 {
 }
 
 .no-content {
+  width: 100%;
   display: flex;
   color: #aaa;
   flex-direction: column;
@@ -301,6 +302,24 @@ h2 {
   height: auto;
   margin-top: 10px;
   cursor: pointer;
+}
+.mark-read {
+  background: var(--gradientFont);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 0.875em;
+  font-weight: 400;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.notif-box {
+  padding: 16px;
+  padding-top: 24px;
+}
+.notif-box:hover {
+  background-color: var(--nav-card-modal);
+  border-radius: 8px;
 }
 
 @media (max-width: 1024px) {

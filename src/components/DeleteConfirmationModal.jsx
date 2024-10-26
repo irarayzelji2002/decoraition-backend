@@ -28,6 +28,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
           color: "var(--color-white)", // Set title text color to white
           display: "flex",
           alignItems: "center",
+          borderBottom: "1px solid var(--color-grey)",
         }}
       >
         <IconButton
@@ -45,6 +46,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
         sx={{
           backgroundColor: "var(  --nav-card-modal)", // Content background color
           color: "var(--color-white)", // Text color in the content
+          marginTop: "20px",
         }}
       >
         <Typography variant="body1">

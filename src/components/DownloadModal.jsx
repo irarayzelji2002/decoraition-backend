@@ -31,6 +31,7 @@ const DownloadModal = ({ isOpen, onClose }) => {
           color: "var(--color-white)", // Title text color
           display: "flex",
           alignItems: "center",
+          borderBottom: "1px solid var(--color-grey)",
         }}
       >
         <IconButton
@@ -45,6 +46,7 @@ const DownloadModal = ({ isOpen, onClose }) => {
         sx={{
           backgroundColor: "var(--nav-card-modal)",
           color: "var(--color-white)",
+          marginTop: "20px",
         }}
       >
         <Typography variant="body1">

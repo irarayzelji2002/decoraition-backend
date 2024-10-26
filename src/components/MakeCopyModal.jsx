@@ -28,6 +28,7 @@ const MakeCopyModal = ({ isOpen, onClose }) => {
           color: "var(--color-white)", // Title text color
           display: "flex",
           alignItems: "center",
+          borderBottom: "1px solid var(--color-grey)",
         }}
       >
         {/* Wrapping ArrowBackIcon inside IconButton for clickability */}
@@ -43,13 +44,16 @@ const MakeCopyModal = ({ isOpen, onClose }) => {
         sx={{
           backgroundColor: "var(  --nav-card-modal)",
           color: "var(--color-white)",
+          marginTop: "20px",
         }}
       >
         <Typography variant="body1">
           Choose options for making a copy of the item.
         </Typography>
       </DialogContent>
-      <DialogActions sx={{ backgroundColor: "var(  --nav-card-modal)" }}>
+      <DialogActions
+        sx={{ backgroundColor: "var(  --nav-card-modal)", margin: "10px" }}
+      >
         {/* Make Copy Button */}
         <Button
           fullWidth
@@ -61,6 +65,7 @@ const MakeCopyModal = ({ isOpen, onClose }) => {
             color: "var(--color-white)", // Button text color
             fontWeight: "bold",
             textTransform: "none",
+
             "&:hover": {
               background: "var(--gradientButtonHover)", // Reverse gradient on hover
             },

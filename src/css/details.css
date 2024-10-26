@@ -1,9 +1,8 @@
 .details-container {
   background-color: var(--bgcolor);
-
+  margin-top: 20px;
   color: var(--color-white);
-  padding: 20px;
-  height: calc(100vh - 60px);
+  overflow-x: hidden !important;
   overflow-y: auto;
 }
 
@@ -15,7 +14,7 @@
 
 .room-image {
   width: 100%;
-  max-width: 600px;
+  max-width: 400px;
   border-radius: 12px;
 }
 
@@ -32,4 +31,19 @@
 
 .room-info p {
   margin: 5px 0;
+}
+
+.access-portion {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-top: 20px;
+  border-top: var(--color-grey) 1px solid;
+  width: 100%;
+  height: 80px !important;
+}
+
+.access-portion h3 {
+  margin-left: 20px;
+  font-size: 18px;
 }

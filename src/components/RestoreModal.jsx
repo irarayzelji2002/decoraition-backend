@@ -28,6 +28,7 @@ const RestoreModal = ({ isOpen, onClose }) => {
           color: "var(--color-white)", // Title text color
           display: "flex",
           alignItems: "center",
+          borderBottom: "1px solid var(--color-grey)",
         }}
       >
         <IconButton
@@ -42,13 +43,16 @@ const RestoreModal = ({ isOpen, onClose }) => {
         sx={{
           backgroundColor: "var(  --nav-card-modal)",
           color: "var(--color-white)",
+          marginTop: "20px",
         }}
       >
         <Typography variant="body1">
           Are you sure you want to restore this item?
         </Typography>
       </DialogContent>
-      <DialogActions sx={{ backgroundColor: "var(  --nav-card-modal)" }}>
+      <DialogActions
+        sx={{ backgroundColor: "var(  --nav-card-modal)", margin: "10px" }}
+      >
         {/* Restore Button */}
         <Button
           fullWidth

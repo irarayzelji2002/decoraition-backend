@@ -1,6 +1,7 @@
 import React from "react";
 import TopBar from "../../components/TopBar";
 import "../../css/details.css";
+import { NavigateNext } from "@mui/icons-material";
 
 function Details() {
   return (
@@ -31,6 +32,10 @@ function Details() {
             <p>
               <strong>Juan Dela Cruz</strong>
             </p>
+          </div>
+          <div className="access-portion">
+            <h3>Who has Access</h3>
+            <NavigateNext style={{ marginLeft: "auto", marginRight: "12px" }} />
           </div>
         </div>
       </div>

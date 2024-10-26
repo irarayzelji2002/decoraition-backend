@@ -237,6 +237,30 @@ select {
   background-color: #9f0000 !important;
 }
 
+.tabStyle {
+  font-weight: bold;
+  text-transform: none;
+  color: var(--color-white) !important;
+}
+
+.tabStyle.Mui-selected {
+  color: transparent !important; /* Hide the actual text color */
+  background-image: var(--gradientFont); /* Apply background image */
+  background-clip: text;
+  -webkit-background-clip: text;
+  font-weight: bold; /* Optional: make text bold to stand out */
+}
+
+.status-select {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  color: var(--color-white) !important;
+  border-radius: 8px;
+  border: 1px solid var(--color-grey);
+  width: 150px;
+  height: 30px;
+}
+
 @media (max-width: 768px) {
   .small-circle-button {
     width: 50px;

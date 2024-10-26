@@ -4,8 +4,8 @@ import Item from "./Item";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import DesignHead from "../../components/DesignHead";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import InventoryIcon from "@mui/icons-material/Inventory";
+import { toggleComments } from "./backend/DesignActions"; // Import the functions from the backend file
+import CommentTabs from "./CommentTabs";
 import { onSnapshot } from "firebase/firestore";
 import "../../css/budget.css";
 import { db } from "../../firebase"; // Assuming you have firebase setup
@@ -34,6 +34,17 @@ function Budget() {
   const [items, setItems] = useState([]);
   const [newName, setNewName] = useState("");
   const [isEditingName, setIsEditingName] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [status, setStatus] = useState("Open");
+  const [showComments, setShowComments] = useState(false);
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
+  const handleStatusChange = (event) => {
+    setStatus(event.target.value);
+  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -151,19 +162,7 @@ function Budget() {
       await updateDoc(designRef, { name: newName });
       setIsEditingName(false);
       toast.success("Design name updated successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        style: {
-          color: "var(--color-white)",
-          backgroundColor: "var(--inputBg)",
-        },
-        progressStyle: {
-          backgroundColor: "var(--brightFont)",
-        },
+        className: "custom-toast-success", // Apply custom success class
       });
     } catch (error) {
       console.error("Error updating design name:", error);
@@ -203,6 +202,7 @@ function Budget() {
         isEditingName={isEditingName}
         handleNameChange={handleNameChange}
         setIsEditingName={setIsEditingName}
+        toggleComments={() => toggleComments(setShowComments)}
       />
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
       <div className="cutoff">
@@ -250,7 +250,15 @@ function Budget() {
               />
             ))
           )}
-        </div>
+        </div>{" "}
+        {showComments && (
+          <CommentTabs
+            activeTab={activeTab}
+            handleTabChange={handleTabChange}
+            status={status}
+            handleStatusChange={handleStatusChange}
+          />
+        )}
       </div>
       <div className="circle-button-container">
         {menuOpen && (

@@ -15,7 +15,6 @@ import BedtimeIcon from "@mui/icons-material/Bedtime";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotifTab from "./NotifTab";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -27,6 +26,7 @@ import {
 } from "./backend/HomepageFunctions.jsx";
 import {
   DesignIcn,
+  FAQ,
   Home,
   LogoutIcn,
   ProjectIcn,
@@ -94,7 +94,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error("Error signing out: ", error);
     }
@@ -366,13 +366,25 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
         <Divider sx={{ backgroundColor: "gray", my: 2 }} />
 
         {/* Settings Menu Item */}
-        <ListItem onClick={() => navigate("/settings")}>
+        <ListItem
+          onClick={() => navigate("/settings")}
+          style={{ cursor: "pointer" }}
+        >
+          <ListItemIcon>
+            <FAQ />
+          </ListItemIcon>
+          <ListItemText primary="FAQ" />
+        </ListItem>
+        <ListItem
+          onClick={() => navigate("/settings")}
+          style={{ cursor: "pointer" }}
+        >
           <ListItemIcon>
             <SettingsIcn />
           </ListItemIcon>
           <ListItemText primary="Settings" />
         </ListItem>
-        <ListItem onClick={handleLogout}>
+        <ListItem onClick={handleLogout} style={{ cursor: "pointer" }}>
           <ListItemIcon>
             <LogoutIcn />
           </ListItemIcon>

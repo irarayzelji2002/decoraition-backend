@@ -55,6 +55,7 @@ const ShareModal = ({
           color: "var(--color-white)", // Title text color
           display: "flex",
           alignItems: "center",
+          borderBottom: "1px solid var(--color-grey)",
         }}
       >
         <ArrowBackIcon

@@ -109,6 +109,10 @@ select:-webkit-autofill {
   flex-grow: 1;
 }
 
+.see-dropdown {
+  width: 140px;
+}
+
 .custom-select {
   width: 100%;
   color: var(--color-white) !important;

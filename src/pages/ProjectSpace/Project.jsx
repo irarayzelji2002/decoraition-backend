@@ -201,19 +201,13 @@ function Project() {
         }}
       >
         <span
-          className="SubtitleBudget"
-          style={{ marginLeft: "20px", fontSize: "30px" }}
+          className="SubtitlePrice"
+          style={{
+            backgroundColor: "transparent",
+            fontSize: "1.5rem",
+          }}
         >
-          Project Name
-          <br />
-          <span
-            className="SubtitlePrice"
-            style={{
-              backgroundColor: "transparent",
-            }}
-          >
-            Designs
-          </span>
+          Designs
         </span>
 
         <div

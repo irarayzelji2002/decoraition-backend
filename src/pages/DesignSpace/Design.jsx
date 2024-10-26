@@ -7,8 +7,7 @@ import { getAuth } from "firebase/auth";
 import PromptBar from "./PromptBar";
 import BottomBar from "./BottomBar";
 import Loading from "../../components/Loading";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+import CommentTabs from "./CommentTabs";
 import { ToastContainer, toast } from "react-toastify";
 import Version from "./Version";
 import "../../css/design.css";
@@ -208,99 +207,12 @@ function Design() {
               </div>
             </div>
             {showComments && (
-              <div className="comment-section">
-                <Tabs
-                  value={activeTab}
-                  onChange={handleTabChange}
-                  TabIndicatorProps={{
-                    style: {
-                      backgroundImage: "var(--gradientFont)", // Customize the indicator color
-                    },
-                  }}
-                >
-                  <Tab
-                    sx={{
-                      fontWeight: "bold",
-                      textTransform: "none",
-                      color:
-                        activeTab === 0
-                          ? "var(--brightFont)"
-                          : "var(--color-white)",
-
-                      "&.Mui-selected": {
-                        color: "transparent", // Hide the actual text color
-                        backgroundImage: "var(--gradientFont)", // Apply background image
-                        backgroundClip: "text",
-                        WebkitBackgroundClip: "text",
-                        fontWeight: "bold", // Optional: make text bold to stand out
-                      },
-                    }}
-                    label="All Comments"
-                  />
-                  <Tab
-                    sx={{
-                      fontWeight: "bold",
-                      textTransform: "none",
-                      color:
-                        activeTab === 1
-                          ? "var(--brightFont)"
-                          : "var(--color-white)",
-                      "&:focus": {
-                        outline: "none",
-                        backgroundColor: "transparent",
-                      },
-                      "&:active": {
-                        outline: "none",
-                        backgroundColor: "transparent",
-                      },
-
-                      "&.Mui-selected": {
-                        color: "transparent", // Hide the actual text color
-                        backgroundImage: "var(--gradientFont)", // Apply background image
-                        backgroundClip: "text",
-                        WebkitBackgroundClip: "text",
-                        fontWeight: "bold",
-                      },
-                    }}
-                    label="For You"
-                  />
-                </Tabs>
-
-                <Select
-                  value={status}
-                  onChange={handleStatusChange}
-                  displayEmpty
-                  sx={{
-                    marginTop: 2,
-                    marginBottom: 2,
-                    color: "var(--color-grey)",
-                    borderRadius: 2,
-                    border: "1px solid var(--color-grey)",
-                    width: "150px",
-                    height: "30px",
-                  }}
-                >
-                  <MenuItem value="Open">Open</MenuItem>
-                  <MenuItem value="Resolved">Resolved</MenuItem>
-                </Select>
-
-                {activeTab === 0 && (
-                  <>
-                    <CommentContainer />
-                    <button className="add-comment-button">
-                      Add a comment
-                    </button>
-                  </>
-                )}
-                {activeTab === 1 && (
-                  <>
-                    <CommentContainer />
-                    <button className="add-comment-button">
-                      Add a comment
-                    </button>
-                  </>
-                )}
-              </div>
+              <CommentTabs
+                activeTab={activeTab}
+                handleTabChange={handleTabChange}
+                status={status}
+                handleStatusChange={handleStatusChange}
+              />
             )}
           </div>
         </div>

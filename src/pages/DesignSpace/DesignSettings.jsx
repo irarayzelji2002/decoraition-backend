@@ -216,7 +216,7 @@ const SettingsContent = ({
                 onChange={setInactivityDays}
               />
               <InactivitySetting
-                label="Number of days before deletion after project inactivity"
+                label="Number of days before deletion after design inactivity"
                 value={deletionDays}
                 onChange={setDeletionDays}
               />

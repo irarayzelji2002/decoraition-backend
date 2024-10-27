@@ -48,7 +48,7 @@ const FAQ = () => {
     <div
       style={{
         background: "var(--bg-header)",
-        height: "100%",
+        height: "100vh",
         display: "flex",
         alignItems: "center",
         flexDirection: "column",

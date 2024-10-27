@@ -30,6 +30,8 @@ import DesignSettings from "./pages/DesignSpace/DesignSettings.jsx";
 import Landing from "./pages/Landing/Landing";
 import PinOrder from "./pages/ProjectSpace/PinOrder.jsx";
 import FAQ from "./pages/Homepage/FAQ.jsx";
+import Terms from "./pages/Account/Terms.jsx";
+import Privacy from "./pages/Account/Privacy.jsx";
 import Error from "./components/Error.jsx";
 import GenerateImgLoadingPage from "./components/GenerateImgLoadingPage.jsx";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
@@ -79,6 +81,8 @@ function App() {
           <Route path="/details/:designId" element={<Details />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/error" element={<Error />} />
           <Route
             path="/generateImgLoadingPage"

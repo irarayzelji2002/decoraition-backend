@@ -112,6 +112,15 @@ function Design() {
     const cleanup = handleSidebarEffect(isSidebarOpen);
     return cleanup;
   }, [isSidebarOpen]);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+
+  const handleNotifClick = () => {
+    setIsNotifOpen(true);
+  };
+
+  const handleNotifClose = () => {
+    setIsNotifOpen(false);
+  };
 
   if (!designData) {
     return (
@@ -142,7 +151,7 @@ function Design() {
           )
         }
         setIsEditingName={setIsEditingName}
-        setIsSidebarOpen={setIsSidebarOpen}
+        setIsSidebarOpen={handleNotifClick}
       />
 
       <>
@@ -152,36 +161,11 @@ function Design() {
             <div
               className="fixed-arrow-button"
               onClick={() => togglePromptBar(setShowPromptBar)}
-            >
-              {/* <div className="arrow-button">
-                {showPromptBar ? (
-                  <ArrowBackIosIcon sx={{ color: "var(--color-white) " }} />
-                ) : (
-                  <ArrowForwardIosIcon sx={{ color: "var(--color-white)" }} />
-                )}
-              </div> */}
-            </div>
+            ></div>
+
+            <Version isDrawerOpen={isNotifOpen} onClose={handleNotifClose} />
 
             <div className="working-area">
-              <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-                <button
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="close-sidebar"
-                >
-                  Close
-                </button>
-                <div className="sidebar-content">
-                  <Version />
-                </div>
-              </div>
-
-              {isSidebarOpen && (
-                <div
-                  className="overlay"
-                  onClick={() => setIsSidebarOpen(false)}
-                ></div>
-              )}
-
               <div className="frame-buttons">
                 <button onClick={() => setNumImageFrames(2)}>
                   <TwoFrames />

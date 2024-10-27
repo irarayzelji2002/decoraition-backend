@@ -102,8 +102,6 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             onClose={handleDrawerClose}
           />
 
-          <NotifTab isDrawerOpen={isNotifOpen} onClose={handleNotifClose} />
-
           <Paper
             component="form"
             sx={{

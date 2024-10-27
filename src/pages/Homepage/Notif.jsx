@@ -1,8 +1,34 @@
 import React from "react";
+import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import { FaCheckCircle, FaEllipsisH, FaCircle } from "react-icons/fa";
+import { useEffect } from "react";
+import { useRef } from "react";
 
 function Notif() {
+  const [showOptions, setShowOptions] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const dropdownRef = useRef(null);
+
+  const toggleOptions = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    setMenuPosition({ top: rect.bottom, left: rect.left });
+    setShowOptions((prev) => !prev);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowOptions(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div>
       <div className="notif-box">
@@ -47,7 +73,23 @@ function Notif() {
             <span style={{ fontSize: "0.5rem" }} className="date">
               <strong>15h</strong>
             </span>
-            <FaEllipsisH className="options-dots" />
+            <FaEllipsisH
+              className="options-dots"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent the div click event
+                toggleOptions(e); // Toggle the options menu
+              }}
+            />
+            {showOptions && (
+              <div
+                className="dropdown-menu"
+                style={{ top: menuPosition.top, left: menuPosition.left - 200 }}
+                ref={dropdownRef}
+              >
+                <div className="dropdown-item">Open</div>
+                <div className="dropdown-item">Resolve</div>
+              </div>
+            )}
           </div>
         </div>
 

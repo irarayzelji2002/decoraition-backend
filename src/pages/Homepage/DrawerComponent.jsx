@@ -364,7 +364,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
 
         {/* Settings Menu Item */}
         <ListItem
-          onClick={() => navigate("/settings")}
+          onClick={() => navigate("/faq")}
           style={{ cursor: "pointer" }}
         >
           <ListItemIcon>

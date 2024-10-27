@@ -281,6 +281,7 @@ const Signup = () => {
               }}
               sx={commonInputStyles}
             />
+            <TermsCheckbox />
             <Button
               type="submit"
               fullWidth
@@ -296,6 +297,7 @@ const Signup = () => {
             </Button>
           </Box>
         </Box>
+
         <Grid container justifyContent="center" alignItems="center">
           <Grid item>
             <Typography
@@ -317,3 +319,33 @@ const Signup = () => {
 };
 
 export default Signup;
+
+const TermsCheckbox = () => {
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+  };
+
+  return (
+    <div className="terms-checkbox">
+      <input
+        type="checkbox"
+        id="terms"
+        checked={isChecked}
+        onChange={handleCheckboxChange}
+      />
+      <label htmlFor="terms">
+        I understand and agree with{" "}
+        <a href="/terms" target="_blank" rel="noopener noreferrer">
+          Terms & Conditions
+        </a>{" "}
+        and{" "}
+        <a href="/privacy" target="_blank" rel="noopener noreferrer">
+          Privacy & Policy
+        </a>
+        .
+      </label>
+    </div>
+  );
+};

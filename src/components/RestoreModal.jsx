@@ -29,6 +29,7 @@ const RestoreModal = ({ isOpen, onClose }) => {
           display: "flex",
           alignItems: "center",
           borderBottom: "1px solid var(--color-grey)",
+          fontWeight: "bold",
         }}
       >
         <IconButton

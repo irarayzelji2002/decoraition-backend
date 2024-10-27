@@ -14,30 +14,6 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
     setActiveTab(newValue);
   };
 
-  // Load dark mode preference from localStorage on component mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-      setDarkMode(false);
-      document.documentElement.classList.add("light-mode");
-    } else {
-      setDarkMode(true);
-      document.documentElement.classList.remove("light-mode");
-    }
-  }, []);
-
-  // Toggle dark mode and save preference in localStorage
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    if (darkMode) {
-      document.documentElement.classList.add("light-mode");
-      localStorage.setItem("theme", "light");
-    } else {
-      document.documentElement.classList.remove("light-mode");
-      localStorage.setItem("theme", "dark");
-    }
-  };
-
   return (
     <Drawer
       anchor="left"
@@ -45,7 +21,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
       onClose={onClose}
       sx={{
         "& .MuiDrawer-paper": {
-          width: { xs: "80%", sm: "25%" },
+          width: { xs: "83%", sm: "38%" },
           minWidth: "300px",
           backgroundColor: darkMode
             ? "var(--bgMain)"

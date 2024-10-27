@@ -29,6 +29,7 @@ import SeeAllProjects from "./pages/DesignSpace/SeeAllProjects.jsx";
 import DesignSettings from "./pages/DesignSpace/DesignSettings.jsx";
 import Landing from "./pages/Landing/Landing";
 import PinOrder from "./pages/ProjectSpace/PinOrder.jsx";
+import FAQ from "./pages/Homepage/FAQ.jsx";
 import Error from "./components/Error.jsx";
 import GenerateImgLoadingPage from "./components/GenerateImgLoadingPage.jsx";
 import { AuthProvider } from "./AuthContext"; // Adjust the path as necessary
@@ -77,6 +78,7 @@ function App() {
           <Route path="/homepage" element={<Homepage />} /> {/*Checked */}
           <Route path="/details/:designId" element={<Details />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/error" element={<Error />} />
           <Route
             path="/generateImgLoadingPage"

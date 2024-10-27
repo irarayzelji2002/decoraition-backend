@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
-
+import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -17,6 +17,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const defaultTheme = createTheme();
 
@@ -321,31 +322,43 @@ const Signup = () => {
 export default Signup;
 
 const TermsCheckbox = () => {
-  const [isChecked, setIsChecked] = useState(false);
+  const [checked, setChecked] = useState(false);
 
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
   };
-
   return (
     <div className="terms-checkbox">
-      <input
-        type="checkbox"
-        id="terms"
-        checked={isChecked}
-        onChange={handleCheckboxChange}
+      <FormControlLabel
+        control={
+          <Checkbox
+            value="remember"
+            sx={{
+              color: "var(--color-white)",
+              "&.Mui-checked": {
+                color: "var(--brightFont)",
+              },
+              borderRadius: "4px",
+              "& .MuiSvgIcon-root": {
+                fontSize: 28,
+              },
+            }}
+          />
+        }
+        label={
+          <label htmlFor="terms">
+            I understand and agree with{" "}
+            <a href="/terms" target="_blank" rel="noopener noreferrer">
+              Terms & Conditions
+            </a>{" "}
+            and{" "}
+            <a href="/privacy" target="_blank" rel="noopener noreferrer">
+              Privacy & Policy
+            </a>
+            .
+          </label>
+        }
       />
-      <label htmlFor="terms">
-        I understand and agree with{" "}
-        <a href="/terms" target="_blank" rel="noopener noreferrer">
-          Terms & Conditions
-        </a>{" "}
-        and{" "}
-        <a href="/privacy" target="_blank" rel="noopener noreferrer">
-          Privacy & Policy
-        </a>
-        .
-      </label>
     </div>
   );
 };

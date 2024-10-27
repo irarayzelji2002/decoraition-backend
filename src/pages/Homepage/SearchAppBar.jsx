@@ -52,6 +52,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
   };
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const handleMenuClick = () => {
     setIsDrawerOpen(true);
@@ -60,8 +61,6 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
-
-  const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const handleNotifClick = () => {
     setIsNotifOpen(true);

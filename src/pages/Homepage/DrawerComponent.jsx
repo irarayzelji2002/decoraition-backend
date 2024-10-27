@@ -37,7 +37,6 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
   // State to handle dark mode
   const [darkMode, setDarkMode] = useState(true);
   const navigate = useNavigate();
-  const [showOptions, setShowOptions] = useState(false);
   const [username, setUsername] = useState("");
   const [user, setUser] = useState(null);
   const [designs, setDesigns] = useState([]);
@@ -64,9 +63,6 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
 
     return () => unsubscribeAuth();
   }, []);
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
-  };
   // Load dark mode preference from localStorage on component mount
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -177,8 +173,9 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
           <IconButton onClick={handleNotifClick} sx={{ color: "white" }}>
             <NotificationsIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
-
-          <NotifTab isDrawerOpen={isNotifOpen} onClose={handleNotifClose} />
+          <div onClick={onClose}>
+            <NotifTab isDrawerOpen={isNotifOpen} onClose={handleNotifClose} />
+          </div>
         </div>
       </div>
 

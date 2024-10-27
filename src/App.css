@@ -131,6 +131,14 @@ select:-webkit-autofill {
   border: none;
 }
 
+.center-me {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: auto;
+}
+
 :root {
   --bg-header: url("../public/img/bg-login.png");
   --bg-image: #1f1e22;

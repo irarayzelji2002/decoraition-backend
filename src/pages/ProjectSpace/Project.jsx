@@ -194,75 +194,81 @@ function Project() {
       </div>
       <div
         style={{
-          display: "flex",
-          width: "auto",
-
-          padding: "20px",
-        }}
-      >
-        <span
-          className="SubtitlePrice"
-          style={{
-            backgroundColor: "transparent",
-            fontSize: "1.5rem",
-          }}
-        >
-          Designs
-        </span>
-
-        <div
-          className="button-container"
-          style={{ display: "flex", marginLeft: "auto" }}
-        >
-          <Button
-            className="gradient-from-none"
-            style={{ marginRight: "10px" }}
-            onClick={handleHorizontalClick}
-          >
-            <HorizontalIcon />
-          </Button>
-          <Button className="gradient-from-none" onClick={handleVerticalClick}>
-            <ListIcon />
-          </Button>
-        </div>
-      </div>
-      <div
-        style={{
           paddingBottom: "20%",
         }}
       >
-        {isVertical && (
-          <div
-            className="design-item"
-            style={{ backgroundColor: "transparent", border: "none" }}
-          >
-            <div className="list-content">
-              <Typography
-                variant="h6"
-                className="ellipsis-text"
-                style={{ width: "20%" }}
-              >
-                Name
-              </Typography>
-
-              <Typography variant="body2" className="ellipsis-text">
-                Owner
-              </Typography>
-              <Typography variant="body2" className="ellipsis-text">
-                Date Modified
-              </Typography>
-              <Typography variant="body2" className="ellipsis-text">
-                Created
-              </Typography>
-              <IconButton style={{ opacity: 0 }}>
-                <MoreVertIcon style={{ color: "var(--color-white)" }} />
-              </IconButton>
-            </div>
-          </div>
-        )}
         <div
-          style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
         >
+          <div style={{ width: "90%" }}>
+            <div style={{ display: "flex" }}>
+              <span
+                className="SubtitlePrice"
+                style={{
+                  backgroundColor: "transparent",
+                  fontSize: "1.5rem",
+                }}
+              >
+                Designs
+              </span>
+
+              <div
+                className="button-container"
+                style={{ display: "flex", marginLeft: "auto" }}
+              >
+                <Button
+                  className="gradient-from-none"
+                  style={{ marginRight: "10px" }}
+                  onClick={handleHorizontalClick}
+                >
+                  <HorizontalIcon />
+                </Button>
+                <Button
+                  className="gradient-from-none"
+                  onClick={handleVerticalClick}
+                >
+                  <ListIcon />
+                </Button>
+              </div>
+            </div>
+
+            {isVertical && (
+              <div
+                className="design-item"
+                style={{ backgroundColor: "transparent", border: "none" }}
+              >
+                <div className="list-content">
+                  <Typography
+                    variant="h6"
+                    className="ellipsis-text"
+                    style={{ width: "20%" }}
+                  >
+                    Name
+                  </Typography>
+
+                  <Typography variant="body2" className="ellipsis-text">
+                    Owner
+                  </Typography>
+                  <Typography variant="body2" className="ellipsis-text">
+                    Date Modified
+                  </Typography>
+                  <Typography variant="body2" className="ellipsis-text">
+                    Created
+                  </Typography>
+                  <IconButton style={{ opacity: 0 }}>
+                    <MoreVertIcon style={{ color: "var(--color-white)" }} />
+                  </IconButton>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div
             className={`layout ${isVertical ? "vertical" : ""}`}
             style={{ width: "90%" }}

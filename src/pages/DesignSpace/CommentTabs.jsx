@@ -20,11 +20,19 @@ function CommentTabs({
       >
         <Tab
           className={`tabStyle ${activeTab === 0 ? "Mui-selected" : ""}`}
-          label="All Comments"
+          label={
+            <span style={{ fontWeight: "bold", textTransform: "none" }}>
+              All Comments
+            </span>
+          }
         />
         <Tab
           className={`tabStyle ${activeTab === 1 ? "Mui-selected" : ""}`}
-          label="For You"
+          label={
+            <span style={{ fontWeight: "bold", textTransform: "none" }}>
+              For You
+            </span>
+          }
         />
       </Tabs>
 

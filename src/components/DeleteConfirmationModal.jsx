@@ -37,7 +37,10 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onDelete }) => {
         >
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h6" sx={{ color: "var(--color-white)" }}>
+        <Typography
+          variant="h6"
+          sx={{ color: "var(--color-white)", fontWeight: "bold" }}
+        >
           {" "}
           Confirm Delete
         </Typography>

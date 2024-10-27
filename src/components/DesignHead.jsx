@@ -23,6 +23,7 @@ import DrawerComponent from "../pages/Homepage/DrawerComponent.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import Version from "../pages/DesignSpace/Version.jsx";
 
 function DesignHead({
   toggleComments,
@@ -177,6 +178,16 @@ function DesignHead({
     handleEditNameToggle();
   };
 
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+
+  const handleNotifClick = () => {
+    setIsNotifOpen(true);
+  };
+
+  const handleNotifClose = () => {
+    setIsNotifOpen(false);
+  };
+
   const handleBlur = () => {
     // Save the name when the user clicks away from the input field
     if (isEditingName) {
@@ -225,6 +236,9 @@ function DesignHead({
         handleLogout={handleLogout}
         darkMode={darkMode}
       />
+
+      <Version isDrawerOpen={isNotifOpen} onClose={handleNotifClose} />
+
       <div className="left">
         <IconButton
           size="large"
@@ -304,7 +318,7 @@ function DesignHead({
               onComment={toggleComments}
               onCopyLink={handleCopyLink}
               onOpenDownloadModal={handleOpenDownloadModal}
-              setIsSidebarOpen={setIsSidebarOpen}
+              setIsSidebarOpen={handleNotifClick}
               onSetting={handleSettings}
               onOpenRenameModal={handleOpenRenameModal}
               onOpenRestoreModal={handleOpenRestoreModal}

@@ -366,6 +366,10 @@ h2 {
   transition: transform 0.3s;
 }
 
+.faq-item:hover .faq-question {
+  background-image: var(--gradientCircle);
+}
+
 .faq-item.open .faq-answer {
   display: block;
 }

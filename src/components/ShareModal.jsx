@@ -82,19 +82,24 @@ const ShareModal = ({
         }}
       >
         {!isSecondPage ? (
-          <div style={{ width: "auto", padding: "16px" }}>
+          <div style={{ width: "auto" }}>
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                paddingLeft: "16px",
               }}
             >
               <EmailInput />
             </div>
-            <Divider sx={{ backgroundColor: "grey", marginBottom: "16px" }} />
+            <Divider sx={{ backgroundColor: "grey" }} />
 
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginLeft: "8px",
+              }}
+            >
               <Select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
@@ -119,13 +124,19 @@ const ShareModal = ({
                 <MenuItem value="Commenter">Commenter</MenuItem>
                 <MenuItem value="Viewer">Viewer</MenuItem>
               </Select>
-              <p style={{ color: "var(--color-white)", marginLeft: "auto" }}>
+              <p
+                style={{
+                  color: "var(--color-white)",
+                  marginLeft: "auto",
+                }}
+              >
                 Notify People
               </p>
               <Checkbox
                 checked={notifyPeople}
                 onChange={(e) => setNotifyPeople(e.target.checked)}
                 sx={{
+                  marginRight: "16px",
                   color: "var(--color-white)",
                   "&.Mui-checked": {
                     color: "var(--brightFont)",
@@ -133,8 +144,6 @@ const ShareModal = ({
                 }}
               />
             </div>
-
-            <br />
             <Divider sx={{ backgroundColor: "grey", marginBottom: "16px" }} />
 
             <TextField
@@ -143,9 +152,8 @@ const ShareModal = ({
               variant="standard"
               placeholder="Optional message"
               sx={{
-                marginBottom: "16px",
-                padding: "16px",
-                width: "90%",
+                padding: "20px",
+                width: "93%",
                 backgroundColor: "transparent",
                 "& .MuiInput-root": {
                   color: "var(--color-white)",

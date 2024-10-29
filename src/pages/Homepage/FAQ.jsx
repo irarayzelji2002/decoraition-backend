@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../../css/landing.css";
 
 const FAQ = () => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -76,6 +77,14 @@ const FAQ = () => {
           ))}
         </div>
       </div>
+      <footer className="footer">
+        <img
+          src="../../img/logo-White.png"
+          alt="DecorAltion Icon"
+          className="decoricon"
+        />
+        <p>DecorAltion </p>
+      </footer>
     </div>
   );
 };

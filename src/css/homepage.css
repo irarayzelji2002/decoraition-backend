@@ -354,6 +354,7 @@ h2 {
   justify-content: space-between;
   align-items: center;
   border-radius: 16px;
+  font-weight: bold;
 }
 
 .faq-answer {
@@ -367,7 +368,7 @@ h2 {
 }
 
 .faq-item:hover .faq-question {
-  background-image: var(--gradientCircle);
+  background-color: var(--budgetCard);
 }
 
 .faq-item.open .faq-answer {

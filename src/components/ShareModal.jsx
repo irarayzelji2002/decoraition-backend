@@ -105,6 +105,7 @@ const ShareModal = ({
                 onChange={(e) => setRole(e.target.value)}
                 sx={{
                   width: "50%",
+                  borderRight: "1px solid var(--color-grey)",
                   backgroundColor: "transparent", // Select background color
                   "& .MuiSelect-select": { color: "var(--color-white)" }, // Select text color
                   "& .MuiOutlinedInput-notchedOutline": {

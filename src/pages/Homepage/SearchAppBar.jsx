@@ -174,18 +174,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
                 src={user.profilePicture}
               />
             ) : (
-              <Avatar
-                sx={{
-                  height: 40,
-                  width: 40,
-                  borderRadius: "50%",
-                  marginLeft: "auto",
-                  marginRight: "12px",
-                  background: "var(--gradientButton)",
-                  border: "2px solid var(--brightFont)",
-                  color: "white", // Optional: to set the text color inside the avatar
-                }}
-              >
+              <Avatar className="avatar-style">
                 {username ? getInitial(username) : ""}
               </Avatar>
             )}

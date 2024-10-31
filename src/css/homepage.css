@@ -379,6 +379,27 @@ h2 {
   transform: rotate(180deg);
 }
 
+.avatar-style {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: 12px;
+  background: var(--gradientButton);
+  border: 2px solid var(--brightFont);
+  color: white;
+}
+
+.solo-avatar-style {
+  height: 75px;
+  width: 75px;
+  border-radius: 50%;
+  margin-right: 12px;
+  background: var(--gradientButton);
+  border: 2px solid var(--brightFont);
+  color: white;
+}
+
 @media (max-width: 1024px) {
   .layout {
     grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */

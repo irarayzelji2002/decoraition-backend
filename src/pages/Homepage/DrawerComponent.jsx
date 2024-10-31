@@ -180,14 +180,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
       </div>
 
       <div className="drawerUser">
-        <Avatar
-          sx={{
-            width: 56,
-            height: 56,
-            marginBottom: "10px",
-          }}
-          src={user?.profilePicture || ""}
-        >
+        <Avatar className="solo-avatar-style" src={user?.profilePicture || ""}>
           {username ? username.charAt(0).toUpperCase() : ""}
         </Avatar>
         <div>

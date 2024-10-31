@@ -126,7 +126,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
     <Drawer
       anchor="left"
       open={isDrawerOpen}
-      onClose={onClose}
+      // onClose={onClose}
       sx={{
         "& .MuiDrawer-paper": {
           width: { xs: "80%", sm: "25%" },
@@ -173,8 +173,8 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
           <IconButton onClick={handleNotifClick} sx={{ color: "white" }}>
             <NotificationsIcon sx={{ color: "var(--color-white)" }} />
           </IconButton>
-          <div onClick={onClose}>
-            <NotifTab isDrawerOpen={isNotifOpen} onClose={handleNotifClose} />
+          <div>
+            <NotifTab isNotifOpen={isNotifOpen} onClose={handleNotifClose} />
           </div>
         </div>
       </div>

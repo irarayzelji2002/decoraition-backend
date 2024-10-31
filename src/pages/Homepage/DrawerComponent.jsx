@@ -126,7 +126,7 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
     <Drawer
       anchor="left"
       open={isDrawerOpen}
-      // onClose={onClose}
+      onClose={onClose}
       sx={{
         "& .MuiDrawer-paper": {
           width: { xs: "80%", sm: "25%" },

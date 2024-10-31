@@ -17,12 +17,10 @@ import NotifTab from "./NotifTab";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { useNavigate } from "react-router-dom";
 
 const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleAuthChange = async (user) => {
@@ -147,6 +145,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
                 <NotificationsIcon sx={{ color: "var(--color-white)" }} />
               </Badge>
             </Box>
+            <NotifTab isNotifOpen={isNotifOpen} onClose={handleNotifClose} />
             <Box
               sx={{
                 color: "var(--color-white)",

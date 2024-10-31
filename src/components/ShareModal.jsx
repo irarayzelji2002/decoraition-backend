@@ -184,7 +184,7 @@ const ShareModal = ({
           <div>
             <Typography
               variant="body1"
-              sx={{ marginBottom: "16px", padding: "12px" }}
+              sx={{ fontWeight: "bold", marginBottom: "16px", padding: "12px" }}
             >
               People with access
             </Typography>
@@ -224,7 +224,7 @@ const ShareModal = ({
             ))}
             <Typography
               variant="body1"
-              sx={{ marginBottom: "16px", padding: "12px" }}
+              sx={{ fontWeight: "bold", marginBottom: "16px", padding: "12px" }}
             >
               General Access
             </Typography>
@@ -262,10 +262,7 @@ const ShareModal = ({
                     }}
                   >
                     <MenuItem value="Public">
-                      <Typography
-                        variant="body1"
-                        style={{ fontWeight: "bold" }}
-                      >
+                      <Typography variant="body1">
                         Anyone with link&nbsp;
                       </Typography>
                       <Typography variant="caption">
@@ -273,12 +270,7 @@ const ShareModal = ({
                       </Typography>
                     </MenuItem>
                     <MenuItem value="Restrict">
-                      <Typography
-                        variant="body1"
-                        style={{ fontWeight: "bold" }}
-                      >
-                        Restricted&nbsp;
-                      </Typography>
+                      <Typography variant="body1">Restricted&nbsp;</Typography>
                       <Typography variant="caption">
                         Only collaborators have access
                       </Typography>

@@ -9,8 +9,11 @@ import {
   IconButton,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { FormControl, Select, MenuItem } from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 const MakeCopyModal = ({ isOpen, onClose }) => {
+  const [version, setVersion] = React.useState("");
   return (
     <Dialog
       open={isOpen}
@@ -22,16 +25,7 @@ const MakeCopyModal = ({ isOpen, onClose }) => {
         },
       }}
     >
-      <DialogTitle
-        sx={{
-          backgroundColor: "var(  --nav-card-modal)", // Title background color
-          color: "var(--color-white)", // Title text color
-          display: "flex",
-          alignItems: "center",
-          borderBottom: "1px solid var(--color-grey)",
-          fontWeight: "bold",
-        }}
-      >
+      <DialogTitle className="dialog-title">
         {/* Wrapping ArrowBackIcon inside IconButton for clickability */}
         <IconButton
           onClick={onClose}
@@ -41,17 +35,30 @@ const MakeCopyModal = ({ isOpen, onClose }) => {
         </IconButton>
         Make a Copy
       </DialogTitle>
-      <DialogContent
-        sx={{
-          backgroundColor: "var(  --nav-card-modal)",
-          color: "var(--color-white)",
-          marginTop: "20px",
-        }}
-      >
+      <DialogContent className="dialog-content">
         <Typography variant="body1">
-          Choose options for making a copy of the item.
+          Choose a Version for making a copy of the item.
         </Typography>
       </DialogContent>
+      <FormControl className="form-control">
+        <label>Version</label>
+        <Select
+          id="date-modified-select"
+          className="custom-select"
+          value={version}
+          label="Choose Pallete"
+          onChange={(e) => setVersion(e.target.value)}
+          IconComponent={(props) => (
+            <ArrowDropDownIcon className="select-icon" />
+          )}
+        >
+          <MenuItem>None</MenuItem>
+          <MenuItem value="1">Version 1</MenuItem>
+          <MenuItem value="2">Version 2</MenuItem>
+          <MenuItem value="3">Version 3</MenuItem>
+          <MenuItem value="4">Version 4</MenuItem>
+        </Select>
+      </FormControl>
       <DialogActions
         sx={{ backgroundColor: "var(  --nav-card-modal)", margin: "10px" }}
       >

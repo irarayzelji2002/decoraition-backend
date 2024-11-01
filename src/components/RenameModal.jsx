@@ -12,26 +12,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const RenameModal = ({ isOpen, onClose }) => {
   return (
-    <Dialog
-      open={isOpen}
-      onClose={onClose}
-      sx={{
-        "& .MuiDialog-paper": {
-          backgroundColor: "var(  --nav-card-modal)",
-          borderRadius: "20px",
-        },
-      }}
-    >
-      <DialogTitle
-        sx={{
-          backgroundColor: "var(  --nav-card-modal)",
-          color: "var(--color-white)",
-          display: "flex",
-          alignItems: "center",
-          borderBottom: "1px solid var(--color-grey)",
-          fontWeight: "bold",
-        }}
-      >
+    <Dialog open={isOpen} onClose={onClose} className="dialog">
+      <DialogTitle className="dialog-title">
         <IconButton
           onClick={onClose}
           sx={{ color: "var(--color-white)", marginRight: 1 }}
@@ -40,33 +22,12 @@ const RenameModal = ({ isOpen, onClose }) => {
         </IconButton>
         Rename
       </DialogTitle>
-      <DialogContent
-        sx={{
-          backgroundColor: "var(  --nav-card-modal)",
-          color: "var(--color-white)",
-          marginTop: "20px",
-        }}
-      >
+      <DialogContent className="dialog-content">
         <TextField
           placeholder="New Name"
           variant="outlined"
           fullWidth
-          sx={{
-            marginBottom: "16px",
-            backgroundColor: "var(  --nav-card-modal)",
-            input: { color: "var(--color-white)" }, //placehold color
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: "var( --borderInput)",
-              },
-              "&:hover fieldset": {
-                borderColor: "var( --borderInput)",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "var(--brightFont)",
-              },
-            },
-          }}
+          className="element"
         />
       </DialogContent>
       <DialogActions
@@ -76,16 +37,7 @@ const RenameModal = ({ isOpen, onClose }) => {
           fullWidth
           variant="contained"
           onClick={onClose}
-          sx={{
-            background: "var(--gradientButton)",
-            borderRadius: "20px",
-            color: "var(--color-white)",
-            fontWeight: "bold",
-            textTransform: "none",
-            "&:hover": {
-              background: "var(--gradientButtonHover)", // Reverse gradient on hover
-            },
-          }}
+          className="confirm-button"
         >
           Rename
         </Button>
@@ -93,25 +45,7 @@ const RenameModal = ({ isOpen, onClose }) => {
           fullWidth
           variant="contained"
           onClick={onClose}
-          sx={{
-            color: "var(--color-white)",
-            background: "transparent",
-            border: "2px solid transparent",
-            borderRadius: "20px",
-            backgroundImage: "var(--lightGradient), var(--gradientButton)",
-            backgroundOrigin: "border-box",
-            backgroundClip: "padding-box, border-box",
-            fontWeight: "bold",
-            textTransform: "none",
-          }}
-          onMouseOver={(e) =>
-            (e.target.style.backgroundImage =
-              "var(--lightGradient), var(--gradientButtonHover)")
-          }
-          onMouseOut={(e) =>
-            (e.target.style.backgroundImage =
-              "var(--lightGradient), var(--gradientButton)")
-          }
+          className="cancel-button"
         >
           Cancel
         </Button>

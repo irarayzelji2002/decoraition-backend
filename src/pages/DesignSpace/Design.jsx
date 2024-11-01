@@ -196,6 +196,7 @@ function Design() {
                 handleTabChange={handleTabChange}
                 status={status}
                 handleStatusChange={handleStatusChange}
+                handleCloseComments={() => toggleComments(setShowComments)}
               />
             )}
           </div>

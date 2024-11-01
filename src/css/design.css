@@ -715,7 +715,7 @@ textarea {
   background-color: var(--nav-card-modal) !important;
   color: var(--color-white) !important;
   margin-top: 20px !important;
-  margin-bottom: -20px !important;
+  margin-bottom: -25px !important;
 }
 
 .form-control {
@@ -786,6 +786,12 @@ textarea {
 .confirm-dialog-actions {
   background-color: var(--nav-card-modal) !important;
   margin: 10px !important;
+}
+
+.comment-tabs-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-bottom: 20px !important;
 }
 
 @media (max-width: 600px) {

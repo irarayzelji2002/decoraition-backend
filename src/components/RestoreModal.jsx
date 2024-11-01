@@ -44,6 +44,7 @@ const RestoreModal = ({ isOpen, onClose }) => {
         </DialogContent>
 
         <FormControl className="form-control">
+          <label>Version</label>
           <Select
             id="date-modified-select"
             className="custom-select"
@@ -67,7 +68,7 @@ const RestoreModal = ({ isOpen, onClose }) => {
             fullWidth
             variant="contained"
             onClick={handleRestoreClick}
-            className="button"
+            className="confirm-button"
           >
             Restore
           </Button>

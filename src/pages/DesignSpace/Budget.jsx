@@ -46,6 +46,11 @@ function Budget() {
     setStatus(event.target.value);
   };
 
+  const handleCloseComments = () => {
+    console.log("Closing comments");
+    setShowComments(false);
+  };
+
   useEffect(() => {
     const auth = getAuth();
 
@@ -257,6 +262,7 @@ function Budget() {
             handleTabChange={handleTabChange}
             status={status}
             handleStatusChange={handleStatusChange}
+            handleCloseComments={() => toggleComments(setShowComments)} // Pass the function here
           />
         )}
       </div>

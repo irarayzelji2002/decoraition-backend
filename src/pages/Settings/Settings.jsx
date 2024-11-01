@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Tabs, Tab, Avatar, Button, Box, IconButton } from "@mui/material";
+import {
+  Tabs,
+  Tab,
+  Avatar,
+  Button,
+  Box,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
 import { Edit as EditIcon, Save as SaveIcon } from "@mui/icons-material";
 import Notifications from "./Notifications";
 import TopBar from "../../components/TopBar";
@@ -28,6 +36,7 @@ function Settings() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageUploaded, setImageUploaded] = useState(false);
   const [uploadedPhoto, setUploadedPhoto] = useState(null);
+  const [isUploading, setIsUploading] = useState(false); // Add loading state
 
   useEffect(() => {
     const auth = getAuth();
@@ -112,6 +121,7 @@ function Settings() {
 
   const handleSavePhoto = async () => {
     if (selectedFile && userId) {
+      setIsUploading(true); // Set loading state to true
       try {
         const storage = getStorage();
         const storageRef = ref(storage, `avatars/${userId}`);
@@ -125,6 +135,8 @@ function Settings() {
         toast.success("Photo updated successfully");
       } catch (error) {
         console.error("Error updating photo:", error);
+      } finally {
+        setIsUploading(false); // Set loading state to false
       }
     }
   };
@@ -253,43 +265,27 @@ function Settings() {
                   <Button
                     variant="contained"
                     color="primary"
-                    startIcon={<SaveIcon />}
-                    className="save-photo-btn"
+                    startIcon={
+                      isUploading ? (
+                        <CircularProgress size={24} />
+                      ) : (
+                        <SaveIcon />
+                      )
+                    }
+                    className="confirm-button"
                     onClick={handleSavePhoto}
                     sx={{
                       background: "linear-gradient(to right, #4CAF50, #81C784)",
                       marginBottom: "10px",
                     }}
+                    disabled={isUploading} // Disable button while uploading
                   >
-                    Save photo
+                    {isUploading ? "Uploading..." : "Save photo"}
                   </Button>
                 )}
 
                 {/* Remove Photo Button */}
-                <Button
-                  sx={{
-                    background: "transparent",
-                    border: "2px solid transparent",
-                    borderRadius: "20px",
-                    backgroundImage:
-                      "var(--lightGradient), var(--gradientButton)",
-                    backgroundOrigin: "border-box",
-                    backgroundClip: "padding-box, border-box",
-                    fontWeight: "bold",
-                    textTransform: "none",
-                    width: "150px",
-                  }}
-                  onMouseOver={(e) =>
-                    (e.target.style.backgroundImage =
-                      "var(--lightGradient), var(--gradientButtonHover)")
-                  }
-                  onMouseOut={(e) =>
-                    (e.target.style.backgroundImage =
-                      "var(--lightGradient), var(--gradientButton)")
-                  }
-                >
-                  Remove photo
-                </Button>
+                <Button className="cancel-button">Remove photo</Button>
               </div>
             </div>
 

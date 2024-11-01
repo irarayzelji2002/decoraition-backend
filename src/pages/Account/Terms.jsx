@@ -79,6 +79,26 @@ function Terms() {
             suitable for all purposes. DecorAItion does not guarantee the
             accuracy or safety of AI-generated content.
           </p>
+
+          <h2>6. Limitation of Liability</h2>
+          <p>
+            DecorAItion is not liable for any damages arising from your use of
+            the app. You agree to indemnify and hold harmless DecorAItion and
+            its affiliates, officers, and employees from any claims or damages
+            resulting from your use of our services.
+          </p>
+          <h2>7. Governing Law</h2>
+          <p>
+            These Terms are governed by the laws of [Your Country/State]. Any
+            disputes arising from these terms shall be resolved in the courts of
+            [Jurisdiction].
+          </p>
+
+          <h2>8. Contact Us</h2>
+          <p>
+            If you have questions regarding these terms, please contact us at
+            [decoraition@gmail.com].
+          </p>
         </div>
       </div>
     </div>

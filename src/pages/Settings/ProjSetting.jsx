@@ -18,7 +18,7 @@ import "../../css/projSettings.css"; // Import the CSS file
 import PublicIcon from "@mui/icons-material/Public"; // Import the globe icon
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
+export const theme = createTheme({
   components: {
     MuiSwitch: {
       styleOverrides: {
@@ -283,7 +283,7 @@ const SettingsContent = ({
 );
 
 // Custom Switch Component for reusability
-const CustomSwitch = ({ label, checked, onChange }) => (
+export const CustomSwitch = ({ label, checked, onChange }) => (
   <Box
     className="customSwitchContainer"
     sx={{
@@ -334,7 +334,7 @@ const menuItemStyles = {
 };
 
 // Styles for Switch
-const switchStyles = {
+export const switchStyles = {
   "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
     backgroundColor: "var(--inputBg)",
   },

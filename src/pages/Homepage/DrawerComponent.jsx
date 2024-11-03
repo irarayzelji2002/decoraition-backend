@@ -19,6 +19,9 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { ArrowBackIos } from "@mui/icons-material";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import DeleteIcon from "@mui/icons-material/Delete";
+import LinkIcon from "@mui/icons-material/Link";
 import {
   fetchUserData,
   fetchDesigns,
@@ -265,16 +268,16 @@ const DrawerComponent = ({ isDrawerOpen, onClose }) => {
                       })
                     }
                   >
-                    <span className="icon"></span> Open
+                    <OpenInNewIcon style={{ fontSize: 20 }} className="icon" />
+                    Open
                   </div>
                   <div className="dropdown-item">
-                    <span className="icon"></span> Delete
+                    <DeleteIcon style={{ fontSize: 20 }} className="icon" />
+                    Delete
                   </div>
                   <div className="dropdown-item">
-                    <span className="icon"></span> Copy Link
-                  </div>
-                  <div className="dropdown-item">
-                    <span className="icon"></span> Rename
+                    <LinkIcon style={{ fontSize: 20 }} className="icon" />
+                    Copy Link
                   </div>
                 </div>
               )}

@@ -228,10 +228,13 @@ function Budget() {
             />
           </div>
         </div>
-        <div className="budgetSpaceImg" style={{ marginBottom: "10%" }}>
-          {items.length === 0 ? (
+
+        {items.length === 0 ? (
+          <div
+            className="budgetSpaceImg"
+            style={{ marginBottom: "10%", justifyContent: "center" }}
+          >
             <div>
-              {" "}
               <p>No items yet</p>
               <img
                 src={"../../img/project-placeholder.png"}
@@ -239,8 +242,10 @@ function Budget() {
                 alt="project placeholder"
               />
             </div>
-          ) : (
-            items.map((item, index) => (
+          </div>
+        ) : (
+          items.map((item, index) => (
+            <div className="budgetSpaceImg" style={{ marginBottom: "10%" }}>
               <Item
                 key={index}
                 item={item}
@@ -253,9 +258,9 @@ function Budget() {
                     : navigate(`/editItem/${designId}/${item.id}`)
                 }
               />
-            ))
-          )}
-        </div>{" "}
+            </div>
+          ))
+        )}
         {showComments && (
           <CommentTabs
             activeTab={activeTab}

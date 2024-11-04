@@ -66,8 +66,10 @@ function Timeline() {
   };
 
   const handleAddEventClick = () => {
-    const formattedDate = date.toISOString().split("T")[0];
-    navigate(`/editEvent/${projectId}?date=${formattedDate}`);
+    const formattedDate = new Date(date);
+    formattedDate.setDate(formattedDate.getDate() + 1);
+    const formattedDateString = formattedDate.toISOString().split("T")[0];
+    navigate(`/editEvent/${projectId}?date=${formattedDateString}`);
   };
   return (
     <>

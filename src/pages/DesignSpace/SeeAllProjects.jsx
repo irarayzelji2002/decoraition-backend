@@ -144,7 +144,7 @@ export default function SeeAllProjects({ designId, projectId }) {
                     designId={design.id}
                     onDelete={handleDeleteDesign}
                     onOpen={() =>
-                      navigate(`/design/${design.id}`, {
+                      navigate(`/project/${design.id}`, {
                         state: { designId: design.id },
                       })
                     }

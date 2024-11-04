@@ -102,6 +102,7 @@ function Homepage() {
         <div className="headerPlace">
           <div className="header">
             <img
+              className="smaller-image"
               style={{
                 height: "96px",
                 marginRight: "14px",

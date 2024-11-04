@@ -2,6 +2,8 @@ import React from "react";
 import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import { FaCheckCircle, FaEllipsisH, FaCircle } from "react-icons/fa";
+import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useEffect } from "react";
 import { useRef } from "react";
 
@@ -86,8 +88,17 @@ function Notif() {
                 style={{ top: menuPosition.top, left: menuPosition.left - 200 }}
                 ref={dropdownRef}
               >
-                <div className="dropdown-item">Open</div>
-                <div className="dropdown-item">Resolve</div>
+                <div className="dropdown-item">
+                  <OpenInNewIcon style={{ fontSize: 20 }} className="icon" />
+                  Open
+                </div>
+                <div className="dropdown-item">
+                  <CheckCircleOutlineOutlinedIcon
+                    style={{ fontSize: 20 }}
+                    className="icon"
+                  />
+                  Resolve
+                </div>
               </div>
             )}
           </div>

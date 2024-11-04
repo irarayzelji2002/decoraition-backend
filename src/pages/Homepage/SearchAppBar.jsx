@@ -106,6 +106,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
               display: "flex",
               alignItems: "center",
               width: "100%",
+              minWidth: "150px",
               marginRight: "12px",
               borderRadius: "24px",
               backgroundColor: "var(--inputBg)",
@@ -147,6 +148,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
             </Box>
             <NotifTab isNotifOpen={isNotifOpen} onClose={handleNotifClose} />
             <Box
+              className="shorten-text"
               sx={{
                 color: "var(--color-white)",
                 marginRight: 1,

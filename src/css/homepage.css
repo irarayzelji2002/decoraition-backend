@@ -7,6 +7,7 @@
   margin-bottom: -10px;
   font-weight: 800;
   letter-spacing: -1px;
+  text-align: center;
 }
 .headerPlace {
   position: relative;
@@ -428,5 +429,14 @@ h2 {
 
   .navName {
     font-size: 2.75em;
+  }
+}
+
+@media only screen and (max-width: 460px) {
+  .navName {
+    font-size: 2.25em;
+  }
+  .navTagline {
+    font-size: 1em;
   }
 }

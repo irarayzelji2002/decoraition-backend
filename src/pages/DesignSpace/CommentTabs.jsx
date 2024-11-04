@@ -3,6 +3,7 @@ import { Tabs, Tab, Select, MenuItem, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CommentContainer from "./CommentContainer";
 
+
 function CommentTabs({
   activeTab,
   handleTabChange,
@@ -50,7 +51,9 @@ function CommentTabs({
         displayEmpty
         className="status-select"
       >
-        <MenuItem value="Open">Open</MenuItem>
+        <MenuItem value="Open">
+        
+        Open</MenuItem>
         <MenuItem value="Resolved">Resolved</MenuItem>
       </Select>
 

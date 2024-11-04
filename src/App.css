@@ -158,6 +158,18 @@ select:-webkit-autofill {
 .element .MuiOutlinedInput-root.Mui-focused fieldset {
   border-color: var(--brightFont) !important;
 }
+.shorten-text {
+  width: auto;
+}
+
+@media (max-width: 480px) {
+  .shorten-text {
+    width: 45px;
+  }
+  .smaller-image {
+    height: 60px !important;
+  }
+}
 
 :root {
   --bg-header: url("../public/img/bg-login.png");
@@ -203,6 +215,15 @@ select:-webkit-autofill {
   );
   --landingGradientOdd: linear-gradient(90deg, #f89a47cc, #f15f3e99, #ec207300);
   --uib-color: #ec2073;
+  --font-size: 16px;
+
+  @media (max-width: 768px) {
+    --font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    --font-size: 12px;
+  }
 }
 
 .light-mode {
@@ -223,7 +244,7 @@ select:-webkit-autofill {
   --budget-capsule: #2c8b2a;
   --inputBg: #f0f0f0;
   --iconBg: #fafafa;
-  --brightFont: #ff7a28;
+  --brightFont: #a65a2b;
   --borderInput: #515151;
   --gradientCircle: linear-gradient(20deg, #ec2073, #ff894d);
   --gradientCircleHover: linear-gradient(20deg, #ff894d, #ec2073);

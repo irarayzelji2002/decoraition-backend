@@ -6,10 +6,19 @@ import { IconButton, Modal, Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
 import { ChromePicker } from "react-color";
+import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 
-function MapPin({ title, editMode = false, pinNo }) {
+function MapPin({ title, editMode = false, pinNo, designId }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [value, setValue] = useState("#ffffff");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
 
   const handleChange = (color) => {
     setValue(color.hex);
@@ -115,9 +124,29 @@ function MapPin({ title, editMode = false, pinNo }) {
         >
           {!editMode ? (
             <>
-              <ExportIcon />
-              <EditPen />
-              <Trash />
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => (window.location.href = "/design/" + designId)}
+              >
+                <ExportIcon />
+              </div>
+
+              <div
+                onClick={() =>
+                  (window.location.href = "/addPin/1729257281629c876")
+                }
+              >
+                <EditPen />
+              </div>
+
+              <div onClick={openDeleteModal}>
+                <Trash />
+              </div>
+
+              <DeleteConfirmationModal
+                isOpen={showDeleteModal}
+                onClose={closeDeleteModal}
+              />
             </>
           ) : (
             <>

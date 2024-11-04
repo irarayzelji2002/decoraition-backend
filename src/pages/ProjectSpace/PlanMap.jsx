@@ -111,7 +111,13 @@ function PlanMap() {
         <div className="budgetSpaceImg">
           {designs.length > 0 ? (
             designs.map((design) => {
-              return <MapPin title={design.name} />;
+              return (
+                <MapPin
+                  key={design.id}
+                  title={design.name}
+                  designId={design.id}
+                />
+              );
             })
           ) : (
             <div className="no-content" style={{ height: "80vh" }}>

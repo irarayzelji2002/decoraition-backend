@@ -5,6 +5,7 @@
   margin-top: 20px;
   max-width: 1200px;
   padding: 20px;
+  padding-top: 0px;
 }
 
 .generalAccessTitle {
@@ -115,11 +116,10 @@
   }
 
   .accessBox {
-    flex-direction: column;
-  }
-
-  .accessIcon {
-    margin-bottom: 1rem;
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .accessSelect {
@@ -144,10 +144,6 @@
 }
 
 @media (max-width: 480px) {
-  .settingsContainer {
-    margin: 50px 10px;
-  }
-
   .generalAccessTitle,
   .viewerSettingsTitle,
   .inactivityTitle {

@@ -30,7 +30,7 @@ const DefaultMenu = ({
   onSetting,
 }) => {
   return (
-    <>
+    <div style={{ overflowY: "hidden" }}>
       {!project && (
         <MenuItem onClick={onComment}>
           <ListItemIcon>
@@ -131,7 +131,7 @@ const DefaultMenu = ({
         </ListItemIcon>
         <ListItemText primary="Details" sx={{ color: "var(--color-white)" }} />
       </MenuItem>
-    </>
+    </div>
   );
 };
 

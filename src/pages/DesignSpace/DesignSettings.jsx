@@ -137,14 +137,6 @@ const SettingsContent = ({
   <ThemeProvider theme={theme}>
     <div className="settingsContainer">
       {/* Tab Navigation */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: 4,
-        }}
-      ></Box>
-
       {/* General Access */}
       <div className="generalAccessTitle">General Access</div>
       <Box className="accessBox">

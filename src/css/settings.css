@@ -42,7 +42,7 @@
 }
 
 .MuiTab-root {
-  font-size: 1rem;
+  font-size: var(--font-size-h6);
   text-transform: none;
 }
 
@@ -117,7 +117,7 @@
 }
 
 .tabItem {
-  font-size: 18px !important;
+  font-size: var(--font-size-h7) !important;
   font-weight: bold !important;
   text-transform: none !important;
   cursor: pointer !important;

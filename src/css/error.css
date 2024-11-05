@@ -11,7 +11,7 @@
 }
 
 .error-title {
-  font-size: 10rem;
+  font-size: var(--font-size-h15);
   background-image: var(--gradientFont);
   background-clip: text;
   -webkit-background-clip: text;
@@ -21,7 +21,7 @@
 }
 
 .error-message {
-  font-size: 2rem;
+  font-size: var(--font-size-h2);
   background-image: var(--gradientFont);
   background-clip: text;
   -webkit-background-clip: text;

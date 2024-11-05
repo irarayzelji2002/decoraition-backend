@@ -1,5 +1,5 @@
 .titleBudget {
-  font-size: 1.5em;
+  font-size: var(--font-size-h4);
   color: var(--color-var(--color-white));
   margin-bottom: -12px;
 }
@@ -12,7 +12,7 @@
 }
 
 .priceSum {
-  font-size: 1.125em;
+  font-size: var(--font-size-h7);
   color: var(--color-var(--color-white));
   margin-top: 24px;
   background-color: var(--inputBg);
@@ -61,7 +61,7 @@
   margin: 12px;
 }
 .itemName {
-  font-size: 1.125em;
+  font-size: var(--font-size-h7);
   color: var(--color-white);
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -72,7 +72,7 @@
 }
 .itemPrice {
   margin-top: 12px;
-  font-size: 1.125em;
+  font-size: var(--font-size-h7);
   opacity: 0.6;
   color: var(--corlor-white);
 }
@@ -126,7 +126,7 @@
 
 .small-button-text {
   color: var(--color-white);
-  font-size: 0.875em;
+  font-size: var(--font-size-small);
   font-weight: bold;
 }
 .overlay {
@@ -140,7 +140,7 @@
 }
 
 .SubtitleBudget {
-  font-size: 1.25em;
+  font-size: var(--font-size-h5);
   margin-bottom: 12px;
   font-weight: bold;
 }
@@ -193,14 +193,14 @@ select {
   align-items: center;
 }
 .modal-header h2 {
-  font-size: 1.5rem;
+  font-size: var(--font-size-h4);
   color: var(--color-white);
   margin: 0;
 }
 .modal-header .close-icon {
   cursor: pointer;
   color: var(--color-white);
-  font-size: 1.5rem;
+  font-size: var(--font-size-h4);
 }
 .modal-body {
   display: flex;
@@ -217,7 +217,7 @@ select {
   border-radius: 25px;
   width: 100%;
   box-sizing: border-box;
-  font-size: 1rem;
+  font-size: var(--font-size-h6);
   outline: none;
 }
 .rounded-input::placeholder {

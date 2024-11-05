@@ -282,7 +282,7 @@ function PromptBar() {
             backgroundColor: "var(--color-tertiary)",
             color: "var(--color-white)",
             width: "500px",
-            maxWidth: "90%",
+            maxWidth: "80%",
             borderRadius: "20px",
             p: 3,
             position: "relative",
@@ -293,7 +293,11 @@ function PromptBar() {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <h2
               id="modal-title"
-              style={{ color: "var(--color-white)", margin: 0 }}
+              style={{
+                color: "var(--color-white)",
+                margin: 0,
+                fontSize: "var(--font-size-h6)",
+              }}
             >
               {modalTitle}
             </h2>
@@ -312,25 +316,6 @@ function PromptBar() {
           </div>
 
           <div style={{ marginTop: "30px" }}>
-            <Button
-              fullWidth
-              size="md"
-              sx={{
-                backgroundImage: "var(--gradientButton)",
-                borderRadius: "20px",
-                color: "white",
-                marginBottom: "20px",
-                "&:hover": {
-                  backgroundImage: "var(--gradientButtonHover)",
-                },
-              }}
-              onClick={() => {
-                console.log("Take a photo clicked");
-              }}
-            >
-              Take a Photo
-            </Button>
-
             <Button
               fullWidth
               size="md"

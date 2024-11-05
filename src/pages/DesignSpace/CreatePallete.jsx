@@ -37,7 +37,11 @@ const CreatePallete = ({ handleCloseModal, modalTitle }) => {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <h2
               id="modal-title"
-              style={{ color: "var(--color-white)", margin: 0 }}
+              style={{
+                color: "var(--color-white)",
+                margin: 0,
+                fontSize: "var(--font-size-h6)",
+              }}
             >
               {modalTitle}
             </h2>

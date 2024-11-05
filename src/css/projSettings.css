@@ -116,10 +116,6 @@
     flex-direction: column;
   }
 
-  .accessIcon {
-    margin-bottom: 1rem;
-  }
-
   .accessSelect {
     width: 100%;
     max-width: none;

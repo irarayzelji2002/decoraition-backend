@@ -111,7 +111,7 @@ h2 {
   font-weight: bold;
   padding: 15px;
   margin: 10px;
-  font-size: 1em;
+  font-size: var(--font-size-body);
   border-radius: 24px !important;
   cursor: pointer;
 
@@ -437,6 +437,6 @@ h2 {
     font-size: 2.25em;
   }
   .navTagline {
-    font-size: 1em;
+    font-size: 0.75em;
   }
 }

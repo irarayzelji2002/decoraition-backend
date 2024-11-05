@@ -129,6 +129,7 @@ const ShareModal = ({
                 style={{
                   color: "var(--color-white)",
                   marginLeft: "auto",
+                  paddingLeft: "8px",
                 }}
               >
                 Notify People

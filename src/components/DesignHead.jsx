@@ -299,6 +299,7 @@ function DesignHead({
               backgroundColor: "#27262C",
               color: "white",
               minWidth: "200px",
+              overflow: "hidden",
             },
           }}
         >

@@ -152,7 +152,7 @@ const SearchAppBar = ({ onMenuClick, onSearchChange, searchQuery }) => {
               sx={{
                 color: "var(--color-white)",
                 marginRight: 1,
-                fontSize: "1em",
+                fontSize: "var(--font-size-h6)",
                 overflow: "hidden",
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis",

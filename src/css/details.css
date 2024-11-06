@@ -13,7 +13,7 @@
 }
 
 .room-image {
-  width: 100%;
+  width: 80%;
   max-width: 400px;
   border-radius: 12px;
 }
@@ -22,6 +22,7 @@
   margin-top: 20px;
   width: 100%;
   max-width: 600px;
+  padding: 12px;
 }
 
 .room-info h1 {
@@ -46,4 +47,9 @@
 .access-portion h3 {
   margin-left: 20px;
   font-size: var(--font-size-h7);
+}
+@media (max-width: 600px) {
+  .room-info {
+    width: 80%;
+  }
 }

@@ -244,22 +244,24 @@ function Budget() {
             </div>
           </div>
         ) : (
-          items.map((item, index) => (
-            <div className="budgetSpaceImg" style={{ marginBottom: "10%" }}>
-              <Item
-                key={index}
-                item={item}
-                onDelete={() => handleDelete(item.id)}
-                onEdit={() =>
-                  projectId
-                    ? navigate(
-                        `/editItem/${designId}/${item.id}/${projectId}/project`
-                      )
-                    : navigate(`/editItem/${designId}/${item.id}`)
-                }
-              />
+          <>
+            <div className="budgetSpaceImg" style={{ marginBottom: "30%" }}>
+              {items.map((item, index) => (
+                <Item
+                  key={index}
+                  item={item}
+                  onDelete={() => handleDelete(item.id)}
+                  onEdit={() =>
+                    projectId
+                      ? navigate(
+                          `/editItem/${designId}/${item.id}/${projectId}/project`
+                        )
+                      : navigate(`/editItem/${designId}/${item.id}`)
+                  }
+                />
+              ))}{" "}
             </div>
-          ))
+          </>
         )}
         {showComments && (
           <CommentTabs

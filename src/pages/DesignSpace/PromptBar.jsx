@@ -18,6 +18,8 @@ function PromptBar() {
   const [modalTitle, setModalTitle] = useState("");
   const [dateModified, setDateModified] = React.useState("");
   const [value, setValue] = React.useState("#ffffff");
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [confirmedImage, setConfirmedImage] = useState(null);
 
   const handleChange = (newValue) => {
     setValue(newValue);
@@ -36,6 +38,27 @@ function PromptBar() {
   const handleCloseModal = () => {
     setModalOpen(false);
     setColorOpen(false);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setUploadedImage(null);
+    setConfirmedImage(null);
+  };
+
+  const handleConfirmImage = () => {
+    setConfirmedImage(uploadedImage);
+    setModalOpen(false);
   };
 
   return (
@@ -112,6 +135,33 @@ function PromptBar() {
           <AddImage />
         </Button>
       </div>
+
+      {confirmedImage && (
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <img
+            src={confirmedImage}
+            alt="Confirmed Preview"
+            style={{ maxWidth: "100%", borderRadius: "10px" }}
+          />
+          <Button
+            fullWidth
+            size="md"
+            sx={{
+              backgroundImage: "var(--gradientButton)",
+              borderRadius: "20px",
+              color: "white",
+              marginTop: "20px",
+              "&:hover": {
+                backgroundImage: "var(--gradientButtonHover)",
+              },
+            }}
+            onClick={handleRemoveImage}
+          >
+            Remove Image
+          </Button>
+        </div>
+      )}
+
       <div
         style={{
           display: "flex",
@@ -362,30 +412,69 @@ function PromptBar() {
           </div>
 
           <div style={{ marginTop: "30px" }}>
-            <Button
-              fullWidth
-              size="md"
-              sx={{
-                backgroundImage: "var(--gradientButton)",
-                borderRadius: "20px",
-                color: "white",
-                marginBottom: "20px",
-                "&:hover": {
-                  backgroundImage: "var(--gradientButtonHover)",
-                },
-              }}
-              onClick={() => {
-                document.getElementById("fileInput").click();
-              }}
-            >
-              Browse from gallery
-            </Button>
+            {uploadedImage ? (
+              <div style={{ textAlign: "center" }}>
+                <img
+                  src={uploadedImage}
+                  alt="Uploaded Preview"
+                  style={{
+                    height: "200px",
+                    borderRadius: "10px",
+                    marginBottom: "20px",
+                  }}
+                />
+
+                <Button
+                  fullWidth
+                  size="md"
+                  className="cancel-button"
+                  onClick={handleRemoveImage}
+                >
+                  Remove Image
+                </Button>
+                <Button
+                  fullWidth
+                  size="md"
+                  sx={{
+                    backgroundImage: "var(--gradientButton)",
+                    borderRadius: "20px",
+                    color: "white",
+                    marginTop: "10px",
+                    "&:hover": {
+                      backgroundImage: "var(--gradientButtonHover)",
+                    },
+                  }}
+                  onClick={handleConfirmImage}
+                >
+                  Confirm Image
+                </Button>
+              </div>
+            ) : (
+              <Button
+                fullWidth
+                size="md"
+                sx={{
+                  backgroundImage: "var(--gradientButton)",
+                  borderRadius: "20px",
+                  color: "white",
+                  marginBottom: "20px",
+                  "&:hover": {
+                    backgroundImage: "var(--gradientButtonHover)",
+                  },
+                }}
+                onClick={() => {
+                  document.getElementById("fileInput").click();
+                }}
+              >
+                Browse from gallery
+              </Button>
+            )}
 
             <input
               type="file"
               id="fileInput"
               style={{ display: "none" }}
-              onChange={(e) => console.log(e.target.files[0])}
+              onChange={handleImageUpload}
             />
           </div>
         </Box>

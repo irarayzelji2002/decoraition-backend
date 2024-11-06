@@ -179,6 +179,14 @@ function PromptBar() {
           value={dateModified}
           label="Choose Pallete"
           onChange={(e) => setDateModified(e.target.value)}
+          sx={{ width: "300px" }} // Customize the width here
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                height: "200px", // Customize the dropdown list width here
+              },
+            },
+          }}
           IconComponent={(props) => (
             <ArrowDropDownIcon
               {...props}
@@ -224,6 +232,44 @@ function PromptBar() {
                 <div
                   className="circle-small"
                   style={{ backgroundColor: "#3e3c47", marginLeft: "-10px" }}
+                ></div>
+              </div>
+            </div>
+          </MenuItem>
+          <MenuItem value="2023-03-01">
+            <div style={{ display: "flex", gap: "2px" }}>
+              Among Us &nbsp;
+              <div style={{ display: "flex", marginLeft: "auto" }}>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#3e3c47", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#faa653", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#ff4500", marginLeft: "-10px" }}
+                ></div>
+              </div>
+            </div>
+          </MenuItem>
+          <MenuItem value="2023-03-01">
+            <div style={{ display: "flex", gap: "2px" }}>
+              Among Us &nbsp;
+              <div style={{ display: "flex", marginLeft: "auto" }}>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#3e3c47", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#faa653", marginLeft: "-10px" }}
+                ></div>
+                <div
+                  className="circle-small"
+                  style={{ backgroundColor: "#ff4500", marginLeft: "-10px" }}
                 ></div>
               </div>
             </div>

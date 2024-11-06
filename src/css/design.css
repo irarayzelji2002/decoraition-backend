@@ -80,10 +80,16 @@
   flex-direction: row;
 }
 
+.design-name-section {
+  word-wrap: none;
+}
+
 .headTitleInput {
   background-color: transparent;
   border: transparent;
   font-size: var(--font-size-h4);
+  width: 8em;
+  overflow: hidden;
   font-weight: bold;
   font-family: "Inter", sans-serif !important;
   color: var(--color-white);

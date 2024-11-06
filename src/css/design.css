@@ -748,6 +748,7 @@ textarea {
   color: var(--color-white) !important;
   font-weight: bold !important;
   text-transform: none !important;
+  transition: background-color 0.3s ease !important; /* Add transition */
 }
 
 .confirm-button:hover {

@@ -349,18 +349,10 @@ function PromptBar() {
         type="submit"
         fullWidth
         variant="contained"
+        className="confirm-button"
         sx={{
-          marginBottom: "40%",
-          color: "white",
-          mt: 3,
-          mb: 2,
-          backgroundImage: "var(--gradientButton)",
-          borderRadius: "20px",
-          textTransform: "none",
-          fontWeight: "bold",
-          "&:hover": {
-            backgroundImage: "var(--gradientButtonHover)",
-          },
+          marginTop: "20px",
+          marginBottom: "40px",
         }}
       >
         Generate Image

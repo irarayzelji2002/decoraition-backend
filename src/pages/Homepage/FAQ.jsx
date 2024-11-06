@@ -59,6 +59,7 @@ const FAQ = () => {
     >
       <div className="center-me" style={{ margin: "24px" }}>
         <div
+          className="faq-page"
           style={{
             display: "flex",
             flexDirection: "row",

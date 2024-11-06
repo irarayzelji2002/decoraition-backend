@@ -223,8 +223,19 @@ h2 {
   width: 100%;
   max-height: 200px;
   border-radius: 8px;
+  border: 2px solid transparent !important;
+}
+.pic:hover {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+  background: transparent !important;
+  border: 2px solid transparent !important;
+  background-image: var(--lightGradient), var(--gradientButton) !important;
+  background-origin: border-box !important;
+  background-clip: padding-box, border-box !important;
 }
 .options {
+  display: flex;
+  justify-content: center;
   height: 34px;
   width: 34px;
   background-color: var(--bgMain);
@@ -239,7 +250,7 @@ h2 {
 }
 
 .selectOption {
-  font-size: var(--font-size-h4);
+  font-size: 24px;
   color: var(--color-white);
   margin-top: 0px;
 }
@@ -332,6 +343,7 @@ h2 {
   padding-top: 24px;
   border-radius: 16px;
   background-color: var(--bgMain);
+  padding-bottom: 20%;
   width: fit-content;
 }
 
@@ -416,8 +428,11 @@ h2 {
   .layout {
     grid-template-columns: repeat(1, 1fr); /* 1 column for small screens */
   }
+  .faq-page {
+    gap: 0px !important;
+  }
 }
-@media only screen and (max-width: 720px) {
+@media only screen and (max-width: 600px) {
   .iconFrame {
     height: 120px;
     width: 90%;

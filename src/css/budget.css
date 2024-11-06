@@ -52,8 +52,10 @@
   width: 100%;
   height: 90px;
   border-radius: 18px;
+  margin: 12px;
   margin-top: 24px;
 }
+
 .thumbnail {
   width: 70px;
   height: 70%;
@@ -324,5 +326,9 @@ select {
   }
   .budgetSpace {
     height: 0%;
+  }
+
+  .itemSpace {
+    width: 90%;
   }
 }

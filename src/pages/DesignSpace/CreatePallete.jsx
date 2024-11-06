@@ -9,15 +9,16 @@ import { ChromePicker } from "react-color";
 
 const CreatePallete = ({ handleCloseModal, modalTitle }) => {
   const [showColorInput, setShowColorInput] = useState(false);
-  const [value, setValue] = useState("#ffffff");
+  const [selectedColor, setSelectedColor] = useState("#ffffff"); // Add state for selected color
 
   const handlePlusClick = () => {
     setShowColorInput(!showColorInput); // Toggle the state
   };
 
-  const handleChange = (color) => {
-    setValue(color.hex);
+  const handleColorChange = (color) => {
+    setSelectedColor(color.hex); // Update the selected color
   };
+
   return (
     <Box
       sx={{
@@ -150,16 +151,16 @@ const CreatePallete = ({ handleCloseModal, modalTitle }) => {
               padding: "10px",
               width: "auto",
               margin: "auto",
-              backgroundColor: value,
+              backgroundColor: selectedColor,
               borderRadius: "10px",
               border: "1px solid var(--color-grey)",
             }}
           ></div>
 
           <ChromePicker
+            color={selectedColor} // Use the selected color
+            onChange={handleColorChange} // Handle color changes
             disableAlpha
-            color={value}
-            onChangeComplete={handleChange}
             styles={{
               default: {
                 picker: {

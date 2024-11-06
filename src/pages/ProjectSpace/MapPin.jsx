@@ -43,7 +43,7 @@ function MapPin({ title, editMode = false, pinNo, designId }) {
             <ChromePicker
               disableAlpha
               color={value}
-              onChangeComplete={handleChange}
+              onChange={handleChange}
               styles={{
                 default: {
                   picker: {

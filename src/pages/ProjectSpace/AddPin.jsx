@@ -19,10 +19,10 @@ import { useState } from "react";
 
 function AddPin({ EditMode }) {
   const [owner, setOwner] = React.useState("");
-  const [value, setValue] = useState("#ffffff");
+  const [selectedColor, setSelectedColor] = useState("#ffffff");
 
-  const handleChange = (color) => {
-    setValue(color.hex);
+  const handleColorChange = (color) => {
+    setSelectedColor(color.hex); // Update the selected color
   };
   const StyledMenu = styled(Menu)(({ theme }) => ({
     "& .MuiPaper-root": {
@@ -196,8 +196,8 @@ function AddPin({ EditMode }) {
               <div className="modalColor" style={{ width: "50%" }}>
                 <ChromePicker
                   disableAlpha
-                  color={value}
-                  onChangeComplete={handleChange}
+                  color={selectedColor}
+                  onChange={handleColorChange}
                   styles={{
                     default: {
                       picker: {

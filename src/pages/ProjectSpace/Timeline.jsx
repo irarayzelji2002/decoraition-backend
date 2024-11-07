@@ -156,6 +156,7 @@ function Timeline() {
               <div className="add-event-button">
                 <button className="design-button" onClick={handleAddEventClick}>
                   Add Event for {formatDate(date)}
+                  {/* dummy */}
                 </button>
               </div>
               <div className="tasks-list">

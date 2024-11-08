@@ -139,13 +139,6 @@ body {
   border-radius: 24px;
   margin: 2%;
 }
-.image-preview {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
-  position: absolute;
-  border-radius: 12px;
-}
 
 .SubtitlePrice {
   font-size: var(--font-size-tiny);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
 import update from "immutability-helper";
 import TopBar from "../../components/TopBar";
 import MapPin from "./MapPin";
@@ -26,8 +27,8 @@ function DraggablePin({ id, index, movePin, title, editMode, pinNo }) {
   });
 
   return (
-    <div ref={(node) => ref(drop(node))}>
-      <MapPin title={title} editMode={editMode} pinNo={pinNo} />
+    <div ref={drop}>
+      <MapPin title={title} editMode={editMode} pinNo={pinNo} dragRef={ref} />
     </div>
   );
 }
@@ -49,8 +50,13 @@ function PinOrder() {
     setPins(updatedPins);
   };
 
+  const isMobile = window.innerWidth <= 768;
+
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider
+      backend={isMobile ? TouchBackend : HTML5Backend}
+      options={isMobile ? { enableMouseEvents: true } : undefined}
+    >
       <div>
         <TopBar state={"Change pins order"} />
         <div className="pinSpace">

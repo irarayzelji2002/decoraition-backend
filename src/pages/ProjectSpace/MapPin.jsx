@@ -8,7 +8,7 @@ import { useState } from "react";
 import { ChromePicker } from "react-color";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 
-function MapPin({ title, editMode = false, pinNo, designId }) {
+function MapPin({ title, editMode = false, pinNo, designId, dragRef }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [value, setValue] = useState("#ffffff");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -150,7 +150,7 @@ function MapPin({ title, editMode = false, pinNo, designId }) {
             </>
           ) : (
             <>
-              <div className="draggable">
+              <div className="draggable" ref={dragRef}>
                 <Draggable />
               </div>
             </>

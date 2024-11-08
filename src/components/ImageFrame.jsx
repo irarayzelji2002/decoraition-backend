@@ -1,12 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import Draggable from "react-draggable";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { MapPinIcon } from "../pages/ProjectSpace/svg/ExportIcon";
 
-const ImageFrame = ({ src, alt }) => {
-  const [pins, setPins] = useState([]);
-  const imageRef = useRef(null);
+const ImageFrame = ({ src, alt, pins = [], setPins }) => {
+  const frameRef = useRef(null);
   const [bounds, setBounds] = useState({
     left: 0,
     top: 0,
@@ -15,36 +12,37 @@ const ImageFrame = ({ src, alt }) => {
   });
 
   useEffect(() => {
-    if (imageRef.current) {
-      const rect = imageRef.current.getBoundingClientRect();
-      setBounds({
-        left: 0,
-        top: 0,
-        right: rect.width,
-        bottom: rect.height,
-      });
-    }
-  }, [imageRef]);
+    const updateBounds = () => {
+      if (frameRef.current) {
+        const rect = frameRef.current.getBoundingClientRect();
+        setBounds({
+          left: 0,
+          top: 0,
+          right: rect.width,
+          bottom: rect.height,
+        });
+      }
+    };
 
-  const addPin = () => {
-    setPins([...pins, { id: Date.now(), x: 0, y: 0 }]);
-  };
+    updateBounds();
+    window.addEventListener("resize", updateBounds);
 
-  const deletePin = (id) => {
-    setPins(pins.filter((pin) => pin.id !== id));
-  };
+    return () => {
+      window.removeEventListener("resize", updateBounds);
+    };
+  }, [frameRef]);
 
   const updatePinPosition = (id, x, y) => {
     setPins(pins.map((pin) => (pin.id === id ? { ...pin, x, y } : pin)));
   };
 
   return (
-    <div className="image-frame">
-      <img ref={imageRef} src={src} alt={alt} className="image-preview" />
+    <div className="image-frame" ref={frameRef}>
+      <img src={src} alt={alt} className="image-preview" />
       {pins.map((pin) => (
         <Draggable
           key={pin.id}
-          bounds={bounds}
+          bounds="parent"
           defaultPosition={{ x: pin.x, y: pin.y }}
           onStop={(e, data) => updatePinPosition(pin.id, data.x, data.y)}
         >
@@ -54,9 +52,6 @@ const ImageFrame = ({ src, alt }) => {
           </div>
         </Draggable>
       ))}
-      <button className="add-pin-button" onClick={addPin}>
-        <AddIcon />
-      </button>
     </div>
   );
 };

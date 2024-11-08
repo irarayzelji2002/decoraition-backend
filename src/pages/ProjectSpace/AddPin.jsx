@@ -16,10 +16,12 @@ import { ChromePicker } from "react-color";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
+import ImageFrame from "../../components/ImageFrame";
 
 function AddPin({ EditMode }) {
   const [owner, setOwner] = React.useState("");
   const [selectedColor, setSelectedColor] = useState("#ffffff");
+  const [pins, setPins] = useState([]);
 
   const handleColorChange = (color) => {
     setSelectedColor(color.hex); // Update the selected color
@@ -96,44 +98,32 @@ function AddPin({ EditMode }) {
     setModalOpen(false);
   };
 
+  const addPin = () => {
+    setPins([...pins, { id: Date.now(), x: 0, y: 0 }]);
+  };
+
   return (
     <>
       <TopBar state={"Add Pin"} />
       <div className="sectionBudget" style={{ background: "none" }}>
         <div className="budgetSpaceImg">
-          <div className="image-frame">
-            <img
-              src="../../img/logoWhitebg.png"
-              alt={`design preview `}
-              className="image-preview"
-            />
-          </div>
+          <ImageFrame
+            src="../../img/floorplan.png"
+            alt="design preview"
+            pins={pins}
+            setPins={setPins}
+          />
         </div>
         <div className="budgetSpaceImg">
           <div style={{ width: "100%" }}>
             {" "}
-            <label style={{ marginLeft: "12px" }}>Pin number: 4</label>
+            <label style={{ marginLeft: "12px" }}>
+              Pin number: {pins.length + 1}
+            </label>
             <br />
             <br />
             <label style={{ marginLeft: "12px" }}>Associated Design</label>
             <FormControl sx={formControlStyles}>
-              <InputLabel
-                id="owner-select-label"
-                sx={{
-                  color: "var(--color-white)",
-                  "&.Mui-focused": {
-                    color: "var(--color-white)", // Ensure label color remains white when focused
-                  },
-                  "&.MuiInputLabel-shrink": {
-                    color: "var(--color-white)", // Ensure label color remains white when shrunk
-                  },
-                  "&.Mui-focused.MuiInputLabel-shrink": {
-                    color: "var(--color-white)", // Ensure label color remains white when focused and shrunk
-                  },
-                }}
-              >
-                Select
-              </InputLabel>
               <Select
                 labelId="owner-select-label"
                 fullWidth
@@ -152,23 +142,7 @@ function AddPin({ EditMode }) {
                   },
                 }}
                 IconComponent={ArrowDropDownIcon}
-                sx={{
-                  color: "var(--color-white)",
-                  backgroundColor: "var(--bgMain)",
-                  borderBottom: "1px solid #4a4a4d",
-                  borderRadius: "8px",
-                  transition: "background-color 0.3s ease",
-                  "&.Mui-focused": {
-                    borderBottom: "1px solid var(--focusBorderColor)", // Change border color when focused
-                    outline: "none",
-                    boxShadow: "none", // Remove blue outline effect
-                    color: "var(--color-grey)", // Ensure text color remains white
-                  },
-
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "var(--color-white)",
-                  },
-                }}
+                className="custom-select"
               >
                 <MenuItem value="" sx={menuItemStyles}>
                   <em>&nbsp;</em>
@@ -231,16 +205,7 @@ function AddPin({ EditMode }) {
                   <Button
                     fullWidth
                     variant="contained"
-                    sx={{
-                      background: "var(--gradientButton)",
-                      borderRadius: "20px",
-                      color: "var(--color-white)",
-                      fontWeight: "bold",
-                      textTransform: "none",
-                      "&:hover": {
-                        background: "var(--gradientButtonHover)", // Reverse gradient on hover
-                      },
-                    }}
+                    className="confirm-button"
                   >
                     Save Color
                   </Button>
@@ -258,6 +223,7 @@ function AddPin({ EditMode }) {
             <button
               className="add-item-btn"
               style={{ width: "100%", margin: "8px" }}
+              onClick={addPin}
             >
               Add Pin
             </button>

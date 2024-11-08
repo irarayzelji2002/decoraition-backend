@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProjectHead from "./ProjectHead";
 import MapPin from "./MapPin";
 import BottomBarDesign from "./BottomBarProject";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import "../../css/project.css";
@@ -15,12 +15,11 @@ import {
   ChangeOrder,
   ChangePlan,
 } from "../DesignSpace/svg/AddImage";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import { fetchDesigns } from "./backend/ProjectDetails";
+import ImageFrame from "../../components/ImageFrame";
 
 function PlanMap() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -100,13 +99,7 @@ function PlanMap() {
       {menuOpen && <div className="overlay" onClick={toggleMenu}></div>}
       <div className="sectionBudget" style={{ background: "none" }}>
         <div className="budgetSpaceImg">
-          <div className="image-frame">
-            <img
-              src="../../img/logoWhitebg.png"
-              alt={`design preview `}
-              className="image-preview"
-            />
-          </div>
+          <ImageFrame src="../../img/floorplan.png" alt="design preview" />
         </div>
         <div className="budgetSpaceImg">
           {designs.length > 0 ? (

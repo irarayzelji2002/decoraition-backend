@@ -132,7 +132,9 @@ function Settings() {
         await updateDoc(userDocRef, {
           photoURL,
         });
-        toast.success("Photo updated successfully");
+        toast.success("Photo updated successfully", {
+          className: "custom-toast-success", // Apply custom class name
+        });
       } catch (error) {
         console.error("Error updating photo:", error);
       } finally {

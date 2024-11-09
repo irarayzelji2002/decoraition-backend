@@ -57,6 +57,7 @@ function PinOrder() {
       backend={isMobile ? TouchBackend : HTML5Backend}
       options={isMobile ? { enableMouseEvents: true } : undefined}
     >
+      {/* dummy */}
       <div>
         <TopBar state={"Change pins order"} />
         <div className="pinSpace">

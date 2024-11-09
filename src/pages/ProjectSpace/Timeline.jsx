@@ -19,6 +19,7 @@ import {
   ListIcon,
   SingleIcon,
 } from "./svg/ExportIcon";
+import { ArrowBackIosNew, ArrowForwardIos } from "@mui/icons-material";
 
 function Timeline() {
   const [date, setDate] = useState(new Date());
@@ -90,11 +91,19 @@ function Timeline() {
   };
 
   const handlePrevDate = () => {
-    setDate((prevDate) => new Date(prevDate.setDate(prevDate.getDate() - 1)));
+    setDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setDate(prevDate.getDate() - 1);
+      return newDate;
+    });
   };
 
   const handleNextDate = () => {
-    setDate((prevDate) => new Date(prevDate.setDate(prevDate.getDate() + 1)));
+    setDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setDate(prevDate.getDate() + 1);
+      return newDate;
+    });
   };
 
   const handlePrevTask = () => {
@@ -112,6 +121,12 @@ function Timeline() {
   const filteredTasks = tasks.filter(
     (task) => new Date(task.endDate).toDateString() === date.toDateString()
   );
+
+  const hasTasks = (date) => {
+    return tasks.some(
+      (task) => new Date(task.endDate).toDateString() === date.toDateString()
+    );
+  };
 
   return (
     <>
@@ -151,6 +166,9 @@ function Timeline() {
                   onChange={setDate}
                   value={date}
                   className="custom-calendar"
+                  tileClassName={({ date, view }) =>
+                    view === "month" && hasTasks(date) ? "task-date" : null
+                  }
                 />
               </div>
               <div className="add-event-button">
@@ -190,11 +208,23 @@ function Timeline() {
         {viewMode === "list" && (
           <div className="calendar-head">
             <div className="date-navigation">
-              <button onClick={handlePrevDate}>{"<"}</button>
-              <span>{formatDate(date)}</span>
-              <button onClick={handleNextDate}>{">"}</button>
+              <Button onClick={handlePrevDate}>
+                <ArrowBackIosNew sx={{ color: "var(--color-white)" }} />
+              </Button>
+
+              <h2>
+                {date.toLocaleDateString(undefined, {
+                  weekday: "long",
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </h2>
+              <Button onClick={handleNextDate}>
+                <ArrowForwardIos sx={{ color: "var(--color-white)" }} />{" "}
+              </Button>
             </div>
-            <h2>Tasks for {formatDate(date)}</h2>
+
             {filteredTasks.length === 0 ? (
               <p>No tasks available</p>
             ) : (
@@ -219,12 +249,18 @@ function Timeline() {
         )}
         {viewMode === "single" && tasks.length > 0 && (
           <div className="calendar-head">
-            <div className="task-navigation">
-              <button onClick={handlePrevTask}>{"<"}</button>
-              <span>
+            <div className="date-navigation">
+              <Button onClick={handlePrevTask}>
+                <ArrowBackIosNew sx={{ color: "var(--color-white)" }} />
+              </Button>
+
+              <h2>
                 Task {currentTaskIndex + 1} of {tasks.length}
-              </span>
-              <button onClick={handleNextTask}>{">"}</button>
+              </h2>
+
+              <Button onClick={handleNextTask}>
+                <ArrowForwardIos sx={{ color: "var(--color-white)" }} />{" "}
+              </Button>
             </div>
             <div className="task-item">
               <div className="task-text">
